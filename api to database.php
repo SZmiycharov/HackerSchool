@@ -18,7 +18,7 @@
 	$jsondata = file_get_contents('http://earthquake.usgs.gov/earthquakes/feed/v1.0/summary/all_month.geojson');
     	
 	$page = $_SERVER['http://earthquake.usgs.gov/earthquakes/feed/v1.0/summary/all_month.geojson'];
-	$sec = "10";
+	$sec = "50";
 	header("Refresh: $sec; url=$page");
 	
     //convert json object to php associative array
