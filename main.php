@@ -32,11 +32,12 @@
           var point = new google.maps.LatLng(
               parseFloat(markers[i].getAttribute("latitude")),
               parseFloat(markers[i].getAttribute("longitude")));
-          var html = "<b> test </b>";
+          var html = "latitude: " + markers[i].getAttribute("latitude") + " longitude: " + markers[i].getAttribute("longitude");
           var marker = new google.maps.Marker({
             map: map,
             position: point
           });
+
           bindInfoWindow(marker, map, infoWindow, html);
         }
       });
