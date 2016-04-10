@@ -5,9 +5,21 @@
     <title>PHP/MySQL & Google Maps Example</title>
     <script src="https://maps.googleapis.com/maps/api/js?sensor=false"
             type="text/javascript"></script>
-    <script type="text/javascript">
-    //<![CDATA[
+<script src="http://code.jquery.com/jquery-latest.js"
+            type="text/javascript"></script>
 
+    <script type="text/javascript">
+
+    //<![CDATA[
+	
+    $(document).ready(function() {
+	$('#search-btn').click(function() {
+		var value = $('#search-input').val();
+		
+		window.location.href = window.location.href.split('?')[0] + '?longitude=' + value;
+	});
+    });	
+	
     var customIcons = {
       restaurant: {
         icon: 'http://labs.google.com/ridefinder/images/mm_20_blue.png'
@@ -24,8 +36,21 @@
       });
       var infoWindow = new google.maps.InfoWindow;
 
+	//function to get the jquery string
+	function getParameterByName(name, url) {
+    if (!url) url = window.location.href;
+    name = name.replace(/[\[\]]/g, "\\$&");
+    var regex = new RegExp("[?&]" + name + "(=([^&#]*)|&|#|$)", "i"),
+        results = regex.exec(url);
+    if (!results) return null;
+    if (!results[2]) return '';
+    return decodeURIComponent(results[2].replace(/\+/g, " "));
+}
+
+	var longitude = getParameterByName('longitude')
+
       // Change this depending on the name of your PHP file
-      downloadUrl("http://localhost/halo.php?longitude=-116.8613333", function(data) {
+      downloadUrl("http://localhost/halo.php?longitude=" + longitude, function(data) {
         var xml = data.responseXML;
         var markers = xml.documentElement.getElementsByTagName("coord");
         for (var i = 0; i < markers.length; i++) {
@@ -75,6 +100,11 @@
   </head>
 
   <body onload="load()">
+	<input type="text" id="search-input" />
+
+<input type="button" value="Search" id="search-btn" />
+
+
     <div id="map" style="width: 1000px; height: 600px"></div>
   </body>
 
