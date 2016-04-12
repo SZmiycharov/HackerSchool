@@ -14,7 +14,6 @@
 	if (!$db_selected) {
 	  die ('Can\'t use db : ' . mysql_error());
 	}
-//asdasdasdasddddddddddddddd
 	$jsondata = file_get_contents('http://earthquake.usgs.gov/earthquakes/feed/v1.0/summary/all_month.geojson');
     	
 	$page = $_SERVER['http://earthquake.usgs.gov/earthquakes/feed/v1.0/summary/all_month.geojson'];
