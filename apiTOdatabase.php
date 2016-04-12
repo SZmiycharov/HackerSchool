@@ -27,9 +27,7 @@
     foreach ($data['features'] as &$feature) {
         $longitude = $feature['geometry']['coordinates'][0];
         $latitude = $feature['geometry']['coordinates'][1];
-        
-		
-		$query = "INSERT INTO Coordinates(longitude, latitude) VALUES ($longitude,$latitude)";
+       
 		$query ="INSERT INTO `Coordinates` (`longitude`, `latitude`)
 			SELECT * FROM (SELECT $longitude,$latitude) AS tmp
 			WHERE NOT EXISTS (
