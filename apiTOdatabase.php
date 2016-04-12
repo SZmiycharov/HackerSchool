@@ -30,6 +30,11 @@
         
 		
 		$query = "INSERT INTO Coordinates(longitude, latitude) VALUES ($longitude,$latitude)";
+		$query ="INSERT INTO `Coordinates` (`longitude`, `latitude`)
+			SELECT * FROM (SELECT $longitude,$latitude) AS tmp
+			WHERE NOT EXISTS (
+    			SELECT * FROM `Coordinates` WHERE longitude = $longitude AND latitude = $latitude
+			) LIMIT 1;";
 		$result = mysql_query($query);
 		if (!$result) {
 		  die('Invalid query: ' . mysql_error());
