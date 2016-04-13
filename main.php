@@ -1,3 +1,18 @@
+<?php
+/**
+ * Template Name: main
+ *
+ * This template is used to integrate main.php file in wordpress
+ *
+ * @since          Twenty Fifteen 1.0
+ *
+ * @package        Acme_Project
+ * @subpackage     Twenty_Fifteen
+ */
+?>
+
+
+
 <!DOCTYPE html >
   <head>
     <meta name="viewport" content="initial-scale=1.0, user-scalable=no" />
