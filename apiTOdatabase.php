@@ -27,10 +27,11 @@
         $latitude = $feature['geometry']['coordinates'][1];
 	$time = $feature['properties']['time'];
 	$place = $feature['properties']['place'];
+	$place = mysql_real_escape_string($place);
 	
        
 		$query ="INSERT INTO `Coordinates` (`longitude`, `latitude`,`time`,`place`)
-			SELECT * FROM (SELECT $longitude,$latitude,$time,$place) AS tmp
+			SELECT * FROM (SELECT $longitude,$latitude,$time,'$place') AS tmp
 			WHERE NOT EXISTS (
     			SELECT * FROM `Coordinates` WHERE longitude = $longitude AND latitude = $latitude
 			) LIMIT 1;";
