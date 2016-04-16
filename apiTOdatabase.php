@@ -26,18 +26,18 @@
         $longitude = $feature['geometry']['coordinates'][0];
         $latitude = $feature['geometry']['coordinates'][1];
 	$time = $feature['properties']['time'];
+	$datetime = date('H:i:s d-M-Y', $time+36000);
+	
 	$place = $feature['properties']['place'];
 	$place = mysql_real_escape_string($place);
 	
-       
-		$query ="INSERT INTO `Coordinates` (`longitude`, `latitude`,`time`,`place`)
-			SELECT * FROM (SELECT $longitude,$latitude,$time,'$place') AS tmp
-			WHERE NOT EXISTS (
-    			SELECT * FROM `Coordinates` WHERE longitude = $longitude AND latitude = $latitude
-			) LIMIT 1;";
-		$result = mysql_query($query);
-		if (!$result) {
-		  die('Invalid query: ' . mysql_error());
-		}
+	$query ="INSERT INTO `Coordinates` (`longitude`, `latitude`,`time`,`place`)
+		SELECT * FROM (SELECT $longitude,$latitude,'$datetime','$place') AS tmp
+		WHERE NOT EXISTS (SELECT * FROM `Coordinates` WHERE longitude = $longitude AND latitude = $latitude) LIMIT 1;";
+
+	$result = mysql_query($query);
+	if (!$result) {
+		 	die('Invalid query: ' . mysql_error());
+		      }
     }
 ?>
