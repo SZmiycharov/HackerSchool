@@ -31,8 +31,8 @@
     $(document).ready(function() {
 	$('#search-btn').click(function() {
 		var value = $('#search-input').val();
-		
-		window.location.href = window.location.href.split('?')[0] + '?longitude=' + value;
+		var value1 = $('#datepicker').val();
+		window.location.href = window.location.href.split('?')[0] + '?time=' + value1 + '?longitude=' + value;
 	});
     });	
 
@@ -68,7 +68,9 @@
     return decodeURIComponent(results[2].replace(/\+/g, " "));
 }
 
+	var longitude = getParameterByName('time')
 	var longitude = getParameterByName('longitude')
+	
 
       // Change this depending on the name of your PHP file
       downloadUrl("http://localhost/halo.php?longitude=" + longitude, function(data) {
