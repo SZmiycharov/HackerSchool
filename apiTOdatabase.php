@@ -27,7 +27,7 @@
         $longitude = $feature['geometry']['coordinates'][0];
         $latitude = $feature['geometry']['coordinates'][1];
 	$time = $feature['properties']['time'];
-	$datetime = date('Y-m-d H:i:s', $time+36000);
+	$datetime = date('Y-m-d', $time+36000);
 	
 	$place = $feature['properties']['place'];
 	$place = mysql_real_escape_string($place);
