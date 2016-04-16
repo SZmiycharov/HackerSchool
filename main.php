@@ -1,18 +1,3 @@
-<?php
-/**
- * Template Name: main
- *
- * This template is used to integrate main.php file in wordpress
- *
- * @since          Twenty Fifteen 1.0
- *
- * @package        Acme_Project
- * @subpackage     Twenty_Fifteen
- */
-?>
-
-
-
 <!DOCTYPE html >
   <head>
     <meta name="viewport" content="initial-scale=1.0, user-scalable=no" />
@@ -72,7 +57,7 @@
           var point = new google.maps.LatLng(
               parseFloat(markers[i].getAttribute("latitude")),
               parseFloat(markers[i].getAttribute("longitude")));
-          var html = "latitude: " + markers[i].getAttribute("latitude") + " longitude: " + markers[i].getAttribute("longitude");
+          var html = markers[i].getAttribute("place");
           var marker = new google.maps.Marker({
             map: map,
             position: point

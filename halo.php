@@ -46,6 +46,8 @@ while ($row = @mysql_fetch_assoc($result)){
 
   echo 'latitude="' . $row['latitude'] . '" ';
   echo 'longitude="' . $row['longitude'] . '" ';
+  echo 'time="' . $row['time'] . '" ';
+  echo 'place="' . $row['place'] . '" ';
   
   echo '/>';
 }
