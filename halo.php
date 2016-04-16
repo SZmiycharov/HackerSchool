@@ -28,9 +28,7 @@ if (!$db_selected) {
 
 // Select all the rows in the markers table
 $longitude = $_GET['longitude'];
-$time = $_GET['time'];
-
-	$query = "SELECT * FROM `Coordinates` WHERE `time` = $time AND `longitude` = $longitude";
+    $query = "SELECT * FROM `Coordinates` WHERE `longitude` = $longitude";
 $result = mysql_query($query);
 if (!$result) {
   die('Invalid query: ' . mysql_error());

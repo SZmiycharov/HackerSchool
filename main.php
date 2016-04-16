@@ -1,16 +1,3 @@
-<?php
-/**
- * Template Name: main
- *
- * This template is used to integrate main.php file in wordpress
- *
- * @since          Twenty Fifteen 1.0
- *
- * @package        Acme_Project
- * @subpackage     Twenty_Fifteen
- */
-?>
-
 <!DOCTYPE html >
   <head>
     <meta name="viewport" content="initial-scale=1.0, user-scalable=no" />
@@ -20,9 +7,6 @@
             type="text/javascript"></script>
 <script src="http://code.jquery.com/jquery-latest.js"
             type="text/javascript"></script>
-<link rel="stylesheet" href="//code.jquery.com/ui/1.11.4/themes/smoothness/jquery-ui.css">
-  <script src="//code.jquery.com/jquery-1.10.2.js"></script>
-  <script src="//code.jquery.com/ui/1.11.4/jquery-ui.js"></script>
 
     <script type="text/javascript">
 
@@ -31,15 +15,10 @@
     $(document).ready(function() {
 	$('#search-btn').click(function() {
 		var value = $('#search-input').val();
-		var value1 = $('#datepicker').val();
-		window.location.href = window.location.href.split('?')[0] + '?time=' + value1 + '?longitude=' + value;
+		
+		window.location.href = window.location.href.split('?')[0] + '?longitude=' + value;
 	});
     });	
-
-  $(function() {
-    $( "#datepicker" ).datepicker();
-  });
-  
 	
     var customIcons = {
       restaurant: {
@@ -68,9 +47,7 @@
     return decodeURIComponent(results[2].replace(/\+/g, " "));
 }
 
-	var longitude = getParameterByName('time')
 	var longitude = getParameterByName('longitude')
-	
 
       // Change this depending on the name of your PHP file
       downloadUrl("http://localhost/halo.php?longitude=" + longitude, function(data) {
@@ -98,7 +75,6 @@
       });
     }
 
-
     function downloadUrl(url, callback) {
       var request = window.ActiveXObject ?
           new ActiveXObject('Microsoft.XMLHTTP') :
@@ -124,14 +100,9 @@
   </head>
 
   <body onload="load()">
-
-<p>Date: <input type="text" id="datepicker"></p>
-	
-<p>Longitude: <input type="text" id="search-input" />
+	<input type="text" id="search-input" />
 
 <input type="button" value="Search" id="search-btn" />
-
-
 
 
     <div id="map" style="width: 1000px; height: 600px"></div>
