@@ -11,8 +11,6 @@
  */
 ?>
 
-
-
 <!DOCTYPE html >
   <head>
     <meta name="viewport" content="initial-scale=1.0, user-scalable=no" />
@@ -22,6 +20,9 @@
             type="text/javascript"></script>
 <script src="http://code.jquery.com/jquery-latest.js"
             type="text/javascript"></script>
+<link rel="stylesheet" href="//code.jquery.com/ui/1.11.4/themes/smoothness/jquery-ui.css">
+  <script src="//code.jquery.com/jquery-1.10.2.js"></script>
+  <script src="//code.jquery.com/ui/1.11.4/jquery-ui.js"></script>
 
     <script type="text/javascript">
 
@@ -34,6 +35,11 @@
 		window.location.href = window.location.href.split('?')[0] + '?longitude=' + value;
 	});
     });	
+
+  $(function() {
+    $( "#datepicker" ).datepicker();
+  });
+  
 	
     var customIcons = {
       restaurant: {
@@ -90,6 +96,7 @@
       });
     }
 
+
     function downloadUrl(url, callback) {
       var request = window.ActiveXObject ?
           new ActiveXObject('Microsoft.XMLHTTP') :
@@ -115,9 +122,14 @@
   </head>
 
   <body onload="load()">
-	<input type="text" id="search-input" />
+
+<p>Date: <input type="text" id="datepicker"></p>
+	
+<p>Longitude: <input type="text" id="search-input" />
 
 <input type="button" value="Search" id="search-btn" />
+
+
 
 
     <div id="map" style="width: 1000px; height: 600px"></div>
