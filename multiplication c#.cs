@@ -29,10 +29,10 @@ namespace multiplicationFastTaskTelebid
         static void Main(string[] args)
         {
             int digit = 0;
-            string helper = "";
-            for (int i=0;i<10000;i++)
+            StringBuilder helper = new StringBuilder();
+            for (int i=0;i<1000000;i++)
             {
-                helper = helper + (i * i).ToString();
+                helper = helper.Append((i * i).ToString());
             }
 
             Console.Write("Enter which digit from the number you want to see: ");
