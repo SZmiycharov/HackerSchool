@@ -1,16 +1,3 @@
-<?php
-/**
- * Template Name: main
- *
- * This template is used to integrate main.php file in wordpress
- *
- * @since          Twenty Fifteen 1.0
- *
- * @package        Acme_Project
- * @subpackage     Twenty_Fifteen
- */
-?>
-
 <!DOCTYPE html >
   <head>
     <meta name="viewport" content="initial-scale=1.0, user-scalable=no" />
@@ -31,29 +18,13 @@
     $(document).ready(function() {
 	$('#search-btn').click(function() {
 		var value = $('#search-input').val();
-		var value1 = $('#from').val();
-		var value2 = $('#to').val();
-		window.location.href = window.location.href.split('?')[0] + '?longitude=' + value + '&fromtime=' + value1 + '&totime' + value2;
+		var value1 = $('#datepicker').val();
+		window.location.href = window.location.href.split('?')[0] + '?time=' + value1 + '&longitude=' + value;
 	});
     });	
 
   $(function() {
-    $( "#from" ).datepicker({
-      defaultDate: "+1w",
-      changeMonth: true,
-      numberOfMonths: 3,
-      onClose: function( selectedDate ) {
-        $( "#to" ).datepicker( "option", "minDate", selectedDate );
-      }
-    });
-    $( "#to" ).datepicker({
-      defaultDate: "+1w",
-      changeMonth: true,
-      numberOfMonths: 3,
-      onClose: function( selectedDate ) {
-        $( "#from" ).datepicker( "option", "maxDate", selectedDate );
-      }
-    });
+    $( "#datepicker" ).datepicker();
   });
   
 	
@@ -69,7 +40,7 @@
     function load() {
       var map = new google.maps.Map(document.getElementById("map"), {
         center: new google.maps.LatLng(30.102261, -81.711777),
-        zoom: 5
+        zoom: 3
       });
       var infoWindow = new google.maps.InfoWindow;
 
@@ -84,13 +55,12 @@
     return decodeURIComponent(results[2].replace(/\+/g, " "));
 }
 
-	var fromtimetime = getParameterByName('fromtime')
-	var totime = getParameterByName('totime')
+	var time = getParameterByName('time')
 	var longitude = getParameterByName('longitude')
 	
 
       // Change this depending on the name of your PHP file
-      downloadUrl("http://localhost/halo.php?longitude=" + longitude + "&fromtime=" + fromtime +"&totime=" + totime, function(data) {
+      downloadUrl("http://localhost/halo.php?time=" + 'time' + "&longitude=" + longitude, function(data) {
         var xml = data.responseXML;
         var markers = xml.documentElement.getElementsByTagName("coord");
         for (var i = 0; i < markers.length; i++) {
@@ -142,10 +112,7 @@
 
   <body onload="load()">
 
-<label for="from">From</label>
-<input type="text" id="from" name="from">
-<label for="to">to</label>
-<input type="text" id="to" name="to">
+<p>Date: <input type="text" id="datepicker"></p>
 	
 <p>Longitude: <input type="text" id="search-input" />
 
@@ -158,4 +125,3 @@
   </body>
 
 </html>
-
