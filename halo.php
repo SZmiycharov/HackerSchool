@@ -28,9 +28,10 @@ if (!$db_selected) {
 
 // Select all the rows in the markers table
 $longitude = $_GET['longitude'];
-$time = $_GET['time'];
+$fromtime = $_GET['fromtime'];
+$totime = $_GET['totime'];
 
-	$query = "SELECT * FROM `Coordinates` WHERE `time` = $time AND `longitude` = $longitude";
+	$query = "SELECT * FROM `Coordinates` WHERE `time` BETWEEN $fromtime AND $totime AND `longitude` = $longitude";
 
 $result = mysql_query($query);
 if (!$result) {

@@ -18,24 +18,30 @@
     $(document).ready(function() {
 	$('#search-btn').click(function() {
 		var value = $('#search-input').val();
-		var value1 = $('#datepicker').val();
-		window.location.href = window.location.href.split('?')[0] + '?time=' + value1 + '&longitude=' + value;
+		var value1 = $('#from').val();
+		var value2 = $('#to').val();
+	window.location.href = window.location.href.split('?')[0] + '?fromtime=' + value1 + '&totime=' + value2 + '&longitude=' + value;
 	});
     });	
 
   $(function() {
-    $( "#datepicker" ).datepicker();
-  });
-  
-	
-    var customIcons = {
-      restaurant: {
-        icon: 'http://labs.google.com/ridefinder/images/mm_20_blue.png'
-      },
-      bar: {
-        icon: 'http://labs.google.com/ridefinder/images/mm_20_red.png'
+    $( "#from" ).datepicker({
+      defaultDate: "+1w",
+      changeMonth: true,
+      numberOfMonths: 3,
+      onClose: function( selectedDate ) {
+        $( "#to" ).datepicker( "option", "minDate", selectedDate );
       }
-    };
+    });
+    $( "#to" ).datepicker({
+      defaultDate: "+1w",
+      changeMonth: true,
+      numberOfMonths: 3,
+      onClose: function( selectedDate ) {
+        $( "#from" ).datepicker( "option", "maxDate", selectedDate );
+      }
+    });
+  });
 
     function load() {
       var map = new google.maps.Map(document.getElementById("map"), {
@@ -55,12 +61,13 @@
     return decodeURIComponent(results[2].replace(/\+/g, " "));
 }
 
-	var time = getParameterByName('time')
+	var fromtime = getParameterByName('fromtime')
+	var totime = getParameterByName('totime')
 	var longitude = getParameterByName('longitude')
 	
 
       // Change this depending on the name of your PHP file
-      downloadUrl("http://localhost/halo.php?time=" + 'time' + "&longitude=" + longitude, function(data) {
+      downloadUrl("http://localhost/halo.php?longitude=" + longitude + "&fromtime=" + 'fromtime' + "&totime=" + 'totime', function(data) {
         var xml = data.responseXML;
         var markers = xml.documentElement.getElementsByTagName("coord");
         for (var i = 0; i < markers.length; i++) {
@@ -112,7 +119,10 @@
 
   <body onload="load()">
 
-<p>Date: <input type="text" id="datepicker"></p>
+<label for="from">Date: from</label>
+<input type="text" id="from" name="from">
+<label for="to">to</label>
+<input type="text" id="to" name="to">
 	
 <p>Longitude: <input type="text" id="search-input" />
 
