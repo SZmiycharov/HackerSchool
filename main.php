@@ -1,3 +1,21 @@
+<?php
+$servername = "localhost";
+$username = "monty";
+$password = "some_pass";
+$database="wp_db";
+
+// Opens a connection to a MySQL server
+$connection=mysql_connect ($servername, $username, $password);
+if (!$connection) {
+  die('Not connected : ' . mysql_error());
+}
+
+// Set the active MySQL database
+$db_selected = mysql_select_db($database, $connection);
+if (!$db_selected) {
+  die ('Can\'t use db : ' . mysql_error());
+}
+?>
 <!DOCTYPE html >
   <head>
     <meta name="viewport" content="initial-scale=1.0, user-scalable=no" />
@@ -43,6 +61,8 @@
     });
   });
 
+
+
     function load() {
       var map = new google.maps.Map(document.getElementById("map"), {
         center: new google.maps.LatLng(30.102261, -81.711777),
@@ -64,11 +84,18 @@
 	var fromtime = getParameterByName('fromtime');
 	var totime = getParameterByName('totime');
 	var longitude = getParameterByName('longitude');
+    
+ 	$(function() {
+    var availableLongitudes = ["asd", "-122.8206635"];
+    $( "#search-input" ).autocomplete({
+      source: availableLongitudes
+    });
+  });
+
 	
 
       // Change this depending on the name of your PHP file
- var url = "http://localhost/halo.php?longitude=" + longitude + "&fromtime=" + fromtime + "&totime=" + totime;
-	console.log(fromtime,totime,longitude ,url)
+      var url = "http://localhost/halo.php?longitude=" + longitude + "&fromtime=" + fromtime + "&totime=" + totime;
       downloadUrl(url, function(data) {
         var xml = data.responseXML;
         var markers = xml.documentElement.getElementsByTagName("coord");
