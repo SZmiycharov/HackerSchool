@@ -27,11 +27,15 @@ if (!$db_selected) {
 }
 
 // Select all the rows in the markers table
-$longitude = $_GET['longitude'];
+$longitude = addslashes($_GET['longitude']);
 $fromtime = $_GET['fromtime'];
+$date = DateTime::createFromFormat('m/d/Y',$fromtime);
+$fromtime = $date->format("Y-m-d");
 $totime = $_GET['totime'];
+$date1 = DateTime::createFromFormat('m/d/Y',$totime);
+$totime = $date1->format("Y-m-d");
 
-	$query = "SELECT * FROM `Coordinates` WHERE `time` BETWEEN $fromtime AND $totime AND `longitude` = $longitude";
+	$query = "SELECT * FROM `Coordinates` WHERE `time` BETWEEN '$fromtime' AND '{$totime}' AND `longitude` = '{$longitude}'";
 
 $result = mysql_query($query);
 if (!$result) {

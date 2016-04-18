@@ -61,13 +61,15 @@
     return decodeURIComponent(results[2].replace(/\+/g, " "));
 }
 
-	var fromtime = getParameterByName('fromtime')
-	var totime = getParameterByName('totime')
-	var longitude = getParameterByName('longitude')
+	var fromtime = getParameterByName('fromtime');
+	var totime = getParameterByName('totime');
+	var longitude = getParameterByName('longitude');
 	
 
       // Change this depending on the name of your PHP file
-      downloadUrl("http://localhost/halo.php?longitude=" + longitude + "&fromtime=" + 'fromtime' + "&totime=" + 'totime', function(data) {
+ var url = "http://localhost/halo.php?longitude=" + longitude + "&fromtime=" + fromtime + "&totime=" + totime;
+	console.log(fromtime,totime,longitude ,url)
+      downloadUrl(url, function(data) {
         var xml = data.responseXML;
         var markers = xml.documentElement.getElementsByTagName("coord");
         for (var i = 0; i < markers.length; i++) {
