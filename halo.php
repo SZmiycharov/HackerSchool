@@ -35,7 +35,12 @@ $totime = $_GET['totime'];
 $date1 = DateTime::createFromFormat('m/d/Y',$totime);
 $totime = $date1->format("Y-m-d");
 
-	$query = "SELECT * FROM `Coordinates` WHERE `time` BETWEEN '$fromtime' AND '{$totime}' AND `longitude` = '{$longitude}'";
+	
+if(empty($longitude))
+{
+	$query = "SELECT * FROM `Coordinates` WHERE `time` BETWEEN '$fromtime' AND '{$totime}'";
+}
+else{$query = "SELECT * FROM `Coordinates` WHERE `time` BETWEEN '$fromtime' AND '{$totime}' AND `longitude` = '{$longitude}'";}
 
 $result = mysql_query($query);
 if (!$result) {
