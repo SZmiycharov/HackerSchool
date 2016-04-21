@@ -8,110 +8,137 @@ namespace warehouse
 {
     class Program
     {
+        static void ClearElements(ref int [,] arr, int lastReachedLeftColumn, int lastReachedRightColumn,
+                                  int lastReachedTopRow,int lastReachedBottomRow, int n)
+        {
+            for (int i = lastReachedLeftColumn; i <= lastReachedRightColumn; i++)
+            {
+                for(int j=lastReachedTopRow; j<=lastReachedBottomRow;j++)
+                {
+                    arr[j,i] = -1;
+                }
+            }
+        }
+        static void GoRight(ref int [,] arr,int i, int j, int n, ref int lastReachedRightColumn)
+        {
+            for(int p = j; p<n; p++)
+            {
+                if (arr[i, p] == 1)
+                {
+                    arr[i, p] = -1;
+                }
+                if (arr[i, p] == 0)
+                {
+                    lastReachedRightColumn = p - 1;
+                    break;
+                }
+            }
+        }
+        static void GoLeft(ref int[,] arr, int i, int j, int n, ref int lastReachedLeftColumn)
+        {
+            for (int p = j; p >= 0; p--)
+            {
+                if (arr[i, p] == 1)
+                {
+                    arr[i, p] = -1;
+                }
+                if (arr[i, p] == 0)
+                {
+                    lastReachedLeftColumn = p + 1;
+                    break;
+                }
+            }
+        }
+        static void GoDown(ref int[,] arr, int i, int j, int n, ref int lastReachedBottomRow)
+        {
+            for (int p = i; p <=n; p++)
+            {
+                if (arr[p, j] == 1)
+                {
+                    arr[p, j] = -1;
+                }
+                if (arr[p, j] == 0)
+                {
+                    lastReachedBottomRow = p - 1;
+                    break;
+                }
+            }
+        }
+        static void GoUp(ref int[,] arr, int i, int j, int n, ref int lastReachedTopRow)
+        {
+            for (int p = i; p >= 0; p--)
+            {
+                if (arr[p, j] == 1)
+                {
+                    arr[p, j] = -1;
+                }
+                if (arr[p, j] == 0)
+                {
+                    lastReachedTopRow = p + 1;
+                    break;
+                }
+            }
+        }
         static void Main(string[] args)
         {
-            int n = 5;
-            int[,] arr = new int[,] { { 1, 1, 1, 0, 1 }, 
-                                      { 1, 1, 1, 0, 0 }, 
-                                      { 0, 0, 0, 0, 1 }, 
-                                      { 1, 1, 0, 0, 1 },
-                                      { 0, 0, 0, 0, 0 }};
-            bool toBreak = false;
-            int breaker = 0;
-            int goods = 0;
-            int starti = 0;
-            int startj = 0;
-            int firstOccurenceOfZero = 0;
-            int newstarti = 0;
-            int newstartj = 0;
-            int firstOccurenceOfOne = 0;
-            int helper = 0;
+            int n = 6;
+            int[,] arr = new int[,] { { 0, 0, 0, 0, 1, 1 }, 
+                                      { 0, 1, 1, 0, 0, 0 }, 
+                                      { 0, 1, 1, 0, 1, 1 }, 
+                                      { 0, 0, 0, 0, 1, 1 },
+                                      { 0, 1, 1, 0, 1, 1 },
+                                      { 0, 0, 0, 0, 0, 0 }};
 
-            while (true)
-            {
-                for (int i = starti; i < n; i++)
-                {
-                    for (int j = startj; j < n; j++)
-                    {
-                        if(arr[i,j] == 1 && j == n-1)
-                        {
-                            for (int p = 0; p < n; p++)
-                            {
-                                
-                            }
-                        }
-                        if (arr[i, j] == 1)
-                        {
-                            firstOccurenceOfOne++;
-                            if (firstOccurenceOfOne == 1)
-                            {
-                                helper = j;
-                            }
-                        }
-                        if (arr[i, j] == 0 && firstOccurenceOfOne != 0)
-                        {
-                            firstOccurenceOfZero++;
-                            if (firstOccurenceOfZero == 1)
-                            {
-                                newstarti = i;
-                                newstartj = j;
-                            }
-                            if (i != n - 1 && j != n - 1 && arr[i + 1, helper] == 0)
-                            {
-                                toBreak = true;
-                                goods++;
-                                starti = newstarti;
-                                startj = newstartj;
-                                firstOccurenceOfZero = 0;
-                                firstOccurenceOfOne = 0;
-                            }
-                            break;
-                        }
-                        if (arr[i, j] == 0 && firstOccurenceOfOne == 0)
-                        {
-                            startj++;
-                            toBreak = true;
-                            break;
-                        }
-                    }
-                    breaker = i;
-                    if (toBreak) break;
-                    
-                }
-                toBreak = false;
-                if (breaker == n - 1) break;
-                
-            }
-            
-
-            
+            //find possible ways in labyrinth
             int ways = 0;
-            int helper2 = 0;
+            int helper = 0;
             for (int i = 0; i < n; i++)
             {
                 for (int j = 0; j < n; j++)
                 {
-                    
+
                     if (arr[i, j] != 0) break;
-                    helper2 = j;
+                    helper = j;
                 }
-                if (helper2 == n-1) ways++;
+                if (helper == n - 1) ways++;
             }
             for (int i = 0; i < n; i++)
             {
                 for (int j = 0; j < n; j++)
                 {
-                    helper2 = j;
+                    helper = j;
                     if (arr[j, i] != 0) break;
                 }
-                if (helper2 == n-1) ways++;
+                if (helper == n - 1) ways++;
             }
-            Console.WriteLine(ways);
-            Console.WriteLine(goods);
-            Console.ReadKey();
 
-
+            //find the rectangles in the labyrinth
+            int goods = 0;
+            int lastReachedTopRow = 0;
+            int lastReachedBottomRow = 0;
+            int lastReachedRightColumn = 0;
+            int lastReachedLeftColumn = 0;
+            for (int i = 0; i < n; i++)
+            {
+                for(int j=0; j<n; j++)
+                {
+                    if (arr[i, j] == 1)
+                    {
+                        GoUp(ref arr, i, j, n, ref lastReachedTopRow);
+                        GoDown(ref arr, i, j, n,ref lastReachedBottomRow);
+                        GoRight(ref arr, i, j, n, ref lastReachedRightColumn);
+                        GoLeft(ref arr, i, j, n, ref lastReachedLeftColumn);
+                        ClearElements(ref arr, lastReachedLeftColumn, lastReachedRightColumn, lastReachedTopRow, lastReachedBottomRow, n);
+                        goods++;
+                    }
+                    else arr[i,j] = -1;
+                }
+            }
             
+
+            Console.WriteLine("Ways: {0}", ways);
+            Console.WriteLine("Rectangles: {0}", goods);
+            Console.ReadKey();
         }
     }
 }
