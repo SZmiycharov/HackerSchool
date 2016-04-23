@@ -91,16 +91,17 @@ namespace warehouse
             //find possible ways in labyrinth
             int ways = 0;
             int helper = 0;
+            //find horizontal ways
             for (int i = 0; i < n; i++)
             {
                 for (int j = 0; j < n; j++)
                 {
-
                     if (arr[i, j] != 0) break;
                     helper = j;
                 }
                 if (helper == n - 1) ways++;
             }
+            //find vertycal ways
             for (int i = 0; i < n; i++)
             {
                 for (int j = 0; j < n; j++)
@@ -111,7 +112,7 @@ namespace warehouse
                 if (helper == n - 1) ways++;
             }
 
-            //find the rectangles in the labyrinth
+            //find the rectangles(goods) in the labyrinth
             int goods = 0;
             int lastReachedTopRow = 0;
             int lastReachedBottomRow = 0;
