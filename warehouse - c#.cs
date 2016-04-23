@@ -32,6 +32,7 @@ namespace warehouse
                     lastReachedRightColumn = p - 1;
                     break;
                 }
+                if (p == n - 1) lastReachedRightColumn = p; 
             }
         }
         static void GoLeft(ref int[,] arr, int i, int j, int n, ref int lastReachedLeftColumn)
@@ -47,6 +48,7 @@ namespace warehouse
                     lastReachedLeftColumn = p + 1;
                     break;
                 }
+                if (p == 0) lastReachedLeftColumn = p;
             }
         }
         static void GoDown(ref int[,] arr, int i, int j, int n, ref int lastReachedBottomRow)
@@ -62,6 +64,7 @@ namespace warehouse
                     lastReachedBottomRow = p - 1;
                     break;
                 }
+                if (p == n - 1) lastReachedBottomRow = p;
             }
         }
         static void GoUp(ref int[,] arr, int i, int j, int n, ref int lastReachedTopRow)
@@ -77,16 +80,15 @@ namespace warehouse
                     lastReachedTopRow = p + 1;
                     break;
                 }
+                if (p == 0) lastReachedTopRow = p;
             }
         }
         static void Main(string[] args)
         {
-            int n = 5;
-            int[,] arr = new int[,] { { 1, 1, 1, 0, 1 }, 
-                                      { 1, 1, 1, 0, 1 }, 
-                                      { 0, 0, 0, 0, 0 }, 
-                                      { 0, 1, 1, 0, 1 },
-                                      { 0, 0, 0, 0, 1 }};
+            int n = 3;
+            int[,] arr = new int[,] { { 1, 1, 1,}, 
+                                      { 1, 1, 1,},
+                                      { 0, 0, 0,}};
 
             //find possible ways in labyrinth
             int ways = 0;
@@ -128,7 +130,8 @@ namespace warehouse
                         GoDown(ref arr, i, j, n, ref lastReachedBottomRow);
                         GoRight(ref arr, i, j, n, ref lastReachedRightColumn);
                         GoLeft(ref arr, i, j, n, ref lastReachedLeftColumn);
-                        ClearElements(ref arr, lastReachedLeftColumn, lastReachedRightColumn, lastReachedTopRow, lastReachedBottomRow, n);
+                        ClearElements(ref arr, lastReachedLeftColumn, lastReachedRightColumn, 
+                            lastReachedTopRow, lastReachedBottomRow, n);
                         goods++;
                     }
                     else arr[i, j] = -1;
