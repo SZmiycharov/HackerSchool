@@ -8,20 +8,20 @@ namespace warehouse
 {
     class Program
     {
-        static void ClearElements(ref int [,] arr, int lastReachedLeftColumn, int lastReachedRightColumn,
-                                  int lastReachedTopRow,int lastReachedBottomRow, int n)
+        static void ClearElements(ref int[,] arr, int lastReachedLeftColumn, int lastReachedRightColumn,
+                                  int lastReachedTopRow, int lastReachedBottomRow, int n)
         {
             for (int i = lastReachedLeftColumn; i <= lastReachedRightColumn; i++)
             {
-                for(int j=lastReachedTopRow; j<=lastReachedBottomRow;j++)
+                for (int j = lastReachedTopRow; j <= lastReachedBottomRow; j++)
                 {
-                    arr[j,i] = -1;
+                    arr[j, i] = -1;
                 }
             }
         }
-        static void GoRight(ref int [,] arr,int i, int j, int n, ref int lastReachedRightColumn)
+        static void GoRight(ref int[,] arr, int i, int j, int n, ref int lastReachedRightColumn)
         {
-            for(int p = j; p<n; p++)
+            for (int p = j; p < n; p++)
             {
                 if (arr[i, p] == 1)
                 {
@@ -51,7 +51,7 @@ namespace warehouse
         }
         static void GoDown(ref int[,] arr, int i, int j, int n, ref int lastReachedBottomRow)
         {
-            for (int p = i; p <=n; p++)
+            for (int p = i; p < n; p++)
             {
                 if (arr[p, j] == 1)
                 {
@@ -81,13 +81,12 @@ namespace warehouse
         }
         static void Main(string[] args)
         {
-            int n = 6;
-            int[,] arr = new int[,] { { 0, 0, 0, 0, 1, 1 }, 
-                                      { 0, 1, 1, 0, 0, 0 }, 
-                                      { 0, 1, 1, 0, 1, 1 }, 
-                                      { 0, 0, 0, 0, 1, 1 },
-                                      { 0, 1, 1, 0, 1, 1 },
-                                      { 0, 0, 0, 0, 0, 0 }};
+            int n = 5;
+            int[,] arr = new int[,] { { 1, 1, 1, 0, 1 }, 
+                                      { 1, 1, 1, 0, 1 }, 
+                                      { 0, 0, 0, 0, 0 }, 
+                                      { 0, 1, 1, 0, 1 },
+                                      { 0, 0, 0, 0, 1 }};
 
             //find possible ways in labyrinth
             int ways = 0;
@@ -120,21 +119,21 @@ namespace warehouse
             int lastReachedLeftColumn = 0;
             for (int i = 0; i < n; i++)
             {
-                for(int j=0; j<n; j++)
+                for (int j = 0; j < n; j++)
                 {
                     if (arr[i, j] == 1)
                     {
                         GoUp(ref arr, i, j, n, ref lastReachedTopRow);
-                        GoDown(ref arr, i, j, n,ref lastReachedBottomRow);
+                        GoDown(ref arr, i, j, n, ref lastReachedBottomRow);
                         GoRight(ref arr, i, j, n, ref lastReachedRightColumn);
                         GoLeft(ref arr, i, j, n, ref lastReachedLeftColumn);
                         ClearElements(ref arr, lastReachedLeftColumn, lastReachedRightColumn, lastReachedTopRow, lastReachedBottomRow, n);
                         goods++;
                     }
-                    else arr[i,j] = -1;
+                    else arr[i, j] = -1;
                 }
             }
-            
+
 
             Console.WriteLine("Ways: {0}", ways);
             Console.WriteLine("Rectangles: {0}", goods);
