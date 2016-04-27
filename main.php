@@ -28,7 +28,7 @@
     $( "#from" ).datepicker({
       defaultDate: "+1w",
       changeMonth: true,
-      numberOfMonths: 3,
+      numberOfMonths: 1,
       onClose: function( selectedDate ) {
         $( "#to" ).datepicker( "option", "minDate", selectedDate );
       }
@@ -36,9 +36,26 @@
     $( "#to" ).datepicker({
       defaultDate: "+1w",
       changeMonth: true,
-      numberOfMonths: 3,
+      numberOfMonths: 1,
       onClose: function( selectedDate ) {
         $( "#from" ).datepicker( "option", "maxDate", selectedDate );
+	var fromtime = $( "#from" ).val();
+	var totime = $( "#to" ).val();
+	//ne vliza v ajax zaqvkata???
+	$.ajax({
+	type: "GET",
+	url: "http://localhost/halo.php?fromtime=" + fromtime + "&totime=" + totime,
+	dataType: "xml",
+	success: function(xml) 
+	  {
+		var select = $('#search-input');			
+		$(xml).find('coords').each(function()
+		{											
+		var longit = $(this).find('longitude').text();
+		select.append(longit);
+	  	});
+	  }
+});
       }
     });
   });
@@ -65,12 +82,7 @@
 	var totime = getParameterByName('totime');
 	var longitude = getParameterByName('longitude');
     
- 	$(function() {
-    var availableLongitudes = ["asd", "-122.8206635"];
-    $( "#search-input" ).autocomplete({
-      source: availableLongitudes
-    });
-  });
+ 	
 
       // Change this depending on the name of your PHP file
       var url = "http://localhost/halo.php?longitude=" + longitude + "&fromtime=" + fromtime + "&totime=" + totime;
@@ -100,7 +112,7 @@
     }
 
 
-    function downloadUrl(url, callback) {
+    function downloadUrl(url, callgetParameterByNameback) {
       var request = window.ActiveXObject ?
           new ActiveXObject('Microsoft.XMLHTTP') :
           new XMLHttpRequest;
