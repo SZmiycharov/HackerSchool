@@ -20,7 +20,27 @@
 		var value = $('#search-input').val();
 		var value1 = $('#from').val();
 		var value2 = $('#to').val();
-	window.location.href = window.location.href.split('?')[0] + '?fromtime=' + value1 + '&totime=' + value2 + '&longitude=' + value;
+	
+	var url = "http://localhost/halo.php?longitude=" + value + "&fromtime=" + value1 + "&totime=" + value2;
+      downloadUrl(url, function(data) 
+{
+	alert("test");
+        var xml = data.responseXML;
+        var markers = xml.documentElement.getElementsByTagName("coord");
+        for (var i = 0; i < markers.length; i++) 
+	{
+          var point = new google.maps.LatLng(
+              parseFloat(markers[i].getAttribute("latitude")),
+              parseFloat(markers[i].getAttribute("longitude")));
+          var html = markers[i].getAttribute("place");
+          var marker = new google.maps.Marker({
+            map: map,
+            position: point
+          });
+
+          bindInfoWindow(marker, map, infoWindow, html);
+        }
+      });
 	});
     });	
 
@@ -42,25 +62,27 @@
 	var fromtime = $( "#from" ).val();
 	var totime = $( "#to" ).val();
 	var url = "http://localhost/halo.php?fromtime=" + fromtime + "&totime=" + totime;
-	//nqma response success ot ajax zaqvkata
 	$.ajax({
 	type: "GET",
 	url: "http://localhost/halo.php?fromtime=" + $( "#from" ).val() + "&totime=" + $( "#to" ).val(),
 	dataType: "xml",
 	success: function(xml) 
 	  {
-		var select = $('#search-input');			
-		$(xml).find('coords').each(function()
+		
+		var select = $('#search-input');	
+		// dostupvane na xml elementite korektno tuk		
+		$(xml).find('coord').each(function()
 		{											
 		var longit = $(this).find('longitude').text();
+		console.log(longit);
 		select.append(longit);
 	  	});
 	  },
-    error: function (jqXHR, textStatus, error) {
+    	error: function (jqXHR, textStatus, error) {
         console.log('Error: ' + error.message);
 
-        alert("ERROR");
-    }
+        alert("ERROR" + error.message);
+        }
 });
       }
     });
@@ -91,24 +113,8 @@
  	
 
       // Change this depending on the name of your PHP file
-      var url = "http://localhost/halo.php?longitude=" + longitude + "&fromtime=" + fromtime + "&totime=" + totime;
-      downloadUrl(url, function(data) {
-        var xml = data.responseXML;
-        var markers = xml.documentElement.getElementsByTagName("coord");
-        for (var i = 0; i < markers.length; i++) {
-          var point = new google.maps.LatLng(
-              parseFloat(markers[i].getAttribute("latitude")),
-              parseFloat(markers[i].getAttribute("longitude")));
-          var html = markers[i].getAttribute("place");
-          var marker = new google.maps.Marker({
-            map: map,
-            position: point
-          });
-
-          bindInfoWindow(marker, map, infoWindow, html);
-        }
-      });
-    }
+      
+}
 
     function bindInfoWindow(marker, map, infoWindow, html) {
       google.maps.event.addListener(marker, 'click', function() {
@@ -126,7 +132,7 @@
       request.onreadystatechange = function() {
         if (request.readyState == 4) {
           
-          callback(request, request.status);
+          callgetParameterByNameback(request, request.status);
         }
       };
 
