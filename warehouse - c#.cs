@@ -8,6 +8,23 @@ namespace warehouse
 {
     class Program
     {
+        static void ValidateInt(string input, ref int number)
+        {
+            while (true)
+            {
+                if (int.TryParse(input, out number) && int.Parse(input) >= 0)
+                {
+                    number = int.Parse(input);
+                    break;
+                }
+                else
+                {
+                    Console.Write("Bad input! Try again: ");
+                    input = Console.ReadLine();
+                }
+            }
+
+        }
         static void ClearElements(ref int[,] arr, int lastReachedLeftColumn, int lastReachedRightColumn,
                                   int lastReachedTopRow, int lastReachedBottomRow, int n)
         {
@@ -85,11 +102,24 @@ namespace warehouse
         }
         static void Main(string[] args)
         {
-            int n = 3;
-            int[,] arr = new int[,] { { 1, 1, 1,}, 
-                                      { 1, 1, 1,},
-                                      { 0, 0, 0,}};
-
+            int n = 0;
+            Console.Write("n <for nxn matrix>= ");
+            ValidateInt(Console.ReadLine(),ref n);
+            int[,] arr = new int[n, n];
+            for (int i = 0; i < n; i++)
+            {
+                for (int j = 0; j < n; j++)
+                {
+                    Console.Write("arr[{0},{1}]=", i, j);
+                    ValidateInt(Console.ReadLine(), ref arr[i, j]);
+                    if(arr[i,j]!=0 && arr[i,j]!=1)
+                    {
+                        Console.Write("Goods should be 1s, empty boxes should be 0s!");
+                        Console.ReadKey();
+                        Environment.Exit(0);
+                    }
+                }
+            }
             //find possible ways in labyrinth
             int ways = 0;
             int helper = 0;

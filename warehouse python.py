@@ -44,10 +44,16 @@ def GoUp(arr, i, j, n, lastReachedTopRow):
         elif (p == 0):
             lastReachedTopRow[0] = p
 
-n = 3
-arr = [[1,1,1],
-       [1,1,1],
-       [0,0,0]]
+userinput = input("n=")
+while(True):
+    if userinput.isdigit() and int(userinput)>=0:
+        n = int(userinput)
+        break
+    else:
+        print("Bad input! Try again: ")
+        userinput = input("n=")
+    
+arr = [[int(input()) for i in range(n)] for j in range(n)]
 
 goods = 0
 lastReachedTopRow = [0]
