@@ -60,7 +60,25 @@ lastReachedTopRow = [0]
 lastReachedBottomRow = [0]
 lastReachedRightColumn = [0]
 lastReachedLeftColumn = [0]
+ways = 0
 
+#find horyzontal ways
+for i in range(0,n):
+    for j in range (0,n):
+        if arr[i][j]!=0:
+            break
+        helper = j
+        if helper == n-1:
+            ways += 1
+            
+#find vertycal ways
+for i in range(0,n):
+    for j in range (0,n):
+        if arr[j][i]!=0: break
+        helper = j
+        if helper == n-1:
+            ways += 1
+            
 #find the rectangles(goods) in the labyrinth
 for i in range(0,n):
     for j in range(0,n):
@@ -77,6 +95,7 @@ for i in range(0,n):
             arr[i][j] = -1
 
 print(goods)
+print(ways)
 
     
 
