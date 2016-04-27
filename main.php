@@ -41,10 +41,11 @@
         $( "#from" ).datepicker( "option", "maxDate", selectedDate );
 	var fromtime = $( "#from" ).val();
 	var totime = $( "#to" ).val();
-	//ne vliza v ajax zaqvkata???
+	var url = "http://localhost/halo.php?fromtime=" + fromtime + "&totime=" + totime;
+	//nqma response success ot ajax zaqvkata
 	$.ajax({
 	type: "GET",
-	url: "http://localhost/halo.php?fromtime=" + fromtime + "&totime=" + totime,
+	url: "http://localhost/halo.php?fromtime=" + $( "#from" ).val() + "&totime=" + $( "#to" ).val(),
 	dataType: "xml",
 	success: function(xml) 
 	  {
@@ -54,7 +55,12 @@
 		var longit = $(this).find('longitude').text();
 		select.append(longit);
 	  	});
-	  }
+	  },
+    error: function (jqXHR, textStatus, error) {
+        console.log('Error: ' + error.message);
+
+        alert("ERROR");
+    }
 });
       }
     });
