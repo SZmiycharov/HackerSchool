@@ -14,7 +14,14 @@
     <script type="text/javascript">
 
     //<![CDATA[
-	
+
+	function load() {
+      var map = new google.maps.Map(document.getElementById("map"), {
+        center: new google.maps.LatLng(30.102261, -81.711777),
+        zoom: 3
+      });
+      var infoWindow = new google.maps.InfoWindow;	
+
     $(document).ready(function() {
 	$('#search-btn').click(function() {
 		var value = $('#search-input').val();
@@ -22,11 +29,14 @@
 		var value2 = $('#to').val();
 	
 	var url = "http://localhost/halo.php?longitude=" + value + "&fromtime=" + value1 + "&totime=" + value2;
+	console.log(url);
+	
       downloadUrl(url, function(data) 
 {
-	alert("test");
         var xml = data.responseXML;
+	
         var markers = xml.documentElement.getElementsByTagName("coord");
+	
         for (var i = 0; i < markers.length; i++) 
 	{
           var point = new google.maps.LatLng(
@@ -42,7 +52,7 @@
         }
       });
 	});
-    });	
+    });		
 
   $(function() {
     $( "#from" ).datepicker({
@@ -68,15 +78,22 @@
 	dataType: "xml",
 	success: function(xml) 
 	  {
-		
+		console.log(url);
 		var select = $('#search-input');	
 		// dostupvane na xml elementite korektno tuk		
-		$(xml).find('coord').each(function()
-		{											
-		var longit = $(this).find('longitude').text();
-		console.log(longit);
-		select.append(longit);
-	  	});
+		 downloadUrl(url, function(data) 
+{
+        var xml = data.responseXML;
+        var helper = xml.documentElement.getElementsByTagName("coord");
+        for (var i = 0; i < helper.length; i++) 
+	{
+	var dropdown = document.getElementById("search-input");
+        var option = document.createElement("option");
+        option.text = helper[i].getAttribute("longitude");
+        dropdown.add(option);
+              
+        }
+      });
 	  },
     	error: function (jqXHR, textStatus, error) {
         console.log('Error: ' + error.message);
@@ -88,12 +105,7 @@
     });
   });
 
-    function load() {
-      var map = new google.maps.Map(document.getElementById("map"), {
-        center: new google.maps.LatLng(30.102261, -81.711777),
-        zoom: 3
-      });
-      var infoWindow = new google.maps.InfoWindow;
+    
 
 	//function to get the jquery string
 	function getParameterByName(name, url) {
@@ -155,12 +167,9 @@
 <label for="to">to</label>
 <input type="text" id="to" name="to">
 	
-<p>Longitude: <input type="text" id="search-input" />
+<p>Longitude: <select id="search-input" />
 
 <input type="button" value="Search" id="search-btn" />
-
-
-
 
     <div id="map" style="width: 1000px; height: 600px"></div>
   </body>
