@@ -22,6 +22,7 @@
       });
       var infoWindow = new google.maps.InfoWindow;	
 
+	
     $(document).ready(function() {
 	$('#search-btn').click(function() {
 		var value = $('#search-input').val();
@@ -29,7 +30,6 @@
 		var value2 = $('#to').val();
 	
 	var url = "http://localhost/halo.php?longitude=" + value + "&fromtime=" + value1 + "&totime=" + value2;
-	console.log(url);
 	
       downloadUrl(url, function(data) 
 {
@@ -78,7 +78,7 @@
 	dataType: "xml",
 	success: function(xml) 
 	  {
-		console.log(url);
+		
 		var select = $('#search-input');	
 		// dostupvane na xml elementite korektno tuk		
 		 downloadUrl(url, function(data) 
@@ -167,7 +167,14 @@
 <label for="to">to</label>
 <input type="text" id="to" name="to">
 	
-<p>Longitude: <select id="search-input" />
+
+<p>Longitude: <select id="search-input">
+<option selected="selected">
+
+</option>
+</select>
+
+
 
 <input type="button" value="Search" id="search-btn" />
 
