@@ -1,16 +1,11 @@
-﻿Build started 9.5.2016 г. 17:14:45.
+﻿Build started 10.5.2016 г. 20:47:52.
      1>Project "C:\Users\stanislav\Documents\Visual Studio 2013\Projects\OOPdomashnoNEWEST\OOPdomashnoNEWEST\OOPdomashnoNEWEST.vcxproj" on node 2 (Build target(s)).
      1>ClCompile:
-         C:\Program Files (x86)\Microsoft Visual Studio 12.0\VC\bin\CL.exe /c /ZI /nologo /W3 /WX- /sdl /Od /Oy- /D WIN32 /D _DEBUG /D _CONSOLE /D _LIB /D _UNICODE /D UNICODE /Gm /EHsc /RTC1 /MDd /GS /fp:precise /Zc:wchar_t /Zc:forScope /Yu"stdafx.h" /Fp"Debug\OOPdomashnoNEWEST.pch" /Fo"Debug\\" /Fd"Debug\vc120.pdb" /Gd /TP /analyze- /errorReport:prompt Store.cpp
+         C:\Program Files (x86)\Microsoft Visual Studio 12.0\VC\bin\CL.exe /c /ZI /nologo /W3 /WX- /sdl /Od /Oy- /D WIN32 /D _DEBUG /D _CONSOLE /D _LIB /D _UNICODE /D UNICODE /Gm /EHsc /RTC1 /MDd /GS /fp:precise /Zc:wchar_t /Zc:forScope /Yu"stdafx.h" /Fp"Debug\OOPdomashnoNEWEST.pch" /Fo"Debug\\" /Fd"Debug\vc120.pdb" /Gd /TP /analyze- /errorReport:prompt Product.cpp Store.cpp
          Store.cpp
-     1>c:\users\stanislav\documents\visual studio 2013\projects\oopdomashnonewest\oopdomashnonewest\store.cpp(23): warning C4018: '<' : signed/unsigned mismatch
-     1>c:\users\stanislav\documents\visual studio 2013\projects\oopdomashnonewest\oopdomashnonewest\store.cpp(30): warning C4018: '<' : signed/unsigned mismatch
-     1>c:\users\stanislav\documents\visual studio 2013\projects\oopdomashnonewest\oopdomashnonewest\store.cpp(37): warning C4018: '<' : signed/unsigned mismatch
-     1>c:\users\stanislav\documents\visual studio 2013\projects\oopdomashnonewest\oopdomashnonewest\store.cpp(40): warning C4018: '<' : signed/unsigned mismatch
-     1>c:\users\stanislav\documents\visual studio 2013\projects\oopdomashnonewest\oopdomashnonewest\store.cpp(130): warning C4018: '<' : signed/unsigned mismatch
-     1>c:\users\stanislav\documents\visual studio 2013\projects\oopdomashnonewest\oopdomashnonewest\store.cpp(140): warning C4018: '<' : signed/unsigned mismatch
-     1>c:\users\stanislav\documents\visual studio 2013\projects\oopdomashnonewest\oopdomashnonewest\store.cpp(157): warning C4018: '<' : signed/unsigned mismatch
-     1>c:\users\stanislav\documents\visual studio 2013\projects\oopdomashnonewest\oopdomashnonewest\store.cpp(171): warning C4018: '<' : signed/unsigned mismatch
+         Product.cpp
+     1>c:\users\stanislav\documents\visual studio 2013\projects\oopdomashnonewest\oopdomashnonewest\product.cpp(28): warning C4101: 'i' : unreferenced local variable
+         Generating Code...
        Link:
          C:\Program Files (x86)\Microsoft Visual Studio 12.0\VC\bin\link.exe /ERRORREPORT:PROMPT /OUT:"C:\Users\stanislav\Documents\Visual Studio 2013\Projects\OOPdomashnoNEWEST\Debug\OOPdomashnoNEWEST.exe" /INCREMENTAL /NOLOGO kernel32.lib user32.lib gdi32.lib winspool.lib comdlg32.lib advapi32.lib shell32.lib ole32.lib oleaut32.lib uuid.lib odbc32.lib odbccp32.lib /MANIFEST /MANIFESTUAC:"level='asInvoker' uiAccess='false'" /manifest:embed /DEBUG /PDB:"C:\Users\stanislav\Documents\Visual Studio 2013\Projects\OOPdomashnoNEWEST\Debug\OOPdomashnoNEWEST.pdb" /SUBSYSTEM:CONSOLE /TLBID:1 /DYNAMICBASE /NXCOMPAT /IMPLIB:"C:\Users\stanislav\Documents\Visual Studio 2013\Projects\OOPdomashnoNEWEST\Debug\OOPdomashnoNEWEST.lib" /MACHINE:X86 Debug\Main.obj
          Debug\OOPdomashnoNEWEST.obj
@@ -22,4 +17,4 @@
 
 Build succeeded.
 
-Time Elapsed 00:00:01.12
+Time Elapsed 00:00:00.95

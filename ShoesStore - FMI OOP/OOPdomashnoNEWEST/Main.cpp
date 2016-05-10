@@ -15,14 +15,13 @@ using namespace std;
 void ShowMenu()
 // Display the main program menu.
 {
-	cout << "\n\t\t*** PHONE DIRECTORY ***";
-	cout << "\n\tI \tInsert a new product into the store";   // Add new product
-	cout << "\n\tL \tLook up an product";
-	cout << "\n\tR \tRemove a product";	 // Delete product
-	cout << "\n\tU \tUpdate a product"; //Change product
-	cout << "\n\tD \tDisplay the entire store"; //Display products
-	cout << "\n\tS \tSave"; //Save products
-	cout << "\n\tO \tLoad"; //Load products
+	cout << "\n\t\t*** Shoes Store ***";
+	cout << "\n\tA \tAdd a new product into the store";   // Add new product
+	cout << "\n\tK \tDelete a product";	 // Delete product
+	cout << "\n\tC \tChange a product"; //Change product
+	cout << "\n\tD \tDisplay all the products"; //Display products
+	cout << "\n\tS \tSave";
+	cout << "\n\tO \tLoad";
 	cout << "\n\t? \tDisplay this menu";
 	cout << "\n\tQ \tQuit"; //Quit
 }
@@ -46,8 +45,8 @@ char Legal(char c)
 // to a legal menu command.  Returns 1 if legal, 0 if not.
 // Used in GetCommand.
 {
-	return	((c == 'I') || (c == 'L') || (c == 'R') || (c == 'U') ||
-		(c == 'D') || (c == 'S') || (c == 'O') || (c == '?') || (c == 'Q'));
+	return	((c == 'A') || (c == 'K') || (c == 'C') ||
+		(c == 'D') || (c == 'S') || (c == 'L') || (c == '?') || (c == 'Q'));
 }
 
 char GetCommand()
@@ -78,13 +77,12 @@ int main()
 		command = GetCommand();		// Retrieve a command.
 		switch (command)
 		{
-		case 'I': d.Insert();				break;
-		case 'L': d.Lookup();				break;
-		case 'R': d.Remove();				break;
-		case 'U': d.Update();				break;
+		case 'A': d.Insert();				break;
+		case 'K': d.Remove();				break;
+		case 'C': d.Update();				break;
 		case 'D': d.DisplayDirectory();	    break;
 		case 'S': d.Save();	                break;
-		case 'O': d.Load();	                break;
+		case 'L': d.Load();	                break;
 		case '?': ShowMenu();				break;
 		case 'Q':					break;
 		}

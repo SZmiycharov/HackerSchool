@@ -11,11 +11,10 @@ class Product
 	friend ostream& operator << (ostream& a, const Product& e);
 
 public:
-	Product();			// initializes all values to blanks
+	//Product();			// initializes all values to blanks
 	string GetSKU();		// returns name in an entry
 	string Save();
-	void Load(string &line);
-
+	void Load(string& line);
 private:
 	string SKU;		// A name is 20 characters,
 	string Brand;	// so is a phone number,

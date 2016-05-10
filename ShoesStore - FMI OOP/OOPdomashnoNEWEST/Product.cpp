@@ -3,11 +3,7 @@
 #include <sstream>
 
 #pragma warning(disable : 4996)
-
-// Definition of class Entry for a phone directory.
-// Note that although we need iostream.h, we don't mention it here,
-// since <iostream.h> is already included in "PRODUCT.H"
-
+#include <string>
 #include <cstring>			// for strlen, strcpy
 #include "Product.h"			// for class Product
 
@@ -16,12 +12,12 @@
 istream& operator >> (istream& s, Product& e)
 // read in data through overloaded >> operator
 {
-	getline(s, e.SKU);		
-	getline(s, e.Brand);	
-	getline(s, e.Model);
-	getline(s, e.Category);
-	getline(s, e.Size);
-	getline(s, e.Price);	
+	getline(s,e.SKU);
+	getline(s,e.Brand);
+	getline(s,e.Model);
+	getline(s,e.Category);
+	getline(s,e.Size);
+	getline(s,e.Price);
 
 	return s;
 }
@@ -31,8 +27,8 @@ ostream& operator << (ostream& s, const Product& e)
 {
 	int i;
 
-	s << " " << e.SKU;		
-	
+	s << " " << e.SKU;
+
 	s << " " << e.Brand;
 
 	s << " " << e.Model;
@@ -49,11 +45,11 @@ ostream& operator << (ostream& s, const Product& e)
 
 //---------- Member functions ----------
 
-Product::Product() : SKU(""), Brand(""), Model(""), Category(""), Size(""), Price("")
-// This constructor for class Product initializes the sku, brand, model, category,
-// size and price to be blank strings.
+/*Product::Product() : SKU(""), Brand(""), Model(""), Category(""), Size(""), Price("")
+// This constructor for class Entry initializes the name, phone number,
+// and room number to be blank strings.
 {
-}
+}*/
 
 string Product::GetSKU()
 // Return the SKU part of an entry.
@@ -66,18 +62,37 @@ string Product::Save()
 	string line = SKU + ";" + Brand + ";" + Model + ";" + Category + ";" + Size + ";" + Price;
 	return line;
 }
-
-void Product::Load(string &line)
+void Product::Load(string& line)
 {
+	string skuString, brandString, modelString, categoryString, sizeString, priceString;
 	stringstream sstream(line);
 
-	getline(sstream, SKU, ';');		
-	getline(sstream, Brand, ';');	
-	getline(sstream, Model, ';');	
-	getline(sstream, Category, ';');
-	getline(sstream, Size, ';');
-	getline(sstream, Price, ';');
+	sstream.str();
+	getline(sstream, skuString, ';');
+	SKU = skuString;
+
+	sstream.str();
+	getline(sstream, brandString, ';');
+	Brand = brandString;
+
+	sstream.str();
+	getline(sstream, modelString, ';');
+	Model = modelString;
+
+	sstream.str();
+	getline(sstream, categoryString, ';');
+	Category = categoryString;
+
+	sstream.str();
+	getline(sstream, sizeString, ';');
+	Size = sizeString;
+
+	sstream.str();
+	getline(sstream, priceString, ';');
+	Price = priceString;
 }
+
+
 
 
 
