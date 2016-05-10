@@ -1,26 +1,20 @@
 #include "stdafx.h"
-
 #include "Store.h"
-
-// Definitions for class Store
 #include <fstream>
 #include <iostream>
-#include <cstring>		// for strcmp
+#include <cstring>		
 #include "store.h"
 
 using namespace std;
 
 Store::Store()
-// Set up empty store of products.
 {
-	maxSize = 5;
+	maxSize = 500;
     currentSize = 0;
     productList = new Product*[maxSize];
 }
 
 Store::~Store()
-// This destructor function for class Store
-// deallocates the store's list of Product objects
 {
 	for (int i = 0; i < currentSize; i++)
 		delete productList[i];
@@ -28,41 +22,37 @@ Store::~Store()
 }
 
 void Store::Insert()
-// Insert a new product into the store.
 {
-	if (currentSize == maxSize)		// If the store is full, grow it.
+	if (currentSize == maxSize)		
 		Grow();
 
-	cout << "\nType the name, phone number, and address, each followed"
+	cout << "\nType the sku, brand, model, category, size, price followed"
 		<< "\n by RETURN or ENTER:\n> ";
 	productList[currentSize] = new Product();
-	cin >> *productList[currentSize];	// read new product.
+	cin >> *productList[currentSize];
 	currentSize++;
 }
 
 void Store::Lookup() const
-//  Display the store product for a sku.
 {
-	// Prompt the user for a sku to be looked up
+	
 	string aSKU;
 	cout << "\tType the sku to be looked up, followed by <Enter>: ";
 	getline(cin,aSKU);
 
-	int thisEntry = FindName(aSKU);	// Locate the sku in the directory.
+	int thisEntry = FindName(aSKU);	
 
 	if (thisEntry == -1)
 		cout << aSKU << " not found in current store\n";
 	else
 	{
 		cout << "\nProduct found: ";
-		cout << *productList[thisEntry];	// display product.
+		cout << *productList[thisEntry];	
 	}
 }
 
 void Store::Remove()
-// Remove a product from the store.
 {
-	// Prompt the user for the sku to be removed.
 	string aSKU;
 	cout << "\nType sku to be removed, followed by <Enter>: ";
 	getline(cin, aSKU);
@@ -73,19 +63,16 @@ void Store::Remove()
 		cout << aSKU << " not found in store";
 	else
 	{
-		// Shift each succeding element "down" one position in the
-		// Store array, thereby deleting the desired entry.
+		
 		for (int j = thisEntry + 1; j < currentSize; j++)
 			productList[j - 1] = productList[j];
 
-		currentSize--;		// Decrement the current number of products.
-		cout << "Entry removed.\n";
+		currentSize--;		
+		cout << "Product removed.\n";
 	}
 }
 
 void Store::Update()
-// Update an existing store product by reentering
-// each of its values.
 {
 	cout << "\nPlease enter the sku of the entry to be modified: ";
 	string aSKU;
@@ -98,56 +85,47 @@ void Store::Update()
 	else
 	{
 		cout << "\nCurrent product is: \n";
-		cout << *productList[thisProduct];		// Display the current product.
+		cout << *productList[thisProduct];		
 
 		cout << "\nReplace with new product as follows: \n";
-		cin >> *productList[thisProduct];		// Get new values for product.
+		cin >> *productList[thisProduct];		
 	}
 }
 
-void Store::DisplayDirectory() const
-// Display the current store products
-// on the standard output (the screen).
+void Store::DisplayStore() const
 {
 	if (currentSize == 0)
 	{
 		cout << "\nCurrent store is empty.\n";
 		return;
 	}
-
-	// Display a header.
 	cout << "\n\t***SKU***BRAND***MODEL***CATEGORY***SIZE***PRICE\n\n";
 
-	for (int i = 0; i < currentSize; i++)	// For each product,
-		cout << *productList[i];			// send it to output
+	for (int i = 0; i < currentSize; i++)
+	{
+		cout<<*productList[i];
+	}
 }
 
 void Store::Grow()
-// Double the size of the store's entry list
-// by creating a new, larger array of products
-// and changing the store's pointer to refer to
-// this new array.
 {
-	maxSize = currentSize + 5;			// Determine a new size.
-	Product** newList = new Product*[maxSize];		// Allocate a new array.
+	maxSize = currentSize + 500;			
+	Product** newList = new Product*[maxSize];
 
-	for (int i = 0; i < currentSize; i++)	// Copy each entry into
-		newList[i] = productList[i];		// the new array.
+	for (int i = 0; i < currentSize; i++)	
+		newList[i] = productList[i];		
 
-	delete[] productList;			// Remove the old array
-	productList = newList;			// Point old name to new array.
+	delete[] productList;			
+	productList = newList;			
 }
 
 int Store::FindName(string aName) const
-// Locate a sku in the store.  Returns the
-// position of the product list as an integer if found.
-// and returns -1 if the product is not found in the store.
 {
-	for (int i = 0; i < currentSize; i++)	// Look at each entry.
+	for (int i = 0; i < currentSize; i++)	
 		if (productList[i]->GetSKU().compare(aName) == 0)
-			return i;		// If found, return position and exit.
+			return i;		
 
-	return -1;				// Return -1 if never found.
+	return -1;				
 }
 void Store::Save() const
 {
@@ -159,7 +137,7 @@ void Store::Save() const
 	// Display a header.
 	ofs << "PRODUCTS IN THE STORE" << endl;
 
-	for (int i = 0; i < currentSize; i++)	// For each entry,
+	for (int i = 0; i < currentSize; i++)	
 	{
 		ofs << productList[i]->Save()<<endl;
 	}
@@ -189,7 +167,4 @@ void Store::Load()
 	}
 	ifs.close();
 	cout << "Loaded." << endl;
-
-
-
 }

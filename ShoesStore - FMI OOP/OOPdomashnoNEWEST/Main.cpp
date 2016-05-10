@@ -21,7 +21,7 @@ void ShowMenu()
 	cout << "\n\tC \tChange a product"; //Change product
 	cout << "\n\tD \tDisplay all the products"; //Display products
 	cout << "\n\tS \tSave";
-	cout << "\n\tO \tLoad";
+	cout << "\n\tL \tLoad";
 	cout << "\n\t? \tDisplay this menu";
 	cout << "\n\tQ \tQuit"; //Quit
 }
@@ -80,7 +80,7 @@ int main()
 		case 'A': d.Insert();				break;
 		case 'K': d.Remove();				break;
 		case 'C': d.Update();				break;
-		case 'D': d.DisplayDirectory();	    break;
+		case 'D': d.DisplayStore();	    break;
 		case 'S': d.Save();	                break;
 		case 'L': d.Load();	                break;
 		case '?': ShowMenu();				break;
@@ -89,12 +89,12 @@ int main()
 	} while (command != 'Q');
 
 	Store d1 = d;
-	d1.DisplayDirectory();
+	d1.DisplayStore();
 
 	Store d2;
 
 	d2 = d1;
-	d2.DisplayDirectory();
+	d2.DisplayStore();
 
 	return 0;
 }

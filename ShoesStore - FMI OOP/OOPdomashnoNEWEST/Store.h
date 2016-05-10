@@ -14,7 +14,7 @@ public:
 	void Lookup() const;		// Look up a name in the directory.
 	void Remove();		// Remove an entry.
 	void Update();		// Update an existing entry.
-	void DisplayDirectory() const;	// Display the current directory.
+	void DisplayStore() const;	// Display the current directory.
 	void Save() const;              // Save directory in CVS file
 	void Load();                    // Load directory from file
 private:
