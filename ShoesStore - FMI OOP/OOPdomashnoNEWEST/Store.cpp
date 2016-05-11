@@ -134,7 +134,6 @@ void Store::Save() const
 	getline(cin, fName);
 	ofstream ofs(fName);
 
-	// Display a header.
 	ofs << "PRODUCTS IN THE STORE" << endl;
 
 	for (int i = 0; i < currentSize; i++)	

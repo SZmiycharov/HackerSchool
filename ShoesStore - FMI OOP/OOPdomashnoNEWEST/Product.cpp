@@ -10,11 +10,10 @@
 //---------- Operator Overloads ---------
 
 istream& operator >> (istream& s, Product& e)
-// read in data through overloaded >> operator
 {
-	getline(s, e.SKU);		// Gets a name; discards newline.
-	getline(s, e.Brand);	// Gets a phone; discards newline.
-	getline(s, e.Model);		// Gets an address; discards newline.
+	getline(s, e.SKU);		
+	getline(s, e.Brand);	
+	getline(s, e.Model);		
 	getline(s, e.Category);
 	getline(s, e.Size);
 	getline(s, e.Price);
@@ -23,14 +22,13 @@ istream& operator >> (istream& s, Product& e)
 }
 
 ostream& operator << (ostream& s, const Product& e)
-// print an entry using the overloaded << operator
 {
-	s << '\t' << e.SKU;		// Display name (after tabbing).
-	s << '\t' << e.Brand;		// Display phone number.
-	s << '\t' << e.Model;		// Display phone number.
-	s << '\t' << e.Category;		// Display phone number.
-	s << '\t' << e.Size;		// Display phone number.
-	s << '\t' << e.Price;			// Display address.
+	s << '\t' << e.SKU;		
+	s << '\t' << e.Brand;	
+	s << '\t' << e.Model;	
+	s << '\t' << e.Category;
+	s << '\t' << e.Size;	
+	s << '\t' << e.Price;	
 	s << '\n';
 
 	return s;
@@ -83,6 +81,16 @@ void Product::Load(string& line)
 	Price = priceString;
 }
 
+string Product::GetPrice()
+{
+	return Price;
+}
+int Product::Count = 0;
+
+void Product::DecreaseCount()
+{
+	Count--;
+}
 
 
 

@@ -1,9 +1,8 @@
 #pragma once
-#include <iostream>		// so that we can overload << and >>
+#include <iostream>		
 #include <string>
 using namespace std;
 
-// Declarations for class Entry for a phone directory
 
 class Product
 {
@@ -15,6 +14,8 @@ public:
 	string GetSKU();		
 	string Save();
 	void Load(string& line);
+	string GetPrice();
+	static void DecreaseCount();
 private:
 	string SKU;		
 	string Brand;	
@@ -22,5 +23,5 @@ private:
 	string Category;
 	string Size;
 	string Price;
-	int Count;
+	static int Count;
 };
