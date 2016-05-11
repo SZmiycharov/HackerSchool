@@ -9,41 +9,7 @@
   	<script src="//code.jquery.com/jquery-1.10.2.js"></script>
 	<script src="//code.jquery.com/ui/1.11.4/jquery-ui.js"></script>
 
-    <script type="text/javascript">
-function myFunction() 
-{
-	var input = document.getElementById('mySearch').value;
-	var url = "http://localhost/helper.php?entry=" + document.getElementById('mySearch').value;
-	$.ajax(
-	{
-		type: "GET",
-		url: "http://localhost/helper.php?entry=" + document.getElementById('mySearch').value,
-		dataType: "xml",
-		success: function(xml) 
-		{
-
-			console.log("in ajax");		
-			downloadUrl(url, function(data) 
-			{
-       				 var xml = data.responseXML;
-       				 var helper = xml.documentElement.getElementsByTagName("place");
-      				 for (var i = 0; i < helper.length; i++) 
-	 			 {
-       					 var option = document.createElement("option");
-       					 option.text = helper[i].getAttribute("oblast");
-       					 console.log(option);
-              	
-       				 }
-     			 });
-		},
-    		error: function (jqXHR, textStatus, error) 
-		 {
-        		console.log('Error: ' + error.message);
-        		alert("ERROR" + error.message);
-      		 }
-	})
-
-}
+<script type="text/javascript">
 
 function getParameterByName(name, url) 
 {
@@ -71,6 +37,39 @@ function downloadUrl(url, callgetParameterByNameback)
 	request.open('GET', url, true);
 	request.send(null);
 }
+
+function myFunction() 
+{
+	var input = document.getElementById('mySearch').value;
+	var url = "http://10.20.1.151/helper.php?entry=" + document.getElementById('mySearch').value;
+	$.ajax({
+		type: "GET",
+		crossDomain: true,
+		url: "http://10.20.1.151/helper.php?entry=" + document.getElementById('mySearch').value,
+		dataType: "xml",
+		success: function(xml) 
+		{			
+			downloadUrl(url, function(data) 
+			{		
+      				var xml = data.responseXML;
+        			var helper = xml.documentElement.getElementsByTagName("place");
+        			for (var i = 0; i < helper.length; i++) 
+				{
+       					var option = document.createElement("option");
+        				option.text = helper[i].getAttribute("oblast");
+					console.log(option);
+       				}
+     			 });
+		},
+    		error: function (jqXHR, textStatus, error) 
+		{
+        		console.log('Error: ' + error.message);
+       			alert("ERROR" + error.message);
+       		}
+	});
+}
+
+
 	    
 	
 
