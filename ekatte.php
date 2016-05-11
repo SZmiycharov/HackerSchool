@@ -40,6 +40,7 @@ function downloadUrl(url, callgetParameterByNameback)
 
 function myFunction() 
 {
+	console.log("Start myfunction");
 	var input = document.getElementById('mySearch').value;
 	var url = "http://10.20.1.151/helper.php?entry=" + document.getElementById('mySearch').value;
 	$.ajax({
@@ -48,16 +49,22 @@ function myFunction()
 		url: "http://10.20.1.151/helper.php?entry=" + document.getElementById('mySearch').value,
 		dataType: "xml",
 		success: function(xml) 
-		{			
+		{		
+			console.log("start ajax successfull");	
 			downloadUrl(url, function(data) 
 			{		
       				var xml = data.responseXML;
         			var helper = xml.documentElement.getElementsByTagName("place");
+				//ASSERT(helper !== null); // slavi
+
         			for (var i = 0; i < helper.length; i++) 
-				{
-       					var option = document.createElement("option");
-        				option.text = helper[i].getAttribute("oblast");
-					console.log(option);
+				{   //TRACE("Option", i, option);
+					//option to be displayed properly
+       					console.log(helper[i].getAttribute("oblast"));
+					console.log(helper[i].getAttribute("name"));
+					console.log(helper[i].getAttribute("region"));
+					console.log(helper[i].getAttribute("document"));
+					console.log("Option " + i + ":" + option.text);
        				}
      			 });
 		},
