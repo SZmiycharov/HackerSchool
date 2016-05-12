@@ -14,42 +14,38 @@ $host = '10.20.1.151';
 $strCnx = "host=$host port=$port dbname=$db user=$user password=$passwd";
 $cn = pg_connect($strCnx);
 
-function parseToXML($htmlStr)
-{
-$xmlStr=str_replace('<','&lt;',$htmlStr);
-$xmlStr=str_replace('>','&gt;',$xmlStr);
-$xmlStr=str_replace('"','&quot;',$xmlStr);
-$xmlStr=str_replace("'",'&#39;',$xmlStr);
-$xmlStr=str_replace("&",'&amp;',$xmlStr);
-return $xmlStr;
-}
-
-
 $entry = $_GET['entry'];
 
+$query = "SELECT oblast AS a, ekatte AS b, name AS c, region AS d FROM ek_obl WHERE name = '{$entry}'
+UNION
+SELECT obstina AS a, ekatte as b, name AS c, document AS d FROM ek_obst WHERE name ='{$entry}'
+UNION
+SELECT kmetstvo AS a, center as b, name AS c, document AS d FROM ek_kmet WHERE name ='{$entry}'
+UNION
+SELECT category AS a, raion as b, name AS c, document AS d FROM ek_raion WHERE name ='{$entry}'";
 
-$query = "SELECT * FROM ek_obl WHERE name ='{$entry}'";
+
 $result = pg_query($query);
 header("Content-type: text/xml");
 
 // Start XML file, echo parent node
-echo '<Coordinates>'; 
+echo '<Places>'; 
 
 // Iterate through the rows, printing XML nodes for each
 while ($row = @pg_fetch_assoc($result)){
   // ADD TO XML DOCUMENT NODE
-  echo '<coord ';
+  echo '<place ';
 
-  echo 'oblast="' . $row['oblast'] . '" ';
-  echo 'name="' . $row['name'] . '" ';
-  echo 'region="' . $row['region'] . '" ';
-  echo 'document="' . $row['document'] . '" ';
+  echo 'oblast="' . $row['a'] . '" ';
+  echo 'name="' . $row['b'] . '" ';
+  echo 'region="' . $row['c'] . '" ';
+  echo 'document="' . $row['d'] . '" ';
   
   echo '/>';
 }
 
 // End XML file
-echo '</Coordinates>';
+echo '</Places>';
 
 
 ?>

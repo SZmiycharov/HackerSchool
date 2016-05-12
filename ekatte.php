@@ -40,7 +40,7 @@ function downloadUrl(url, callgetParameterByNameback)
 
 function myFunction() 
 {
-	console.log("Start myfunction");
+	console.log("Start of myfunction");
 	var input = document.getElementById('mySearch').value;
 	var url = "http://10.20.1.151/helper.php?entry=" + document.getElementById('mySearch').value;
 	$.ajax({
@@ -50,22 +50,32 @@ function myFunction()
 		dataType: "xml",
 		success: function(xml) 
 		{		
-			console.log("start ajax successfull");	
+			console.log("start of ajax success");	
 			downloadUrl(url, function(data) 
 			{		
       				var xml = data.responseXML;
         			var helper = xml.documentElement.getElementsByTagName("place");
 				//ASSERT(helper !== null); // slavi
-
+				
+				var ul = document.getElementById("list");
+  				
+				$(list).empty();
         			for (var i = 0; i < helper.length; i++) 
 				{   //TRACE("Option", i, option);
 					//option to be displayed properly
-       					console.log(helper[i].getAttribute("oblast"));
-					console.log(helper[i].getAttribute("name"));
-					console.log(helper[i].getAttribute("region"));
-					console.log(helper[i].getAttribute("document"));
-					console.log("Option " + i + ":" + option.text);
+					console.log("in for cycle");
+
+					var li = document.createElement("li");
+ 					li.appendChild(document.createTextNode(helper[i].getAttribute("oblast") + " "));
+					li.appendChild(document.createTextNode(helper[i].getAttribute("name") + " "));
+					li.appendChild(document.createTextNode(helper[i].getAttribute("region") + " "));
+					li.appendChild(document.createTextNode(helper[i].getAttribute("document") + " "));
+  					ul.appendChild(li);
+
+					console.log("index at current iteration: " + i);
+					console.log("second attribute at current iteration: " + helper[i].getAttribute("name"));
        				}
+				
      			 });
 		},
     		error: function (jqXHR, textStatus, error) 
@@ -77,17 +87,18 @@ function myFunction()
 }
 
 
-	    
-	
-
 </script>
 </head>
 
 <body onload="load()">
 <p>Enter:</p>
-<input type="search" id="mySearch" placeholder="Search for town..">
+<input type="search" id="mySearch" placeholder="Search for place..">
 
 <button onclick="myFunction()">Search</button>
+
+<p id="places"></p>
+
+<ul id = "list"></ul> 
 
 
 
