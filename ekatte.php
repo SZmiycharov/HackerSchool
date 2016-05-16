@@ -54,7 +54,7 @@ function myFunction()
 			downloadUrl(url, function(data) 
 			{		
       				var xml = data.responseXML;
-        			var helper = xml.documentElement.getElementsByTagName("place");
+        			var helper = xml.documentElement.getElementsByTagName("Oblast");
 				//ASSERT(helper !== null); // slavi
 				
 				var ul = document.getElementById("list");
@@ -66,10 +66,10 @@ function myFunction()
 					console.log("in for cycle");
 
 					var li = document.createElement("li");
- 					li.appendChild(document.createTextNode(helper[i].getAttribute("oblast") + " "));
-					li.appendChild(document.createTextNode(helper[i].getAttribute("name") + " "));
-					li.appendChild(document.createTextNode(helper[i].getAttribute("region") + " "));
-					li.appendChild(document.createTextNode(helper[i].getAttribute("document") + " "));
+ 					li.appendChild(document.createTextNode("Област: " + helper[i].getAttribute("oblast") + ";   Екатте: "));
+					li.appendChild(document.createTextNode(helper[i].getAttribute("ekatte") + ";   Име: "));
+					li.appendChild(document.createTextNode(helper[i].getAttribute("name") + ";   Регион: "));
+					li.appendChild(document.createTextNode(helper[i].getAttribute("region")));
   					ul.appendChild(li);
 
 					console.log("index at current iteration: " + i);
