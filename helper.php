@@ -16,16 +16,15 @@ $cn = pg_connect($strCnx);
 
 $entry = $_GET['entry'];
 
-$query1 = "SELECT oblast AS a, ekatte AS b, name AS c, region AS d FROM ek_obl WHERE name = '{$entry}'";
-$query2 = "SELECT obstina AS e, ekatte AS f, name AS g, document AS h FROM ek_obst WHERE name = '{$entry}'";
-$query3 = "SELECT raion AS j, name AS k category AS l, document AS m FROM ek_raion WHERE name = '{$entry}'";
-$query4 = "SELECT kmetstvo AS n, name AS o, center AS p, document AS q FROM ek_kmet WHERE name = '{$entry}'";
-
+$query1 = "SELECT oblast, ekatte, name, document FROM ek_obl WHERE name = '{$entry}'";
+$query2 = "SELECT obstina, ekatte, name, document FROM ek_obst WHERE name = '{$entry}'";
+$query3 = "SELECT raion, category, name, document FROM ek_raion WHERE name = '{$entry}'";
+$query4 = "SELECT kmetstvo, center, name, document FROM ek_kmet WHERE name = '{$entry}'";
 
 $result1 = pg_query($query1);
 $result2 = pg_query($query2);
-$result1 = pg_query($query3);
-$result1 = pg_query($query4);
+$result3 = pg_query($query3);
+$result4 = pg_query($query4);
 
 header("Content-type: text/xml");
 
@@ -34,47 +33,56 @@ echo '<Places>';
 
 // Iterate through the rows, printing XML nodes for each
 while ($row1 = @pg_fetch_assoc($result1)){
-  echo '<Oblast ';
+  // ADD TO XML DOCUMENT NODE
+  echo '<place ';
 
-  echo 'oblast="' . $row1['a'] . '" ';
-  echo 'ekatte="' . $row1['b'] . '" ';
-  echo 'name="' . $row1['c'] . '" ';
-  echo 'region="' . $row1['d'] . '" ';
+  echo 'OBLoblast="' . $row1['oblast'] . '" ';
+  echo 'OBLekatte="' . $row1['ekatte'] . '" ';
+  echo 'OBLname="' . $row1['name'] . '" ';
+  echo 'OBLregion="' . $row1['document'] . '" ';
   
   echo '/>';
 }
+
 while ($row2 = @pg_fetch_assoc($result2)){
-  echo '<Obstina ';
+  // ADD TO XML DOCUMENT NODE
+  echo '<place ';
 
-  echo 'obstina="' . $row2['e'] . '" ';
-  echo 'ekatte="' . $row2['f'] . '" ';
-  echo 'name="' . $row2['g'] . '" ';
-  echo 'document="' . $row2['h'] . '" ';
+  echo 'OBSTobstina="' . $row2['obstina'] . '" ';
+  echo 'OBSTekatte="' . $row2['ekatte'] . '" ';
+  echo 'OBSTname="' . $row2['name'] . '" ';
+  echo 'OBSTdocument="' . $row2['document'] . '" ';
   
   echo '/>';
 }
+
 while ($row3 = @pg_fetch_assoc($result3)){
-  echo '<Raion ';
+  // ADD TO XML DOCUMENT NODE
+  echo '<place ';
 
-  echo 'raion="' . $row3['e'] . '" ';
-  echo 'name="' . $row3['f'] . '" ';
-  echo 'category="' . $row3['g'] . '" ';
-  echo 'document="' . $row3['h'] . '" ';
+  echo 'RAIraion="' . $row3['raion'] . '" ';
+  echo 'RAIname="' . $row3['name'] . '" ';
+  echo 'RAIcategory="' . $row3['category'] . '" ';
+  echo 'RAIdocument="' . $row3['document'] . '" ';
   
   echo '/>';
 }
+
 while ($row4 = @pg_fetch_assoc($result4)){
-  echo '<Kmetstvo ';
+  // ADD TO XML DOCUMENT NODE
+  echo '<place ';
 
-  echo 'kmetstvo="' . $row4['i'] . '" ';
-  echo 'name="' . $row4['j'] . '" ';
-  echo 'center="' . $row4['k'] . '" ';
-  echo 'document="' . $row4['l'] . '" ';
+  echo 'KMETkmetstvo="' . $row4['kmetstvo'] . '" ';
+  echo 'KMETcenter="' . $row4['center'] . '" ';
+  echo 'KMETname="' . $row4['name'] . '" ';
+  echo 'KMETdocument="' . $row4['document'] . '" ';
   
   echo '/>';
 }
 
+// End XML file
 echo '</Places>';
+
 
 
 
