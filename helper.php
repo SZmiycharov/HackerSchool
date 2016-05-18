@@ -16,15 +16,14 @@ $cn = pg_connect($strCnx);
 
 $entry = $_GET['entry'];
 
-$query1 = "SELECT oblast, ekatte, name, document FROM ek_obl WHERE name = '{$entry}'";
-$query2 = "SELECT obstina, ekatte, name, document FROM ek_obst WHERE name = '{$entry}'";
-$query3 = "SELECT raion, category, name, document FROM ek_raion WHERE name = '{$entry}'";
-$query4 = "SELECT kmetstvo, center, name, document FROM ek_kmet WHERE name = '{$entry}'";
 
-$result1 = pg_query($query1);
-$result2 = pg_query($query2);
-$result3 = pg_query($query3);
-$result4 = pg_query($query4);
+$query = "SELECT ek_atte.t_v_m, ek_atte.name, ek_obl.name as oblast, ek_obst.name as obstina
+	FROM ek_atte
+	INNER JOIN ek_obst ON ek_atte.obstina = ek_obst.obstina
+	INNER JOIN ek_obl ON ek_atte.oblast = ek_obl.oblast
+	WHERE ek_atte.name LIKE '{$entry}%'";
+
+$result = pg_query($query);
 
 header("Content-type: text/xml");
 
@@ -32,50 +31,14 @@ header("Content-type: text/xml");
 echo '<Places>'; 
 
 // Iterate through the rows, printing XML nodes for each
-while ($row1 = @pg_fetch_assoc($result1)){
+while ($row = @pg_fetch_assoc($result)){
   // ADD TO XML DOCUMENT NODE
   echo '<place ';
 
-  echo 'OBLoblast="' . $row1['oblast'] . '" ';
-  echo 'OBLekatte="' . $row1['ekatte'] . '" ';
-  echo 'OBLname="' . $row1['name'] . '" ';
-  echo 'OBLregion="' . $row1['document'] . '" ';
-  
-  echo '/>';
-}
-
-while ($row2 = @pg_fetch_assoc($result2)){
-  // ADD TO XML DOCUMENT NODE
-  echo '<place ';
-
-  echo 'OBSTobstina="' . $row2['obstina'] . '" ';
-  echo 'OBSTekatte="' . $row2['ekatte'] . '" ';
-  echo 'OBSTname="' . $row2['name'] . '" ';
-  echo 'OBSTdocument="' . $row2['document'] . '" ';
-  
-  echo '/>';
-}
-
-while ($row3 = @pg_fetch_assoc($result3)){
-  // ADD TO XML DOCUMENT NODE
-  echo '<place ';
-
-  echo 'RAIraion="' . $row3['raion'] . '" ';
-  echo 'RAIname="' . $row3['name'] . '" ';
-  echo 'RAIcategory="' . $row3['category'] . '" ';
-  echo 'RAIdocument="' . $row3['document'] . '" ';
-  
-  echo '/>';
-}
-
-while ($row4 = @pg_fetch_assoc($result4)){
-  // ADD TO XML DOCUMENT NODE
-  echo '<place ';
-
-  echo 'KMETkmetstvo="' . $row4['kmetstvo'] . '" ';
-  echo 'KMETcenter="' . $row4['center'] . '" ';
-  echo 'KMETname="' . $row4['name'] . '" ';
-  echo 'KMETdocument="' . $row4['document'] . '" ';
+  echo 'type="' . $row['t_v_m'] . '" ';
+  echo 'name="' . $row['name'] . '" ';
+  echo 'oblast="' . $row['oblast'] . '" ';
+  echo 'obstina="' . $row['obstina'] . '" ';
   
   echo '/>';
 }

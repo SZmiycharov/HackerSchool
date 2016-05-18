@@ -66,41 +66,13 @@ function myFunction()
 					console.log("in for cycle");
 
 					var li = document.createElement("li");
-					if(helper[i].getAttribute("OBLoblast") != null)
-					{
-	 					li.appendChild(document.createTextNode("ОБЛАСТ: " + helper[i].getAttribute("OBLoblast") + ";   Екатте: "));
-						li.appendChild(document.createTextNode(helper[i].getAttribute("OBLekatte") + ";   Име: "));
-						li.appendChild(document.createTextNode(helper[i].getAttribute("OBLname") + ";   Регион: "));
-						li.appendChild(document.createTextNode(helper[i].getAttribute("OBLregion")));
-	  					ul.appendChild(li);
-					}
-		
-					if(helper[i].getAttribute("OBSTobstina") != null)
-					{
-						li.appendChild(document.createTextNode("ОБЩИНА: " + helper[i].getAttribute("OBSTobstina") + ";   Екатте: "));
-						li.appendChild(document.createTextNode(helper[i].getAttribute("OBSTekatte") + ";   Име: "));
-						li.appendChild(document.createTextNode(helper[i].getAttribute("OBSTname") + ";   Документ: "));
-						li.appendChild(document.createTextNode(helper[i].getAttribute("OBSTdocument")));
-	  					ul.appendChild(li);
-					}
 					
-					if(helper[i].getAttribute("RAIraion") != null)
-					{
-						li.appendChild(document.createTextNode("РАЙОН: " + helper[i].getAttribute("RAIraion") + ";   Име: "));
-						li.appendChild(document.createTextNode(helper[i].getAttribute("RAIname") + ";   Категория: "));
-						li.appendChild(document.createTextNode(helper[i].getAttribute("RAIcategory") + ";   Документ: "));
-						li.appendChild(document.createTextNode(helper[i].getAttribute("RAIdocument")));
-	  					ul.appendChild(li);
-					}
+	 				li.appendChild(document.createTextNode(helper[i].getAttribute("type") + " "));
+					li.appendChild(document.createTextNode(helper[i].getAttribute("name") + ";   от област: "));
+					li.appendChild(document.createTextNode(helper[i].getAttribute("oblast") + ";   от община: "));
+					li.appendChild(document.createTextNode(helper[i].getAttribute("obstina")));
+	  				ul.appendChild(li);
 					
-					if(helper[i].getAttribute("KMETkmetstvo") != null)
-					{
-						li.appendChild(document.createTextNode("КМЕТСТВО: " + helper[i].getAttribute("KMETkmetstvo") + ";   Център: "));
-						li.appendChild(document.createTextNode(helper[i].getAttribute("KMETcenter") + ";   Име: "));
-						li.appendChild(document.createTextNode(helper[i].getAttribute("KMETname") + ";   Документ: "));
-						li.appendChild(document.createTextNode(helper[i].getAttribute("KMETdocument")));
-	  					ul.appendChild(li);
-					}
        				}
 				
      			 });
