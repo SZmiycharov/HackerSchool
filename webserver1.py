@@ -13,14 +13,21 @@ while True:
     request = client_connection.recv(1024)
     print request
 
+#make a dictionary of the query strings
     querystrings = parse_qs(urlparse("http://localhost:8888/hello?a=5&b=6").query,
          keep_blank_values=True)
+
     querystr1 = querystrings['a']
     querystr1 = map(int, querystr1)
     querystr2 = querystrings['b']
     querystr2 = map(int, querystr2)
+
+#make two int variables equal to the query strings
     http_response = querystr1[0] + querystr2[0]
     print(http_response)
+
     result = str(http_response)
+
+#print the sum of the two numbers, gotton from the query string
     client_connection.sendall(result)
     client_connection.close()
