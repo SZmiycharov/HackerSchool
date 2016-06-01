@@ -1,33 +1,42 @@
 import socket
-from urlparse import parse_qs, urlparse
+import re
 
-HOST, PORT = '', 8888
+# Standard socket stuff:
+host = '' # do we need socket.gethostname() ?
+port = 8080
+sock = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
+#change socket behaviour - to be able to reconnect faster
+sock.setsockopt(socket.SOL_SOCKET, socket.SO_REUSEADDR, 1)
+sock.bind((host, port))
+sock.listen(1) # don't queue up any requests
 
-listen_socket = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
-listen_socket.setsockopt(socket.SOL_SOCKET, socket.SO_REUSEADDR, 1)
-listen_socket.bind((HOST, PORT))
-listen_socket.listen(1)
-print 'Serving HTTP on port %s ...' % PORT
+# Loop forever, listening for requests:
 while True:
-    client_connection, client_address = listen_socket.accept()
-    request = client_connection.recv(1024)
-    print request
+    csock, caddr = sock.accept()
+    print "Connection from: " + `caddr`
+    req = csock.recv(1024) # get the request, 1kB max
+    print req
+    # Look in the first line of the request for a move command
+    # A move command should be e.g. 'http://server/move?a=90'
+    match = re.match('GET .*&b=(\d+)', req)
+    if match:
+        b = match.group(1)
+        print "b: " + b + "\n"
+        csock.sendall("""HTTP/1.0 200 OK
+Content-Type: text/html
 
-#make a dictionary of the query strings
-    querystrings = parse_qs(urlparse("http://localhost:8888/hello?a=5&b=6").query,
-         keep_blank_values=True)
+<html>
+<head>
+<title>Success</title>
+</head>
+<body>
+Boo!
+</body>
+</html>
+""")
+    else:
+        # If there was no recognised command then return a 404 (page not found)
+        print "Returning 404"
+        csock.sendall("HTTP/1.0 404 Not Found\r\n")
 
-    querystr1 = querystrings['a']
-    querystr1 = map(int, querystr1)
-    querystr2 = querystrings['b']
-    querystr2 = map(int, querystr2)
-
-#make two int variables equal to the query strings
-    http_response = querystr1[0] + querystr2[0]
-    print(http_response)
-
-    result = str(http_response)
-
-#print the sum of the two numbers, gotton from the query string
-    client_connection.sendall(result)
-    client_connection.close()
+    csock.close()
