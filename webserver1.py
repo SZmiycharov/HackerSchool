@@ -2,7 +2,7 @@ import socket
 import re
 
 # Standard socket stuff:
-host = '' # do we need socket.gethostname() ?
+host = '' 
 port = 8080
 sock = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
 #change socket behaviour - to be able to reconnect faster
