@@ -18,13 +18,18 @@ while True:
     print req
     # Look in the first line of the request for a move command
     # A move command should be e.g. 'http://server/move?a=90'
+    match = re.match('GET .*?a=(\d+)', req)
+    if match:
+        a = match.group(1)
+        print "a: " + a
     match = re.match('GET .*&b=(\d+)', req)
     if match:
         b = match.group(1)
-        print "b: " + b + "\n"
+        print "b: " + b
+	sumOfBoth = int(a) + int(b)
+	print "a + b = %d" % (sumOfBoth)
         csock.sendall("""HTTP/1.0 200 OK
 Content-Type: text/html
-
 <html>
 <head>
 <title>Success</title>
