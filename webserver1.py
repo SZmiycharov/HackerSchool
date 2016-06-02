@@ -7,8 +7,8 @@ sock = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
 #change socket behaviour - to be able to reconnect faster
 sock.setsockopt(socket.SOL_SOCKET, socket.SO_REUSEADDR, 1)
 sock.bind((host, port))
-#don't queue requests - listen for only 1
-sock.listen(1) 
+#queue the requests
+sock.listen(5) 
 
 # Loop forever, listening for requests:
 while True:
@@ -30,15 +30,10 @@ while True:
 	print "a + b = %d" % (sumOfBoth)
 	print "\n"
         csock.sendall("""HTTP/1.1 200 OK
+
+Server: SLAVI
 Content-Type: text/html
-<html>
-<head>
-<title>Success</title>
-</head>
-<body>
-YEY!
-</body>
-</html>
+
 """)
     else:
         # If there was no recognised command then return a 404 (page not found)
