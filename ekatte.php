@@ -66,14 +66,13 @@ function myFunction()
 					console.log("in for cycle");
 
 					var li = document.createElement("li");
- 					li.appendChild(document.createTextNode(helper[i].getAttribute("oblast") + " "));
-					li.appendChild(document.createTextNode(helper[i].getAttribute("name") + " "));
-					li.appendChild(document.createTextNode(helper[i].getAttribute("region") + " "));
-					li.appendChild(document.createTextNode(helper[i].getAttribute("document") + " "));
-  					ul.appendChild(li);
-
-					console.log("index at current iteration: " + i);
-					console.log("second attribute at current iteration: " + helper[i].getAttribute("name"));
+					
+	 				li.appendChild(document.createTextNode(helper[i].getAttribute("type") + " "));
+					li.appendChild(document.createTextNode(helper[i].getAttribute("name") + ";   от област: "));
+					li.appendChild(document.createTextNode(helper[i].getAttribute("oblast") + ";   от община: "));
+					li.appendChild(document.createTextNode(helper[i].getAttribute("obstina")));
+	  				ul.appendChild(li);
+					
        				}
 				
      			 });

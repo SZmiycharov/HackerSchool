@@ -16,16 +16,15 @@ $cn = pg_connect($strCnx);
 
 $entry = $_GET['entry'];
 
-$query = "SELECT oblast AS a, ekatte AS b, name AS c, region AS d FROM ek_obl WHERE name = '{$entry}'
-UNION
-SELECT obstina AS a, ekatte as b, name AS c, document AS d FROM ek_obst WHERE name ='{$entry}'
-UNION
-SELECT kmetstvo AS a, center as b, name AS c, document AS d FROM ek_kmet WHERE name ='{$entry}'
-UNION
-SELECT category AS a, raion as b, name AS c, document AS d FROM ek_raion WHERE name ='{$entry}'";
 
+$query = "SELECT ek_atte.t_v_m, ek_atte.name, ek_obl.name as oblast, ek_obst.name as obstina
+	FROM ek_atte
+	INNER JOIN ek_obst ON ek_atte.obstina = ek_obst.obstina
+	INNER JOIN ek_obl ON ek_atte.oblast = ek_obl.oblast
+	WHERE ek_atte.name LIKE '{$entry}%'";
 
 $result = pg_query($query);
+
 header("Content-type: text/xml");
 
 // Start XML file, echo parent node
@@ -36,16 +35,19 @@ while ($row = @pg_fetch_assoc($result)){
   // ADD TO XML DOCUMENT NODE
   echo '<place ';
 
-  echo 'oblast="' . $row['a'] . '" ';
-  echo 'name="' . $row['b'] . '" ';
-  echo 'region="' . $row['c'] . '" ';
-  echo 'document="' . $row['d'] . '" ';
+  echo 'type="' . $row['t_v_m'] . '" ';
+  echo 'name="' . $row['name'] . '" ';
+  echo 'oblast="' . $row['oblast'] . '" ';
+  echo 'obstina="' . $row['obstina'] . '" ';
   
   echo '/>';
 }
 
 // End XML file
 echo '</Places>';
+
+
+
 
 
 ?>
