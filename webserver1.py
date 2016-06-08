@@ -1,9 +1,25 @@
 import socket
 import re
+import sys, getopt
 #python getopt - parameters from command line
 #sharevane na papka i da moje da se dostupva fail ot neq prez browsera
 host = '' 
-port = 8080
+port = ''
+
+#get parameters from cmd line
+try:
+	opts, args = getopt.getopt(sys.argv[1:],"hp:",["port="])
+except getopt.GetoptError:
+	print 'test.py -p <port>'
+	sys.exit(2)
+for opt, arg in opts:
+	if opt == '-h':
+        	print 'test.py -p <inputfile>'
+        	sys.exit()
+    	elif opt in ("-p", "--port"):
+        	port = arg
+port = int(port)
+
 sock = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
 #change socket behaviour - to be able to reconnect faster
 sock.setsockopt(socket.SOL_SOCKET, socket.SO_REUSEADDR, 1)
