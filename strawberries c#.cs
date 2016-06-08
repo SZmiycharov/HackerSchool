@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using System.Linq;
 
 namespace straweberries
 {
@@ -24,36 +25,102 @@ namespace straweberries
                 }
             }
         }
-
-        static void MakeNeighborsBadStrawberries(ref int [,] arr, int arri, int arrj, int day, int indexi, int indexj)
+        static bool Contains(int [,] arr, int K, int L, int num)
         {
-            //idnexi, indexj - index of the bad strawberry
-            if (indexi - 1 != -1 && arr[indexi - 1, indexj] != 1 && arr[indexi - 1, indexj] != day-1)
+            for(int i = 0; i<K; i++)
             {
-                arr[indexi - 1, indexj] = day;
+                for(int j = 0; j<L; j++)
+                {
+                    if (arr[i, j] == num) return true;
+                }
             }
-            if (indexj - 1 != -1 && arr[indexi, indexj - 1] != 1 && arr[indexi, indexj - 1] != day - 1)
+            return false;
+        }
+
+        static void MakeNeighborsBadStrawberries(ref int [,] arr, int arri, int arrj,
+            int currentDay, int maxDay, int indexi, int indexj)
+        {
+            if (indexj >= arrj || indexj < 0 || indexi < 0 || indexi >= arri) return;
+            else
             {
-                arr[indexi, indexj - 1] = day;
+                if (currentDay >= maxDay) return;
+                //idnexi, indexj - index of the bad strawberry
+                if (indexj < arrj && indexi > 0 && indexj != arrj && arr[indexi - 1, indexj] >= currentDay)
+                {
+                    arr[indexi - 1, indexj] = currentDay;
+                }
+                if (indexj < arrj && indexi != arri && indexj > 0 && arr[indexi, indexj - 1] >= currentDay)
+                {
+                    arr[indexi, indexj - 1] = currentDay;
+                }
+                if (indexj + 1 < arrj && indexi != arri && arr[indexi, indexj + 1] >= currentDay)
+                {
+                    arr[indexi, indexj + 1] = currentDay;
+                }
+                if (indexj <= arrj && indexi + 1 < arri && indexj != arrj && arr[indexi + 1, indexj] >= currentDay)
+                {
+                    arr[indexi + 1, indexj] = currentDay;
+                }
             }
-            if (indexj + 1 != arrj && arr[indexi, indexj + 1] != 1 && arr[indexi, indexj + 1] != day-1)
+
+            currentDay++;
+            if (currentDay >= maxDay) return;
+            else
             {
-                arr[indexi, indexj + 1] = day;
-            }
-            if (indexi + 1 != arri && arr[indexi + 1, indexj] != 1 && arr[indexi + 1, indexj] != day - 1)
-            {
-                arr[indexi + 1, indexj] = day;
+                MakeNeighborsBadStrawberries(ref arr, arri, arrj, currentDay, maxDay, indexi + 1, indexj);
+                MakeNeighborsBadStrawberries(ref arr, arri, arrj, currentDay, maxDay, indexi - 1, indexj);
+                MakeNeighborsBadStrawberries(ref arr, arri, arrj, currentDay, maxDay, indexi, indexj + 1);
+                MakeNeighborsBadStrawberries(ref arr, arri, arrj, currentDay, maxDay, indexi, indexj - 1);
             }
         }
 
         static void Main(string[] args)
         {
-            int K = 0, L = 0, i1 = 0, i2 = -1, j1 = 0, j2 = 0;
-            string choice;
+            int K = 10, L = 10, R = 20, i1 = 0, j1 = 0, i2 = K-1, j2 = L-1;
+            if (R > (K * L / 2)) Console.Write("0");
+            else
+            {
+                int[,] arr = new int[K, L];
+                for (int i = 0; i < K; i++)
+                {
+                    for (int j = 0; j < L; j++)
+                    {
+                        arr[i, j] = 100;
+                    }
+                }
+                arr[i2, j2] = 1;
+                arr[i1, j1] = 1;
+
+                int currentDay = 2;
+
+                MakeNeighborsBadStrawberries(ref arr, K, L, currentDay, R + 2, i1, j1);
+                MakeNeighborsBadStrawberries(ref arr, K, L, currentDay, R + 2, i2, j2);
+
+                for (int p = 0; p < K; p++)
+                {
+                    for (int q = 0; q < L; q++)
+                    {
+                        Console.Write("{0}   ", arr[p, q]);
+                    }
+                    Console.Write(Environment.NewLine + Environment.NewLine);
+                }
+                int count = 0;
+                for (int p = 0; p < K; p++)
+                {
+                    for (int q = 0; q < L; q++)
+                    {
+                        if (arr[p, q] == 100) count++;
+                    }
+                }
+                Console.WriteLine("Count: {0}", count);
+            }
+            /*string choice;
             Console.Write("Enter K: ");
             ValidateInt(Console.ReadLine(), ref K);
             Console.Write("Enter L: ");
             ValidateInt(Console.ReadLine(), ref L);
+            Console.Write("Enter R: ");
+            ValidateInt(Console.ReadLine(), ref R);
             Console.Write("Enter i1: ");
             ValidateInt(Console.ReadLine(), ref i1);
             Console.Write("Enter j1: ");
@@ -66,44 +133,10 @@ namespace straweberries
                 ValidateInt(Console.ReadLine(), ref i2);
                 Console.Write("Enter j2: ");
                 ValidateInt(Console.ReadLine(), ref j2);
-            }
+            }*/
 
             
-            int[,] arr = new int[8, 10] { { 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 }, 
-                                          { 0, 0, 0, 0, 0, 0, 1, 0, 0, 0 },
-                                          { 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 },
-                                          { 0, 0, 0, 0, 0, 0, 0, 1, 0, 0 },
-                                          { 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 },
-                                          { 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 },
-                                          { 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 },
-                                          { 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 }};
-
-            arr[i1, j1] = 1;
-            if (i2 != -1) arr[i2, j2] = 1;
-
-            int day = 2;
-
-            MakeNeighborsBadStrawberries(ref arr, 8, 10, day, i1, j1);
-            MakeNeighborsBadStrawberries(ref arr, 8, 10, day, i2, j2);
-            day++;
-            MakeNeighborsBadStrawberries(ref arr, 8, 10, day, i1 - 1, j1);
-            MakeNeighborsBadStrawberries(ref arr, 8, 10, day, i1, j1 -1);
-            MakeNeighborsBadStrawberries(ref arr, 8, 10, day, i1, j1 + 1);
-            MakeNeighborsBadStrawberries(ref arr, 8, 10, day, i1 + 1, j1);
-            MakeNeighborsBadStrawberries(ref arr, 8, 10, day, i2 - 1, j2);
-            MakeNeighborsBadStrawberries(ref arr, 8, 10, day, i2, j2 - 1);
-            MakeNeighborsBadStrawberries(ref arr, 8, 10, day, i2, j2 + 1);
-            MakeNeighborsBadStrawberries(ref arr, 8, 10, day, i2 + 1, j2);
-
-            for (int p = 0; p < 8; p++)
-            {
-                for(int q = 0; q<10; q++)
-                {
-                    Console.Write("{0}  ", arr[p, q]);
-                }
-                Console.WriteLine();
-            }
-
+            
             Console.ReadKey();
         }
     }
