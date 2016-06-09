@@ -8,18 +8,23 @@ namespace strawberriesNewTry
 {
     class Program
     {
-        static bool Contains(int [,] arr, int K, int L)
+        static void ValidateInt(string input, ref int number)
         {
-            for(int i = 0; i<K; i++)
+            while (true)
             {
-                for(int j = 0; j<L; j++)
+                if (int.TryParse(input, out number) && int.Parse(input) >= 0 && int.Parse(input) < 100000)
                 {
-                    if (arr[i, j] == 10000) return true;
+                    number = int.Parse(input);
+                    break;
+                }
+                else
+                {
+                    Console.Write("Bad input! Try again: ");
+                    input = Console.ReadLine();
                 }
             }
-            return false;
         }
-        static void GoUp(ref int [,] arr, int L, int K, int currentDay, int maxDay, int indexi, int indexj)
+        static void GoUp(ref int [,] arr, int K, int L, int currentDay, int maxDay, int indexi, int indexj)
         {
             indexi++;
             while(indexi<K)
@@ -34,7 +39,7 @@ namespace strawberriesNewTry
                 else break;
             }
         }
-        static void GoDown(ref int [,] arr, int L, int K, int currentDay, int maxDay, int indexi, int indexj)
+        static void GoDown(ref int [,] arr, int K, int L, int currentDay, int maxDay, int indexi, int indexj)
         {
             indexi--;
             while(indexi>=0)
@@ -49,7 +54,7 @@ namespace strawberriesNewTry
                 else break;
             }
         }
-        static void GoLeft(ref int [,] arr, int L, int K, int currentDay, int maxDay, int indexi, int indexj)
+        static void GoLeft(ref int [,] arr, int K, int L, int currentDay, int maxDay, int indexi, int indexj)
         {
             indexj--;
             while(indexj>=0)
@@ -64,7 +69,7 @@ namespace strawberriesNewTry
                 else break;
             }
         }
-        static void GoRight(ref int [,] arr, int L, int K, int currentDay, int maxDay, int indexi, int indexj)
+        static void GoRight(ref int [,] arr, int K, int L, int currentDay, int maxDay, int indexi, int indexj)
         {
             indexj++;
             while(indexj<L)
@@ -82,8 +87,30 @@ namespace strawberriesNewTry
 
         static void Main(string[] args)
         {
-            int K = 5, L = 5, R = 3, i1 =0, j1 = 0, i2 = K - 1, j2 = L - 1;
+            int K = 0, L = 0, R = 0, i1 =0, j1 = 0, i2 = 0, j2 = 0;
             int count = 0;
+            string choice = "";
+
+            Console.Write("Enter K: ");
+            ValidateInt(Console.ReadLine(), ref K);
+            Console.Write("Enter L: ");
+            ValidateInt(Console.ReadLine(), ref L);
+            Console.Write("Enter R: ");
+            ValidateInt(Console.ReadLine(), ref R);
+            Console.Write("Enter i1: ");
+            ValidateInt(Console.ReadLine(), ref i1);
+            Console.Write("Enter j1: ");
+            ValidateInt(Console.ReadLine(), ref j1);
+            Console.Write("Enter another one? <y or n>");
+            choice = Console.ReadLine();
+            if (choice == "y")
+            {
+                Console.Write("Enter i2: ");
+                ValidateInt(Console.ReadLine(), ref i2);
+                Console.Write("Enter j2: ");
+                ValidateInt(Console.ReadLine(), ref j2);
+            }
+
 
             R = R + 2;
             int[,] arr = new int[K, L];
@@ -95,7 +122,10 @@ namespace strawberriesNewTry
                 }
             }
             arr[i2, j2] = 1;
-            arr[i1, j1] = 1;
+            if(i2!=0 || j2!=0)
+            {
+                arr[i1, j1] = 1;
+            }
             int currentDay = 1;
             int helper = currentDay;
             while (true)
@@ -106,10 +136,10 @@ namespace strawberriesNewTry
                     {
                         if (arr[i, j] == currentDay)
                         {
-                            GoUp(ref arr, L, K, currentDay + 1, R, i, j);
-                            GoDown(ref arr, L, K, currentDay + 1, R, i, j);
-                            GoLeft(ref arr, L, K, currentDay + 1, R, i, j);
-                            GoRight(ref arr, L, K, currentDay + 1, R, i, j);
+                            GoUp(ref arr, K, L, currentDay + 1, R, i, j);
+                            GoDown(ref arr, K, L, currentDay + 1, R, i, j);
+                            GoLeft(ref arr, K, L, currentDay + 1, R, i, j);
+                            GoRight(ref arr, K, L, currentDay + 1, R, i, j);
                         }
                     }
                 }
