@@ -1,23 +1,45 @@
 import socket
 import re
+import threading
 import sys, getopt
-#python getopt - parameters from command line
+import os
+
+#python getopt - parameters from command line - DONE!
 #sharevane na papka i da moje da se dostupva fail ot neq prez browsera
+
+def RetrFile(filename, sock):
+    if os.path.isfile(filename):
+        sock.send("EXISTS " + str(os.path.getsize(filename)))
+        with open(filename, 'rb') as f:
+            bytesToSend = f.read(1024)
+            sock.sendall(bytesToSend)
+            while bytesToSend != "":
+                bytesToSend = f.read(1024)
+                sock.sendall(bytesToSend)
+    else:
+        sock.send("ERR ")
+
+    sock.close()
+
+
 host = '' 
 port = ''
+folder = ''
 
-#get parameters from cmd line
+#get port and folder from cmd line
 try:
-	opts, args = getopt.getopt(sys.argv[1:],"hp:",["port="])
+	opts, args = getopt.getopt(sys.argv[1:],"hp:f:",["port=", "folder="])
 except getopt.GetoptError:
-	print 'test.py -p <port>'
+	print 'webserver1.py -p <port> -f <folder>'
 	sys.exit(2)
 for opt, arg in opts:
 	if opt == '-h':
-        	print 'test.py -p <inputfile>'
+        	print 'webserver1.py -p <port> -f <folder>'
         	sys.exit()
     	elif opt in ("-p", "--port"):
         	port = arg
+	elif opt in ("-f", "--folder"):
+        	folder = arg
 port = int(port)
 
 sock = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
@@ -33,8 +55,18 @@ while True:
     print "Connection from: " + `caddr`
     req = csock.recv(1024) # get the request, 1kB max
     print req
-    # address should be sth like GET /move?a=20&b=3 HTTP/1.1
+    # req should be sth like GET /move?a=20&b=3 HTTP/1.1
 
+    match = re.match('GET .*/(.*)', req)
+    if match:
+        fileName = match.group(1)
+        print "file: " + fileName
+	#get the file
+	t = threading.Thread(target=RetrFile, args=(fileName, csock))
+	print("After threading.Thread!")
+	#start threading
+   	t.start()
+	
     match = re.match('GET .*?.=(\d+)', req)
     if match:
         a = match.group(1)
@@ -47,13 +79,14 @@ while True:
 	sumOfBoth = int(a) + int(b)
 	print "a + b = %d" % (sumOfBoth)
 	print "\n"
+
         csock.sendall("""HTTP/1.1 200 OK
 Server: SLAVI
 Content-Type: text/html
 
 <html>
 <body>
-%d
+sum: %d
 </body>
 </html>
 """ % (sumOfBoth))
