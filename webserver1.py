@@ -9,7 +9,6 @@ import os
 
 def RetrFile(filename, sock):
     if os.path.isfile(filename):
-        sock.send("EXISTS " + str(os.path.getsize(filename)))
         with open(filename, 'rb') as f:
             bytesToSend = f.read(1024)
             sock.sendall(bytesToSend)
@@ -18,9 +17,7 @@ def RetrFile(filename, sock):
                 sock.sendall(bytesToSend)
     else:
         sock.send("ERR ")
-
-    sock.close()
-
+	sock.close()
 
 host = '' 
 port = ''
@@ -57,15 +54,7 @@ while True:
     print req
     # req should be sth like GET /move?a=20&b=3 HTTP/1.1
 
-    match = re.match('GET .*/(.*)', req)
-    if match:
-        fileName = match.group(1)
-        print "file: " + fileName
-	#get the file
-	t = threading.Thread(target=RetrFile, args=(fileName, csock))
-	print("After threading.Thread!")
-	#start threading
-   	t.start()
+    
 	
     match = re.match('GET .*?.=(\d+)', req)
     if match:
@@ -81,18 +70,27 @@ while True:
 	print "\n"
 
         csock.sendall("""HTTP/1.1 200 OK
-Server: SLAVI
-Content-Type: text/html
+			Server: SLAVI
+			Content-Type: text/html
 
-<html>
-<body>
-sum: %d
-</body>
-</html>
-""" % (sumOfBoth))
+			<html>
+			<body>
+			sum: %d
+			</body>
+			</html>
+			""" % (sumOfBoth))
+    
     else:
-        # If there was no recognised command then return a 404 (page not found)
-        print "Returning 404"
-        csock.sendall("HTTP/1.1 404 \Not Found\r\n")
+	match = re.match('GET .*/(.*)', req)
+        fileName = match.group(1)
+        print "file: " + fileName
+	#get the file
+	t = threading.Thread(target=RetrFile, args=(fileName, csock))
+	print("After threading.Thread!")
+	#start threading
+   	t.start()
+	print("after t.start()")
 
     csock.close()
+
+
