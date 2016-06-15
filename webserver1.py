@@ -7,16 +7,13 @@ import os
 #python getopt - parameters from command line - DONE!
 #sharevane na papka i da moje da se dostupva fail ot neq prez browsera
 
-def RetrFile(filename, sock):
-    if os.path.isfile(filename):
+def RetrFile(name, sock, filename):
         with open(filename, 'rb') as f:
             bytesToSend = f.read(1024)
-            sock.sendall(bytesToSend)
+            sock.send(bytesToSend)
             while bytesToSend != "":
                 bytesToSend = f.read(1024)
-                sock.sendall(bytesToSend)
-    else:
-        sock.send("ERR ")
+                sock.send(bytesToSend)
 	sock.close()
 
 host = '' 
@@ -81,14 +78,12 @@ while True:
 			""" % (sumOfBoth))
     
     else:
-	match = re.match('GET .*/(.*)', req)
+	match = re.match('GET .*/move/(.*) ', req)
         fileName = match.group(1)
         print "file: " + fileName
 	#get the file
-	t = threading.Thread(target=RetrFile, args=(fileName, csock))
-	print("After threading.Thread!")
-	#start threading
-   	t.start()
+	t = threading.Thread(target=RetrFile, args=("RetrThread", csock, fileName))
+        t.start()
 	print("after t.start()")
 
     csock.close()
