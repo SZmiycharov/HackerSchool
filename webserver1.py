@@ -86,6 +86,6 @@ while True:
         t.start()
 	print("after t.start()")
 
-    csock.close()
+csock.close()
 
 
