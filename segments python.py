@@ -17,7 +17,7 @@ def ClearUntilNexOne(arr, currentIndex, n):
 while True:
   try:
      n = int(input("Enter n: "))       
-  except TypeError:
+  except StandardError:
      print("Not an integer!")
      continue
   else:

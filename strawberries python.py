@@ -1,3 +1,5 @@
+
+
 def GoUp(arr, K, L, currentDay, maxDay, indexi, indexj):
         indexi = indexi + 1
         while indexi < K:
@@ -153,13 +155,14 @@ while True:
         if currentDay >= R: break
 
 
-for i in range (K):
+for i in range(K):
         for j in range (L):
-                print('\n'.join([''.join(['{:4}'.format(item) for item in row]) 
-      for row in arr]))
                 if arr[i][j] == 10000:
                         count = count + 1
-        print("\n")
+
+print('\n'.join([''.join(['{:6}'.format(item) for item in row]) 
+      for row in arr]))
+                
 
 print(count)
 

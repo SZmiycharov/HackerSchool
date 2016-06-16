@@ -4,8 +4,10 @@ import threading
 import sys, getopt
 import os
 
-#python getopt - parameters from command line - DONE!
-#sharevane na papka i da moje da se dostupva fail ot neq prez browsera
+# za vseki tip fail da se pra6ta header
+#error handling ako ne su6testvuva faila
+#open za cheteneto na failove kakvi gre6ki vru6ta
+#ot koq papka da se vzimat failovete
 
 def RetrFile(name, sock, filename):
         with open(filename, 'rb') as f:
@@ -47,7 +49,7 @@ sock.listen(5)
 while True:
     csock, caddr = sock.accept()
     print "Connection from: " + `caddr`
-    req = csock.recv(1024) # get the request, 1kB max
+    req = csock.recv(4096) # get the request, 1kB max
     print req
     # req should be sth like GET /move?a=20&b=3 HTTP/1.1
 
@@ -76,6 +78,7 @@ while True:
 			</body>
 			</html>
 			""" % (sumOfBoth))
+	csock.close()
     
     else:
 	match = re.match('GET .*/move/(.*) ', req)
