@@ -18,8 +18,33 @@ def RetrFile(name, sock, filename):
 		sock.send(errorMsg)
 		sock.close()
 		return
-        bytesToSend = f.read(1024)
-        sock.send(bytesToSend)
+
+	fileType = filename[-3:]
+	print(fileType)
+	
+	if(fileType == '.py' or fileType == 'txt'):
+		sock.send("""HTTP/1.1 200 OK
+			Server: SLAVI
+			Content-Type: text/plain 
+			""")
+	elif(fileType == 'tml'):
+		sock.send("""HTTP/1.1 200 OK
+			Server: SLAVI
+			Content-Type: text/html 
+			""")
+	elif(fileType == 'png'):
+		sock.send("""HTTP/1.1 200 OK
+			Server: SLAVI
+			Content-Type: image/png 
+			""")
+	elif(fileType == 'jpg'):
+		sock.send("""HTTP/1.1 200 OK
+			Server: SLAVI
+			Content-Type: image/jpeg 
+			""")
+
+	bytesToSend = f.read(1024)
+	sock.send(bytesToSend)
         while bytesToSend != "":
         	bytesToSend = f.read(1024)
         	sock.send(bytesToSend)
@@ -61,8 +86,6 @@ while True:
     print req
     # req should be sth like GET /move?a=20&b=3 HTTP/1.1
 
-    
-	
     match = re.match('GET .*?.=(\d+)', req)
     if match:
         a = match.group(1)
@@ -87,9 +110,9 @@ while True:
 			</html>
 			""" % (sumOfBoth))
 	csock.close()
-    
-    else:
-	match = re.match('GET .*/move/(.*) ', req)
+
+    match = re.match('GET /(.*) ', req)
+    if match:
         fileName = match.group(1)
         print "file: " + fileName
 	#get the file
