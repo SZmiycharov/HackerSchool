@@ -4,18 +4,26 @@ import threading
 import sys, getopt
 import os
 
-# za vseki tip fail da se pra6ta header
-#error handling ako ne su6testvuva faila
-#open za cheteneto na failove kakvi gre6ki vru6ta
-#ot koq papka da se vzimat failovete
+#za vseki tip fail da se pra6ta header
+#error handling ako ne su6testvuva faila - DONE!
+#open za cheteneto na failove kakvi gre6ki vru6ta - DONE!
+#ot koq papka da se vzimat failovete - DONE!
 
 def RetrFile(name, sock, filename):
-        with open(filename, 'rb') as f:
-            bytesToSend = f.read(1024)
-            sock.send(bytesToSend)
-            while bytesToSend != "":
-                bytesToSend = f.read(1024)
-                sock.send(bytesToSend)
+	try:		
+		filePath = folder + "/" + filename
+        	f = open(filePath, 'rb')
+	except IOError:
+		errorMsg = "File could not be found!"
+		sock.send(errorMsg)
+		sock.close()
+		return
+        bytesToSend = f.read(1024)
+        sock.send(bytesToSend)
+        while bytesToSend != "":
+        	bytesToSend = f.read(1024)
+        	sock.send(bytesToSend)
+	f.close()
 	sock.close()
 
 host = '' 
@@ -88,6 +96,8 @@ while True:
 	t = threading.Thread(target=RetrFile, args=("RetrThread", csock, fileName))
         t.start()
 	print("after t.start()")
+	helper = folder + "/" + fileName
+	print(helper)
 
 csock.close()
 
