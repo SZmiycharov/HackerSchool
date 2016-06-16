@@ -13,38 +13,45 @@ def RetrFile(name, sock, filename):
 	try:		
 		filePath = folder + "/" + filename
         	f = open(filePath, 'rb')
+		print(filePath)
 	except IOError:
 		errorMsg = "File could not be found!"
 		sock.send(errorMsg)
 		sock.close()
 		return
 
-	fileType = filename[-3:]
+	match = re.match('.*\.(.*)', filename)
+	fileType = match.group(1)
+
 	print(fileType)
 	
-	if(fileType == '.py' or fileType == 'txt'):
-		sock.send("""HTTP/1.1 200 OK
-			Server: SLAVI
-			Content-Type: text/plain\n
+	if(fileType == 'py' or fileType == 'txt'):
+		sock.send("""
+HTTP/1.1 200 OK
+Server: SLAVI
+Content-Type: text/plain
 			""")
-	elif(fileType == 'tml'):
-		sock.send("""HTTP/1.1 200 OK
-			Server: SLAVI
-			Content-Type: text/html\n
+	elif(fileType == "html"):
+		sock.send("""
+HTTP/1.1 200 OK
+Server: SLAVI
+Content-Type: text/html
 			""")
 	elif(fileType == 'png'):
-		sock.send("""HTTP/1.1 200 OK
-			Server: SLAVI
-			Content-Type: image/png\n
+		sock.send("""
+HTTP/1.1 200 OK
+Server: SLAVI
+Content-Type: image/png
 			""")
 	elif(fileType == 'jpg'):
-		sock.send("""HTTP/1.1 200 OK
-			Server: SLAVI
-			Content-Type: image/jpeg\n 
+		sock.send("""
+HTTP/1.1 200 OK
+Server: SLAVI
+Content-Type: image/jpeg
 			""")
 
 	bytesToSend = f.read(1024)
-	sock.send(bytesToSend)
+        sock.send(bytesToSend)
         while bytesToSend != "":
         	bytesToSend = f.read(1024)
         	sock.send(bytesToSend)
@@ -99,28 +106,27 @@ while True:
 	print "a + b = %d" % (sumOfBoth)
 	print "\n"
 
-        csock.sendall("""HTTP/1.1 200 OK
-			Server: SLAVI
-			Content-Type: text/html
+        csock.send("""
+HTTP/1.1 200 OK
+Server: SLAVI
+Content-Type: text/html
 
-			<html>
-			<body>
-			sum: %d
-			</body>
-			</html>
-			""" % (sumOfBoth))
+<html>
+<body>
+<p><b> sum: %d </b></p>
+</body>
+</html>
+		""" % (sumOfBoth))
 	csock.close()
 
-    match = re.match('GET /(.*) ', req)
-    if match:
+    
+    else:
+	match = re.match('GET /(.*) ', req)
         fileName = match.group(1)
-        print "file: " + fileName
+        print "file in else: " + fileName
 	#get the file
 	t = threading.Thread(target=RetrFile, args=("RetrThread", csock, fileName))
         t.start()
-	print("after t.start()")
-	helper = folder + "/" + fileName
-	print(helper)
 
 csock.close()
 
