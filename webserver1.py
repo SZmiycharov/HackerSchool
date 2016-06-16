@@ -25,22 +25,22 @@ def RetrFile(name, sock, filename):
 	if(fileType == '.py' or fileType == 'txt'):
 		sock.send("""HTTP/1.1 200 OK
 			Server: SLAVI
-			Content-Type: text/plain 
+			Content-Type: text/plain\n
 			""")
 	elif(fileType == 'tml'):
 		sock.send("""HTTP/1.1 200 OK
 			Server: SLAVI
-			Content-Type: text/html 
+			Content-Type: text/html\n
 			""")
 	elif(fileType == 'png'):
 		sock.send("""HTTP/1.1 200 OK
 			Server: SLAVI
-			Content-Type: image/png 
+			Content-Type: image/png\n
 			""")
 	elif(fileType == 'jpg'):
 		sock.send("""HTTP/1.1 200 OK
 			Server: SLAVI
-			Content-Type: image/jpeg 
+			Content-Type: image/jpeg\n 
 			""")
 
 	bytesToSend = f.read(1024)
