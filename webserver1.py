@@ -4,7 +4,7 @@ import threading
 import sys, getopt
 import os
 
-#za vseki tip fail da se pra6ta header
+#za vseki tip fail da se pra6ta header - DONE!
 #error handling ako ne su6testvuva faila - DONE!
 #open za cheteneto na failove kakvi gre6ki vru6ta - DONE!
 #ot koq papka da se vzimat failovete - DONE!
@@ -43,6 +43,16 @@ Content-Type: image/png\n
 		sock.send("""HTTP/1.1 200 OK
 Server: SLAVI
 Content-Type: image/jpeg\n
+""")
+	elif(fileType == 'pdf'):
+		sock.send("""HTTP/1.1 200 OK
+Server: SLAVI
+Content-Type: application/pdf\n
+""")
+	elif(fileType == 'avi'):
+		sock.send("""HTTP/1.1 200 OK
+Server: SLAVI
+Content-Type: video/x-msvideo\n
 """)
 	
 
