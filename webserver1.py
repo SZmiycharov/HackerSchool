@@ -23,40 +23,37 @@ def RetrFile(name, sock, filename):
 	match = re.match('.*\.(.*)', filename)
 	fileType = match.group(1)
 
-	print(fileType)
 	
 	if(fileType == 'py' or fileType == 'txt'):
-		sock.send("""
-HTTP/1.1 200 OK
+		sock.send("""HTTP/1.1 200 OK
 Server: SLAVI
-Content-Type: text/plain
-			""")
-	elif(fileType == "html"):
-		sock.send("""
-HTTP/1.1 200 OK
+Content-Type: text/plain\n
+""")
+	elif(fileType == "html" or fileType == "php"):
+		sock.send("""HTTP/1.1 200 OK
 Server: SLAVI
-Content-Type: text/html
-			""")
+Content-Type: text/html\n
+""")
 	elif(fileType == 'png'):
-		sock.send("""
-HTTP/1.1 200 OK
+		sock.send("""HTTP/1.1 200 OK
 Server: SLAVI
-Content-Type: image/png
-			""")
+Content-Type: image/png\n
+""")
 	elif(fileType == 'jpg'):
-		sock.send("""
-HTTP/1.1 200 OK
+		sock.send("""HTTP/1.1 200 OK
 Server: SLAVI
-Content-Type: image/jpeg
-			""")
+Content-Type: image/jpeg\n
+""")
+	
 
-	bytesToSend = f.read(1024)
-        sock.send(bytesToSend)
-        while bytesToSend != "":
-        	bytesToSend = f.read(1024)
-        	sock.send(bytesToSend)
+	while True:
+		fileData = f.read()
+		if fileData == '': break
+		sock.sendall(fileData)
+	
 	f.close()
 	sock.close()
+
 
 host = '' 
 port = ''
@@ -89,7 +86,7 @@ sock.listen(5)
 while True:
     csock, caddr = sock.accept()
     print "Connection from: " + `caddr`
-    req = csock.recv(4096) # get the request, 1kB max
+    req = csock.recv(4096) # get the request, 3kB max
     print req
     # req should be sth like GET /move?a=20&b=3 HTTP/1.1
 
@@ -106,8 +103,7 @@ while True:
 	print "a + b = %d" % (sumOfBoth)
 	print "\n"
 
-        csock.send("""
-HTTP/1.1 200 OK
+        csock.send("""HTTP/1.1 200 OK
 Server: SLAVI
 Content-Type: text/html
 
@@ -123,7 +119,6 @@ Content-Type: text/html
     else:
 	match = re.match('GET /(.*) ', req)
         fileName = match.group(1)
-        print "file in else: " + fileName
 	#get the file
 	t = threading.Thread(target=RetrFile, args=("RetrThread", csock, fileName))
         t.start()
