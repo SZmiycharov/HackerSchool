@@ -15,21 +15,18 @@ def RetrFile(name, sock, filename):
         	f = open(filePath, 'rb')
 		print(filePath)
 	except IOError:
-		errorMsg = "File could not be found!"
+		errorMsg = "File %s could not be found!" %(filename)
 		sock.send(errorMsg)
 		sock.close()
 		return
+	except:
+    		print "Unexpected error:", sys.exc_info()[0]
+    		return
 
 	match = re.match('.*\.(.*)', filename)
 	fileType = match.group(1)
 
-	
-	if(fileType == 'py' or fileType == 'txt'):
-		sock.send("""HTTP/1.1 200 OK
-Server: SLAVI
-Content-Type: text/plain\n
-""")
-	elif(fileType == "html" or fileType == "php"):
+	if(fileType == "html" or fileType == "php"):
 		sock.send("""HTTP/1.1 200 OK
 Server: SLAVI
 Content-Type: text/html\n
@@ -53,6 +50,11 @@ Content-Type: application/pdf\n
 		sock.send("""HTTP/1.1 200 OK
 Server: SLAVI
 Content-Type: video/x-msvideo\n
+""")
+	else:
+		sock.send("""HTTP/1.1 200 OK
+Server: SLAVI
+Content-Type: text/plain\n
 """)
 	
 
@@ -92,6 +94,7 @@ sock.bind((host, port))
 #queue the requests
 sock.listen(5) 
 
+print("                   ************SERVER STARTED************")
 # Loop forever, listening for requests:
 while True:
     csock, caddr = sock.accept()
