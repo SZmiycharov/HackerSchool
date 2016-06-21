@@ -9,6 +9,17 @@ import os
 #open za cheteneto na failove kakvi gre6ki vru6ta - DONE!
 #ot koq papka da se vzimat failovete - DONE!
 
+def threaded_client(conn):
+    conn.send(str.encode('Welcome, type your info\n'))
+
+    while True:
+        data = conn.recv(2048)
+        reply = 'Server output: '+ data.decode('utf-8')
+        if not data:
+            break
+        conn.sendall(str.encode(reply))
+    conn.close()
+
 def RetrFile(name, sock, filename):
 	try:		
 		filePath = folder + "/" + filename
@@ -57,7 +68,6 @@ Server: SLAVI
 Content-Type: text/plain\n
 """)
 	
-
 	while True:
 		fileData = f.read()
 		if fileData == '': break
@@ -65,7 +75,6 @@ Content-Type: text/plain\n
 	
 	f.close()
 	sock.close()
-
 
 host = '' 
 port = ''
@@ -90,7 +99,11 @@ port = int(port)
 sock = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
 #change socket behaviour - to be able to reconnect faster
 sock.setsockopt(socket.SOL_SOCKET, socket.SO_REUSEADDR, 1)
-sock.bind((host, port))
+try:
+	sock.bind((host, port))
+except:
+	socket.error as e:
+		print(str(e))
 #queue the requests
 sock.listen(5) 
 
@@ -108,33 +121,35 @@ while True:
         a = match.group(1)
         print "a: " + a
 
-    match = re.match('GET .*&.=(\d+)', req)
+    	match = re.match('GET .*&.=(\d+)', req)
+    	if match:
+		b = match.group(1)
+		print "b: " + b
+		sumOfBoth = int(a) + int(b)
+		print "a + b = %d" % (sumOfBoth)
+		print "\n"
+
+		csock.send("""HTTP/1.1 200 OK
+	Server: SLAVI
+	Content-Type: text/html
+
+	<html>
+	<body>
+	<p><b> sum: %d </b></p>
+	</body>
+	</html>
+			""" % (sumOfBoth))
+		csock.close()
+
+    match = re.match('GET /(.*) ', req)
     if match:
-        b = match.group(1)
-        print "b: " + b
-	sumOfBoth = int(a) + int(b)
-	print "a + b = %d" % (sumOfBoth)
-	print "\n"
-
-        csock.send("""HTTP/1.1 200 OK
-Server: SLAVI
-Content-Type: text/html
-
-<html>
-<body>
-<p><b> sum: %d </b></p>
-</body>
-</html>
-		""" % (sumOfBoth))
-	csock.close()
-
-    
-    else:
-	match = re.match('GET /(.*) ', req)
         fileName = match.group(1)
 	#get the file
 	t = threading.Thread(target=RetrFile, args=("RetrThread", csock, fileName))
         t.start()
+    else:
+	csock.send("Invalid request!\n")
+	csock.close()
 
 csock.close()
 
