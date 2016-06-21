@@ -3,7 +3,6 @@ import re
 import threading
 import sys, getopt
 import os
-from requests import Request, Session
 
 def RetrFile(sock, filename):
 	try:		
@@ -57,7 +56,6 @@ Content-Type: text/plain\n
 		fileData = f.read()
 		if fileData == '': break
 		sock.sendall(fileData)
-	
 	f.close()
 	sock.close()
 
@@ -65,7 +63,6 @@ host = ''
 port = ''
 folder = ''
 
-#get port and folder from cmd line
 try:
 	opts, args = getopt.getopt(sys.argv[1:],"hp:f:",["port=", "folder="])
 except getopt.GetoptError:
@@ -94,17 +91,13 @@ print("                   ************SERVER STARTED************")
 def threaded_client(csock):
 	while True:
 	    req = csock.recv(4096) # get the request, 3kB max
-	    # req should be sth like GET /move?a=20&b=3 HTTP/1.1
-	    match = re.match('GET (.*) HTTP/1.1' , req)
-	    if match:
-	   	 page = 'localhost:8080%s'%(match.group(1))
-	   
+	    print req
 	    match = re.match('GET .*?.=(\d+)', req)
 	    if match:
 		a = match.group(1)
 		print "a: " + a
 
-	    	match = re.match('GET .*&.=(\d+) HTTP/1.1', req)
+	    	match = re.match('GET .*&.=(\d+)', req)
 	    	if match:
 			b = match.group(1)
 			print "b: " + b
@@ -120,30 +113,26 @@ def threaded_client(csock):
 		<body>
 		<p><b> sum: %d </b></p>
 		</body>
-		</html>""" % (sumOfBoth))
-			csock.send("\n")
-			csock.close()
-		else:
-			print("invalid req")
-			csock.send("Invalid request!\n")
-			csock.close()
-	    
+		</html>
+				""" % (sumOfBoth))
+			csock.send("\n")	
 	    elif re.match('GET /(.*) ', req):
 		match = re.match('GET /(.*) ', req)
 		fileName = match.group(1)
 		#get the file
-		t = threading.Thread(target=RetrFile, args=("RetrThread", csock, fileName))
+		t = threading.Thread(target=RetrFile, args=(csock, fileName))
 		t.start()
-		csock.close()
 	    else:
 		csock.send("Invalid request!\n")
-		csock.close()
+	csock.close()
 
 while True:
 	csock, caddr = sock.accept()
 	print "Connection from: " + `caddr`
 	tr = threading.Thread(target=threaded_client, args=(csock,))
 	tr.start()
+
+
 
 
 
