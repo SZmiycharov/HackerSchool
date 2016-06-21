@@ -3,14 +3,7 @@ import re
 import threading
 import sys, getopt
 import os
-
-#za vseki tip fail da se pra6ta header - DONE!
-#error handling ako ne su6testvuva faila - DONE!
-#open za cheteneto na failove kakvi gre6ki vru6ta - DONE!
-#ot koq papka da se vzimat failovete - DONE!
-
-
-
+from requests import Request, Session
 
 def RetrFile(sock, filename):
 	try:		
@@ -99,19 +92,19 @@ sock.listen(5)
 print("                   ************SERVER STARTED************")
 
 def threaded_client(csock):
-	print("in threaded_client")
 	while True:
 	    req = csock.recv(4096) # get the request, 3kB max
-	    print req
-	    print("after req")
 	    # req should be sth like GET /move?a=20&b=3 HTTP/1.1
-
+	    match = re.match('GET (.*) HTTP/1.1' , req)
+	    if match:
+	   	 page = 'localhost:8080%s'%(match.group(1))
+	   
 	    match = re.match('GET .*?.=(\d+)', req)
 	    if match:
 		a = match.group(1)
 		print "a: " + a
 
-	    	match = re.match('GET .*&.=(\d+)', req)
+	    	match = re.match('GET .*&.=(\d+) HTTP/1.1', req)
 	    	if match:
 			b = match.group(1)
 			print "b: " + b
@@ -127,8 +120,13 @@ def threaded_client(csock):
 		<body>
 		<p><b> sum: %d </b></p>
 		</body>
-		</html>
-				""" % (sumOfBoth))
+		</html>""" % (sumOfBoth))
+			csock.send("\n")
+			csock.close()
+		else:
+			print("invalid req")
+			csock.send("Invalid request!\n")
+			csock.close()
 	    
 	    elif re.match('GET /(.*) ', req):
 		match = re.match('GET /(.*) ', req)
@@ -136,10 +134,10 @@ def threaded_client(csock):
 		#get the file
 		t = threading.Thread(target=RetrFile, args=("RetrThread", csock, fileName))
 		t.start()
+		csock.close()
 	    else:
 		csock.send("Invalid request!\n")
 		csock.close()
-	csock.close()
 
 while True:
 	csock, caddr = sock.accept()
