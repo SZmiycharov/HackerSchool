@@ -101,9 +101,8 @@ sock = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
 sock.setsockopt(socket.SOL_SOCKET, socket.SO_REUSEADDR, 1)
 try:
 	sock.bind((host, port))
-except:
-	socket.error as e:
-		print(str(e))
+except socket.error as e:
+	print(str(e))
 #queue the requests
 sock.listen(5) 
 
@@ -139,10 +138,10 @@ while True:
 	</body>
 	</html>
 			""" % (sumOfBoth))
-		csock.close()
 
-    match = re.match('GET /(.*) ', req)
-    if match:
+    
+    elif re.match('GET /(.*) ', req):
+	match = re.match('GET /(.*) ', req)
         fileName = match.group(1)
 	#get the file
 	t = threading.Thread(target=RetrFile, args=("RetrThread", csock, fileName))
