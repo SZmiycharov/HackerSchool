@@ -9,18 +9,10 @@ import os
 #open za cheteneto na failove kakvi gre6ki vru6ta - DONE!
 #ot koq papka da se vzimat failovete - DONE!
 
-def threaded_client(conn):
-    conn.send(str.encode('Welcome, type your info\n'))
 
-    while True:
-        data = conn.recv(2048)
-        reply = 'Server output: '+ data.decode('utf-8')
-        if not data:
-            break
-        conn.sendall(str.encode(reply))
-    conn.close()
 
-def RetrFile(name, sock, filename):
+
+def RetrFile(sock, filename):
 	try:		
 		filePath = folder + "/" + filename
         	f = open(filePath, 'rb')
@@ -103,53 +95,71 @@ try:
 	sock.bind((host, port))
 except socket.error as e:
 	print(str(e))
-#queue the requests
 sock.listen(5) 
-
 print("                   ************SERVER STARTED************")
-# Loop forever, listening for requests:
-while True:
-    csock, caddr = sock.accept()
-    print "Connection from: " + `caddr`
-    req = csock.recv(4096) # get the request, 3kB max
-    print req
-    # req should be sth like GET /move?a=20&b=3 HTTP/1.1
 
-    match = re.match('GET .*?.=(\d+)', req)
-    if match:
-        a = match.group(1)
-        print "a: " + a
+def threaded_client(csock):
+	print("in threaded_client")
+	while True:
+	    req = csock.recv(4096) # get the request, 3kB max
+	    print req
+	    print("after req")
+	    # req should be sth like GET /move?a=20&b=3 HTTP/1.1
 
-    	match = re.match('GET .*&.=(\d+)', req)
-    	if match:
-		b = match.group(1)
-		print "b: " + b
-		sumOfBoth = int(a) + int(b)
-		print "a + b = %d" % (sumOfBoth)
-		print "\n"
+	    match = re.match('GET .*?.=(\d+)', req)
+	    if match:
+		a = match.group(1)
+		print "a: " + a
 
-		csock.send("""HTTP/1.1 200 OK
-	Server: SLAVI
-	Content-Type: text/html
+	    	match = re.match('GET .*&.=(\d+)', req)
+	    	if match:
+			b = match.group(1)
+			print "b: " + b
+			sumOfBoth = int(a) + int(b)
+			print "a + b = %d" % (sumOfBoth)
+			print "\n"
 
-	<html>
-	<body>
-	<p><b> sum: %d </b></p>
-	</body>
-	</html>
-			""" % (sumOfBoth))
+			csock.send("""HTTP/1.1 200 OK
+		Server: SLAVI
+		Content-Type: text/html
 
-    
-    elif re.match('GET /(.*) ', req):
-	match = re.match('GET /(.*) ', req)
-        fileName = match.group(1)
-	#get the file
-	t = threading.Thread(target=RetrFile, args=("RetrThread", csock, fileName))
-        t.start()
-    else:
-	csock.send("Invalid request!\n")
+		<html>
+		<body>
+		<p><b> sum: %d </b></p>
+		</body>
+		</html>
+				""" % (sumOfBoth))
+	    
+	    elif re.match('GET /(.*) ', req):
+		match = re.match('GET /(.*) ', req)
+		fileName = match.group(1)
+		#get the file
+		t = threading.Thread(target=RetrFile, args=("RetrThread", csock, fileName))
+		t.start()
+	    else:
+		csock.send("Invalid request!\n")
+		csock.close()
 	csock.close()
 
-csock.close()
+while True:
+	csock, caddr = sock.accept()
+	print "Connection from: " + `caddr`
+	tr = threading.Thread(target=threaded_client, args=(csock,))
+	tr.start()
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
