@@ -3,6 +3,7 @@ import re
 import threading
 import sys, getopt
 import os
+import time
 
 def RetrFile(conn, filename):
 	try:		
@@ -17,7 +18,6 @@ def RetrFile(conn, filename):
 	match = re.match('.*\.(.*)', filename)
 	fileType = match.group(1)
 
-	
 	if(fileType == 'py' or fileType == 'txt'):
 		conn.send("""HTTP/1.1 200 OK
 Server: SLAVI
@@ -42,7 +42,6 @@ Content-Type: image/jpeg\n
 		fileData = f.read()
 		if fileData == '': break
 		conn.sendall(fileData)
-	print("finished while loop")
 	f.close()
 	conn.close()
 
@@ -97,16 +96,13 @@ def threaded_client(conn):
 				""" % (sumOfBoth))
 			conn.send("\n")
 			conn.close()
-			return
 	    
 	    elif re.match('GET /(.*) ', req):
 		match = re.match('GET /(.*) ', req)
 		fileName = match.group(1)
 		RetrFile(conn, fileName)
-		return
 	    else:
 		conn.send("Invalid request!\n")
-		return
 
 
 print("                   ************SERVER STARTED************")
