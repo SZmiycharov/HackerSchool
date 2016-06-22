@@ -96,14 +96,17 @@ def threaded_client(conn):
 		</html>
 				""" % (sumOfBoth))
 			conn.send("\n")
+			conn.close()
+			return
 	    
 	    elif re.match('GET /(.*) ', req):
 		match = re.match('GET /(.*) ', req)
 		fileName = match.group(1)
 		RetrFile(conn, fileName)
+		return
 	    else:
 		conn.send("Invalid request!\n")
-	return
+		return
 
 
 print("                   ************SERVER STARTED************")
