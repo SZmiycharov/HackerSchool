@@ -62,6 +62,7 @@ Content-Type: image/jpeg\n
 		if fileData == '': break
 		sock.sendall(fileData)
 	f.close()   
+	sock.close()
 
     def listenToClient(self, client):
 	print("in listenToClient function")
@@ -92,10 +93,10 @@ Content-Type: image/jpeg\n
 		<body>
 		<p><b> sum: %d </b></p>
 		</body>
-		</html>""" % (sumOfBoth))
+		</html>
+			""" % (sumOfBoth))
 			client.close()
 
-		    
 		    else:
 			print("in else")
 			match = re.match('GET /(.*) ', req)
