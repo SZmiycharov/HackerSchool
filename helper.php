@@ -46,8 +46,4 @@ while ($row = @pg_fetch_assoc($result)){
 // End XML file
 echo '</Places>';
 
-
-
-
-
 ?>
