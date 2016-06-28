@@ -22,36 +22,37 @@ class ThreadedServer(object):
             client.settimeout(60)
             threading.Thread(target = self.listenToClient,args = (client,)).start()
 
-    def RetrFile(client, fileName):
+    def RetrFile(self, client, fileName):
 	try:		
-		filePath = self.folder + "/" + filename
+		
+		filePath = self.folder + '/' + fileName
         	f = open(filePath, 'rb')
 		print(filePath)
 	except IOError:
+		print("in except")
 		errorMsg = "File could not be found!"
-		client.send(errorMsg)
+		client.sendall(errorMsg)
 		client.close()
-
-	match = re.match('.*\.(.*)', filename)
+	match = re.match('.*\.(.*)', fileName)
 	fileType = match.group(1)
 
 	if(fileType == 'py' or fileType == 'txt'):
-		client.send("""HTTP/1.1 200 OK
+		client.sendall("""HTTP/1.1 200 OK
 Server: SLAVI
 Content-Type: text/plain\n
 """)
 	elif(fileType == "html" or fileType == "php"):
-		client.send("""HTTP/1.1 200 OK
+		client.sendall("""HTTP/1.1 200 OK
 Server: SLAVI
 Content-Type: text/html\n
 """)
 	elif(fileType == 'png'):
-		client.send("""HTTP/1.1 200 OK
+		client.sendall("""HTTP/1.1 200 OK
 Server: SLAVI
 Content-Type: image/png\n
 """)
 	elif(fileType == 'jpg'):
-		client.send("""HTTP/1.1 200 OK
+		client.sendall("""HTTP/1.1 200 OK
 Server: SLAVI
 Content-Type: image/jpeg\n
 """)
@@ -62,6 +63,7 @@ Content-Type: image/jpeg\n
 		client.sendall(fileData)
 	f.close()   
 	client.close()
+	return
 
     def listenToClient(self, client):
         while True:
@@ -94,11 +96,9 @@ Content-Type: text/html\n""")
 		else:
 			match = re.match('GET /(.*) ', req)
 			fileName = match.group(1)
-			t = threading.Thread(target=RetrFile, args=(client, fileName))
-			t.start()
+			self.RetrFile(client, fileName)
             except:
                 client.close()
-                return False
 
 if __name__ == "__main__":
 	host = '' 
