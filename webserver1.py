@@ -10,49 +10,48 @@ class ThreadedServer(object):
         self.host = host
         self.port = port
 	self.folder = folder
-        self.sock = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
+        
+    def listen(self):
+	self.sock = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
         self.sock.setsockopt(socket.SOL_SOCKET, socket.SO_REUSEADDR, 1)
         self.sock.bind((self.host, self.port))
-
-    def listen(self):
-	print("in listen function")
         self.sock.listen(5)
         while True:
             client, address = self.sock.accept()
+	    print "Connection from: " + `address`
             client.settimeout(60)
             threading.Thread(target = self.listenToClient,args = (client,)).start()
 
-    def RetrFile(sock, fileName):
-	print("in RetrFile")
+    def RetrFile(client, fileName):
 	try:		
 		filePath = self.folder + "/" + filename
         	f = open(filePath, 'rb')
 		print(filePath)
 	except IOError:
 		errorMsg = "File could not be found!"
-		sock.send(errorMsg)
-		sock.close()
+		client.send(errorMsg)
+		client.close()
 
 	match = re.match('.*\.(.*)', filename)
 	fileType = match.group(1)
 
 	if(fileType == 'py' or fileType == 'txt'):
-		sock.send("""HTTP/1.1 200 OK
+		client.send("""HTTP/1.1 200 OK
 Server: SLAVI
 Content-Type: text/plain\n
 """)
 	elif(fileType == "html" or fileType == "php"):
-		sock.send("""HTTP/1.1 200 OK
+		client.send("""HTTP/1.1 200 OK
 Server: SLAVI
 Content-Type: text/html\n
 """)
 	elif(fileType == 'png'):
-		sock.send("""HTTP/1.1 200 OK
+		client.send("""HTTP/1.1 200 OK
 Server: SLAVI
 Content-Type: image/png\n
 """)
 	elif(fileType == 'jpg'):
-		sock.send("""HTTP/1.1 200 OK
+		client.send("""HTTP/1.1 200 OK
 Server: SLAVI
 Content-Type: image/jpeg\n
 """)
@@ -60,51 +59,43 @@ Content-Type: image/jpeg\n
 	while True:
 		fileData = f.read()
 		if fileData == '': break
-		sock.sendall(fileData)
+		client.sendall(fileData)
 	f.close()   
-	sock.close()
+	client.close()
 
     def listenToClient(self, client):
-	print("in listenToClient function")
         while True:
             try:
                 req = client.recv(1024)
 		print (req)
-                if req:
-		    print("in first if")
-                    match = re.match('GET .*?.=(\d+)', req)
-		    if match:
+                match = re.match('GET .*?.=(\d+)', req)
+		if match:
+			client.sendall("""HTTP/1.1 200 OK
+Server: SLAVI
+Content-Type: text/html\n""")
 			a = match.group(1)
 			print "a: " + a
 
-		    match = re.match('GET .*&.=(\d+)', req)
-		    if match:
-			print("in first match")
-			b = match.group(1)
-			print "b: " + b
-			sumOfBoth = int(a) + int(b)
-			print "a + b = %d" % (sumOfBoth)
-			print "\n"
+			match = re.match('GET .*&.=(\d+)', req)
+			if match:
+				b = match.group(1)
+				print "b: " + b
+				sumOfBoth = int(a) + int(b)
+				print "a + b = %d" % (sumOfBoth)
+				print "\n"
+				client.sendall("""
+<html>
+<body>
+<p><b> sum: %d </b></p>
+</body>
+</html>""" % (sumOfBoth))
+				client.close()
 
-			client.send("""HTTP/1.1 200 OK
-		Server: SLAVI
-		Content-Type: text/html
-		<html>
-		<body>
-		<p><b> sum: %d </b></p>
-		</body>
-		</html>
-			""" % (sumOfBoth))
-			client.close()
-
-		    else:
-			print("in else")
+		else:
 			match = re.match('GET /(.*) ', req)
 			fileName = match.group(1)
 			t = threading.Thread(target=RetrFile, args=(client, fileName))
 			t.start()
-                else:
-                    raise error('Client disconnected')
             except:
                 client.close()
                 return False
