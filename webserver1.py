@@ -76,12 +76,12 @@ Content-Type: text/html\n""")
 			a = match.group(1)
 			print "a: " + a
 
-			match = re.match('GET .*&.=(\d+)', req)
+			match = re.match('GET .*&.=(\d+) HTTP', req)
 			if match:
 				b = match.group(1)
 				print "b: " + b
 				sumOfBoth = int(a) + int(b)
-				print "a + b = %d" % (sumOfBoth)
+				print "a + b = %s" % (sumOfBoth)
 				print "\n"
 				client.sendall("""
 <html>
