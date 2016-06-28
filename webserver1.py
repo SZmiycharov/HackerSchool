@@ -62,13 +62,11 @@ Content-Type: image/jpeg\n
 		if fileData == '': break
 		client.sendall(fileData)
 	f.close()   
-	client.close()
-	return
 
     def listenToClient(self, client):
         while True:
             try:
-                req = client.recv(1024)
+                req = client.recv(4096)
 		print (req)
                 match = re.match('GET .*?.=(\d+)', req)
 		if match:
@@ -97,6 +95,7 @@ Content-Type: text/html\n""")
 			match = re.match('GET /(.*) ', req)
 			fileName = match.group(1)
 			self.RetrFile(client, fileName)
+			client.close()
             except:
                 client.close()
 
