@@ -6,26 +6,28 @@ import os
 import time
 
 class ThreadedServer(object):
-    def __init__(self, host, port, folder):
+    def __init__(self, host, port, directory, clienttimeout = 60, socklisten = 5):
         self.host = host
         self.port = port
-	self.folder = folder
+	self.directory = directory
+	self.clienttimeout = clienttimeout
+	self.socklisten = socklisten
         
     def listen(self):
 	self.sock = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
         self.sock.setsockopt(socket.SOL_SOCKET, socket.SO_REUSEADDR, 1)
         self.sock.bind((self.host, self.port))
-        self.sock.listen(5)
+        self.sock.listen(self.socklisten)
         while True:
             client, address = self.sock.accept()
 	    print "Connection from: " + `address`
-            client.settimeout(60)
+            client.settimeout(self.clienttimeout)
             threading.Thread(target = self.listenToClient,args = (client,)).start()
 
     def RetrFile(self, client, fileName):
 	try:		
 		
-		filePath = self.folder + '/' + fileName
+		filePath = self.directory + '/' + fileName
         	f = open(filePath, 'rb')
 		print(filePath)
 	except IOError:
@@ -101,25 +103,32 @@ Content-Type: text/html\n""")
 
 if __name__ == "__main__":
 	host = '' 
-	port = ''
-	folder = ''
+	port = '8080'
+	directory = '/home'
 	#get port and folder from cmd line
 	try:
-		opts, args = getopt.getopt(sys.argv[1:],"hp:f:",["port=", "folder="])
+		opts, args = getopt.getopt(sys.argv[1:],"hp:f:",["port=", "directory="])		
 	except getopt.GetoptError:
-		print 'webserver1.py -p <port> -f <folder>'
+		print 'webserver1.py -p <port> -f <directory>'
 		sys.exit(2)
 	for opt, arg in opts:
 		if opt == '-h':
-			print 'webserver1.py -p <port> -f <folder>'
+			print 'webserver1.py -p <port> -f <directory>'
 			sys.exit()
 	    	elif opt in ("-p", "--port"):
 			port = arg
-		elif opt in ("-f", "--folder"):
-			folder = arg
+		elif opt in ("-f", "--directory"):
+			directory = arg
 	port = int(port)
+	if (port>=64000 or port<=1): 
+			print("should specify port as parameter!")
+			sys.exit()
+	if not os.path.isdir(directory):
+		print("not a valid directory")
+		sys.exit()
+		
 	print("                      **********SERVER STARTED**********")
-	ThreadedServer('', port, folder).listen()
+	ThreadedServer('', port, directory).listen()
 
 
 
