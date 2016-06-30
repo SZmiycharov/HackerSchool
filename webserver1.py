@@ -28,14 +28,14 @@ class ThreadedServer(object):
 
     def RetrFile(self, client, fileName):
 	try:		
-		
 		filePath = self.directory + '/' + fileName
         	f = open(filePath, 'rb')
-		print(filePath)
 	except IOError:
 		errorMsg = "File could not be found!"
 		client.sendall(errorMsg)
 		client.close()
+		return
+		
 	match = re.match('.*\.(.*)', fileName)
 	fileType = match.group(1)
 
@@ -59,7 +59,6 @@ Content-Type: image/png\n
 Server: SLAVI
 Content-Type: image/jpeg\n
 """)
-	
 	while True:
 		fileData = f.read()
 		if fileData == '': break
@@ -114,8 +113,7 @@ Content-Type: image/jpeg\n
 					self.RetrFile(client, fileName)
 					client.close()
 		elif(request_method == 'POST'):
-			file_requested = req.split(' ')[1]
-			print("file requested: %s"%(file_requested))
+			file_requested = req.split(' ')[1].split('\n')[0]
 			if(file_requested == '/sum'):
 				parameters = req.split()[-1]
 				print("parameters: %s"%(parameters))
@@ -147,6 +145,7 @@ Content-Type: image/jpeg\n
 				username = req.split(' ')[1].split('&')[0].split('=')[1].split('/')[0]
 				password = req.split(' ')[1].split('&')[1].split('=')[1].split('/')[0]
 				fileName = file_requested.split('/')[2]
+				
 				if(username == 'slavi' and password == 'pass'):
 					self.RetrFile(client, fileName)
 					client.close()
