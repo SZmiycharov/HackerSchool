@@ -4,6 +4,8 @@ import threading
 import sys, getopt
 import os
 import time
+import getrandom
+import subprocess
 
 class ThreadedServer(object):
     def __init__(self, host, port, directory, clienttimeout = 60, socklisten = 5):
@@ -68,43 +70,49 @@ Content-Type: image/jpeg\n
     def listenToClient(self, client):
         while True:
             try:
-		req = recv_timeout(client,10)
+		req = recv_timeout(client,5)
 		print (req)
-		string = bytes.decode(req)
-		request_method = string.split(' ')[0]
+		request_method = req.split(' ')[0]
 		if(request_method == 'GET'):
-		        match = re.match('GET .*?.=(\d+)', req)
-			if match:
-				client.sendall("""HTTP/1.1 200 OK
-	Server: SLAVI
-	Content-Type: text/html\n""")
-				a = match.group(1)
-				print "a: " + a
-
-				match = re.match('GET .*&.=(\d+) HTTP', req)
-				if match:
-					b = match.group(1)
-					print "b: " + b
-					sumOfBoth = int(a) + int(b)
-					print "a + b = %s" % (sumOfBoth)
-					print "\n"
-					client.sendall("""
-	<html>
-	<body>
-	<p><b> sum: %d </b></p>
-	</body>
-	</html>""" % (sumOfBoth))
-					client.close()
+			string = req.split(' ')[1].split('/')[1]
+			if string == 'scripts':
+				maxvalue = req.split('?')[1].split('=')[1]
+				output = subprocess.check_output("python /home/slavi/Desktop/programtocallGETRANDOM.py", shell=True)
+   				client.sendall(output)
+				client.close()
 
 			else:
-				match = re.match('GET /(.*) ', req)
-				fileName = match.group(1)
-				self.RetrFile(client, fileName)
-				client.close()
+				match = re.match('GET .*?.=(\d+)', req)
+				if match:
+					client.sendall("""HTTP/1.1 200 OK
+		Server: SLAVI
+		Content-Type: text/html\n""")
+					a = match.group(1)
+					print "a: " + a
+
+					match = re.match('GET .*&.=(\d+) HTTP', req)
+					if match:
+						b = match.group(1)
+						print "b: " + b
+						sumOfBoth = int(a) + int(b)
+						print "a + b = %s" % (sumOfBoth)
+						print "\n"
+						client.sendall("""
+		<html>
+		<body>
+		<p><b> sum: %d </b></p>
+		</body>
+		</html>""" % (sumOfBoth))
+						client.close()
+
+				else:
+					match = re.match('GET /(.*) ', req)
+					fileName = match.group(1)
+					self.RetrFile(client, fileName)
+					client.close()
 		elif(request_method == 'POST'):
 			file_requested = string.split(' ')[1]
 			print("file requested: %s"%(file_requested))
-			
 			if(file_requested == '/sum'):
 				parameters = string.split()[-1]
 				print("parameters: %s"%(parameters))
