@@ -69,13 +69,13 @@ Content-Type: image/jpeg\n
         while True:
             try:
 		totalData = ''
-		i = 1
 		while True:
 			data = client.recv(1024)
-			print(data)
 			totalData += data
-			if data is None:
-    				print "yolo"
+			print(totalData)
+			if '\n' in data:
+				if '\n' in client.recv(1024):
+					break
 		req = ''.join(totalData)
 		print (req)
 		request_method = req.split(' ')[0]
