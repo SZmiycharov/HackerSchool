@@ -78,6 +78,9 @@ Content-Type: image/jpeg\n
 			if string == 'scripts':
 				maxvalue = req.split('?')[1].split('=')[1]
 				output = subprocess.check_output("python /home/slavi/Desktop/programtocallGETRANDOM.py", shell=True)
+				client.sendall("""HTTP/1.1 200 OK
+		Server: SLAVI
+		Content-Type: text/html\n""")
    				client.sendall(output)
 				client.close()
 

@@ -23,14 +23,14 @@ def some_func(num = -1):
 	a = random.randrange(0,maxvalue)
 	b = random.randrange(0,maxvalue)
 	string = '''<!DOCTYPE html>
-	<html>
-	<body>
+<html>
+<body>
 
-	<h2 style="color:green;">%s</h2>
-	<h2 style="color:red;">%s</h2>
+<h2 style="color:green;">%s</h2>
+<h2 style="color:red;">%s</h2>
 
-	</body>
-	</html>'''%(a,b)
+</body>
+</html>'''%(a,b)
 	print string
 
 if __name__ == "__main__":
