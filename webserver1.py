@@ -76,8 +76,10 @@ Content-Type: image/jpeg\n
 		if(request_method == 'GET'):
 			string = req.split(' ')[1].split('/')[1]
 			if string == 'scripts':
-				maxvalue = req.split('?')[1].split('=')[1]
-				output = subprocess.check_output("python /home/slavi/Desktop/programtocallGETRANDOM.py", shell=True)
+				maxvalue = req.split(' ')[1].split('?MAX=')[1]
+				command = "python %s -m %s"%(req.split(' ')[1].split('?')[0].split('/')[2], maxvalue)
+				print "command: %s"%(command)
+				output = subprocess.check_output(command, shell=True)
 				client.sendall("""HTTP/1.1 200 OK
 		Server: SLAVI
 		Content-Type: text/html\n""")
