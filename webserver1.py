@@ -68,7 +68,15 @@ Content-Type: image/jpeg\n
     def listenToClient(self, client):
         while True:
             try:
-		req = recv_timeout(client,5)
+		totalData = ''
+		i = 1
+		while True:
+			data = client.recv(1024)
+			print(data)
+			totalData += data
+			if data is None:
+    				print "yolo"
+		req = ''.join(totalData)
 		print (req)
 		request_method = req.split(' ')[0]
 		if(request_method == 'GET'):
