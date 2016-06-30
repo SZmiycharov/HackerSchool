@@ -112,9 +112,22 @@ Content-Type: image/jpeg\n
 					fileName = match.group(1)
 					self.RetrFile(client, fileName)
 					client.close()
+
+#***********************************************************************************************************************************	
+	
 		elif(request_method == 'POST'):
 			file_requested = req.split(' ')[1].split('\n')[0]
-			if(file_requested == '/sum'):
+			string = req.split(' ')[1].split('/')[1]
+			if string == 'scripts':
+				maxvalue = req.split('\n')[-1].split('=')[1]
+				command = "python %s -m %s"%(req.split(' ')[1].split('?')[0].split('/')[2], maxvalue)
+				output = subprocess.check_output(command, shell=True)
+				client.sendall("""HTTP/1.1 200 OK
+		Server: SLAVI
+		Content-Type: text/html\n""")
+   				client.sendall(output)
+				client.close()			
+			if file_requested == '/sum':
 				parameters = req.split()[-1]
 				print("parameters: %s"%(parameters))
 				if parameters:
