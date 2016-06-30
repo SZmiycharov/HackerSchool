@@ -101,27 +101,34 @@ Content-Type: image/jpeg\n
 				fileName = match.group(1)
 				self.RetrFile(client, fileName)
 				client.close()
-		if(request_method == 'POST'):
+		elif(request_method == 'POST'):
 			file_requested = string.split(' ')[1]
 			print(file_requested)
-			parameters = string.split()[-1]
-			print("parameters: %s"%(parameters))
-			if parameters:
-				string = req.split('&')
-				a = string[0].split('=')
-				a = a[1]
-				print("a = %s"%(a))
-				b = string[1].split('=')
-				b = b[1]
-				print("b = %s"%(b))
-				sumOfBoth = int(a) + int(b)
-				result = "a + b = %s" % (sumOfBoth)
-				print result
-				client.sendall(result)
+			if(file_requested == '/sum'):
+				parameters = string.split()[-1]
+				print("parameters: %s"%(parameters))
+				if parameters:
+					string = req.split('&')
+					a = string[0].split('=')
+					a = a[1]
+					print("a = %s"%(a))
+					b = string[1].split('=')
+					b = b[1]
+					print("b = %s"%(b))
+					sumOfBoth = int(a) + int(b)
+					result = "a + b = %s" % (sumOfBoth)
+					print result
+					client.sendall(result)
+					client.close()
+				else:
+					print("Parameters should be specified!")
+					client.close()
+			else:
+				self.RetrFile(client, file_requested)
 				client.close()
-				
-				
-			
+		else:
+			print("Cannot recognize %s request!"%(request_method))
+			client.close()
 	    except:
 	    	client.close()
 
