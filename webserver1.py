@@ -68,7 +68,7 @@ Content-Type: image/jpeg\n
     def listenToClient(self, client):
         while True:
             try:
-                req = client.recv(4096)
+		req = recv_timeout(client,10)
 		print (req)
                 match = re.match('GET .*?.=(\d+)', req)
 		if match:
@@ -101,10 +101,45 @@ Content-Type: text/html\n""")
             except:
                 client.close()
 
+def recv_timeout(the_socket,timeout=2):
+    #make socket non blocking
+    the_socket.setblocking(0)
+     
+    #total data partwise in an array
+    total_data=[];
+    data='';
+     
+    #beginning time
+    begin=time.time()
+    while 1:
+        #if you got some data, then break after timeout
+        if total_data and time.time()-begin > timeout:
+            break
+         
+        #if you got no data at all, wait a little longer, twice the timeout
+        elif time.time()-begin > timeout*2:
+            break
+         
+        #recv something
+        try:
+            data = the_socket.recv(8192)
+            if data:
+                total_data.append(data)
+                #change the beginning time for measurement
+                begin=time.time()
+            else:
+                #sleep for sometime to indicate a gap
+                time.sleep(0.1)
+        except:
+            pass
+     
+    #join all parts to make final string
+    return ''.join(total_data)
+
 if __name__ == "__main__":
 	host = '' 
 	port = '8080'
-	directory = '/home'
+	directory = '/home/slavi/Desktop'
 	#get port and folder from cmd line
 	try:
 		opts, args = getopt.getopt(sys.argv[1:],"hp:f:",["port=", "directory="])		
@@ -121,8 +156,8 @@ if __name__ == "__main__":
 			directory = arg
 	port = int(port)
 	if (port>=64000 or port<=1): 
-			print("should specify port as parameter!")
-			sys.exit()
+		print("should specify port as parameter!")
+		sys.exit()
 	if not os.path.isdir(directory):
 		print("not a valid directory")
 		sys.exit()
