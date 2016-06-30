@@ -109,6 +109,9 @@ Content-Type: image/jpeg\n
 				parameters = string.split()[-1]
 				print("parameters: %s"%(parameters))
 				if parameters:
+					client.sendall("""HTTP/1.1 200 OK
+	Server: SLAVI
+	Content-Type: text/html\n""")
 					string = req.split('&')
 					a = string[0].split('=')
 					a = a[1]
@@ -119,7 +122,12 @@ Content-Type: image/jpeg\n
 					sumOfBoth = int(a) + int(b)
 					result = "a + b = %s" % (sumOfBoth)
 					print result
-					client.sendall(result)
+					client.sendall("""
+	<html>
+	<body>
+	<p><b> sum: %d </b></p>
+	</body>
+	</html>""" % (sumOfBoth))
 					client.close()
 				else:
 					print("Parameters should be specified!")
@@ -132,10 +140,10 @@ Content-Type: image/jpeg\n
 					self.RetrFile(client, fileName)
 					client.close()
 				else:
-					print("Not acceptable username and/or passowrd")
+					client.sendall("Not acceptable username and/or passowrd")
 					client.close()
 		else:
-			print("Cannot recognize %s request!"%(request_method))
+			client.sendall("Cannot recognize %s request!"%(request_method))
 			client.close()
 	    except:
 	    	client.close()
