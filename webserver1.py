@@ -33,7 +33,6 @@ class ThreadedServer(object):
         	f = open(filePath, 'rb')
 		print(filePath)
 	except IOError:
-		print("in except")
 		errorMsg = "File could not be found!"
 		client.sendall(errorMsg)
 		client.close()
@@ -78,7 +77,6 @@ Content-Type: image/jpeg\n
 			if string == 'scripts':
 				maxvalue = req.split(' ')[1].split('?MAX=')[1]
 				command = "python %s -m %s"%(req.split(' ')[1].split('?')[0].split('/')[2], maxvalue)
-				print "command: %s"%(command)
 				output = subprocess.check_output(command, shell=True)
 				client.sendall("""HTTP/1.1 200 OK
 		Server: SLAVI
@@ -116,10 +114,10 @@ Content-Type: image/jpeg\n
 					self.RetrFile(client, fileName)
 					client.close()
 		elif(request_method == 'POST'):
-			file_requested = string.split(' ')[1]
+			file_requested = req.split(' ')[1]
 			print("file requested: %s"%(file_requested))
 			if(file_requested == '/sum'):
-				parameters = string.split()[-1]
+				parameters = req.split()[-1]
 				print("parameters: %s"%(parameters))
 				if parameters:
 					client.sendall("""HTTP/1.1 200 OK
