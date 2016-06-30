@@ -103,7 +103,8 @@ Content-Type: image/jpeg\n
 				client.close()
 		elif(request_method == 'POST'):
 			file_requested = string.split(' ')[1]
-			print(file_requested)
+			print("file requested: %s"%(file_requested))
+			
 			if(file_requested == '/sum'):
 				parameters = string.split()[-1]
 				print("parameters: %s"%(parameters))
@@ -124,8 +125,15 @@ Content-Type: image/jpeg\n
 					print("Parameters should be specified!")
 					client.close()
 			else:
-				self.RetrFile(client, file_requested)
-				client.close()
+				username = req.split(' ')[1].split('&')[0].split('=')[1].split('/')[0]
+				password = req.split(' ')[1].split('&')[1].split('=')[1].split('/')[0]
+				fileName = file_requested.split('/')[2]
+				if(username == 'slavi' and password == 'pass'):
+					self.RetrFile(client, fileName)
+					client.close()
+				else:
+					print("Not acceptable username and/or passowrd")
+					client.close()
 		else:
 			print("Cannot recognize %s request!"%(request_method))
 			client.close()
