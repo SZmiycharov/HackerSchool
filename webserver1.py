@@ -84,7 +84,7 @@ Content-Type: image/jpeg\n
 		if(request_method == 'GET'):
 			string = req.split(' ')[1].split('/')[1]
 			if string == 'scripts':
-				maxvalue = req.split(' ')[2].split('MAX=')[1].split('\n')[0]
+				maxvalue = req.split(' ')[1].split('MAX=')[1].split('\n')[0]
 				print maxvalue
 				command = "python %s -m %s"%(req.split(' ')[1].split('?')[0].split('/')[2], maxvalue)
 				print command
