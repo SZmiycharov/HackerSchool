@@ -6,6 +6,7 @@ import os
 import time
 import getrandom
 import subprocess
+import os.path
 
 class ThreadedServer(object):
     def __init__(self, host, port, directory, clienttimeout = 60, socklisten = 5):
@@ -74,24 +75,39 @@ Content-Type: image/jpeg\n
 		print req
 		request_method = req.split(' ')[0]
 
-#*********************************************************************************************************************************
+#*******************************************************GET**************************************************************************
 
 		if(request_method == 'GET'):
 			string = req.split(' ')[1].split('/')[1]
+			print string
 			if string == 'scripts':
 				print "in first if"
 				maxvalue = req.split(' ')[1].split('MAX=')[1].split('\n')[0]
 				print maxvalue
 				command = "python %s -m %s"%(req.split(' ')[1].split('?')[0].split('/')[2], maxvalue)
 				print command
-				output = subprocess.check_output(command, shell=True)
-				client.sendall("""HTTP/1.1 200 OK
-		Server: SLAVI
-		Content-Type: text/html\n""")
-   				client.sendall(output)
-				client.close()
-
-			elif re.match('GET .*?.=(.*)&', req):
+				print req.split(' ')[1].split('?')[0].split('/')[2]
+				temp = str(req.split(' ')[1].split('?')[0].split('/')[2])
+				if os.path.isfile(temp):
+					print "here"
+					output = subprocess.check_output(command, shell=True)
+					client.sendall("""HTTP/1.1 200 OK
+			Server: SLAVI
+			Content-Type: text/html\n""")
+	   				client.sendall(output)
+					client.close()
+				else:
+					client.sendall("""HTTP/1.1 200 OK
+			Server: SLAVI
+			Content-Type: text/html\n""")
+					client.sendall("""
+			<html>
+			<body>
+			<p><b> NO SUCH FILE! </b></p>
+			</body>
+			</html>""")
+					client.close()
+			elif string.split('?')[0] == 'sum':
 				print "in first elif"
 				match = re.match('GET .*?.=(.*)&', req)
 				if match:
@@ -128,8 +144,8 @@ Content-Type: image/jpeg\n
 			</html>""" % (sumOfBoth))
 							client.close()
 			
-			elif req.split(' ')[1].split('/')[1]:
-				fileName = req.split(' ')[1].split('/')[1]
+			elif string == 'files':
+				fileName = req.split(' ')[1].split('/')[2]
 				if len(fileName.split('.')) > 1:
 					print "in second if"
 					self.RetrFile(client, fileName)
@@ -143,11 +159,27 @@ Content-Type: image/jpeg\n
 				<html>
 				<body>
 				<p><b> Web server cannot understand command! </b></p>
+				<p>Should be sum, files or scripts</p>
 				</body>
 				</html>""")
 					client.close()
+			else:
+				print "in last else"
+				client.sendall("""HTTP/1.1 200 OK
+			Server: SLAVI
+			Content-Type: text/html\n""")
+				client.sendall("""
+				<html>
+				<body>
+				<p><b> Web server cannot understand command! </b></p>
+				<p>Should be sum, files or scripts</p>
+				</body>
+				</html>""")
+				client.close()
+				
 
-#***********************************************************************************************************************************	
+
+#*********************************************************POST**************************************************************************	
 	
 		elif(request_method == 'POST'):
 			file_requested = req.split(' ')[1].split('\n')[0]
@@ -157,13 +189,28 @@ Content-Type: image/jpeg\n
 				print maxvalue
 				command = "python %s -m %s"%(req.split(' ')[1].split('?')[0].split('/')[2], maxvalue)
 				print command
-				output = subprocess.check_output(command, shell=True)
-				client.sendall("""HTTP/1.1 200 OK
-		Server: SLAVI
-		Content-Type: text/html\n""")
-   				client.sendall(output)
-				client.close()			
-			elif file_requested == '/sum':
+
+				temp = str(req.split(' ')[1].split('?')[0].split('/')[2])
+				if os.path.isfile(temp):
+					print "here"
+					output = subprocess.check_output(command, shell=True)
+					client.sendall("""HTTP/1.1 200 OK
+			Server: SLAVI
+			Content-Type: text/html\n""")
+	   				client.sendall(output)
+					client.close()
+				else:
+					client.sendall("""HTTP/1.1 200 OK
+			Server: SLAVI
+			Content-Type: text/html\n""")
+					client.sendall("""
+			<html>
+			<body>
+			<p><b> NO SUCH FILE! </b></p>
+			</body>
+			</html>""")
+					client.close()		
+			elif string == 'sum':
 				parameters = req.split()[-1]
 				print("parameters: %s"%(parameters))
 				client.sendall("""HTTP/1.1 200 OK
@@ -227,6 +274,21 @@ Content-Type: image/jpeg\n
 		<p><b> BAD <OR MISSING> PARAMETERS! </b></p>
 		</body>
 		</html>""")
+			else:
+				client.sendall("""HTTP/1.1 200 OK
+			Server: SLAVI
+			Content-Type: text/html\n""")
+				client.sendall("""
+				<html>
+				<body>
+				<p><b> Web server cannot understand command! </b></p>
+				<p>Should be sum, files or scripts</p>
+				</body>
+				</html>""")
+				client.close()
+				
+
+#*************************************************END OF POST***********************************************************************
 		else:
 			client.sendall("Cannot recognize request method <should be POST or GET>!")
 			client.close()
