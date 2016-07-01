@@ -19,7 +19,13 @@ def some_func():
 	try:
 		maxvalue = int(maxvalue)
 	except ValueError:
-		print "MAX is not a number!"
+		string = '''<!DOCTYPE html>
+	<html>
+	<body>
+	<p>MAX was not a number!</p>
+	</body>
+	</html>'''
+		print string
 	else:
 		a = random.randrange(0,maxvalue)
 		b = random.randrange(0,maxvalue)

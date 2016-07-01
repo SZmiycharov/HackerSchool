@@ -79,6 +79,7 @@ Content-Type: image/jpeg\n
 		if(request_method == 'GET'):
 			string = req.split(' ')[1].split('/')[1]
 			if string == 'scripts':
+				print "in first if"
 				maxvalue = req.split(' ')[1].split('MAX=')[1].split('\n')[0]
 				print maxvalue
 				command = "python %s -m %s"%(req.split(' ')[1].split('?')[0].split('/')[2], maxvalue)
@@ -90,7 +91,8 @@ Content-Type: image/jpeg\n
    				client.sendall(output)
 				client.close()
 
-			else:
+			elif re.match('GET .*?.=(.*)&', req):
+				print "in first elif"
 				match = re.match('GET .*?.=(.*)&', req)
 				if match:
 					client.sendall("""HTTP/1.1 200 OK
@@ -126,11 +128,25 @@ Content-Type: image/jpeg\n
 			</html>""" % (sumOfBoth))
 							client.close()
 
-				else:
-					match = re.match('GET /(.*) ', req)
-					fileName = match.group(1)
-					self.RetrFile(client, fileName)
-					client.close()
+			fileName = req.split(' ')[1].split('/')[1]
+			print fileName
+			print fileName.split('.')
+			if len(fileName.split('.')) > 1:
+				print "in second if"
+				self.RetrFile(client, fileName)
+				client.close()
+			elif len(fileName.split('.')) == 1:
+				print "in second elif"
+				client.sendall("""HTTP/1.1 200 OK
+		Server: SLAVI
+		Content-Type: text/html\n""")
+				client.sendall("""
+			<html>
+			<body>
+			<p><b> Web server cannot understand command! </b></p>
+			</body>
+			</html>""")
+				client.close()
 
 #***********************************************************************************************************************************	
 	
