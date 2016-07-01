@@ -182,14 +182,15 @@ Content-Type: image/jpeg\n
 #*********************************************************POST**************************************************************************	
 	
 		elif(request_method == 'POST'):
+			print "method is POST"
 			file_requested = req.split(' ')[1].split('\n')[0]
+			print file_requested
 			string = req.split(' ')[1].split('/')[1]
+			print string
 			if string == 'scripts':
+				print "in first post if"
 				maxvalue = req.split('\n')[-1].split('=')[1]
-				print maxvalue
 				command = "python %s -m %s"%(req.split(' ')[1].split('?')[0].split('/')[2], maxvalue)
-				print command
-
 				temp = str(req.split(' ')[1].split('?')[0].split('/')[2])
 				if os.path.isfile(temp):
 					print "here"
@@ -211,6 +212,7 @@ Content-Type: image/jpeg\n
 			</html>""")
 					client.close()		
 			elif string == 'sum':
+				print "in first elif Post"
 				parameters = req.split()[-1]
 				print("parameters: %s"%(parameters))
 				client.sendall("""HTTP/1.1 200 OK
@@ -244,9 +246,11 @@ Content-Type: image/jpeg\n
 		</body>
 		</html>""" % (sumOfBoth))
 					client.close()
-			elif req.split(' ')[1].split('&')[0].split('=')[1].split('/')[0]:
-				username = req.split(' ')[1].split('&')[0].split('=')[1].split('/')[0]
-				password = req.split(' ')[1].split('&')[1].split('=')[1].split('/')[0]
+			elif string == 'files':
+				print "in second elif post"
+				# POST /files/username=slavi&password=pass/svzmobile.jpg
+				username = req.split(' ')[1].split('/')[2].split('&')[0].split('=')[1].split('/')[0]
+				password = req.split(' ')[1].split('/')[2].split('&')[1].split('=')[1].split('/')[0]
 				if username == '' or password == '':
 					client.sendall("""HTTP/1.1 200 OK
 	Server: SLAVI
@@ -259,7 +263,7 @@ Content-Type: image/jpeg\n
 		</html>""")
 					client.close()
 				else:
-					fileName = file_requested.split('/')[2]
+					fileName = file_requested.split('/')[3]
 				
 					if(username == 'slavi' and password == 'pass'):
 						self.RetrFile(client, fileName)
@@ -271,10 +275,12 @@ Content-Type: image/jpeg\n
 						client.sendall("""
 		<html>
 		<body>
-		<p><b> BAD <OR MISSING> PARAMETERS! </b></p>
+		<p><b> Incorrect username or password! </b></p>
 		</body>
 		</html>""")
+						client.close()
 			else:
+				print "in else post"
 				client.sendall("""HTTP/1.1 200 OK
 			Server: SLAVI
 			Content-Type: text/html\n""")
