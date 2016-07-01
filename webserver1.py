@@ -78,11 +78,16 @@ Content-Type: image/jpeg\n
 			if data == '\r\n' and previousData == '\r\n':
 				break
 		request_method = req.split(' ')[0]
+
+#*********************************************************************************************************************************
+
 		if(request_method == 'GET'):
 			string = req.split(' ')[1].split('/')[1]
 			if string == 'scripts':
-				maxvalue = req.split(' ')[1].split('?MAX=')[1]
+				maxvalue = req.split(' ')[2].split('MAX=')[1].split('\n')[0]
+				print maxvalue
 				command = "python %s -m %s"%(req.split(' ')[1].split('?')[0].split('/')[2], maxvalue)
+				print command
 				output = subprocess.check_output(command, shell=True)
 				client.sendall("""HTTP/1.1 200 OK
 		Server: SLAVI
@@ -126,8 +131,12 @@ Content-Type: image/jpeg\n
 			file_requested = req.split(' ')[1].split('\n')[0]
 			string = req.split(' ')[1].split('/')[1]
 			if string == 'scripts':
-				maxvalue = req.split('\n')[-1].split('=')[1]
+				print req
+				print "****************"
+				maxvalue = req.split(' ')[2].split('MAX=')[1].split('\n')[0]
+				print maxvalue
 				command = "python %s -m %s"%(req.split(' ')[1].split('?')[0].split('/')[2], maxvalue)
+				print(command)
 				output = subprocess.check_output(command, shell=True)
 				client.sendall("""HTTP/1.1 200 OK
 		Server: SLAVI
@@ -173,7 +182,7 @@ Content-Type: image/jpeg\n
 					client.sendall("Not acceptable username and/or passowrd")
 					client.close()
 		else:
-			client.sendall("Cannot recognize %s request!"%(request_method))
+			client.sendall("Cannot recognize request method <should be POST or GET>!")
 			client.close()
 	    except:
 	    	client.close()
