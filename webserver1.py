@@ -121,9 +121,6 @@ Content-Type: image/jpeg\n
 				print "GET in first elif"
 				match = re.match('GET .*?.=(.*)&', req)
 				if match:
-					client.sendall("""HTTP/1.1 204 No Content
-		Server: SLAVI
-		Content-Type: text/html\n""")
 					a = match.group(1)
 					print "a: " + a
 
@@ -135,6 +132,9 @@ Content-Type: image/jpeg\n
 							a = int(a)
 							b = int(b)
 						except ValueError:
+							client.sendall("""HTTP/1.1 400 Bad Request
+		Server: SLAVI
+		Content-Type: text/html\n""")
 							client.sendall("""
 			<html>
 			<body>
@@ -146,6 +146,9 @@ Content-Type: image/jpeg\n
 							sumOfBoth = a + b
 							print "a + b = %s" % (sumOfBoth)
 							print "\n"
+							client.sendall("""HTTP/1.1 200 OK
+		Server: SLAVI
+		Content-Type: text/html\n""")
 							client.sendall("""
 			<html>
 			<body>
@@ -212,7 +215,8 @@ Content-Type: image/jpeg\n
 	   				client.sendall(output)
 					client.close()
 				else:
-					client.sendall("""HTTP/1.1 200 OK
+					print "here"
+					client.sendall("""HTTP/1.1 204 No Content
 			Server: SLAVI
 			Content-Type: text/html\n""")
 					client.sendall("""
@@ -226,9 +230,7 @@ Content-Type: image/jpeg\n
 				print "POST in first elif"
 				parameters = req.split()[-1]
 				print("parameters: %s"%(parameters))
-				client.sendall("""HTTP/1.1 200 OK
-	Server: SLAVI
-	Content-Type: text/html\n""")
+				
 				string = req.split('&')
 				a = string[0].split('=')[-1]
 				print("a = %s"%(a))
@@ -239,6 +241,9 @@ Content-Type: image/jpeg\n
 					a = int(a)
 					b = int(b)
 				except ValueError:
+					client.sendall("""HTTP/1.1 400 Bad Request
+	Server: SLAVI
+	Content-Type: text/html\n""")
 					client.sendall("""
 		<html>
 		<body>
@@ -250,6 +255,9 @@ Content-Type: image/jpeg\n
 					sumOfBoth = a + b
 					print "a + b = %s" % (sumOfBoth)
 					print "\n"
+					client.sendall("""HTTP/1.1 200 OK
+	Server: SLAVI
+	Content-Type: text/html\n""")
 					client.sendall("""
 		<html>
 		<body>
@@ -262,7 +270,7 @@ Content-Type: image/jpeg\n
 				username = req.split(' ')[1].split('/')[2].split('&')[0].split('=')[1].split('/')[0]
 				password = req.split(' ')[1].split('/')[2].split('&')[1].split('=')[1].split('/')[0]
 				if username == '' or password == '':
-					client.sendall("""HTTP/1.1 200 OK
+					client.sendall("""HTTP/1.1 401 Unauthorized
 	Server: SLAVI
 	Content-Type: text/html\n""")
 					client.sendall("""
@@ -279,7 +287,7 @@ Content-Type: image/jpeg\n
 						self.RetrFile(client, fileName)
 						client.close()
 					else:
-						client.sendall("""HTTP/1.1 200 OK
+						client.sendall("""HTTP/1.1 401 Unauthorized
 	Server: SLAVI
 	Content-Type: text/html\n""")
 						client.sendall("""
