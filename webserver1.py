@@ -71,7 +71,7 @@ Content-Type: image/jpeg\n
             try:
 		req = ''
 		data = ''
-		req = client.recv(8192)
+		req = recv_timeout(client,10)
 		print req
 		request_method = req.split(' ')[0]
 
@@ -248,7 +248,6 @@ Content-Type: image/jpeg\n
 					client.close()
 			elif string == 'files':
 				print "in second elif post"
-				# POST /files/username=slavi&password=pass/svzmobile.jpg
 				username = req.split(' ')[1].split('/')[2].split('&')[0].split('=')[1].split('/')[0]
 				password = req.split(' ')[1].split('/')[2].split('&')[1].split('=')[1].split('/')[0]
 				if username == '' or password == '':
