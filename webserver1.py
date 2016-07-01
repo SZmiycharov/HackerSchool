@@ -87,10 +87,11 @@ Content-Type: image/jpeg\n
 #*******************************************************GET**************************************************************************
 
 		if(request_method == 'GET'):
+			print "in GET method"
 			string = req.split(' ')[1].split('/')[1]
 			print string
 			if string == 'scripts':
-				print "in first if"
+				print "GET in first if"
 				maxvalue = req.split(' ')[1].split('MAX=')[1].split('\n')[0]
 				print maxvalue
 				command = "python %s -m %s"%(req.split(' ')[1].split('?')[0].split('/')[2], maxvalue)
@@ -98,7 +99,7 @@ Content-Type: image/jpeg\n
 				print req.split(' ')[1].split('?')[0].split('/')[2]
 				temp = str(req.split(' ')[1].split('?')[0].split('/')[2])
 				if os.path.isfile(temp):
-					print "here"
+					print "GET after os path isfile"
 					output = subprocess.check_output(command, shell=True)
 					client.sendall("""HTTP/1.1 200 OK
 			Server: SLAVI
@@ -117,7 +118,7 @@ Content-Type: image/jpeg\n
 			</html>""")
 					client.close()
 			elif string.split('?')[0] == 'sum':
-				print "in first elif"
+				print "GET in first elif"
 				match = re.match('GET .*?.=(.*)&', req)
 				if match:
 					client.sendall("""HTTP/1.1 204 No Content
@@ -154,13 +155,14 @@ Content-Type: image/jpeg\n
 							client.close()
 			
 			elif string == 'files':
+				print "GET in second elif"
 				fileName = req.split(' ')[1].split('/')[2]
 				if len(fileName.split('.')) > 1:
-					print "in second if"
+					print "GET in second if"
 					self.RetrFile(client, fileName)
 					client.close()
 				elif len(fileName.split('.')) == 1:
-					print "in second elif"
+					print "GET in third elif"
 					client.sendall("""HTTP/1.1 400 Bad Request
 			Server: SLAVI
 			Content-Type: text/html\n""")
@@ -173,7 +175,7 @@ Content-Type: image/jpeg\n
 				</html>""")
 					client.close()
 			else:
-				print "in last else"
+				print "GET in else"
 				client.sendall("""HTTP/1.1 400 Bad Request
 			Server: SLAVI
 			Content-Type: text/html\n""")
@@ -191,18 +193,18 @@ Content-Type: image/jpeg\n
 #*********************************************************POST**************************************************************************	
 	
 		elif(request_method == 'POST'):
-			print "method is POST"
+			print "in POST method"
 			file_requested = req.split(' ')[1].split('\n')[0]
 			print file_requested
 			string = req.split(' ')[1].split('/')[1]
 			print string
 			if string == 'scripts':
-				print "in first post if"
+				print "POST in first if"
 				maxvalue = req.split('\n')[-1].split('=')[1]
 				command = "python %s -m %s"%(req.split(' ')[1].split('?')[0].split('/')[2], maxvalue)
 				temp = str(req.split(' ')[1].split('?')[0].split('/')[2])
 				if os.path.isfile(temp):
-					print "here"
+					print "POST after os path isfile"
 					output = subprocess.check_output(command, shell=True)
 					client.sendall("""HTTP/1.1 200 OK
 			Server: SLAVI
@@ -221,7 +223,7 @@ Content-Type: image/jpeg\n
 			</html>""")
 					client.close()		
 			elif string == 'sum':
-				print "in first elif Post"
+				print "POST in first elif"
 				parameters = req.split()[-1]
 				print("parameters: %s"%(parameters))
 				client.sendall("""HTTP/1.1 200 OK
@@ -256,7 +258,7 @@ Content-Type: image/jpeg\n
 		</html>""" % (sumOfBoth))
 					client.close()
 			elif string == 'files':
-				print "in second elif post"
+				print "POST in second elif"
 				username = req.split(' ')[1].split('/')[2].split('&')[0].split('=')[1].split('/')[0]
 				password = req.split(' ')[1].split('/')[2].split('&')[1].split('=')[1].split('/')[0]
 				if username == '' or password == '':
@@ -288,7 +290,7 @@ Content-Type: image/jpeg\n
 		</html>""")
 						client.close()
 			else:
-				print "in else post"
+				print "POST in else"
 				client.sendall("""HTTP/1.1 400 Bad Request
 			Server: SLAVI
 			Content-Type: text/html\n""")
