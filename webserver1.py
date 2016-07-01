@@ -68,16 +68,15 @@ Content-Type: image/jpeg\n
     def listenToClient(self, client):
         while True:
             try:
-		totalData = ''
+		req = ''
+		previousData = ''
+		data = ''
 		while True:
+			previousData = data
 			data = client.recv(1024)
-			totalData += data
-			print(totalData)
-			if '\n' in data:
-				if '\n' in client.recv(1024):
-					break
-		req = ''.join(totalData)
-		print (req)
+			req += data
+			if data == '\r\n' and previousData == '\r\n':
+				break
 		request_method = req.split(' ')[0]
 		if(request_method == 'GET'):
 			string = req.split(' ')[1].split('/')[1]
