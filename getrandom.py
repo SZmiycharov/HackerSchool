@@ -15,19 +15,24 @@ def some_func():
 		elif opt in ("-m", "--max"):
 			maxvalue = arg
 		
-	maxvalue = int(maxvalue)
-	a = random.randrange(0,maxvalue)
-	b = random.randrange(0,maxvalue)
-	string = '''<!DOCTYPE html>
-<html>
-<body>
 
-<h2 style="color:green;">%s</h2>
-<h2 style="color:red;">%s</h2>
+	try:
+		maxvalue = int(maxvalue)
+	except ValueError:
+		print "MAX is not a number!"
+	else:
+		a = random.randrange(0,maxvalue)
+		b = random.randrange(0,maxvalue)
+		string = '''<!DOCTYPE html>
+	<html>
+	<body>
 
-</body>
-</html>'''%(a,b)
-	print string
+	<h2 style="color:green;">%s</h2>
+	<h2 style="color:red;">%s</h2>
+
+	</body>
+	</html>'''%(a,b)
+		print string
 
 if __name__ == "__main__":
 	some_func()

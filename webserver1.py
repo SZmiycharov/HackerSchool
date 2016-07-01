@@ -91,7 +91,7 @@ Content-Type: image/jpeg\n
 				client.close()
 
 			else:
-				match = re.match('GET .*?.=(\d+)', req)
+				match = re.match('GET .*?.=(.*)&', req)
 				if match:
 					client.sendall("""HTTP/1.1 200 OK
 		Server: SLAVI
@@ -99,20 +99,32 @@ Content-Type: image/jpeg\n
 					a = match.group(1)
 					print "a: " + a
 
-					match = re.match('GET .*&.=(\d+) HTTP', req)
+					match = re.match('GET .*&.=(.*) HTTP', req)
 					if match:
 						b = match.group(1)
 						print "b: " + b
-						sumOfBoth = int(a) + int(b)
-						print "a + b = %s" % (sumOfBoth)
-						print "\n"
-						client.sendall("""
-		<html>
-		<body>
-		<p><b> sum: %d </b></p>
-		</body>
-		</html>""" % (sumOfBoth))
-						client.close()
+						try:
+							a = int(a)
+							b = int(b)
+						except ValueError:
+							client.sendall("""
+			<html>
+			<body>
+			<p><b> BAD PARAMETERS! </b></p>
+			</body>
+			</html>""")
+							client.close()
+						else:
+							sumOfBoth = a + b
+							print "a + b = %s" % (sumOfBoth)
+							print "\n"
+							client.sendall("""
+			<html>
+			<body>
+			<p><b> sum: %d </b></p>
+			</body>
+			</html>""" % (sumOfBoth))
+							client.close()
 
 				else:
 					match = re.match('GET /(.*) ', req)
@@ -129,7 +141,7 @@ Content-Type: image/jpeg\n
 				maxvalue = req.split('\n')[-1].split('=')[1]
 				print maxvalue
 				command = "python %s -m %s"%(req.split(' ')[1].split('?')[0].split('/')[2], maxvalue)
-				print(command)
+				print command
 				output = subprocess.check_output(command, shell=True)
 				client.sendall("""HTTP/1.1 200 OK
 		Server: SLAVI
@@ -139,28 +151,36 @@ Content-Type: image/jpeg\n
 			if file_requested == '/sum':
 				parameters = req.split()[-1]
 				print("parameters: %s"%(parameters))
-				if parameters:
-					client.sendall("""HTTP/1.1 200 OK
+				client.sendall("""HTTP/1.1 200 OK
 	Server: SLAVI
 	Content-Type: text/html\n""")
-					string = req.split('&')
-					a = string[0].split('=')[-1]
-					print("a = %s"%(a))
-					b = string[1].split('=')
-					b = b[1]
-					print("b = %s"%(b))
-					sumOfBoth = int(a) + int(b)
-					result = "a + b = %s" % (sumOfBoth)
-					print result
+				string = req.split('&')
+				a = string[0].split('=')[-1]
+				print("a = %s"%(a))
+				b = string[1].split('=')
+				b = b[1]
+				print("b = %s"%(b))
+				try:
+					a = int(a)
+					b = int(b)
+				except ValueError:
 					client.sendall("""
-	<html>
-	<body>
-	<p><b> sum: %d </b></p>
-	</body>
-	</html>""" % (sumOfBoth))
+		<html>
+		<body>
+		<p><b> BAD <OR MISSING> PARAMETERS! </b></p>
+		</body>
+		</html>""")
 					client.close()
 				else:
-					print("Parameters should be specified!")
+					sumOfBoth = a + b
+					print "a + b = %s" % (sumOfBoth)
+					print "\n"
+					client.sendall("""
+		<html>
+		<body>
+		<p><b> sum: %d </b></p>
+		</body>
+		</html>""" % (sumOfBoth))
 					client.close()
 			else:
 				username = req.split(' ')[1].split('&')[0].split('=')[1].split('/')[0]
