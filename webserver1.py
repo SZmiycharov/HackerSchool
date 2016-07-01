@@ -69,14 +69,8 @@ Content-Type: image/jpeg\n
         while True:
             try:
 		req = ''
-		previousData = ''
 		data = ''
-		while True:
-			previousData = data
-			data = client.recv(1024)
-			req += data
-			if data == '\r\n' and previousData == '\r\n':
-				break
+		req = client.recv(4096)
 		request_method = req.split(' ')[0]
 
 #*********************************************************************************************************************************
@@ -131,9 +125,7 @@ Content-Type: image/jpeg\n
 			file_requested = req.split(' ')[1].split('\n')[0]
 			string = req.split(' ')[1].split('/')[1]
 			if string == 'scripts':
-				print req
-				print "****************"
-				maxvalue = req.split(' ')[2].split('MAX=')[1].split('\n')[0]
+				maxvalue = req.split('\n')[-1].split('=')[1]
 				print maxvalue
 				command = "python %s -m %s"%(req.split(' ')[1].split('?')[0].split('/')[2], maxvalue)
 				print(command)
