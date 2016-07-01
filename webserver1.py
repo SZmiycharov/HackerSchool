@@ -127,26 +127,25 @@ Content-Type: image/jpeg\n
 			</body>
 			</html>""" % (sumOfBoth))
 							client.close()
-
-			fileName = req.split(' ')[1].split('/')[1]
-			print fileName
-			print fileName.split('.')
-			if len(fileName.split('.')) > 1:
-				print "in second if"
-				self.RetrFile(client, fileName)
-				client.close()
-			elif len(fileName.split('.')) == 1:
-				print "in second elif"
-				client.sendall("""HTTP/1.1 200 OK
-		Server: SLAVI
-		Content-Type: text/html\n""")
-				client.sendall("""
-			<html>
-			<body>
-			<p><b> Web server cannot understand command! </b></p>
-			</body>
-			</html>""")
-				client.close()
+			
+			elif req.split(' ')[1].split('/')[1]:
+				fileName = req.split(' ')[1].split('/')[1]
+				if len(fileName.split('.')) > 1:
+					print "in second if"
+					self.RetrFile(client, fileName)
+					client.close()
+				elif len(fileName.split('.')) == 1:
+					print "in second elif"
+					client.sendall("""HTTP/1.1 200 OK
+			Server: SLAVI
+			Content-Type: text/html\n""")
+					client.sendall("""
+				<html>
+				<body>
+				<p><b> Web server cannot understand command! </b></p>
+				</body>
+				</html>""")
+					client.close()
 
 #***********************************************************************************************************************************	
 	
@@ -164,7 +163,7 @@ Content-Type: image/jpeg\n
 		Content-Type: text/html\n""")
    				client.sendall(output)
 				client.close()			
-			if file_requested == '/sum':
+			elif file_requested == '/sum':
 				parameters = req.split()[-1]
 				print("parameters: %s"%(parameters))
 				client.sendall("""HTTP/1.1 200 OK
@@ -198,17 +197,36 @@ Content-Type: image/jpeg\n
 		</body>
 		</html>""" % (sumOfBoth))
 					client.close()
-			else:
+			elif req.split(' ')[1].split('&')[0].split('=')[1].split('/')[0]:
 				username = req.split(' ')[1].split('&')[0].split('=')[1].split('/')[0]
 				password = req.split(' ')[1].split('&')[1].split('=')[1].split('/')[0]
-				fileName = file_requested.split('/')[2]
-				
-				if(username == 'slavi' and password == 'pass'):
-					self.RetrFile(client, fileName)
+				if username == '' or password == '':
+					client.sendall("""HTTP/1.1 200 OK
+	Server: SLAVI
+	Content-Type: text/html\n""")
+					client.sendall("""
+		<html>
+		<body>
+		<p><b> BAD <OR MISSING> PARAMETERS! </b></p>
+		</body>
+		</html>""")
 					client.close()
 				else:
-					client.sendall("Not acceptable username and/or passowrd")
-					client.close()
+					fileName = file_requested.split('/')[2]
+				
+					if(username == 'slavi' and password == 'pass'):
+						self.RetrFile(client, fileName)
+						client.close()
+					else:
+						client.sendall("""HTTP/1.1 200 OK
+	Server: SLAVI
+	Content-Type: text/html\n""")
+						client.sendall("""
+		<html>
+		<body>
+		<p><b> BAD <OR MISSING> PARAMETERS! </b></p>
+		</body>
+		</html>""")
 		else:
 			client.sendall("Cannot recognize request method <should be POST or GET>!")
 			client.close()
