@@ -70,7 +70,8 @@ Content-Type: image/jpeg\n
             try:
 		req = ''
 		data = ''
-		req = client.recv(4096)
+		req = client.recv(8192)
+		print req
 		request_method = req.split(' ')[0]
 
 #*********************************************************************************************************************************
@@ -143,8 +144,7 @@ Content-Type: image/jpeg\n
 	Server: SLAVI
 	Content-Type: text/html\n""")
 					string = req.split('&')
-					a = string[0].split('=')
-					a = a[1]
+					a = string[0].split('=')[-1]
 					print("a = %s"%(a))
 					b = string[1].split('=')
 					b = b[1]
