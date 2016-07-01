@@ -33,7 +33,16 @@ class ThreadedServer(object):
         	f = open(filePath, 'rb')
 	except IOError:
 		errorMsg = "File could not be found!"
-		client.sendall(errorMsg)
+		client.sendall("""HTTP/1.1 204 No Content
+Server: SLAVI
+Content-Type: text/html\n
+""")
+		client.sendall("""
+			<html>
+			<body>
+			<p><b> sum: %s </b></p>
+			</body>
+			</html>""" % (errorMsg))
 		client.close()
 		return
 		
@@ -71,7 +80,7 @@ Content-Type: image/jpeg\n
             try:
 		req = ''
 		data = ''
-		req = recv_timeout(client,10)
+		req = client.recv(8192)
 		print req
 		request_method = req.split(' ')[0]
 
@@ -97,7 +106,7 @@ Content-Type: image/jpeg\n
 	   				client.sendall(output)
 					client.close()
 				else:
-					client.sendall("""HTTP/1.1 200 OK
+					client.sendall("""HTTP/1.1 204 No Content
 			Server: SLAVI
 			Content-Type: text/html\n""")
 					client.sendall("""
@@ -111,7 +120,7 @@ Content-Type: image/jpeg\n
 				print "in first elif"
 				match = re.match('GET .*?.=(.*)&', req)
 				if match:
-					client.sendall("""HTTP/1.1 200 OK
+					client.sendall("""HTTP/1.1 204 No Content
 		Server: SLAVI
 		Content-Type: text/html\n""")
 					a = match.group(1)
@@ -152,7 +161,7 @@ Content-Type: image/jpeg\n
 					client.close()
 				elif len(fileName.split('.')) == 1:
 					print "in second elif"
-					client.sendall("""HTTP/1.1 200 OK
+					client.sendall("""HTTP/1.1 400 Bad Request
 			Server: SLAVI
 			Content-Type: text/html\n""")
 					client.sendall("""
@@ -165,7 +174,7 @@ Content-Type: image/jpeg\n
 					client.close()
 			else:
 				print "in last else"
-				client.sendall("""HTTP/1.1 200 OK
+				client.sendall("""HTTP/1.1 400 Bad Request
 			Server: SLAVI
 			Content-Type: text/html\n""")
 				client.sendall("""
@@ -280,7 +289,7 @@ Content-Type: image/jpeg\n
 						client.close()
 			else:
 				print "in else post"
-				client.sendall("""HTTP/1.1 200 OK
+				client.sendall("""HTTP/1.1 400 Bad Request
 			Server: SLAVI
 			Content-Type: text/html\n""")
 				client.sendall("""
