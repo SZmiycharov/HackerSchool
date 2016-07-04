@@ -361,6 +361,8 @@ Content-Type: image/jpeg\n
 				print "POST in second elif"
 				username = req.split(' ')[1].split('/')[2].split('&')[0].split('=')[1].split('/')[0]
 				password = req.split(' ')[1].split('/')[2].split('&')[1].split('=')[1].split('/')[0]
+				print username
+				print password
 				if username == '' or password == '':
 					client.sendall("""HTTP/1.1 401 Unauthorized
 	Server: SLAVI
@@ -379,10 +381,12 @@ Content-Type: image/jpeg\n
 					cur.execute("""SELECT username FROM users""")
 					rows = cur.fetchall()
 					for row in rows:
-						if row[0] == username:	
+						if row[0] == username:
 							cur.execute("""SELECT password FROM users""")
+							rows = cur.fetchall()
 							for row in rows:
 								if row[0] == password:
+									print "heASHDAHSDHAre"
 									credentialsCorrect = True
 									self.RetrFile(client, fileName)
 									logging.info("Retrieved file %s; POST!"%(fileName))
