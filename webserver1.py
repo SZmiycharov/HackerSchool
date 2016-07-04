@@ -119,7 +119,22 @@ Content-Type: image/jpeg\n
 					client.close()
 
 			elif string == 'upload':
-				client.sendall("Filename? -> ")
+				client.sendall("""HTTP/1.1 200 OK
+			Server: SLAVI
+			Content-Type: text/html\n""")
+				client.sendall("""<!DOCTYPE html>
+<html>
+<body>
+
+<form>
+File: <input type="text" name="File"><br>
+<input type="submit" value="Submit">
+</form>
+
+
+</body>
+</html>""")
+				client.close()
 				filePath = client.recv(1024)
 				print "filepath: %s"%(filePath)	
 				filePath = filePath.split('\r\n')[0]
@@ -135,6 +150,13 @@ Content-Type: image/jpeg\n
 					f2.write(line)
 					print line
 				f2.close()
+				
+				client.sendall("""
+			<html>
+			<body>
+			<p> File uploaded! </p>
+			</body>
+			</html>""")
 				client.close()
 		
 
