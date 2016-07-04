@@ -9,6 +9,8 @@ import subprocess
 import os.path
 import logging
 import psycopg2
+from multiprocessing import Process
+import os
 
 logging.basicConfig(format='%(asctime)s %(message)s',filename='/home/slavi/Desktop/webserver1.log',level=logging.DEBUG )
 try:
