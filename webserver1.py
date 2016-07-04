@@ -7,6 +7,9 @@ import time
 import getrandom
 import subprocess
 import os.path
+import logging
+
+logging.basicConfig(filename='/home/slavi/Desktop/webserver1.log',level=logging.DEBUG)
 
 class ThreadedServer(object):
     def __init__(self, host, port, directory, clienttimeout = 60, socklisten = 5):
@@ -104,6 +107,7 @@ Content-Type: image/jpeg\n
 			Server: SLAVI
 			Content-Type: text/html\n""")
 	   				client.sendall(output)
+					logging.info("Returned 2 random numbers less than %s!"%(maxvalue))
 					client.close()
 				else:
 					client.sendall("""HTTP/1.1 204 No Content
@@ -148,7 +152,8 @@ Content-Type: image/jpeg\n
 			<body>
 			<p> File uploaded! </p>
 			</body>
-			</html>""")
+			</html>""")	
+				logging.info("Uploaded file %s!"%(absoluteFilePath))
 				
 				client.close()
 		
@@ -191,6 +196,7 @@ Content-Type: image/jpeg\n
 			<p><b> sum: %d </b></p>
 			</body>
 			</html>""" % (sumOfBoth))
+							logging.info("Found sum of %s and %s!"%(a,b))
 							client.close()
 			
 			elif string == 'files':
