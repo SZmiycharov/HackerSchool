@@ -22,13 +22,12 @@ $query = "SELECT ek_atte.t_v_m, ek_atte.name, ek_obl.name as oblast, ek_obst.nam
 	INNER JOIN ek_obst ON ek_atte.obstina = ek_obst.obstina
 	INNER JOIN ek_obl ON ek_atte.oblast = ek_obl.oblast
 	WHERE ek_atte.name LIKE '{$entry}%'";
-
 $result = pg_query($query);
 
 header("Content-type: text/xml");
 
 // Start XML file, echo parent node
-echo '<Places>'; 
+echo "<Places>"; 
 
 // Iterate through the rows, printing XML nodes for each
 while ($row = @pg_fetch_assoc($result)){
@@ -45,5 +44,4 @@ while ($row = @pg_fetch_assoc($result)){
 
 // End XML file
 echo '</Places>';
-
 ?>

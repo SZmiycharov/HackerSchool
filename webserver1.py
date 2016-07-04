@@ -117,6 +117,27 @@ Content-Type: image/jpeg\n
 			</body>
 			</html>""")
 					client.close()
+
+			elif string == 'upload':
+				client.sendall("Filename? -> ")
+				filePath = client.recv(1024)
+				print "filepath: %s"%(filePath)	
+				filePath = filePath.split('\r\n')[0]
+				currFileName = filePath.split('/')[-1].split('.')[0]
+				print currFileName
+				currFileType = filePath.split('/')[-1].split('.')[1]
+				print currFileType
+				newfile = self.directory + "/" + currFileName + "1." + currFileType
+				print "newfile: %s"%(newfile)
+				f = open(filePath, 'r')
+				f2 = open(newfile, 'w+')
+				for line in f:
+					f2.write(line)
+					print line
+				f2.close()
+				client.close()
+		
+
 			elif string.split('?')[0] == 'sum':
 				print "GET in first elif"
 				match = re.match('GET .*?.=(.*)&', req)
