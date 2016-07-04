@@ -8,8 +8,15 @@ import getrandom
 import subprocess
 import os.path
 import logging
+import psycopg2
 
 logging.basicConfig(format='%(asctime)s %(message)s',filename='/home/slavi/Desktop/webserver1.log',level=logging.DEBUG )
+try:
+    conn = psycopg2.connect("dbname='httpAuth' user='slavi' host='localhost' password='3111'")
+except:
+    print "I am unable to connect to the database"
+cur = conn.cursor()
+
 
 class ThreadedServer(object):
     def __init__(self, host, port, directory, clienttimeout = 60, socklisten = 5):
@@ -367,13 +374,21 @@ Content-Type: image/jpeg\n
 					logging.info("Wrong username/password; POST!")
 					client.close()
 				else:
+					credentialsCorrect = False
 					fileName = file_requested.split('/')[3]
-				
-					if(username == 'slavi' and password == 'pass'):
-						self.RetrFile(client, fileName)
-						logging.info("Retrieved file %s; POST!"%(fileName))
-						client.close()
-					else:
+					cur.execute("""SELECT username FROM users""")
+					rows = cur.fetchall()
+					for row in rows:
+						if row[0] == username:	
+							cur.execute("""SELECT password FROM users""")
+							for row in rows:
+								if row[0] == password:
+									credentialsCorrect = True
+									self.RetrFile(client, fileName)
+									logging.info("Retrieved file %s; POST!"%(fileName))
+									client.close()
+							
+					if not credentialsCorrect:
 						client.sendall("""HTTP/1.1 401 Unauthorized
 	Server: SLAVI
 	Content-Type: text/html\n""")
