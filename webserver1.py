@@ -36,7 +36,7 @@ class ThreadedServer(object):
         	f = open(filePath, 'rb')
 	except IOError:
 		errorMsg = "File could not be found!"
-		client.sendall("""HTTP/1.1 204 No Content
+		client.sendall("""HTTP/1.1 400 Bad Request
 Server: SLAVI
 Content-Type: text/html\n
 """)
@@ -111,7 +111,7 @@ Content-Type: image/jpeg\n
 					logging.info("Returned 2 random numbers less than %s; GET!"%(maxvalue))
 					client.close()
 				else:
-					client.sendall("""HTTP/1.1 204 No Content
+					client.sendall("""HTTP/1.1 400 Bad Request
 			Server: SLAVI
 			Content-Type: text/html\n""")
 					client.sendall("""
@@ -248,7 +248,42 @@ Content-Type: image/jpeg\n
 			print file_requested
 			string = req.split(' ')[1].split('/')[1]
 			print string
-			if string == 'scripts':
+			if string == 'upload':
+				print "POST in upload"
+				currFileName = req.split('%2F')[-1].split('.')[0]
+				print currFileName
+				currFileType = req.split('%2F')[-1].split('.')[1]
+				print currFileType
+				newfile = self.directory + "/" + currFileName + "1." + currFileType
+				length = len(req.split('\n')[-1].split('filePath=')[1].split('%2F'))
+				absoluteFilePath = ''
+				for i in range (1,length):
+					absoluteFilePath += "/" + req.split('\n')[-1].split('filePath=')[1].split('%2F')[i]
+				print "abs path: %s"%(absoluteFilePath)
+				print "newfile: %s"%(newfile)
+				f = open(absoluteFilePath, 'rb')
+				f2 = open(newfile, 'wb+')
+				bytesToSend = f.read(4096)
+				f2.write(bytesToSend)
+				while bytesToSend != '':
+				    bytesToSend = f.read(4096)
+				    f2.write(bytesToSend)
+				f.close()
+				f2.close()
+				client.sendall("""HTTP/1.1 200 OK
+			Server: SLAVI
+			Content-Type: text/html\n""")
+				client.sendall("""
+			<html>
+			<body>
+			<p> File uploaded! </p>
+			</body>
+			</html>""")	
+				logging.info("Uploaded file %s; GET!"%(absoluteFilePath))
+				
+				client.close()
+				
+			elif string == 'scripts':
 				print "POST in first if"
 				maxvalue = req.split('\n')[-1].split('=')[1]
 				command = "python %s -m %s"%(req.split(' ')[1].split('?')[0].split('/')[2], maxvalue)
@@ -263,7 +298,7 @@ Content-Type: image/jpeg\n
 					logging.info("Executed program: %s; POST!"%(req.split(' ')[1].split('?')[0].split('/')[2]))
 					client.close()
 				else:
-					client.sendall("""HTTP/1.1 204 No Content
+					client.sendall("""HTTP/1.1 400 Bad Request
 			Server: SLAVI
 			Content-Type: text/html\n""")
 					client.sendall("""
@@ -373,7 +408,6 @@ Content-Type: image/jpeg\n
 			client.close()
 	    except:
 	    	client.close()
-		break
 
 def recv_timeout(the_socket,timeout=2):
     #make socket non blocking
