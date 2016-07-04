@@ -9,7 +9,7 @@ import subprocess
 import os.path
 import logging
 
-logging.basicConfig(filename='/home/slavi/Desktop/webserver1.log',level=logging.DEBUG)
+logging.basicConfig(format='%(asctime)s %(message)s',filename='/home/slavi/Desktop/webserver1.log',level=logging.DEBUG )
 
 class ThreadedServer(object):
     def __init__(self, host, port, directory, clienttimeout = 60, socklisten = 5):
@@ -43,9 +43,10 @@ Content-Type: text/html\n
 		client.sendall("""
 			<html>
 			<body>
-			<p><b> sum: %s </b></p>
+			<p><b> %s </b></p>
 			</body>
 			</html>""" % (errorMsg))
+		logging.error("File %s could not be found!"%(fileName))
 		client.close()
 		return
 		
@@ -107,7 +108,7 @@ Content-Type: image/jpeg\n
 			Server: SLAVI
 			Content-Type: text/html\n""")
 	   				client.sendall(output)
-					logging.info("Returned 2 random numbers less than %s!"%(maxvalue))
+					logging.info("Returned 2 random numbers less than %s; GET!"%(maxvalue))
 					client.close()
 				else:
 					client.sendall("""HTTP/1.1 204 No Content
@@ -119,6 +120,7 @@ Content-Type: image/jpeg\n
 			<p><b> NO SUCH FILE! </b></p>
 			</body>
 			</html>""")
+					logging.error("File could not be found; GET!")
 					client.close()
 
 			elif string.split('?')[0] == 'upload':
@@ -132,7 +134,6 @@ Content-Type: image/jpeg\n
 				print length
 				absoluteFilePath = ''
 				for i in range (1,length):
-					print i
 					absoluteFilePath += '/' + filePath.split('%2F')[i]
 				print absoluteFilePath
 				f = open(absoluteFilePath, 'rb')
@@ -153,7 +154,7 @@ Content-Type: image/jpeg\n
 			<p> File uploaded! </p>
 			</body>
 			</html>""")	
-				logging.info("Uploaded file %s!"%(absoluteFilePath))
+				logging.info("Uploaded file %s; GET!"%(absoluteFilePath))
 				
 				client.close()
 		
@@ -182,6 +183,7 @@ Content-Type: image/jpeg\n
 			<p><b> BAD PARAMETERS! </b></p>
 			</body>
 			</html>""")
+							logging.error("Bad parameters for sum; GET!")
 							client.close()
 						else:
 							sumOfBoth = a + b
@@ -196,7 +198,7 @@ Content-Type: image/jpeg\n
 			<p><b> sum: %d </b></p>
 			</body>
 			</html>""" % (sumOfBoth))
-							logging.info("Found sum of %s and %s!"%(a,b))
+							logging.info("Found sum of %s and %s; GET!"%(a,b))
 							client.close()
 			
 			elif string == 'files':
@@ -205,6 +207,7 @@ Content-Type: image/jpeg\n
 				if len(fileName.split('.')) > 1:
 					print "GET in second if"
 					self.RetrFile(client, fileName)
+					logging.info("Retrieved file %s; GET!"%(fileName))
 					client.close()
 				elif len(fileName.split('.')) == 1:
 					print "GET in third elif"
@@ -218,6 +221,7 @@ Content-Type: image/jpeg\n
 				<p>Should be sum, files or scripts</p>
 				</body>
 				</html>""")
+					logging.error("Bad command; user tried: %s; GET!"%(string))
 					client.close()
 			else:
 				print "GET in else"
@@ -231,6 +235,7 @@ Content-Type: image/jpeg\n
 				<p>Should be sum, files or scripts</p>
 				</body>
 				</html>""")
+				logging.error("Bad command; user tried: %s; GET!"%(string))
 				client.close()
 				
 
@@ -255,9 +260,9 @@ Content-Type: image/jpeg\n
 			Server: SLAVI
 			Content-Type: text/html\n""")
 	   				client.sendall(output)
+					logging.info("Executed program: %s; POST!"%(req.split(' ')[1].split('?')[0].split('/')[2]))
 					client.close()
 				else:
-					print "here"
 					client.sendall("""HTTP/1.1 204 No Content
 			Server: SLAVI
 			Content-Type: text/html\n""")
@@ -267,6 +272,7 @@ Content-Type: image/jpeg\n
 			<p><b> NO SUCH FILE! </b></p>
 			</body>
 			</html>""")
+					logging.error("File %s could not be found; POST!"%(req.split(' ')[1].split('?')[0].split('/')[2]))
 					client.close()		
 			elif string == 'sum':
 				print "POST in first elif"
@@ -292,6 +298,7 @@ Content-Type: image/jpeg\n
 		<p><b> BAD <OR MISSING> PARAMETERS! </b></p>
 		</body>
 		</html>""")
+					logging.error("Bad parameters for sum; POST!"%())
 					client.close()
 				else:
 					sumOfBoth = a + b
@@ -306,6 +313,7 @@ Content-Type: image/jpeg\n
 		<p><b> sum: %d </b></p>
 		</body>
 		</html>""" % (sumOfBoth))
+					logging.info("Returned sum of %s and %s; POST"%(a,b))
 					client.close()
 			elif string == 'files':
 				print "POST in second elif"
@@ -321,12 +329,14 @@ Content-Type: image/jpeg\n
 		<p><b> BAD <OR MISSING> PARAMETERS! </b></p>
 		</body>
 		</html>""")
+					logging.info("Wrong username/password; POST!")
 					client.close()
 				else:
 					fileName = file_requested.split('/')[3]
 				
 					if(username == 'slavi' and password == 'pass'):
 						self.RetrFile(client, fileName)
+						logging.info("Retrieved file %s; POST!"%(fileName))
 						client.close()
 					else:
 						client.sendall("""HTTP/1.1 401 Unauthorized
@@ -338,6 +348,7 @@ Content-Type: image/jpeg\n
 		<p><b> Incorrect username or password! </b></p>
 		</body>
 		</html>""")
+						logging.error("User tried incorrect username or password; POST!")
 						client.close()
 			else:
 				print "POST in else"
@@ -351,15 +362,18 @@ Content-Type: image/jpeg\n
 				<p>Should be sum, files or scripts</p>
 				</body>
 				</html>""")
+				logging.error("Wrong command; user tried: %s; POST"%(string))
 				client.close()
 				
 
 #*************************************************END OF POST***********************************************************************
 		else:
 			client.sendall("Cannot recognize request method <should be POST or GET>!")
+			logging.error("Could not recognize request!")
 			client.close()
 	    except:
 	    	client.close()
+		break
 
 def recv_timeout(the_socket,timeout=2):
     #make socket non blocking
