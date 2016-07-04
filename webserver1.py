@@ -89,7 +89,6 @@ Content-Type: image/jpeg\n
 		if(request_method == 'GET'):
 			print "in GET method"
 			string = req.split(' ')[1].split('/')[1]
-			print string
 			if string == 'scripts':
 				print "GET in first if"
 				maxvalue = req.split(' ')[1].split('MAX=')[1].split('\n')[0]
@@ -118,45 +117,39 @@ Content-Type: image/jpeg\n
 			</html>""")
 					client.close()
 
-			elif string == 'upload':
+			elif string.split('?')[0] == 'upload':
+				filePath = string.split('filePath=')[1].split()[0]
+				currFileName = filePath.split('%2F')[-1].split('.')[0]
+				currFileType = filePath.split('%2F')[-1].split('.')[1]
+				print "filePath: %s"%(filePath)
+				newfile = self.directory + "/" + currFileName + "1." + currFileType
+				print "newfile: %s"%(newfile)
+				length = len(filePath.split('%2F'))
+				print length
+				absoluteFilePath = ''
+				for i in range (1,length):
+					print i
+					absoluteFilePath += '/' + filePath.split('%2F')[i]
+				print absoluteFilePath
+				f = open(absoluteFilePath, 'rb')
+				f2 = open(newfile, 'wb+')
+				bytesToSend = f.read(4096)
+				f2.write(bytesToSend)
+				while bytesToSend != '':
+				    bytesToSend = f.read(4096)
+				    f2.write(bytesToSend)
+				f.close()
+				f2.close()
 				client.sendall("""HTTP/1.1 200 OK
 			Server: SLAVI
 			Content-Type: text/html\n""")
-				client.sendall("""<!DOCTYPE html>
-<html>
-<body>
-
-<form>
-File: <input type="text" name="File"><br>
-<input type="submit" value="Submit">
-</form>
-
-
-</body>
-</html>""")
-				client.close()
-				filePath = client.recv(1024)
-				print "filepath: %s"%(filePath)	
-				filePath = filePath.split('\r\n')[0]
-				currFileName = filePath.split('/')[-1].split('.')[0]
-				print currFileName
-				currFileType = filePath.split('/')[-1].split('.')[1]
-				print currFileType
-				newfile = self.directory + "/" + currFileName + "1." + currFileType
-				print "newfile: %s"%(newfile)
-				f = open(filePath, 'r')
-				f2 = open(newfile, 'w+')
-				for line in f:
-					f2.write(line)
-					print line
-				f2.close()
-				
 				client.sendall("""
 			<html>
 			<body>
 			<p> File uploaded! </p>
 			</body>
 			</html>""")
+				
 				client.close()
 		
 
