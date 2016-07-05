@@ -177,11 +177,27 @@ Content-Type: image/jpeg\n
 					client.close()
 
 			elif string.split('?')[0] == 'download':
-				serverfile = string.split('file=')[1].split()[0]
-				print serverfile
-				self.RetrFile(client, fileName)
-				logging.info("Downloaded file %s; GET!"%(absoluteFilePath))
-				client.close()
+				fileName = string.split('file=')[1].split()[0]
+				if len(fileName.split('.')) > 1:
+					print "GET in second if"
+					print fileName
+					self.RetrFile(client, fileName, True)
+					logging.info("Retrieved file %s; GET!"%(fileName))
+					client.close()
+				elif len(fileName.split('.')) == 1:
+					print "GET in third elif"
+					client.sendall("""HTTP/1.1 400 Bad Request
+			Server: SLAVI
+			Content-Type: text/html\n""")
+					client.sendall("""
+				<html>
+				<body>
+				<p><b> Web server cannot understand command! </b></p>
+				<p>Should be sum, files or scripts</p>
+				</body>
+				</html>""")
+					logging.error("Bad command; user tried: %s; GET!"%(string))
+					client.close()
 
 			elif string.split('?')[0] == 'sum':
 				print "GET in first elif"
@@ -224,10 +240,7 @@ Content-Type: image/jpeg\n
 			</html>""" % (sumOfBoth))
 							logging.info("Found sum of %s and %s; GET!"%(a,b))
 							client.close()
-			elif string == 'upload':
-				print "in upload"
 			
-
 			elif string == 'files':
 				print "GET in second elif"
 				fileName = req.split(' ')[1].split('/')[2]
