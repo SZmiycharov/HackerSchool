@@ -134,12 +134,12 @@ Content-Type: image/jpeg\n
 
 			elif string.split('?')[0] == 'download':
 				serverfile = string.split('file=')[1].split()[0]
+				print serverfile
 				serverfileName = serverfile.split('.')[0]
 				serverfileType = serverfile.split('.')[1]
 				newfile = serverfileName + "1." + serverfileType
 				print "newfile: %s"%(newfile)
 				serverfile = self.directory + "/" + serverfile
-				print serverfile
 				f = open(serverfile, 'rb')
 				f2 = open(newfile, 'wb+')
 				bytesToSend = f.read(4096)
