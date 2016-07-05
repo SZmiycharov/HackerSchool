@@ -279,6 +279,10 @@ Content-Type: image/jpeg\n
 			print string
 			if string == 'upload':
 				print "POST in upload"
+				print "******************"
+				filePart = req.split('Content-Type:')[2].split('\r\n\r\n')[1].split('\n\r')[0]
+				print filePart
+				print "******************"
 				currFileName = req.split('%2F')[-1].split('.')[0]
 				print currFileName
 				currFileType = req.split('%2F')[-1].split('.')[1]
