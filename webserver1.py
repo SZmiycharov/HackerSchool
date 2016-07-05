@@ -9,6 +9,7 @@ import subprocess
 import os.path
 import logging
 import psycopg2
+import resource
 from multiprocessing import Process
 import os
 
@@ -49,10 +50,9 @@ class ThreadedServer(object):
 			else:
 				sys.exit(0)
 		except OSError, e:
-			print "exrept oserror"
+			print "except oserror"
 			sys.exit(1)
-		
-	print "out of for loop**********************************************"
+		print resource.getrusage(resource.RUSAGE_SELF).ru_maxrss
 
     def RetrFile(self, client, fileName):
 	try:		
