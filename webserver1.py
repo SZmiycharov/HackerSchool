@@ -16,7 +16,7 @@ logging.basicConfig(format='%(asctime)s %(message)s',filename='/home/slavi/Deskt
 try:
     conn = psycopg2.connect("dbname='httpAuth' user='slavi' host='localhost' password='3111'")
 except:
-    print "I am unable to connect to the database"
+    print "Unable to connect to the database"
 cur = conn.cursor()
 
 
@@ -37,11 +37,17 @@ class ThreadedServer(object):
         self.sock.setsockopt(socket.SOL_SOCKET, socket.SO_REUSEADDR, 1)
         self.sock.bind((self.host, self.port))
         self.sock.listen(self.socklisten)
-        while True:
-            client, address = self.sock.accept()
-	    print "Connection from: " + `address`
-            client.settimeout(self.clienttimeout)
-            threading.Thread(target = self.listenToClient,args = (client,)).start()
+	for i in range(1000):
+		client, address = self.sock.accept()
+		child_pid = os.fork()
+		print "child_pid: %s"%(child_pid)
+		if child_pid == 0:
+			childpid = os.getpid()
+			self.listenToClient(client)
+		else:
+			continue
+	print "out of for loop**********************************************"
+		
 
     def RetrFile(self, client, fileName):
 	try:		
@@ -217,6 +223,7 @@ Content-Type: image/jpeg\n
 			</html>""" % (sumOfBoth))
 							logging.info("Found sum of %s and %s; GET!"%(a,b))
 							client.close()
+							return
 			
 			elif string == 'files':
 				print "GET in second elif"
