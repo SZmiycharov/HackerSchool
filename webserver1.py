@@ -27,6 +27,10 @@ class ThreadedServer(object):
 	self.directory = directory
 	self.clienttimeout = clienttimeout
 	self.socklisten = socklisten
+	self.downloadedFiles = []
+	self.downloadedFiles.append(0)
+	self.uploadedFiles = []
+	self.uploadedFiles.append(0)
         
     def listen(self):
 	self.sock = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
@@ -140,7 +144,6 @@ Content-Type: image/jpeg\n
 				newfile = self.directory + "/" + currFileName + "1." + currFileType
 				print "newfile: %s"%(newfile)
 				length = len(filePath.split('%2F'))
-				print length
 				absoluteFilePath = ''
 				for i in range (1,length):
 					absoluteFilePath += '/' + filePath.split('%2F')[i]
@@ -154,6 +157,8 @@ Content-Type: image/jpeg\n
 				    f2.write(bytesToSend)
 				f.close()
 				f2.close()
+				self.uploadedFiles[0] += 1
+				print self.uploadedFiles[0]
 				client.sendall("""HTTP/1.1 200 OK
 			Server: SLAVI
 			Content-Type: text/html\n""")
@@ -161,9 +166,12 @@ Content-Type: image/jpeg\n
 			<html>
 			<body>
 			<p> File uploaded! </p>
+			<p> %s files already uploaded! </p>
 			</body>
-			</html>""")	
+			</html>"""%(self.uploadedFiles[0]))	
 				logging.info("Uploaded file %s; GET!"%(absoluteFilePath))
+				
+				
 				
 				client.close()
 		
@@ -286,8 +294,9 @@ Content-Type: image/jpeg\n
 			<html>
 			<body>
 			<p> File uploaded! </p>
+			<p> %s files already uploaded! </p>
 			</body>
-			</html>""")	
+			</html>"""%(self.uploadedFiles[0]))	
 				logging.info("Uploaded file %s; GET!"%(absoluteFilePath))
 				
 				client.close()
@@ -484,8 +493,8 @@ if __name__ == "__main__":
 		elif opt in ("-f", "--directory"):
 			directory = arg
 	port = int(port)
-	if (port>=64000 or port<=1): 
-		print("should specify port as parameter!")
+	if (port>=65535 or port<=1): 
+		print("should specify valid port as parameter!")
 		sys.exit()
 	if not os.path.isdir(directory):
 		print("not a valid directory")
