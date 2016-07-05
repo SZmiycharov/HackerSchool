@@ -1,0 +1,2 @@
+bios - gotovo!
+sled zarejdane na kernela - koi zarejda procesite (apache, mysql, grafi4na sreda) - init(), koito se vika ot deamon-a; init e proces koito izvikva vsi4ki drugi procesi, inicializira gi

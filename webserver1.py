@@ -11,6 +11,8 @@ import logging
 import psycopg2
 from multiprocessing import Process
 import os
+import re
+import cgi
 
 logging.basicConfig(format='%(asctime)s %(message)s',filename='/home/slavi/Desktop/webserver1.log',level=logging.DEBUG )
 try:
@@ -39,7 +41,7 @@ class ThreadedServer(object):
             client.settimeout(self.clienttimeout)
             threading.Thread(target = self.listenToClient,args = (client,)).start()
 
-    def RetrFile(self, client, fileName):
+    def RetrFile(self, client, fileName, toDownload=True):
 	try:		
 		filePath = self.directory + '/' + fileName
         	f = open(filePath, 'rb')
@@ -61,32 +63,75 @@ Content-Type: text/html\n
 		
 	match = re.match('.*\.(.*)', fileName)
 	fileType = match.group(1)
-
-	if(fileType == 'py' or fileType == 'txt'):
-		client.sendall("""HTTP/1.1 200 OK
+	if toDownload:
+		if(fileType == 'py'):
+			client.sendall("""HTTP/1.1 200 OK
 Server: SLAVI
-Content-Type: text/plain\n
-""")
-	elif(fileType == "html" or fileType == "php"):
-		client.sendall("""HTTP/1.1 200 OK
+Content-Type: text/plain
+Content-Disposition: attachment; filename="file.py"\n""")
+		elif(fileType == 'txt'):
+			client.sendall("""HTTP/1.1 200 OK
 Server: SLAVI
-Content-Type: text/html\n
-""")
-	elif(fileType == 'png'):
-		client.sendall("""HTTP/1.1 200 OK
+Content-Type: text/plain
+Content-Disposition: attachment; filename="file.txt"\n""")
+		elif(fileType == "html"):
+			client.sendall("""HTTP/1.1 200 OK
 Server: SLAVI
-Content-Type: image/png\n
-""")
-	elif(fileType == 'jpg'):
-		client.sendall("""HTTP/1.1 200 OK
+Content-Type: text/html
+Content-Disposition: attachment; filename="file.html"\n""")
+		elif(fileType == "php"):
+			client.sendall("""HTTP/1.1 200 OK
+Server: SLAVI
+Content-Type: text/html
+Content-Disposition: attachment; filename="file.php"\n""")
+		elif(fileType == 'png'):
+			client.sendall("""HTTP/1.1 200 OK
+Server: SLAVI
+Content-Type: image/png
+Content-Disposition: attachment; filename="file.png"\n""")
+		elif(fileType == 'jpg'):
+			client.sendall("""HTTP/1.1 200 OK
+Server: SLAVI
+Content-Type: image/jpeg
+Content-Disposition: attachment; filename="file.jpg"\n""")
+		while True:
+			fileData = f.read()
+			if fileData == '': break
+			client.sendall(fileData)
+		f.close()   
+	else:
+		if(fileType == 'py'):
+			client.sendall("""HTTP/1.1 200 OK
+Server: SLAVI
+Content-Type: text/plain\n""")
+		elif(fileType == 'txt'):
+			client.sendall("""HTTP/1.1 200 OK
+Server: SLAVI
+Content-Type: text/plain\n""")
+		elif(fileType == "html"):
+			client.sendall("""HTTP/1.1 200 OK
+Server: SLAVI
+Content-Type: text/html\n""")
+		elif(fileType == "php"):
+			client.sendall("""HTTP/1.1 200 OK
+Server: SLAVI
+Content-Type: text/html\n""")
+		elif(fileType == 'png'):
+			client.sendall("""HTTP/1.1 200 OK
+Server: SLAVI
+Content-Type: image/png\n""")
+		elif(fileType == 'jpg'):
+			client.sendall("""HTTP/1.1 200 OK
 Server: SLAVI
 Content-Type: image/jpeg\n
 """)
-	while True:
-		fileData = f.read()
-		if fileData == '': break
-		client.sendall(fileData)
-	f.close()   
+		
+		while True:
+			fileData = f.read()
+			if fileData == '': break
+			client.sendall(fileData)
+		f.close()   
+		
 
     def listenToClient(self, client):
         while True:
@@ -94,7 +139,6 @@ Content-Type: image/jpeg\n
 		req = ''
 		data = ''
 		req = client.recv(8192)
-		print req
 		request_method = req.split(' ')[0]
 
 #*******************************************************GET**************************************************************************
@@ -134,34 +178,10 @@ Content-Type: image/jpeg\n
 
 			elif string.split('?')[0] == 'download':
 				serverfile = string.split('file=')[1].split()[0]
-				serverfileName = serverfile.split('.')[0]
-				serverfileType = serverfile.split('.')[1]
-				newfile = serverfileName + "1." + serverfileType
-				print "newfile: %s"%(newfile)
-				serverfile = self.directory + "/" + serverfile
 				print serverfile
-				f = open(serverfile, 'rb')
-				f2 = open(newfile, 'wb+')
-				bytesToSend = f.read(4096)
-				f2.write(bytesToSend)
-				while bytesToSend != '':
-				    bytesToSend = f.read(4096)
-				    f2.write(bytesToSend)
-				f.close()
-				f2.close()
-				client.sendall("""HTTP/1.1 200 OK
-			Server: SLAVI
-			Content-Type: text/html\n""")
-				client.sendall("""
-			<html>
-			<body>
-			<p> File downloaded! </p>
-			</body>
-			</html>""")	
+				self.RetrFile(client, fileName)
 				logging.info("Downloaded file %s; GET!"%(absoluteFilePath))
-				
 				client.close()
-		
 
 			elif string.split('?')[0] == 'sum':
 				print "GET in first elif"
@@ -204,13 +224,17 @@ Content-Type: image/jpeg\n
 			</html>""" % (sumOfBoth))
 							logging.info("Found sum of %s and %s; GET!"%(a,b))
 							client.close()
+			elif string == 'upload':
+				print "in upload"
 			
+
 			elif string == 'files':
 				print "GET in second elif"
 				fileName = req.split(' ')[1].split('/')[2]
 				if len(fileName.split('.')) > 1:
 					print "GET in second if"
-					self.RetrFile(client, fileName)
+					print fileName
+					self.RetrFile(client, fileName, False)
 					logging.info("Retrieved file %s; GET!"%(fileName))
 					client.close()
 				elif len(fileName.split('.')) == 1:
@@ -252,42 +276,9 @@ Content-Type: image/jpeg\n
 			print file_requested
 			string = req.split(' ')[1].split('/')[1]
 			print string
-			if string == 'download':
-				print "POST in download"
-				currFileName = req.split('%2F')[-1].split('.')[0]
-				print currFileName
-				currFileType = req.split('%2F')[-1].split('.')[1]
-				print currFileType
-				newfile = self.directory + "/" + currFileName + "1." + currFileType
-				length = len(req.split('\n')[-1].split('filePath=')[1].split('%2F'))
-				absoluteFilePath = ''
-				for i in range (1,length):
-					absoluteFilePath += "/" + req.split('\n')[-1].split('filePath=')[1].split('%2F')[i]
-				print "abs path: %s"%(absoluteFilePath)
-				print "newfile: %s"%(newfile)
-				f = open(absoluteFilePath, 'rb')
-				f2 = open(newfile, 'wb+')
-				bytesToSend = f.read(4096)
-				f2.write(bytesToSend)
-				while bytesToSend != '':
-				    bytesToSend = f.read(4096)
-				    f2.write(bytesToSend)
-				f.close()
-				f2.close()
-				client.sendall("""HTTP/1.1 200 OK
-			Server: SLAVI
-			Content-Type: text/html\n""")
-				client.sendall("""
-			<html>
-			<body>
-			<p> File downloaded! </p>
-			</body>
-			</html>""")	
-				logging.info("Downloaded file %s; GET!"%(absoluteFilePath))
+			
 				
-				client.close()
-				
-			elif string == 'scripts':
+			if string == 'scripts':
 				print "POST in first if"
 				maxvalue = req.split('\n')[-1].split('=')[1]
 				command = "python %s -m %s"%(req.split(' ')[1].split('?')[0].split('/')[2], maxvalue)
@@ -487,7 +478,7 @@ if __name__ == "__main__":
 		sys.exit()
 		
 	print("                      **********SERVER STARTED**********")
-	ThreadedServer('', port, directory).listen()
+	ThreadedServer('10.20.1.151', port, directory).listen()
 
 
 
