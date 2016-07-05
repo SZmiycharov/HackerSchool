@@ -21,7 +21,7 @@ cur = conn.cursor()
 
 
 class ThreadedServer(object):
-    def __init__(self, host, port, directory, clienttimeout = 60, socklisten = 5):
+    def __init__(self, host, port, directory, clienttimeout = 6, socklisten = 5):
         self.host = host
         self.port = port
 	self.directory = directory
@@ -37,17 +37,21 @@ class ThreadedServer(object):
         self.sock.setsockopt(socket.SOL_SOCKET, socket.SO_REUSEADDR, 1)
         self.sock.bind((self.host, self.port))
         self.sock.listen(self.socklisten)
-	for i in range(1000):
+	while True:
 		client, address = self.sock.accept()
+		print "Connection from: " + `address`
 		child_pid = os.fork()
-		print "child_pid: %s"%(child_pid)
 		if child_pid == 0:
+			print "true"
 			childpid = os.getpid()
 			self.listenToClient(client)
+			os._exit(0)
+			break
 		else:
-			continue
+			print "in else of forks"
+	print child_pid
 	print "out of for loop**********************************************"
-		
+	sys.exit()
 
     def RetrFile(self, client, fileName):
 	try:		
