@@ -145,8 +145,10 @@ Content-Type: image/jpeg\n
             try:
 		req = ''
 		data = ''
-		req = client.recv(8192)
-		
+		req = recv_timeout(client, 5)
+		print "************"
+		print req
+		print "************"
 		request_method = req.split(' ')[0]
 
 #*******************************************************GET**************************************************************************
@@ -191,7 +193,7 @@ Content-Type: text/html\n
 """)
 				client.sendall("""<form action="http://10.20.1.151:8080/files/username=slavi&password=3111/success.png" enctype="multipart/form-data" method="post">
 <p>Please specify a file, or a set of files:<br>
-<input type="file" name="datafile" size="40"></p>
+<input type="file" name="datafile"></p>
 <div>
 <input type="submit" value="Send">
 </div>
@@ -383,8 +385,6 @@ Content-Type: text/html\n
 				print "POST in second elif"
 				username = req.split(' ')[1].split('/')[2].split('&')[0].split('=')[1].split('/')[0]
 				password = req.split(' ')[1].split('/')[2].split('&')[1].split('=')[1].split('/')[0]
-				print username
-				print password
 				if username == '' or password == '':
 					client.sendall("""HTTP/1.1 401 Unauthorized
 	Server: SLAVI
@@ -414,8 +414,7 @@ Content-Type: text/html\n
 									if fileName == 'success.png':
 										contType = req.split('Content-Type')[2].split(': ')[1].split('\n')[0]
 										contType = contType.split('\r')[0]
-										fileToUpload = req.split('Content-Type')[2].split(': ')[1].split(contType)[1].split('-------')[0]
-										print "filetoupload %s"%(fileToUpload)
+										fileToUpload = req.split('Content-Type')[2].split(': ')[1].split(contType)[1].split('-----------------------------')[0].split('\r\n\r\n')[1].split('\n\r')[0]
 										if contType == 'text/plain':
 											print "yes text plain e!"
 											serverFile = self.directory + '/ASHDAHSD.txt'
@@ -431,6 +430,12 @@ Content-Type: text/html\n
 										elif contType == 'image/jpeg':
 											print "image jpeg e"
 											serverFile = self.directory + '/ASHDAHSD.jpg'
+											f = open(serverFile, 'wb+')
+											f.write(fileToUpload)
+											f.close()
+										elif contType == 'image/png':
+											print "image png e"
+											serverFile = self.directory + '/ASHDAHSD.png'
 											f = open(serverFile, 'wb+')
 											f.write(fileToUpload)
 											f.close()
