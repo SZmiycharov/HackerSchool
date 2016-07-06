@@ -146,9 +146,7 @@ Content-Type: image/jpeg\n
 		req = ''
 		data = ''
 		req = client.recv(8192)
-		print "*************************"
-		print req
-		print "*************************"
+		
 		request_method = req.split(' ')[0]
 
 #*******************************************************GET**************************************************************************
@@ -191,7 +189,7 @@ Content-Type: image/jpeg\n
 Server: SLAVI
 Content-Type: text/html\n
 """)
-				client.sendall("""<form action="http://localhost:8080/files/username=slavi&password=3111/success.png" enctype="multipart/form-data" method="post">
+				client.sendall("""<form action="http://10.20.1.151:8080/files/username=slavi&password=3111/success.png" enctype="multipart/form-data" method="post">
 <p>Please specify a file, or a set of files:<br>
 <input type="file" name="datafile" size="40"></p>
 <div>
@@ -421,6 +419,18 @@ Content-Type: text/html\n
 										if contType == 'text/plain':
 											print "yes text plain e!"
 											serverFile = self.directory + '/ASHDAHSD.txt'
+											f = open(serverFile, 'wb+')
+											f.write(fileToUpload)
+											f.close()
+										elif contType == 'text/x-python':
+											print "text xpython e"
+											serverFile = self.directory + '/ASHDAHSD.py'
+											f = open(serverFile, 'wb+')
+											f.write(fileToUpload)
+											f.close()
+										elif contType == 'image/jpeg':
+											print "image jpeg e"
+											serverFile = self.directory + '/ASHDAHSD.jpg'
 											f = open(serverFile, 'wb+')
 											f.write(fileToUpload)
 											f.close()
