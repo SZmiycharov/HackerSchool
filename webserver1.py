@@ -88,12 +88,14 @@ Content-Disposition: attachment; filename="file.php"\n""")
 			client.sendall("""HTTP/1.1 200 OK
 Server: SLAVI
 Content-Type: image/png
-Content-Disposition: attachment; filename="file.png"\n""")
+Content-Disposition: attachment; filename="file.png"\n
+""")
 		elif(fileType == 'jpg'):
 			client.sendall("""HTTP/1.1 200 OK
 Server: SLAVI
 Content-Type: image/jpeg
-Content-Disposition: attachment; filename="file.jpg"\n""")
+Content-Disposition: attachment; filename="file.jpg"\n
+""")
 		while True:
 			fileData = f.read()
 			if fileData == '': break
@@ -103,23 +105,28 @@ Content-Disposition: attachment; filename="file.jpg"\n""")
 		if(fileType == 'py'):
 			client.sendall("""HTTP/1.1 200 OK
 Server: SLAVI
-Content-Type: text/plain\n""")
+Content-Type: text/plain\n
+""")
 		elif(fileType == 'txt'):
 			client.sendall("""HTTP/1.1 200 OK
 Server: SLAVI
-Content-Type: text/plain\n""")
+Content-Type: text/plain\n
+""")
 		elif(fileType == "html"):
 			client.sendall("""HTTP/1.1 200 OK
 Server: SLAVI
-Content-Type: text/html\n""")
+Content-Type: text/html\n
+""")
 		elif(fileType == "php"):
 			client.sendall("""HTTP/1.1 200 OK
 Server: SLAVI
-Content-Type: text/html\n""")
+Content-Type: text/html\n
+""")
 		elif(fileType == 'png'):
 			client.sendall("""HTTP/1.1 200 OK
 Server: SLAVI
-Content-Type: image/png\n""")
+Content-Type: image/png\n
+""")
 		elif(fileType == 'jpg'):
 			client.sendall("""HTTP/1.1 200 OK
 Server: SLAVI
@@ -139,6 +146,9 @@ Content-Type: image/jpeg\n
 		req = ''
 		data = ''
 		req = client.recv(8192)
+		print "*************************"
+		print req
+		print "*************************"
 		request_method = req.split(' ')[0]
 
 #*******************************************************GET**************************************************************************
@@ -175,7 +185,20 @@ Content-Type: image/jpeg\n
 			</html>""")
 					logging.error("File could not be found; GET!")
 					client.close()
-
+			elif string == 'upload':
+				print "in upload"
+				client.sendall("""HTTP/1.1 200 OK
+Server: SLAVI
+Content-Type: text/html\n
+""")
+				client.sendall("""<form action="http://localhost:8080/files/username=slavi&password=3111/success.png" enctype="multipart/form-data" method="post">
+<p>Please specify a file, or a set of files:<br>
+<input type="file" name="datafile" size="40"></p>
+<div>
+<input type="submit" value="Send">
+</div>
+</form>""")			
+				client.close()
 			elif string.split('?')[0] == 'download':
 				fileName = string.split('file=')[1].split()[0]
 				if len(fileName.split('.')) > 1:
@@ -289,8 +312,7 @@ Content-Type: image/jpeg\n
 			print file_requested
 			string = req.split(' ')[1].split('/')[1]
 			print string
-			
-				
+	
 			if string == 'scripts':
 				print "POST in first if"
 				maxvalue = req.split('\n')[-1].split('=')[1]
@@ -316,7 +338,8 @@ Content-Type: image/jpeg\n
 			</body>
 			</html>""")
 					logging.error("File %s could not be found; POST!"%(req.split(' ')[1].split('?')[0].split('/')[2]))
-					client.close()		
+					client.close()	
+			
 			elif string == 'sum':
 				print "POST in first elif"
 				parameters = req.split()[-1]
@@ -387,10 +410,20 @@ Content-Type: image/jpeg\n
 							rows = cur.fetchall()
 							for row in rows:
 								if row[0] == password:
-									print "heASHDAHSDHAre"
 									credentialsCorrect = True
-									self.RetrFile(client, fileName)
+									self.RetrFile(client, fileName, False)
 									logging.info("Retrieved file %s; POST!"%(fileName))
+									if fileName == 'success.png':
+										contType = req.split('Content-Type')[2].split(': ')[1].split('\n')[0]
+										contType = contType.split('\r')[0]
+										fileToUpload = req.split('Content-Type')[2].split(': ')[1].split(contType)[1].split('-------')[0]
+										print "filetoupload %s"%(fileToUpload)
+										if contType == 'text/plain':
+											print "yes text plain e!"
+											serverFile = self.directory + '/ASHDAHSD.txt'
+											f = open(serverFile, 'wb+')
+											f.write(fileToUpload)
+											f.close()
 									client.close()
 							
 					if not credentialsCorrect:
@@ -491,7 +524,7 @@ if __name__ == "__main__":
 		sys.exit()
 		
 	print("                      **********SERVER STARTED**********")
-	ThreadedServer('10.20.1.151', port, directory).listen()
+	ThreadedServer('', port, directory).listen()
 
 
 
