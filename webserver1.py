@@ -13,7 +13,8 @@ from multiprocessing import Process
 import os
 import re
 import cgi
-import request
+import Request
+import ServerFunctions
 
 logging.basicConfig(format='%(asctime)s %(message)s',filename='/home/slavi/Desktop/webserver1.log',level=logging.DEBUG )
 try:
@@ -38,88 +39,15 @@ class Server(object):
 		f.close()
 
     def listen(self):
-	self.sock = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
-        self.sock.setsockopt(socket.SOL_SOCKET, socket.SO_REUSEADDR, 1)
-        self.sock.bind((self.host, self.port))
-        self.sock.listen(self.socklisten)
-        while True:
-            client, address = self.sock.accept()
-	    print "Connection from: " + `address`
-            client.settimeout(self.clienttimeout)
-            threading.Thread(target = self.listenToClient,args = (client,)).start()
-
-    def RetrFile(self, client, fileName, toDownload=True):
-	try:		
-		filePath = self.directory + '/' + fileName
-        	f = open(filePath, 'rb')
-	except IOError:
-		errorMsg = "File could not be found!"
-		request.Request(client, '400 Bad Request').SendRequest()
-		client.sendall("""
-			<html>
-			<body>
-			<p><b> %s </b></p>
-			</body>
-			</html>""" % (errorMsg))
-		logging.error("File %s could not be found!"%(fileName))
-		client.close()
-		return
-		
-	match = re.match('.*\.(.*)', fileName)
-	fileType = match.group(1)
-	if toDownload:
-		if(fileType == 'py'):
-			client.sendall("""HTTP/1.1 200 OK
-Server: SLAVI
-Content-Type: text/plain
-Content-Disposition: attachment; filename="file.py"\n""")
-		elif(fileType == 'txt'):
-			client.sendall("""HTTP/1.1 200 OK
-Server: SLAVI
-Content-Type: text/plain
-Content-Disposition: attachment; filename="file.txt"\n""")
-		elif(fileType == "html"):
-			client.sendall("""HTTP/1.1 200 OK
-Server: SLAVI
-Content-Type: text/html
-Content-Disposition: attachment; filename="file.html"\n""")
-		elif(fileType == "php"):
-			client.sendall("""HTTP/1.1 200 OK
-Server: SLAVI
-Content-Type: text/html
-Content-Disposition: attachment; filename="file.php"\n""")
-		elif(fileType == 'png'):
-			client.sendall("""HTTP/1.1 200 OK
-Server: SLAVI
-Content-Type: image/png
-Content-Disposition: attachment; filename="file.png"\n
-""")
-		elif(fileType == 'jpg'):
-			request.Request(client, '200 OK', 'image/jpeg', 'jpg').SendFileRequest()
-		while True:
-			fileData = f.read()
-			if fileData == '': break
-			client.sendall(fileData)
-		f.close()  
-	else:
-		if(fileType == 'py'):
-			request.Request(client, '200 OK', 'text/plain').SendRequest()
-		elif(fileType == 'txt'):
-			request.Request(client, '200 OK', 'text/plain').SendRequest()
-		elif(fileType == "html"):
-			request.Request(client, '200 OK', 'text/html').SendRequest()
-		elif(fileType == "php"):
-			request.Request(client, '200 OK', 'text/plain').SendRequest()
-		elif(fileType == 'png'):
-			request.Request(client, '200 OK', 'image/png').SendRequest()
-		elif(fileType == 'jpg'):
-			request.Request(client, '200 OK', 'image/jpeg').SendRequest()
-		
-		while True:
-			fileData = f.read()
-			if fileData == '': break
-			client.sendall(fileData)
-		f.close()   
+    	self.sock = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
+    	self.sock.setsockopt(socket.SOL_SOCKET, socket.SO_REUSEADDR, 1)
+    	self.sock.bind((self.host, self.port))
+    	self.sock.listen(self.socklisten)
+    	while True:
+			client, address = self.sock.accept()
+			print "Connection from: " + `address`
+			client.settimeout(self.clienttimeout)
+			threading.Thread(target = self.listenToClient,args = (client,)).start()
 		
 
     def listenToClient(self, client):
@@ -146,12 +74,12 @@ Content-Disposition: attachment; filename="file.png"\n
 				if os.path.isfile(temp):
 					print "GET after os path isfile"
 					output = subprocess.check_output(command, shell=True)
-					request.Request(client, '200 OK', 'text/html').SendRequest()
+					Request.Request(client, '200 OK', 'text/html').SendRequest()
 	   				client.sendall(output)
 					logging.info("Returned 2 random numbers less than %s; GET!"%(maxvalue))
 					client.close()
 				else:
-					request.Request(client, '400 Bad Request', 'text/html').SendRequest()
+					Request.Request(client, '400 Bad Request', 'text/html').SendRequest()
 					client.sendall("""
 			<html>
 			<body>
@@ -162,7 +90,7 @@ Content-Disposition: attachment; filename="file.png"\n
 					client.close()
 			elif string == 'upload':
 				print "in upload"
-				request.Request(client, '200 OK', 'text/html').SendRequest()
+				Request.Request(client, '200 OK', 'text/html').SendRequest()
 				client.sendall("""<form action="http://10.20.1.151:8080/files/username=slavi&password=3111/success.png" enctype="multipart/form-data" method="post">
 <p>Please specify a file, or a set of files:<br>
 <input type="file" name="datafile"></p>
@@ -177,13 +105,13 @@ Content-Disposition: attachment; filename="file.png"\n
 				if len(fileName.split('.')) > 1:
 					print "GET in second if"
 					print fileName
-					self.RetrFile(client, fileName, True)
-					print "out of retrfile"
+					ServerFunctions.ServerFunctions(client, fileName, self.directory).RetrFile()
+					print "out of serverfunc.serverfunc"
 					logging.info("Retrieved file %s; GET!"%(fileName))
 					client.close()
 				elif len(fileName.split('.')) == 1:
 					print "GET in third elif"
-					request.Request(client, '400 Bad Request', 'text/html').SendRequest()
+					Request.Request(client, '400 Bad Request', 'text/html').SendRequest()
 					client.sendall("""
 				<html>
 				<body>
@@ -209,7 +137,7 @@ Content-Disposition: attachment; filename="file.png"\n
 							a = int(a)
 							b = int(b)
 						except ValueError:
-							request.Request(client, '400 Bad Request', 'text/html').SendRequest()
+							Request.Request(client, '400 Bad Request', 'text/html').SendRequest()
 							client.sendall("""
 			<html>
 			<body>
@@ -222,7 +150,7 @@ Content-Disposition: attachment; filename="file.png"\n
 							sumOfBoth = a + b
 							print "a + b = %s" % (sumOfBoth)
 							print "\n"
-							request.Request(client, '200 OK', 'text/html').SendRequest()
+							Request.Request(client, '200 OK', 'text/html').SendRequest()
 							client.sendall("""
 			<html>
 			<body>
@@ -238,12 +166,12 @@ Content-Disposition: attachment; filename="file.png"\n
 				if len(fileName.split('.')) > 1:
 					print "GET in second if"
 					print fileName
-					self.RetrFile(client, fileName, False)
+					ServerFunctions.ServerFunctions(client,fileName,self.directory).RetrFile(False)
 					logging.info("Retrieved file %s; GET!"%(fileName))
 					client.close()
 				elif len(fileName.split('.')) == 1:
 					print "GET in third elif"
-					request.Request(client, '400 Bad Request', 'text/html').SendRequest()
+					Request.Request(client, '400 Bad Request', 'text/html').SendRequest()
 					client.sendall("""
 				<html>
 				<body>
@@ -255,7 +183,7 @@ Content-Disposition: attachment; filename="file.png"\n
 					client.close()
 			else:
 				print "GET in else"
-				request.Request(client, '400 Bad Request', 'text/html').SendRequest()
+				Request.Request(client, '400 Bad Request', 'text/html').SendRequest()
 				client.sendall("""
 				<html>
 				<body>
@@ -285,12 +213,12 @@ Content-Disposition: attachment; filename="file.png"\n
 				if os.path.isfile(temp):
 					print "POST after os path isfile"
 					output = subprocess.check_output(command, shell=True)
-					request.Request(client, '200 OK', 'text/html').SendRequest()
+					Request.Request(client, '200 OK', 'text/html').SendRequest()
 	   				client.sendall(output)
 					logging.info("Executed program: %s; POST!"%(req.split(' ')[1].split('?')[0].split('/')[2]))
 					client.close()
 				else:
-					request.Request(client, '400 Bad Request', 'text/html').SendRequest()
+					Request.Request(client, '400 Bad Request', 'text/html').SendRequest()
 					client.sendall("""
 			<html>
 			<body>
@@ -315,7 +243,7 @@ Content-Disposition: attachment; filename="file.png"\n
 					a = int(a)
 					b = int(b)
 				except ValueError:
-					request.Request(client, '400 Bad Request', 'text/html').SendRequest()
+					Request.Request(client, '400 Bad Request', 'text/html').SendRequest()
 					client.sendall("""
 		<html>
 		<body>
@@ -328,7 +256,7 @@ Content-Disposition: attachment; filename="file.png"\n
 					sumOfBoth = a + b
 					print "a + b = %s" % (sumOfBoth)
 					print "\n"
-					request.Request(client, '200 OK', 'text/html').SendRequest()
+					Request.Request(client, '200 OK', 'text/html').SendRequest()
 					client.sendall("""
 		<html>
 		<body>
@@ -342,7 +270,7 @@ Content-Disposition: attachment; filename="file.png"\n
 				username = req.split(' ')[1].split('/')[2].split('&')[0].split('=')[1].split('/')[0]
 				password = req.split(' ')[1].split('/')[2].split('&')[1].split('=')[1].split('/')[0]
 				if username == '' or password == '':
-					request.Request(client, '401 Unauthorized', 'text/html').SendRequest()
+					Request.Request(client, '401 Unauthorized', 'text/html').SendRequest()
 					client.sendall("""
 		<html>
 		<body>
@@ -363,7 +291,8 @@ Content-Disposition: attachment; filename="file.png"\n
 							for row in rows:
 								if row[0] == password:
 									credentialsCorrect = True
-									self.RetrFile(client, fileName, False)
+									ServerFunctions.ServerFunctions(client,fileName,self.directory).RetrFile(False)
+
 									logging.info("Retrieved file %s; POST!"%(fileName))
 									if fileName == 'success.png':
 										contType = req.split('Content-Type')[2].split(': ')[1].split('\n')[0]
@@ -384,7 +313,7 @@ Content-Disposition: attachment; filename="file.png"\n
 									client.close()
 							
 					if not credentialsCorrect:
-						request.Request(client, '401 Unauthorized', 'text/html').SendRequest()
+						Request.Request(client, '401 Unauthorized', 'text/html').SendRequest()
 						client.sendall("""
 		<html>
 		<body>
@@ -395,7 +324,7 @@ Content-Disposition: attachment; filename="file.png"\n
 						client.close()
 			else:
 				print "POST in else"
-				request.Request(client, '400 Bad Request', 'text/html').SendRequest()
+				Request.Request(client, '400 Bad Request', 'text/html').SendRequest()
 				client.sendall("""
 				<html>
 				<body>
