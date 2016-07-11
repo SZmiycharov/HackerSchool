@@ -1,5 +1,5 @@
 class Response:
-	def __init__(self, client, returnCode = '200 OK', contenttype = 'text/html', fileExtension = 'txt', http = 'HTTP/1.1'):
+	def __init__(self, client = '', returnCode = '200 OK', contenttype = 'text/html', fileExtension = 'txt', http = 'HTTP/1.1'):
 		self.client = client
 		self.http = http
 		self.returnCode = returnCode
@@ -33,6 +33,7 @@ Content-Disposition: attachment; filename="file.%s"\n\n"""%(self.http, self.retu
 				<p>Should be sum, files or scripts</p>
 				</body>
 				</html>""")
+
 	def SendBadParametersResponse(self, client):
 		client.sendall("""
 			<html>
@@ -40,13 +41,22 @@ Content-Disposition: attachment; filename="file.%s"\n\n"""%(self.http, self.retu
 			<p><b> BAD PARAMETERS! </b></p>
 			</body>
 			</html>""")
+
 	def SendSumResponse(self, client, sumOfBoth):
+		print "sending sum response"
+		print("""
+			<html>
+			<body>
+			<p><b> sum: %d </b></p>
+			</body>
+			</html>""" % (sumOfBoth))
 		client.sendall("""
 			<html>
 			<body>
 			<p><b> sum: %d </b></p>
 			</body>
 			</html>""" % (sumOfBoth))
+
 	def SendNoSuchFileResponse(self, client):
 		client.sendall("""
 			<html>
@@ -54,6 +64,7 @@ Content-Disposition: attachment; filename="file.%s"\n\n"""%(self.http, self.retu
 			<p><b> NO SUCH FILE! </b></p>
 			</body>
 			</html>""")
+
 	def SendFormForUpload(self, client):
 		client.sendall("""<form action="http://10.20.1.151:8080/files/username=slavi&password=3111/success.png" enctype="multipart/form-data" method="post">
 <p>Please specify a file, or a set of files:<br>

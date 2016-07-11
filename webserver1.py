@@ -23,7 +23,6 @@ except:
     print "I am unable to connect to the database"
 cur = conn.cursor()
 
-
 class Server(object):	
     def __init__(self, host, port, directory, clienttimeout = 60, socklisten = 5):
     	self.host = host
@@ -49,7 +48,6 @@ class Server(object):
 			client.settimeout(self.clienttimeout)
 			threading.Thread(target = self.listenToClient,args = (client,)).start()
 		
-
     def listenToClient(self, client):
         while True:
             try:
@@ -66,10 +64,7 @@ class Server(object):
 			if string == 'scripts':
 				print "GET in first if"
 				maxvalue = req.split(' ')[1].split('MAX=')[1].split('\n')[0]
-				print maxvalue
 				command = "python %s -m %s"%(req.split(' ')[1].split('?')[0].split('/')[2], maxvalue)
-				print command
-				print req.split(' ')[1].split('?')[0].split('/')[2]
 				temp = str(req.split(' ')[1].split('?')[0].split('/')[2])
 				if os.path.isfile(temp):
 					print "GET after os path isfile"
@@ -95,7 +90,6 @@ class Server(object):
 					print "GET in second if"
 					print fileName
 					ServerFunctions.ServerFunctions(client, fileName, self.directory).RetrFile()
-					print "out of serverfunc.serverfunc"
 					logging.info("Retrieved file %s; GET!"%(fileName))
 					client.close()
 				elif len(fileName.split('.')) == 1:
@@ -110,12 +104,9 @@ class Server(object):
 				match = re.match('GET .*?.=(.*)&', req)
 				if match:
 					a = match.group(1)
-					print "a: " + a
-
 					match = re.match('GET .*&.=(.*) HTTP', req)
 					if match:
 						b = match.group(1)
-						print "b: " + b
 						try:
 							a = int(a)
 							b = int(b)
@@ -126,8 +117,6 @@ class Server(object):
 							client.close()
 						else:
 							sumOfBoth = a + b
-							print "a + b = %s" % (sumOfBoth)
-							print "\n"
 							Response.Response(client, '200 OK', 'text/html').SendResponse()
 							Response.Response().SendSumResponse(client, sumOfBoth)
 							logging.info("Found sum of %s and %s; GET!"%(a,b))
@@ -138,7 +127,6 @@ class Server(object):
 				fileName = req.split(' ')[1].split('/')[2]
 				if len(fileName.split('.')) > 1:
 					print "GET in second if"
-					print fileName
 					ServerFunctions.ServerFunctions(client,fileName,self.directory).RetrFile(False)
 					logging.info("Retrieved file %s; GET!"%(fileName))
 					client.close()
@@ -155,8 +143,6 @@ class Server(object):
 				logging.error("Bad command; user tried: %s; GET!"%(string))
 				client.close()
 				
-
-
 #*********************************************************POST**************************************************************************	
 	
 		elif(request_method == 'POST'):
@@ -187,14 +173,10 @@ class Server(object):
 			elif string == 'sum':
 				print "POST in first elif"
 				parameters = req.split()[-1]
-				print("parameters: %s"%(parameters))
-				
 				string = req.split('&')
 				a = string[0].split('=')[-1]
-				print("a = %s"%(a))
 				b = string[1].split('=')
 				b = b[1]
-				print("b = %s"%(b))
 				try:
 					a = int(a)
 					b = int(b)
@@ -205,8 +187,6 @@ class Server(object):
 					client.close()
 				else:
 					sumOfBoth = a + b
-					print "a + b = %s" % (sumOfBoth)
-					print "\n"
 					Response.Response(client, '200 OK', 'text/html').SendResponse()
 					Response.Response().SendSumResponse(client, sumOfBoth)
 					logging.info("Returned sum of %s and %s; POST"%(a,b))
@@ -233,29 +213,24 @@ class Server(object):
 								if row[0] == password:
 									credentialsCorrect = True
 									ServerFunctions.ServerFunctions(client,fileName,self.directory).RetrFile(False)
-
 									logging.info("Retrieved file %s; POST!"%(fileName))
 									if fileName == 'success.png':
 										contType = req.split('Content-Type')[2].split(': ')[1].split('\n')[0]
 										contType = contType.split('\r')[0]
 										fileToUpload = req.split('Content-Type')[2].split(': ')[1].split(contType)[1].split('-----------------------------')[0].split('\r\n\r\n')[1].split('\n\r')[0]
 										if contType == 'text/plain':
-											print "yes text plain e!"
 											ServerFunctions.ServerFunctions().uploadFile('txt', fileToUpload, self.directory)
 										elif contType == 'text/x-python':
-											print "text xpython e"
 											ServerFunctions.ServerFunctions().uploadFile('py', fileToUpload, self.directory)
 										elif contType == 'image/jpeg':
-											print "image jpeg e"
 											ServerFunctions.ServerFunctions().uploadFile('jpg', fileToUpload, self.directory)
 										elif contType == 'image/png':
-											print "image png e"
 											ServerFunctions.ServerFunctions().uploadFile('png', fileToUpload, self.directory)
 									client.close()
 							
 					if not credentialsCorrect:
 						Response.Response(client, '401 Unauthorized', 'text/html').SendResponse()
-						Response.Response(client, '401 Unauthorized', 'text/html').SendIncorrectUsernameOrPasswordResponse()
+						Response.Response().SendIncorrectUsernameOrPasswordResponse(client)
 						logging.error("User tried incorrect username or password; POST!")
 						client.close()
 			else:
@@ -265,7 +240,6 @@ class Server(object):
 				logging.error("Wrong command; user tried: %s; POST"%(string))
 				client.close()
 				
-
 #*************************************************END OF POST***********************************************************************
 		else:
 			client.sendall("Cannot recognize request method <should be POST or GET>!")
@@ -337,7 +311,3 @@ if __name__ == "__main__":
 		
 	print("                      **********SERVER STARTED**********")
 	Server('', port, directory).listen()
-
-
-
-
