@@ -19,7 +19,7 @@ Content-Disposition: attachment; filename="file.%s"\n\n"""%(self.http, self.retu
 
 	def SendAuthenticationResponse(self, client):
 		client.sendall("""HTTP/1.1 401 Access Denied
-WWW-Authenticate: Basic realm='SLAVI'
+WWW-Authenticate: Basic realm='Authenticate yourself!'
 Content-Length: 0\n\n""")
 
 	def SendIncorrectUsernameOrPasswordResponse(self, client):

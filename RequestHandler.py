@@ -180,7 +180,6 @@ def HandlePOST(client, req, cur, directory):
 					fileName = file_requested.split('/')[2]
 					ServerFunctions.ServerFunctions(client,fileName,directory).RetrFile(False)
 					logging.info("Retrieved file %s; POST!"%(fileName))
-					print "HERE"
 					if fileName == 'success.png':
 						contType = req.split('Content-Type')[2].split(': ')[1].split('\n')[0]
 						contType = contType.split('\r')[0]
@@ -193,7 +192,6 @@ def HandlePOST(client, req, cur, directory):
 							ServerFunctions.ServerFunctions().uploadFile('jpg', fileToUpload, directory)
 						elif contType == 'image/png':
 							ServerFunctions.ServerFunctions().uploadFile('png', fileToUpload, directory)
-					print "HAHSDHADHAHSD"
 					client.close()
 
 				else:
@@ -202,9 +200,7 @@ def HandlePOST(client, req, cur, directory):
 					Response.Response().SendCannotUnderstandCommandResponse(client)
 					logging.error("Wrong command; user tried: %s; POST"%(string))
 					client.close()
-
-				
-								
+			
 			else:
 				Response.Response().SendAuthenticationResponse(client)
 				logging.error("User tried incorrect username or password; POST!")
