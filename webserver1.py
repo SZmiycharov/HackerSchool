@@ -23,13 +23,13 @@ except:
 cur = conn.cursor()
 
 
-class ThreadedServer(object):	
+class Server(object):	
     def __init__(self, host, port, directory, clienttimeout = 60, socklisten = 5):
-        self.host = host
-        self.port = port
-		self.directory = directory
-		self.clienttimeout = clienttimeout
-		self.socklisten = socklisten
+    	self.host = host
+    	self.port = port
+    	self.directory = directory
+    	self.clienttimeout = clienttimeout
+    	self.socklisten = socklisten
     
 	def uploadFile(fileextension, fileToUpload):
 		serverFile = self.directory + '/newfile.' + fileextension
@@ -111,10 +111,8 @@ class ThreadedServer(object):
             try:
 		req = ''
 		data = ''
-		req = recv_timeout(client, 5)
-		print "************"
+		req = recv_timeout(client, 1)
 		print req
-		print "************"
 		request_method = req.split(' ')[0]
 
 #*******************************************************GET**************************************************************************
@@ -159,6 +157,7 @@ class ThreadedServer(object):
 </form>""")			
 				client.close()
 			elif string.split('?')[0] == 'download':
+				print "in GET download"
 				fileName = string.split('file=')[1].split()[0]
 				if len(fileName.split('.')) > 1:
 					print "GET in second if"
@@ -462,7 +461,7 @@ if __name__ == "__main__":
 		sys.exit()
 		
 	print("                      **********SERVER STARTED**********")
-	ThreadedServer('', port, directory).listen()
+	Server('', port, directory).listen()
 
 
 
