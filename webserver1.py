@@ -13,7 +13,7 @@ from multiprocessing import Process
 import os
 import re
 import cgi
-import Request
+import Response
 import ServerFunctions
 
 logging.basicConfig(format='%(asctime)s %(message)s',filename='/home/slavi/Desktop/webserver1.log',level=logging.DEBUG )
@@ -74,30 +74,19 @@ class Server(object):
 				if os.path.isfile(temp):
 					print "GET after os path isfile"
 					output = subprocess.check_output(command, shell=True)
-					Request.Request(client, '200 OK', 'text/html').SendRequest()
+					Response.Response(client, '200 OK', 'text/html').SendResponse()
 	   				client.sendall(output)
 					logging.info("Returned 2 random numbers less than %s; GET!"%(maxvalue))
 					client.close()
 				else:
-					Request.Request(client, '400 Bad Request', 'text/html').SendRequest()
-					client.sendall("""
-			<html>
-			<body>
-			<p><b> NO SUCH FILE! </b></p>
-			</body>
-			</html>""")
+					Response.Response(client, '400 Bad Response', 'text/html').SendResponse()
+					Response.Response().SendNoSuchFileResponse()
 					logging.error("File could not be found; GET!")
 					client.close()
 			elif string == 'upload':
 				print "in upload"
-				Request.Request(client, '200 OK', 'text/html').SendRequest()
-				client.sendall("""<form action="http://10.20.1.151:8080/files/username=slavi&password=3111/success.png" enctype="multipart/form-data" method="post">
-<p>Please specify a file, or a set of files:<br>
-<input type="file" name="datafile"></p>
-<div>
-<input type="submit" value="Send">
-</div>
-</form>""")			
+				Response.Response(client, '200 OK', 'text/html').SendResponse()
+				Response.Response().SendFormForUpload(client)		
 				client.close()
 			elif string.split('?')[0] == 'download':
 				print "in GET download"
@@ -111,14 +100,8 @@ class Server(object):
 					client.close()
 				elif len(fileName.split('.')) == 1:
 					print "GET in third elif"
-					Request.Request(client, '400 Bad Request', 'text/html').SendRequest()
-					client.sendall("""
-				<html>
-				<body>
-				<p><b> Web server cannot understand command! </b></p>
-				<p>Should be sum, files or scripts</p>
-				</body>
-				</html>""")
+					Response.Response(client, '400 Bad Request', 'text/html').SendResponse()
+					Response.Response().SendCannotUnderstandCommandResponse(client)
 					logging.error("Bad command; user tried: %s; GET!"%(string))
 					client.close()
 
@@ -137,26 +120,16 @@ class Server(object):
 							a = int(a)
 							b = int(b)
 						except ValueError:
-							Request.Request(client, '400 Bad Request', 'text/html').SendRequest()
-							client.sendall("""
-			<html>
-			<body>
-			<p><b> BAD PARAMETERS! </b></p>
-			</body>
-			</html>""")
+							Response.Response(client, '400 Bad Request', 'text/html').SendResponse()
+							Response.Response().SendBadParametersResponse(client)
 							logging.error("Bad parameters for sum; GET!")
 							client.close()
 						else:
 							sumOfBoth = a + b
 							print "a + b = %s" % (sumOfBoth)
 							print "\n"
-							Request.Request(client, '200 OK', 'text/html').SendRequest()
-							client.sendall("""
-			<html>
-			<body>
-			<p><b> sum: %d </b></p>
-			</body>
-			</html>""" % (sumOfBoth))
+							Response.Response(client, '200 OK', 'text/html').SendResponse()
+							Response.Response().SendSumResponse(client, sumOfBoth)
 							logging.info("Found sum of %s and %s; GET!"%(a,b))
 							client.close()
 			
@@ -171,26 +144,14 @@ class Server(object):
 					client.close()
 				elif len(fileName.split('.')) == 1:
 					print "GET in third elif"
-					Request.Request(client, '400 Bad Request', 'text/html').SendRequest()
-					client.sendall("""
-				<html>
-				<body>
-				<p><b> Web server cannot understand command! </b></p>
-				<p>Should be sum, files or scripts</p>
-				</body>
-				</html>""")
+					Response.Response(client, '400 Bad Request', 'text/html').SendResponse()
+					Response.Response().SendCannotUnderstandCommandResponse(client)
 					logging.error("Bad command; user tried: %s; GET!"%(string))
 					client.close()
 			else:
 				print "GET in else"
-				Request.Request(client, '400 Bad Request', 'text/html').SendRequest()
-				client.sendall("""
-				<html>
-				<body>
-				<p><b> Web server cannot understand command! </b></p>
-				<p>Should be sum, files or scripts</p>
-				</body>
-				</html>""")
+				Response.Response(client, '400 Bad Request', 'text/html').SendResponse()
+				Response.Response().SendCannotUnderstandCommandResponse(client)
 				logging.error("Bad command; user tried: %s; GET!"%(string))
 				client.close()
 				
@@ -213,18 +174,13 @@ class Server(object):
 				if os.path.isfile(temp):
 					print "POST after os path isfile"
 					output = subprocess.check_output(command, shell=True)
-					Request.Request(client, '200 OK', 'text/html').SendRequest()
+					Response.Response(client, '200 OK', 'text/html').SendResponse()
 	   				client.sendall(output)
 					logging.info("Executed program: %s; POST!"%(req.split(' ')[1].split('?')[0].split('/')[2]))
 					client.close()
 				else:
-					Request.Request(client, '400 Bad Request', 'text/html').SendRequest()
-					client.sendall("""
-			<html>
-			<body>
-			<p><b> NO SUCH FILE! </b></p>
-			</body>
-			</html>""")
+					Response.Response(client, '400 Bad Request', 'text/html').SendResponse()
+					Response.Response().SendNoSuchFileResponse()
 					logging.error("File %s could not be found; POST!"%(req.split(' ')[1].split('?')[0].split('/')[2]))
 					client.close()	
 			
@@ -243,26 +199,16 @@ class Server(object):
 					a = int(a)
 					b = int(b)
 				except ValueError:
-					Request.Request(client, '400 Bad Request', 'text/html').SendRequest()
-					client.sendall("""
-		<html>
-		<body>
-		<p><b> BAD <OR MISSING> PARAMETERS! </b></p>
-		</body>
-		</html>""")
+					Response.Response(client, '400 Bad Request', 'text/html').SendResponse()
+					Response.Response().SendBadParametersResponse(client)
 					logging.error("Bad parameters for sum; POST!"%())
 					client.close()
 				else:
 					sumOfBoth = a + b
 					print "a + b = %s" % (sumOfBoth)
 					print "\n"
-					Request.Request(client, '200 OK', 'text/html').SendRequest()
-					client.sendall("""
-		<html>
-		<body>
-		<p><b> sum: %d </b></p>
-		</body>
-		</html>""" % (sumOfBoth))
+					Response.Response(client, '200 OK', 'text/html').SendResponse()
+					Response.Response().SendSumResponse(client, sumOfBoth)
 					logging.info("Returned sum of %s and %s; POST"%(a,b))
 					client.close()
 			elif string == 'files':
@@ -270,13 +216,8 @@ class Server(object):
 				username = req.split(' ')[1].split('/')[2].split('&')[0].split('=')[1].split('/')[0]
 				password = req.split(' ')[1].split('/')[2].split('&')[1].split('=')[1].split('/')[0]
 				if username == '' or password == '':
-					Request.Request(client, '401 Unauthorized', 'text/html').SendRequest()
-					client.sendall("""
-		<html>
-		<body>
-		<p><b> BAD <OR MISSING> PARAMETERS! </b></p>
-		</body>
-		</html>""")
+					Response.Response(client, '401 Unauthorized', 'text/html').SendResponse()
+					Response.Response().SendBadParametersResponse(client)
 					logging.info("Wrong username/password; POST!")
 					client.close()
 				else:
@@ -313,25 +254,14 @@ class Server(object):
 									client.close()
 							
 					if not credentialsCorrect:
-						Request.Request(client, '401 Unauthorized', 'text/html').SendRequest()
-						client.sendall("""
-		<html>
-		<body>
-		<p><b> Incorrect username or password! </b></p>
-		</body>
-		</html>""")
+						Response.Response(client, '401 Unauthorized', 'text/html').SendResponse()
+						Response.Response(client, '401 Unauthorized', 'text/html').SendIncorrectUsernameOrPasswordResponse()
 						logging.error("User tried incorrect username or password; POST!")
 						client.close()
 			else:
 				print "POST in else"
-				Request.Request(client, '400 Bad Request', 'text/html').SendRequest()
-				client.sendall("""
-				<html>
-				<body>
-				<p><b> Web server cannot understand command! </b></p>
-				<p>Should be sum, files or scripts</p>
-				</body>
-				</html>""")
+				Response.Response(client, '400 Bad Request', 'text/html').SendResponse()
+				Response.Response().SendCannotUnderstandCommandResponse(client)
 				logging.error("Wrong command; user tried: %s; POST"%(string))
 				client.close()
 				
