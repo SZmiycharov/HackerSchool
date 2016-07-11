@@ -1,4 +1,4 @@
-import Request
+import Response
 import re
 
 class ServerFunctions:
@@ -15,7 +15,7 @@ class ServerFunctions:
 				f = open(filePath, 'rb')
 			except IOError:
 				errorMsg = "File could not be found!"
-				Request.Request(self.client, '400 Bad Request').SendRequest()
+				Response.Response(self.client, '400 Bad Request').SendResponse()
 				self.client.sendall("""
 					<html>
 					<body>
@@ -30,17 +30,17 @@ class ServerFunctions:
 			print fileType
 			if toDownload:
 				if(fileType == 'py'):
-					Request.Request(self.client, '200 OK', 'text/plain', 'py').SendFileRequest()
+					Response.Response(self.client, '200 OK', 'text/plain', 'py').SendFileResponse()
 				elif(fileType == 'txt'):
-					Request.Request(self.client, '200 OK', 'text/plain', 'txt').SendFileRequest()
+					Response.Response(self.client, '200 OK', 'text/plain', 'txt').SendFileResponse()
 				elif(fileType == "html"):
-					Request.Request(self.client, '200 OK', 'text/html', 'html').SendFileRequest()
+					Response.Response(self.client, '200 OK', 'text/html', 'html').SendFileResponse()
 				elif(fileType == "php"):
-					Request.Request(self.client, '200 OK', 'text/html', 'php').SendFileRequest()
+					Response.Response(self.client, '200 OK', 'text/html', 'php').SendFileResponse()
 				elif(fileType == 'png'):
-					Request.Request(self.client, '200 OK', 'image/png', 'png').SendFileRequest()
+					Response.Response(self.client, '200 OK', 'image/png', 'png').SendFileResponse()
 				elif(fileType == 'jpg'):
-					Request.Request(self.client, '200 OK', 'image/jpeg', 'jpg').SendFileRequest()
+					Response.Response(self.client, '200 OK', 'image/jpeg', 'jpg').SendFileResponse()
 				while True:
 					fileData = self.f.read()
 					if fileData == '': break
@@ -48,17 +48,17 @@ class ServerFunctions:
 				f.close()  
 			else:
 				if(fileType == 'py'):
-					Request.Request(self.client, '200 OK', 'text/plain').SendRequest()
+					Response.Response(self.client, '200 OK', 'text/plain').SendResponse()
 				elif(fileType == 'txt'):
-					Request.Request(self.client, '200 OK', 'text/plain').SendRequest()
+					Response.Response(self.client, '200 OK', 'text/plain').SendResponse()
 				elif(fileType == "html"):
-					Request.Request(self.client, '200 OK', 'text/html').SendRequest()
+					Response.Response(self.client, '200 OK', 'text/html').SendResponse()
 				elif(fileType == "php"):
-					Request.Request(self.client, '200 OK', 'text/plain').SendRequest()
+					Response.Response(self.client, '200 OK', 'text/plain').SendResponse()
 				elif(fileType == 'png'):
-					Request.Request(self.client, '200 OK', 'image/png').SendRequest()
+					Response.Response(self.client, '200 OK', 'image/png').SendResponse()
 				elif(fileType == 'jpg'):
-					Request.Request(self.client, '200 OK', 'image/jpeg').SendRequest()
+					Response.Response(self.client, '200 OK', 'image/jpeg').SendResponse()
 				
 				while True:
 					fileData = f.read()

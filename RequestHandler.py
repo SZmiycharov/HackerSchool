@@ -96,7 +96,7 @@ def HandleGET(client, req, directory):
 					Response.Response().SendCannotUnderstandCommandResponse(client)
 					logging.error("Bad command; user tried: %s; GET!"%(string))
 					client.close()
-					
+
 			else:
 				print "GET in else"
 				Response.Response(client, '400 Bad Request', 'text/html').SendResponse()
@@ -104,14 +104,12 @@ def HandleGET(client, req, directory):
 				logging.error("Bad command; user tried: %s; GET!"%(string))
 				client.close()
 
-def HandlePOST(client, req):
+def HandlePOST(client, req, cur, directory):
 			file_requested = req.split(' ')[1].split('\n')[0]
 			string = req.split(' ')[1].split('/')[1]
 	
 			if string == 'scripts':
 				print "POST in first if"
-				print req
-				print req.split('\n')[-1].split('=')
 				maxvalue = req.split('\n')[-1].split('=')[1]
 				command = "python %s -m %s"%(req.split(' ')[1].split('?')[0].split('/')[2], maxvalue)
 				temp = str(req.split(' ')[1].split('?')[0].split('/')[2])
@@ -154,6 +152,8 @@ def HandlePOST(client, req):
 				print "POST in second elif"
 				username = req.split(' ')[1].split('/')[2].split('&')[0].split('=')[1].split('/')[0]
 				password = req.split(' ')[1].split('/')[2].split('&')[1].split('=')[1].split('/')[0]
+				print username
+				print password
 				if username == '' or password == '':
 					Response.Response(client, '401 Unauthorized', 'text/html').SendResponse()
 					Response.Response().SendBadParametersResponse(client)

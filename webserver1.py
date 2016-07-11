@@ -19,9 +19,9 @@ import RequestHandler
 
 logging.basicConfig(format='%(asctime)s %(message)s',filename='/home/slavi/Desktop/webserver1.log',level=logging.DEBUG )
 try:
-    conn = psycopg2.connect("dbname='httpAuth' user='slavi' host='localhost' password='3111'")
+	conn = psycopg2.connect("dbname='httpAuth' user='slavi' host='localhost' password='3111'")
 except:
-    print "Unable to connect to the database"
+	print "Unable to connect to the database"
 cur = conn.cursor()
 
 class Server(object):	
@@ -33,38 +33,38 @@ class Server(object):
     	self.socklisten = socklisten
     
     def listen(self):
-    	self.sock = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
-    	self.sock.setsockopt(socket.SOL_SOCKET, socket.SO_REUSEADDR, 1)
-    	self.sock.bind((self.host, self.port))
-    	self.sock.listen(self.socklisten)
-    	while True:
+		self.sock = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
+		self.sock.setsockopt(socket.SOL_SOCKET, socket.SO_REUSEADDR, 1)
+		self.sock.bind((self.host, self.port))
+		self.sock.listen(self.socklisten)
+		while True:
 			client, address = self.sock.accept()
 			print "Connection from: " + `address`
 			client.settimeout(self.clienttimeout)
 			threading.Thread(target = self.listenToClient,args = (client,)).start()
 		
     def listenToClient(self, client):
-        while True:
-            try:
-		req = ''
-		data = ''
-		req = recv_timeout(client, 1)
-		request_method = req.split(' ')[0]
+		while True:
+			try:
+				req = ''
+				data = ''
+				req = recv_timeout(client)
+				request_method = req.split(' ')[0]
 
-		if(request_method == 'GET'):
-			print "in GET method"
-			RequestHandler.HandleGET(client, req, self.directory)	
-	
-		elif(request_method == 'POST'):
-			print "in POST method"
-			RequestHandler.HandlePOST(client, req)
+				if(request_method == 'GET'):
+					print "in GET method"
+					RequestHandler.HandleGET(client, req, self.directory)	
 			
-		else:
-			client.sendall("Cannot recognize request method <should be POST or GET>!")
-			logging.error("Could not recognize request!")
-			client.close()
-	    except:
-	    	client.close()
+				elif(request_method == 'POST'):
+					print "in POST method"
+					RequestHandler.HandlePOST(client, req, cur, self.directory)
+					
+				else:
+					client.sendall("Cannot recognize request method <should be POST or GET>!")
+					logging.error("Could not recognize request!")
+					client.close()
+			except:
+				client.close()
 
 def recv_timeout(the_socket,timeout=2):
     #make socket non blocking
