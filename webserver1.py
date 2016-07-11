@@ -30,7 +30,13 @@ class ThreadedServer(object):
 		self.directory = directory
 		self.clienttimeout = clienttimeout
 		self.socklisten = socklisten
-        
+    
+	def uploadFile(fileextension, fileToUpload):
+		serverFile = self.directory + '/newfile.' + fileextension
+		f = open(serverFile, 'wb+')
+		f.write(fileToUpload)
+		f.close()
+
     def listen(self):
 	self.sock = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
         self.sock.setsockopt(socket.SOL_SOCKET, socket.SO_REUSEADDR, 1)
@@ -222,9 +228,7 @@ class ThreadedServer(object):
 					client.close()
 				elif len(fileName.split('.')) == 1:
 					print "GET in third elif"
-					client.sendall("""HTTP/1.1 400 Bad Request
-			Server: SLAVI
-			Content-Type: text/html\n""")
+					request.Request(client, '400 Bad Request', 'text/html').SendRequest()
 					client.sendall("""
 				<html>
 				<body>
@@ -236,9 +240,7 @@ class ThreadedServer(object):
 					client.close()
 			else:
 				print "GET in else"
-				client.sendall("""HTTP/1.1 400 Bad Request
-			Server: SLAVI
-			Content-Type: text/html\n""")
+				request.Request(client, '400 Bad Request', 'text/html').SendRequest()
 				client.sendall("""
 				<html>
 				<body>
@@ -268,16 +270,12 @@ class ThreadedServer(object):
 				if os.path.isfile(temp):
 					print "POST after os path isfile"
 					output = subprocess.check_output(command, shell=True)
-					client.sendall("""HTTP/1.1 200 OK
-			Server: SLAVI
-			Content-Type: text/html\n""")
+					request.Request(client, '200 OK', 'text/html').SendRequest()
 	   				client.sendall(output)
 					logging.info("Executed program: %s; POST!"%(req.split(' ')[1].split('?')[0].split('/')[2]))
 					client.close()
 				else:
-					client.sendall("""HTTP/1.1 400 Bad Request
-			Server: SLAVI
-			Content-Type: text/html\n""")
+					request.Request(client, '400 Bad Request', 'text/html').SendRequest()
 					client.sendall("""
 			<html>
 			<body>
@@ -302,9 +300,7 @@ class ThreadedServer(object):
 					a = int(a)
 					b = int(b)
 				except ValueError:
-					client.sendall("""HTTP/1.1 400 Bad Request
-	Server: SLAVI
-	Content-Type: text/html\n""")
+					request.Request(client, '400 Bad Request', 'text/html').SendRequest()
 					client.sendall("""
 		<html>
 		<body>
@@ -317,9 +313,7 @@ class ThreadedServer(object):
 					sumOfBoth = a + b
 					print "a + b = %s" % (sumOfBoth)
 					print "\n"
-					client.sendall("""HTTP/1.1 200 OK
-	Server: SLAVI
-	Content-Type: text/html\n""")
+					request.Request(client, '200 OK', 'text/html').SendRequest()
 					client.sendall("""
 		<html>
 		<body>
@@ -333,9 +327,7 @@ class ThreadedServer(object):
 				username = req.split(' ')[1].split('/')[2].split('&')[0].split('=')[1].split('/')[0]
 				password = req.split(' ')[1].split('/')[2].split('&')[1].split('=')[1].split('/')[0]
 				if username == '' or password == '':
-					client.sendall("""HTTP/1.1 401 Unauthorized
-	Server: SLAVI
-	Content-Type: text/html\n""")
+					request.Request(client, '401 Unauthorized', 'text/html').SendRequest()
 					client.sendall("""
 		<html>
 		<body>
@@ -364,34 +356,20 @@ class ThreadedServer(object):
 										fileToUpload = req.split('Content-Type')[2].split(': ')[1].split(contType)[1].split('-----------------------------')[0].split('\r\n\r\n')[1].split('\n\r')[0]
 										if contType == 'text/plain':
 											print "yes text plain e!"
-											serverFile = self.directory + '/ASHDAHSD.txt'
-											f = open(serverFile, 'wb+')
-											f.write(fileToUpload)
-											f.close()
+											self.uploadFile('txt', fileToUpload)
 										elif contType == 'text/x-python':
 											print "text xpython e"
-											serverFile = self.directory + '/ASHDAHSD.py'
-											f = open(serverFile, 'wb+')
-											f.write(fileToUpload)
-											f.close()
+											self.uploadFile('py', fileToUpload)
 										elif contType == 'image/jpeg':
 											print "image jpeg e"
-											serverFile = self.directory + '/ASHDAHSD.jpg'
-											f = open(serverFile, 'wb+')
-											f.write(fileToUpload)
-											f.close()
+											self.uploadFile('jpg', fileToUpload)
 										elif contType == 'image/png':
 											print "image png e"
-											serverFile = self.directory + '/ASHDAHSD.png'
-											f = open(serverFile, 'wb+')
-											f.write(fileToUpload)
-											f.close()
+											self.uploadFile('png', fileToUpload)
 									client.close()
 							
 					if not credentialsCorrect:
-						client.sendall("""HTTP/1.1 401 Unauthorized
-	Server: SLAVI
-	Content-Type: text/html\n""")
+						request.Request(client, '401 Unauthorized', 'text/html').SendRequest()
 						client.sendall("""
 		<html>
 		<body>
@@ -402,9 +380,7 @@ class ThreadedServer(object):
 						client.close()
 			else:
 				print "POST in else"
-				client.sendall("""HTTP/1.1 400 Bad Request
-			Server: SLAVI
-			Content-Type: text/html\n""")
+				request.Request(client, '400 Bad Request', 'text/html').SendRequest()
 				client.sendall("""
 				<html>
 				<body>
