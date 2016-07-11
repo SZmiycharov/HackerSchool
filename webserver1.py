@@ -13,6 +13,7 @@ from multiprocessing import Process
 import os
 import re
 import cgi
+import request
 
 logging.basicConfig(format='%(asctime)s %(message)s',filename='/home/slavi/Desktop/webserver1.log',level=logging.DEBUG )
 try:
@@ -22,13 +23,13 @@ except:
 cur = conn.cursor()
 
 
-class ThreadedServer(object):
+class ThreadedServer(object):	
     def __init__(self, host, port, directory, clienttimeout = 60, socklisten = 5):
         self.host = host
         self.port = port
-	self.directory = directory
-	self.clienttimeout = clienttimeout
-	self.socklisten = socklisten
+		self.directory = directory
+		self.clienttimeout = clienttimeout
+		self.socklisten = socklisten
         
     def listen(self):
 	self.sock = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
@@ -47,10 +48,7 @@ class ThreadedServer(object):
         	f = open(filePath, 'rb')
 	except IOError:
 		errorMsg = "File could not be found!"
-		client.sendall("""HTTP/1.1 400 Bad Request
-Server: SLAVI
-Content-Type: text/html\n
-""")
+		request.Request(client, '400 Bad Request').SendRequest()
 		client.sendall("""
 			<html>
 			<body>
@@ -65,37 +63,17 @@ Content-Type: text/html\n
 	fileType = match.group(1)
 	if toDownload:
 		if(fileType == 'py'):
-			client.sendall("""HTTP/1.1 200 OK
-Server: SLAVI
-Content-Type: text/plain
-Content-Disposition: attachment; filename="file.py"\n""")
+			request.Request(client, '200 OK', 'text/plain', 'py').SendFileRequest()
 		elif(fileType == 'txt'):
-			client.sendall("""HTTP/1.1 200 OK
-Server: SLAVI
-Content-Type: text/plain
-Content-Disposition: attachment; filename="file.txt"\n""")
+			request.Request(client, '200 OK', 'text/plain', 'txt').SendFileRequest()
 		elif(fileType == "html"):
-			client.sendall("""HTTP/1.1 200 OK
-Server: SLAVI
-Content-Type: text/html
-Content-Disposition: attachment; filename="file.html"\n""")
+			request.Request(client, '200 OK', 'text/html', 'html').SendFileRequest()
 		elif(fileType == "php"):
-			client.sendall("""HTTP/1.1 200 OK
-Server: SLAVI
-Content-Type: text/html
-Content-Disposition: attachment; filename="file.php"\n""")
+			request.Request(client, '200 OK', 'text/plain', 'php').SendFileRequest()
 		elif(fileType == 'png'):
-			client.sendall("""HTTP/1.1 200 OK
-Server: SLAVI
-Content-Type: image/png
-Content-Disposition: attachment; filename="file.png"\n
-""")
+			request.Request(client, '200 OK', 'image/png', 'png').SendFileRequest()
 		elif(fileType == 'jpg'):
-			client.sendall("""HTTP/1.1 200 OK
-Server: SLAVI
-Content-Type: image/jpeg
-Content-Disposition: attachment; filename="file.jpg"\n
-""")
+			request.Request(client, '200 OK', 'image/jpeg', 'jpg').SendFileRequest()
 		while True:
 			fileData = f.read()
 			if fileData == '': break
@@ -103,35 +81,17 @@ Content-Disposition: attachment; filename="file.jpg"\n
 		f.close()   
 	else:
 		if(fileType == 'py'):
-			client.sendall("""HTTP/1.1 200 OK
-Server: SLAVI
-Content-Type: text/plain\n
-""")
+			request.Request(client, '200 OK', 'text/plain').SendRequest()
 		elif(fileType == 'txt'):
-			client.sendall("""HTTP/1.1 200 OK
-Server: SLAVI
-Content-Type: text/plain\n
-""")
+			request.Request(client, '200 OK', 'text/plain').SendRequest()
 		elif(fileType == "html"):
-			client.sendall("""HTTP/1.1 200 OK
-Server: SLAVI
-Content-Type: text/html\n
-""")
+			request.Request(client, '200 OK', 'text/html').SendRequest()
 		elif(fileType == "php"):
-			client.sendall("""HTTP/1.1 200 OK
-Server: SLAVI
-Content-Type: text/html\n
-""")
+			request.Request(client, '200 OK', 'text/plain').SendRequest()
 		elif(fileType == 'png'):
-			client.sendall("""HTTP/1.1 200 OK
-Server: SLAVI
-Content-Type: image/png\n
-""")
+			request.Request(client, '200 OK', 'image/png').SendRequest()
 		elif(fileType == 'jpg'):
-			client.sendall("""HTTP/1.1 200 OK
-Server: SLAVI
-Content-Type: image/jpeg\n
-""")
+			request.Request(client, '200 OK', 'image/jpeg').SendRequest()
 		
 		while True:
 			fileData = f.read()
@@ -167,16 +127,12 @@ Content-Type: image/jpeg\n
 				if os.path.isfile(temp):
 					print "GET after os path isfile"
 					output = subprocess.check_output(command, shell=True)
-					client.sendall("""HTTP/1.1 200 OK
-			Server: SLAVI
-			Content-Type: text/html\n""")
+					request.Request(client, '200 OK', 'text/html').SendRequest()
 	   				client.sendall(output)
 					logging.info("Returned 2 random numbers less than %s; GET!"%(maxvalue))
 					client.close()
 				else:
-					client.sendall("""HTTP/1.1 400 Bad Request
-			Server: SLAVI
-			Content-Type: text/html\n""")
+					request.Request(client, '400 Bad Request', 'text/html').SendRequest()
 					client.sendall("""
 			<html>
 			<body>
@@ -187,10 +143,7 @@ Content-Type: image/jpeg\n
 					client.close()
 			elif string == 'upload':
 				print "in upload"
-				client.sendall("""HTTP/1.1 200 OK
-Server: SLAVI
-Content-Type: text/html\n
-""")
+				request.Request(client, '200 OK', 'text/html').SendRequest()
 				client.sendall("""<form action="http://10.20.1.151:8080/files/username=slavi&password=3111/success.png" enctype="multipart/form-data" method="post">
 <p>Please specify a file, or a set of files:<br>
 <input type="file" name="datafile"></p>
@@ -209,9 +162,7 @@ Content-Type: text/html\n
 					client.close()
 				elif len(fileName.split('.')) == 1:
 					print "GET in third elif"
-					client.sendall("""HTTP/1.1 400 Bad Request
-			Server: SLAVI
-			Content-Type: text/html\n""")
+					request.Request(client, '400 Bad Request', 'text/html').SendRequest()
 					client.sendall("""
 				<html>
 				<body>
@@ -237,9 +188,7 @@ Content-Type: text/html\n
 							a = int(a)
 							b = int(b)
 						except ValueError:
-							client.sendall("""HTTP/1.1 400 Bad Request
-		Server: SLAVI
-		Content-Type: text/html\n""")
+							request.Request(client, '400 Bad Request', 'text/html').SendRequest()
 							client.sendall("""
 			<html>
 			<body>
@@ -252,9 +201,7 @@ Content-Type: text/html\n
 							sumOfBoth = a + b
 							print "a + b = %s" % (sumOfBoth)
 							print "\n"
-							client.sendall("""HTTP/1.1 200 OK
-		Server: SLAVI
-		Content-Type: text/html\n""")
+							request.Request(client, '200 OK', 'text/html').SendRequest()
 							client.sendall("""
 			<html>
 			<body>
