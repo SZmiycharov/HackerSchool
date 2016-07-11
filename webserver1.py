@@ -69,22 +69,38 @@ class Server(object):
 	fileType = match.group(1)
 	if toDownload:
 		if(fileType == 'py'):
-			request.Request(client, '200 OK', 'text/plain', 'py').SendFileRequest()
+			client.sendall("""HTTP/1.1 200 OK
+Server: SLAVI
+Content-Type: text/plain
+Content-Disposition: attachment; filename="file.py"\n""")
 		elif(fileType == 'txt'):
-			request.Request(client, '200 OK', 'text/plain', 'txt').SendFileRequest()
+			client.sendall("""HTTP/1.1 200 OK
+Server: SLAVI
+Content-Type: text/plain
+Content-Disposition: attachment; filename="file.txt"\n""")
 		elif(fileType == "html"):
-			request.Request(client, '200 OK', 'text/html', 'html').SendFileRequest()
+			client.sendall("""HTTP/1.1 200 OK
+Server: SLAVI
+Content-Type: text/html
+Content-Disposition: attachment; filename="file.html"\n""")
 		elif(fileType == "php"):
-			request.Request(client, '200 OK', 'text/plain', 'php').SendFileRequest()
+			client.sendall("""HTTP/1.1 200 OK
+Server: SLAVI
+Content-Type: text/html
+Content-Disposition: attachment; filename="file.php"\n""")
 		elif(fileType == 'png'):
-			request.Request(client, '200 OK', 'image/png', 'png').SendFileRequest()
+			client.sendall("""HTTP/1.1 200 OK
+Server: SLAVI
+Content-Type: image/png
+Content-Disposition: attachment; filename="file.png"\n
+""")
 		elif(fileType == 'jpg'):
 			request.Request(client, '200 OK', 'image/jpeg', 'jpg').SendFileRequest()
 		while True:
 			fileData = f.read()
 			if fileData == '': break
 			client.sendall(fileData)
-		f.close()   
+		f.close()  
 	else:
 		if(fileType == 'py'):
 			request.Request(client, '200 OK', 'text/plain').SendRequest()
@@ -112,7 +128,6 @@ class Server(object):
 		req = ''
 		data = ''
 		req = recv_timeout(client, 1)
-		print req
 		request_method = req.split(' ')[0]
 
 #*******************************************************GET**************************************************************************
@@ -163,6 +178,7 @@ class Server(object):
 					print "GET in second if"
 					print fileName
 					self.RetrFile(client, fileName, True)
+					print "out of retrfile"
 					logging.info("Retrieved file %s; GET!"%(fileName))
 					client.close()
 				elif len(fileName.split('.')) == 1:
