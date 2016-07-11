@@ -21,7 +21,7 @@ logging.basicConfig(format='%(asctime)s %(message)s',filename='/home/slavi/Deskt
 try:
     conn = psycopg2.connect("dbname='httpAuth' user='slavi' host='localhost' password='3111'")
 except:
-    print "I am unable to connect to the database"
+    print "Unable to connect to the database"
 cur = conn.cursor()
 
 class Server(object):	
@@ -32,12 +32,6 @@ class Server(object):
     	self.clienttimeout = clienttimeout
     	self.socklisten = socklisten
     
-	def uploadFile(fileextension, fileToUpload):
-		serverFile = self.directory + '/newfile.' + fileextension
-		f = open(serverFile, 'wb+')
-		f.write(fileToUpload)
-		f.close()
-
     def listen(self):
     	self.sock = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
     	self.sock.setsockopt(socket.SOL_SOCKET, socket.SO_REUSEADDR, 1)

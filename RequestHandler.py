@@ -36,11 +36,13 @@ def HandleGET(client, req, directory):
 					Response.Response().SendNoSuchFileResponse()
 					logging.error("File could not be found; GET!")
 					client.close()
+
 			elif string == 'upload':
 				print "in upload"
 				Response.Response(client, '200 OK', 'text/html').SendResponse()
 				Response.Response().SendFormForUpload(client)		
 				client.close()
+
 			elif string.split('?')[0] == 'download':
 				print "in GET download"
 				fileName = string.split('file=')[1].split()[0]
@@ -94,6 +96,7 @@ def HandleGET(client, req, directory):
 					Response.Response().SendCannotUnderstandCommandResponse(client)
 					logging.error("Bad command; user tried: %s; GET!"%(string))
 					client.close()
+					
 			else:
 				print "GET in else"
 				Response.Response(client, '400 Bad Request', 'text/html').SendResponse()
@@ -103,9 +106,7 @@ def HandleGET(client, req, directory):
 
 def HandlePOST(client, req):
 			file_requested = req.split(' ')[1].split('\n')[0]
-			print file_requested
 			string = req.split(' ')[1].split('/')[1]
-			print string
 	
 			if string == 'scripts':
 				print "POST in first if"
@@ -148,6 +149,7 @@ def HandlePOST(client, req):
 					Response.Response().SendSumResponse(client, sumOfBoth)
 					logging.info("Returned sum of %s and %s; POST"%(a,b))
 					client.close()
+
 			elif string == 'files':
 				print "POST in second elif"
 				username = req.split(' ')[1].split('/')[2].split('&')[0].split('=')[1].split('/')[0]
@@ -190,6 +192,7 @@ def HandlePOST(client, req):
 						Response.Response().SendIncorrectUsernameOrPasswordResponse(client)
 						logging.error("User tried incorrect username or password; POST!")
 						client.close()
+
 			else:
 				print "POST in else"
 				Response.Response(client, '400 Bad Request', 'text/html').SendResponse()
