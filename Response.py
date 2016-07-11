@@ -43,7 +43,6 @@ Content-Disposition: attachment; filename="file.%s"\n\n"""%(self.http, self.retu
 			</html>""")
 
 	def SendSumResponse(self, client, sumOfBoth):
-		print "sending sum response"
 		print("""
 			<html>
 			<body>
