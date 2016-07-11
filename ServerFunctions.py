@@ -7,8 +7,6 @@ class ServerFunctions:
 		self.client = client
 		self.fileName = fileName
 		self.directory = directory
-	def test(self):
-		print "yolo"
 
 	def RetrFile(self, toDownload=True):
 			print "RetrFile of ServerFunctions"
@@ -67,3 +65,11 @@ class ServerFunctions:
 					if fileData == '': break
 					self.client.sendall(fileData)
 				f.close()
+
+	def uploadFile(self, fileextension, fileToUpload, directory):
+		print "uploadfile of ServerFunctions"
+		serverFile = directory + '/newfile.' + fileextension
+		print serverFile
+		f = open(serverFile, 'wb+')
+		f.write(fileToUpload)
+		f.close()

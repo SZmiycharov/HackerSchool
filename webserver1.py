@@ -300,16 +300,16 @@ class Server(object):
 										fileToUpload = req.split('Content-Type')[2].split(': ')[1].split(contType)[1].split('-----------------------------')[0].split('\r\n\r\n')[1].split('\n\r')[0]
 										if contType == 'text/plain':
 											print "yes text plain e!"
-											self.uploadFile('txt', fileToUpload)
+											ServerFunctions.ServerFunctions().uploadFile('txt', fileToUpload, self.directory)
 										elif contType == 'text/x-python':
 											print "text xpython e"
-											self.uploadFile('py', fileToUpload)
+											ServerFunctions.ServerFunctions().uploadFile('py', fileToUpload, self.directory)
 										elif contType == 'image/jpeg':
 											print "image jpeg e"
-											self.uploadFile('jpg', fileToUpload)
+											ServerFunctions.ServerFunctions().uploadFile('jpg', fileToUpload, self.directory)
 										elif contType == 'image/png':
 											print "image png e"
-											self.uploadFile('png', fileToUpload)
+											ServerFunctions.ServerFunctions().uploadFile('png', fileToUpload, self.directory)
 									client.close()
 							
 					if not credentialsCorrect:
@@ -407,30 +407,6 @@ if __name__ == "__main__":
 		
 	print("                      **********SERVER STARTED**********")
 	Server('', port, directory).listen()
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 
 
 
