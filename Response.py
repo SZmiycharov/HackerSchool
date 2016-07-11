@@ -17,6 +17,11 @@ Server: SLAVI
 Content-Type: %s
 Content-Disposition: attachment; filename="file.%s"\n\n"""%(self.http, self.returnCode, self.contenttype, self.fileExtension))
 
+	def SendAuthenticationResponse(self, client):
+		client.sendall("""HTTP/1.1 401 Access Denied
+WWW-Authenticate: Basic realm='SLAVI'
+Content-Length: 0\n\n""")
+
 	def SendIncorrectUsernameOrPasswordResponse(self, client):
 		client.sendall("""
 		<html>
@@ -72,6 +77,7 @@ Content-Disposition: attachment; filename="file.%s"\n\n"""%(self.http, self.retu
 <input type="submit" value="Send">
 </div>
 </form>""")	
+
 
 
 
