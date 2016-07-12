@@ -3,7 +3,6 @@ import re
 
 class ServerFunctions:
 	def __init__(self, client = '', fileName = '', directory = ''):
-		print "init of ServerFunctions"
 		self.client = client
 		self.fileName = fileName
 		self.directory = directory
@@ -12,6 +11,9 @@ class ServerFunctions:
 			print "RetrFile of ServerFunctions"
 			try:		
 				filePath = self.directory + '/' + self.fileName
+				print "*********"
+				print filePath
+				print "*********"
 				f = open(filePath, 'rb')
 			except IOError:
 				errorMsg = "File could not be found!"
@@ -42,9 +44,9 @@ class ServerFunctions:
 				elif(fileType == 'jpg'):
 					Response.Response(self.client, '200 OK', 'image/jpeg', 'jpg').SendFileResponse()
 				while True:
-					fileData = self.f.read()
+					fileData = f.read()
 					if fileData == '': break
-					client.sendall(fileData)
+					self.client.sendall(fileData)
 				f.close()  
 			else:
 				if(fileType == 'py'):

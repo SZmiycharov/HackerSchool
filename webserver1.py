@@ -52,11 +52,7 @@ class Server(object):
 					data = client.recv(1024)
 					req += data
 					if '\r\n\r\n' in req:
-						print "YES"
 						break 
-				print "******************"
-				print req
-				print "******************"
 				request_method = req.split(' ')[0]
 
 				if(request_method == 'GET'):
