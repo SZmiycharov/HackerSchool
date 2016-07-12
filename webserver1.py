@@ -13,7 +13,6 @@ from multiprocessing import Process
 import os
 import re
 import cgi
-import Response
 import ServerFunctions
 import RequestHandler
 

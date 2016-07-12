@@ -1,4 +1,4 @@
-class Response:
+class ResponseHeader:
 	def __init__(self, client = '', returnCode = '200 OK', contenttype = 'text/html', fileExtension = 'txt', http = 'HTTP/1.1'):
 		self.client = client
 		self.http = http
@@ -70,7 +70,7 @@ Content-Length: 0\n\n""")
 			</html>""")
 
 	def SendFormForUpload(self, client):
-		client.sendall("""<form action="http://10.20.1.151:8080/files/success.png" enctype="multipart/form-data" method="post">
+		client.sendall("""<form action="http://localhost:8080/files/success.png" enctype="multipart/form-data" method="post">
 <p>Please specify a file, or a set of files:<br>
 <input type="file" name="datafile"></p>
 <div>

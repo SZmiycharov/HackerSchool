@@ -11,13 +11,11 @@ class ServerFunctions:
 			print "RetrFile of ServerFunctions"
 			try:		
 				filePath = self.directory + '/' + self.fileName
-				print "*********"
-				print filePath
-				print "*********"
+				print "filePath: %s" %(filePath)
 				f = open(filePath, 'rb')
 			except IOError:
 				errorMsg = "File could not be found!"
-				Response.Response(self.client, '400 Bad Request').SendResponse()
+				ResponseHeader.ResponseHeader(self.client, '400 Bad Request').SendResponse()
 				self.client.sendall("""
 					<html>
 					<body>
@@ -32,17 +30,17 @@ class ServerFunctions:
 			print fileType
 			if toDownload:
 				if(fileType == 'py'):
-					Response.Response(self.client, '200 OK', 'text/plain', 'py').SendFileResponse()
+					ResponseHeader.ResponseHeader(self.client, '200 OK', 'text/plain', 'py').SendFileResponse()
 				elif(fileType == 'txt'):
-					Response.Response(self.client, '200 OK', 'text/plain', 'txt').SendFileResponse()
+					ResponseHeader.ResponseHeader(self.client, '200 OK', 'text/plain', 'txt').SendFileResponse()
 				elif(fileType == "html"):
-					Response.Response(self.client, '200 OK', 'text/html', 'html').SendFileResponse()
+					ResponseHeader.ResponseHeader(self.client, '200 OK', 'text/html', 'html').SendFileResponse()
 				elif(fileType == "php"):
-					Response.Response(self.client, '200 OK', 'text/html', 'php').SendFileResponse()
+					ResponseHeader.ResponseHeader(self.client, '200 OK', 'text/html', 'php').SendFileResponse()
 				elif(fileType == 'png'):
-					Response.Response(self.client, '200 OK', 'image/png', 'png').SendFileResponse()
+					ResponseHeader.ResponseHeader(self.client, '200 OK', 'image/png', 'png').SendFileResponse()
 				elif(fileType == 'jpg'):
-					Response.Response(self.client, '200 OK', 'image/jpeg', 'jpg').SendFileResponse()
+					ResponseHeader.ResponseHeader(self.client, '200 OK', 'image/jpeg', 'jpg').SendFileResponse()
 				while True:
 					fileData = f.read()
 					if fileData == '': break
@@ -50,17 +48,17 @@ class ServerFunctions:
 				f.close()  
 			else:
 				if(fileType == 'py'):
-					Response.Response(self.client, '200 OK', 'text/plain').SendResponse()
+					ResponseHeader.ResponseHeader(self.client, '200 OK', 'text/plain').SendResponse()
 				elif(fileType == 'txt'):
-					Response.Response(self.client, '200 OK', 'text/plain').SendResponse()
+					ResponseHeader.ResponseHeader(self.client, '200 OK', 'text/plain').SendResponse()
 				elif(fileType == "html"):
-					Response.Response(self.client, '200 OK', 'text/html').SendResponse()
+					ResponseHeader.ResponseHeader(self.client, '200 OK', 'text/html').SendResponse()
 				elif(fileType == "php"):
-					Response.Response(self.client, '200 OK', 'text/plain').SendResponse()
+					ResponseHeader.ResponseHeader(self.client, '200 OK', 'text/plain').SendResponse()
 				elif(fileType == 'png'):
-					Response.Response(self.client, '200 OK', 'image/png').SendResponse()
+					ResponseHeader.ResponseHeader(self.client, '200 OK', 'image/png').SendResponse()
 				elif(fileType == 'jpg'):
-					Response.Response(self.client, '200 OK', 'image/jpeg').SendResponse()
+					ResponseHeader.ResponseHeader(self.client, '200 OK', 'image/jpeg').SendResponse()
 				
 				while True:
 					fileData = f.read()
@@ -70,8 +68,9 @@ class ServerFunctions:
 
 	def uploadFile(self, fileextension, fileToUpload, directory):
 		print "uploadfile of ServerFunctions"
+		print "filetoupload: %s"%(fileToUpload)
 		serverFile = directory + '/newfile.' + fileextension
-		print serverFile
+		print "serverFile: %s"%(serverFile)
 		f = open(serverFile, 'wb+')
 		f.write(fileToUpload)
 		f.close()
