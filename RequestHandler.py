@@ -179,10 +179,9 @@ def HandlePOST(client, req, cur, directory):
 				elif string == 'upload':
 					print "in handlepost upload"
 					contType = req.split('Content-Type')[2].split(': ')[1].split('\n')[0].split('\r')[0]
-
 					print "contType: %s"%(contType)
-					#fileToUpload = req.split('Content-Type')[2].split(': ')[1].split(contType)[1].split('-----------------------------')[0].split('\r\n\r\n')[1].split('\n\r')[0]
-					fileToUpload = req.split('\r\n\r\n')[2]
+					print req.split('\r\n\r\n')[2].split('----')[0].split('\n\r\n')
+					fileToUpload = req.split('\r\n\r\n')[2].split('----')[0].split('\n\r\n')[0]
 					if contType == 'text/plain':
 						ServerFunctions.ServerFunctions().uploadFile('txt', fileToUpload, directory)
 					elif contType == 'text/x-python':

@@ -62,7 +62,7 @@ Content-Length: 0\n\n""")
 		client.sendall("""
 			<html>
 			<body>
-			<p><b> ASHDHASDH:  </b></p>
+			<p><b> Download complete!  </b></p>
 			</body>
 			</html>""")
 
