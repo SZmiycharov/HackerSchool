@@ -13,6 +13,7 @@ from multiprocessing import Process
 import os
 import re
 import cgi
+import ResponseHeader
 import ServerFunctions
 import RequestHandler
 
@@ -47,12 +48,9 @@ class Server(object):
 			try:
 				req = ''
 				data = ''
-				while True:
-					data = client.recv(1024)
-					req += data
-					if '\r\n\r\n' in req:
-						break 
+				req = recv_timeout(client, 5)
 				request_method = req.split(' ')[0]
+				print req
 
 				if(request_method == 'GET'):
 					print "in GET method"

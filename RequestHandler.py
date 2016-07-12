@@ -44,7 +44,7 @@ def HTTPBasicAuthentication(req, cur):
 
 def HandleGET(client, req, directory):
 			string = req.split(' ')[1].split('/')[1]
-			print string
+			print "string: %s" %(string)
 			if string == 'scripts':
 				print "GET in first if"
 				maxvalue = req.split(' ')[1].split('MAX=')[1].split('\n')[0]
@@ -65,7 +65,7 @@ def HandleGET(client, req, directory):
 
 			elif string == 'upload':
 				print "in upload"
-				ResponseHeader.ResponseHeader(client, '200 OK', 'text/html').SendResponse()
+				ResponseHeader.ResponseHeader(client).SendResponse()
 				ResponseHeader.ResponseHeader().SendFormForUpload(client)		
 				client.close()
 
@@ -74,7 +74,6 @@ def HandleGET(client, req, directory):
 				fileName = string.split('file=')[1].split()[0]
 				if len(fileName.split('.')) > 1:
 					print "GET in second if"
-					print fileName
 					ServerFunctions.ServerFunctions(client, fileName, directory).RetrFile()
 					logging.info("Retrieved file %s; GET!"%(fileName))
 					client.close()
@@ -183,8 +182,8 @@ def HandlePOST(client, req, cur, directory):
 					if fileName == 'success.png':
 						contType = req.split('Content-Type')[2].split(': ')[1].split('\n')[0]
 						contType = contType.split('\r')[0]
-						fileToUpload = req.split('Content-Type')[2].split(': ')[1].split(contType)[1].split('-----------------------------')[0].split('\r\n\r\n')[1].split('\n\r')[0]
-						print fileToUpload
+						fileToUpload = req.split('Content-Type:')[2].split('\n\n')[1].split('\n--------')[0]
+
 						if contType == 'text/plain':
 							ServerFunctions.ServerFunctions().uploadFile('txt', fileToUpload, directory)
 						elif contType == 'text/x-python':

@@ -1,4 +1,4 @@
-import Response
+import ResponseHeader
 import re
 
 class ServerFunctions:
@@ -27,7 +27,6 @@ class ServerFunctions:
 				return
 			match = re.match('.*\.(.*)', self.fileName)
 			fileType = match.group(1)
-			print fileType
 			if toDownload:
 				if(fileType == 'py'):
 					ResponseHeader.ResponseHeader(self.client, '200 OK', 'text/plain', 'py').SendFileResponse()
@@ -68,7 +67,6 @@ class ServerFunctions:
 
 	def uploadFile(self, fileextension, fileToUpload, directory):
 		print "uploadfile of ServerFunctions"
-		print "filetoupload: %s"%(fileToUpload)
 		serverFile = directory + '/newfile.' + fileextension
 		print "serverFile: %s"%(serverFile)
 		f = open(serverFile, 'wb+')

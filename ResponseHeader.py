@@ -9,7 +9,8 @@ class ResponseHeader:
 	def SendResponse(self):
 		self.client.sendall("""%s %s
 Server: SLAVI
-Content-Type: %s\n\n"""%(self.http, self.returnCode, self.contenttype))
+Content-Type: %s\n
+"""%(self.http, self.returnCode, self.contenttype))
 
 	def SendFileResponse(self):
 		self.client.sendall("""%s %s
