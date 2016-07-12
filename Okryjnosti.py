@@ -3,11 +3,7 @@ from graph import Graph
 
 
 def HaveTwoPoints(r1, x1, y1, r2, x2, y2):
-	firstSide = (abs(x2-x1))*(abs(x2-x1))
-	secondSide = (abs(y2-y1))*(abs(y2-y1))
-	csquared = firstSide + secondSide
-	c = math.sqrt(csquared)
-	if c < r1+r2:
+	if (abs(r1-r2)<math.sqrt((x1-x2)*(x1-x2)+(y1-y2)*(y1-y2))) and (math.sqrt((x1-x2)*(x1-x2)+(y1-y2)*(y1-y2)) <= (r1+r2)):
 		return True
 	else:
 		return False
@@ -60,18 +56,16 @@ for i in range(n):
 helperDict = {}
 for i in range(n):
 	helperDict[i] = []
-
+print "***********"
 for i in range(0, n-1):
-	for j in range(0, n):
+    for j in range(0, n):
                 if i!=j:
                         if HaveTwoPoints(rove[i], hiksove[i], yci[i], rove[j], hiksove[j], yci[j]):
-                                helperDict[i].append(j)
-print "***********"
+                        		helperDict[i].append(j)
+
 print helperDict
 
 graph = Graph(helperDict)
-
-print('The path from vertex 0 to vertex 3:')
 path = graph.find_all_paths(0, n-1)
 print(path)
 
