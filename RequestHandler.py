@@ -43,8 +43,8 @@ def HTTPBasicAuthentication(req, cur):
 
 
 def HandleGET(client, req, directory):
-			print "in GET method"
 			string = req.split(' ')[1].split('/')[1]
+			print string
 			if string == 'scripts':
 				print "GET in first if"
 				maxvalue = req.split(' ')[1].split('MAX=')[1].split('\n')[0]
@@ -189,6 +189,7 @@ def HandlePOST(client, req, cur, directory):
 						elif contType == 'text/x-python':
 							ServerFunctions.ServerFunctions().uploadFile('py', fileToUpload, directory)
 						elif contType == 'image/jpeg':
+							print "HERE"
 							ServerFunctions.ServerFunctions().uploadFile('jpg', fileToUpload, directory)
 						elif contType == 'image/png':
 							ServerFunctions.ServerFunctions().uploadFile('png', fileToUpload, directory)

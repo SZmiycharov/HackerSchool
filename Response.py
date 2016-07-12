@@ -70,7 +70,7 @@ Content-Length: 0\n\n""")
 			</html>""")
 
 	def SendFormForUpload(self, client):
-		client.sendall("""<form action="http://10.20.1.151:8080/files/username=slavi&password=3111/success.png" enctype="multipart/form-data" method="post">
+		client.sendall("""<form action="http://10.20.1.151:8080/files/success.png" enctype="multipart/form-data" method="post">
 <p>Please specify a file, or a set of files:<br>
 <input type="file" name="datafile"></p>
 <div>
