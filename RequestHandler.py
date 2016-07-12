@@ -16,6 +16,7 @@ import cgi
 import ResponseHeader
 import ServerFunctions
 import base64
+import logging
 
 def HTTPBasicAuthentication(req, cur):
 	authorization = req.split('Authorization:')
@@ -29,6 +30,7 @@ def HTTPBasicAuthentication(req, cur):
 				ResponseHeader.ResponseHeader().SendAuthenticationResponse(client)
 				logging.info("Wrong username/password; POST!")
 				client.close()
+				sys.exit(0)
 		else:
 				cur.execute("""SELECT username FROM users""")
 				rows = cur.fetchall()
@@ -39,14 +41,14 @@ def HTTPBasicAuthentication(req, cur):
 						for row in rows:
 							if row[0] == password:
 								credentialsCorrect = True
+								break
 							else: 
-								print "HTTPBasicAuthentication in else 1"
 								client.close()
-					else:
-						print "HTTPBasicAuthentication in else 1" 
+								sys.exit(0)
+					else: 
 						client.close()
+						sys.exit(0)
 	return credentialsCorrect
-
 
 def HandleGET(client, req, directory):
 			string = req.split(' ')[1].split('/')[1]
@@ -54,7 +56,8 @@ def HandleGET(client, req, directory):
 			if string == 'scripts':
 				print "GET in first if"
 				maxvalue = req.split(' ')[1].split('MAX=')[1].split('\n')[0]
-				command = "python %s -m %s"%(req.split(' ')[1].split('?')[0].split('/')[2], maxvalue)
+				if len(req.split(' ')[1].split('?')[0].split('/')[2])>=2:
+					command = "python %s -m %s"%(req.split(' ')[1].split('?')[0].split('/')[2], maxvalue)
 				temp = str(req.split(' ')[1].split('?')[0].split('/')[2])
 				if os.path.isfile(temp):
 					print "GET after os path isfile"
@@ -69,6 +72,21 @@ def HandleGET(client, req, directory):
 					logging.error("File could not be found; GET!")
 					client.close()
 
+			elif string == '':
+				ResponseHeader.ResponseHeader(client, '200 OK', 'text/html').SendResponse()
+				client.sendall('''<!DOCTYPE html>
+<html>
+<body>
+
+<h1 style="color:red;">SLAVI THE BEST :D</h1>
+
+
+</body>
+</html>
+''')
+				client.close()
+				sys.exit(1)
+
 			elif string.split('?')[0] == 'download':
 				print "in GET download"
 				fileName = string.split('file=')[1].split()[0]
@@ -77,7 +95,7 @@ def HandleGET(client, req, directory):
 					ServerFunctions.ServerFunctions(client, fileName, directory).RetrFile()
 					logging.info("Retrieved file %s; GET!"%(fileName))
 					client.close()
-				elif len(fileName.split('.')) == 1:
+				else:
 					print "GET in third elif"
 					ResponseHeader.ResponseHeader(client, '400 Bad Request', 'text/html').SendResponse()
 					ResponseHeader.ResponseHeader().SendCannotUnderstandCommandResponse(client)
@@ -100,12 +118,26 @@ def HandleGET(client, req, directory):
 							ResponseHeader.ResponseHeader().SendBadParametersResponse(client)
 							logging.error("Bad parameters for sum; GET!")
 							client.close()
+							sys.exit(1)
 						else:
 							sumOfBoth = a + b
 							ResponseHeader.ResponseHeader(client, '200 OK', 'text/html').SendResponse()
 							ResponseHeader.ResponseHeader().SendSumResponse(client, sumOfBoth)
 							logging.info("Found sum of %s and %s; GET!"%(a,b))
 							client.close()
+							sys.exit(1)
+					else:
+						ResponseHeader.ResponseHeader(client, '400 Bad Request', 'text/html').SendResponse()
+						ResponseHeader.ResponseHeader().SendBadParametersResponse(client)
+						logging.error("Bad parameters for sum; GET!")
+						client.close()
+						sys.exit(1)
+				else:
+					ResponseHeader.ResponseHeader(client, '400 Bad Request', 'text/html').SendResponse()
+					ResponseHeader.ResponseHeader().SendBadParametersResponse(client)
+					logging.error("Bad parameters for sum; GET!")
+					client.close()
+					sys.exit(1)
 			
 			elif string == 'files':
 				print "GET in second elif"
@@ -115,12 +147,14 @@ def HandleGET(client, req, directory):
 					ServerFunctions.ServerFunctions(client,fileName,directory).RetrFile(False)
 					logging.info("Retrieved file %s; GET!"%(fileName))
 					client.close()
-				elif len(fileName.split('.')) == 1:
+					sys.exit(1)
+				else:
 					print "GET in third elif"
 					ResponseHeader.ResponseHeader(client, '400 Bad Request', 'text/html').SendResponse()
 					ResponseHeader.ResponseHeader().SendCannotUnderstandCommandResponse(client)
 					logging.error("Bad command; user tried: %s; GET!"%(string))
 					client.close()
+					sys.exit(1)
 
 			else:
 				print "GET in else"
@@ -139,8 +173,11 @@ def HandlePOST(client, req, cur, directory):
 				if string == 'scripts':
 					print "POST in first if"
 					maxvalue = req.split('\n')[-1].split('=')[1]
+					print maxvalue
 					command = "python %s -m %s"%(req.split(' ')[1].split('?')[0].split('/')[2], maxvalue)
+					print command
 					temp = str(req.split(' ')[1].split('?')[0].split('/')[2])
+					print temp
 					if os.path.isfile(temp):
 						print "POST after os path isfile"
 						output = subprocess.check_output(command, shell=True)
@@ -148,11 +185,13 @@ def HandlePOST(client, req, cur, directory):
 		   				client.sendall(output)
 						logging.info("Executed program: %s; POST!"%(req.split(' ')[1].split('?')[0].split('/')[2]))
 						client.close()
+						sys.exit(0)
 					else:
 						ResponseHeader.ResponseHeader(client, '400 Bad Request', 'text/html').SendResponse()
 						ResponseHeader.ResponseHeader().SendNoSuchFileResponse()
 						logging.error("File %s could not be found; POST!"%(req.split(' ')[1].split('?')[0].split('/')[2]))
 						client.close()	
+						sys.exit(0)
 				
 				elif string == 'sum':
 					print "POST in first elif"
@@ -169,18 +208,19 @@ def HandlePOST(client, req, cur, directory):
 						ResponseHeader.ResponseHeader().SendBadParametersResponse(client)
 						logging.error("Bad parameters for sum; POST!"%())
 						client.close()
+						sys.exit(0)
 					else:
 						sumOfBoth = a + b
 						ResponseHeader.ResponseHeader(client, '200 OK', 'text/html').SendResponse()
 						ResponseHeader.ResponseHeader().SendSumResponse(client, sumOfBoth)
 						logging.info("Returned sum of %s and %s; POST"%(a,b))
 						client.close()
+						sys.exit(0)
 
 				elif string == 'upload':
 					print "in handlepost upload"
 					contType = req.split('Content-Type')[2].split(': ')[1].split('\n')[0].split('\r')[0]
 					print "contType: %s"%(contType)
-					print req.split('\r\n\r\n')[2].split('----')[0].split('\n\r\n')
 					fileToUpload = req.split('\r\n\r\n')[2].split('----')[0].split('\n\r\n')[0]
 					if contType == 'text/plain':
 						ServerFunctions.ServerFunctions().uploadFile('txt', fileToUpload, directory)
@@ -194,6 +234,7 @@ def HandlePOST(client, req, cur, directory):
 					ResponseHeader.ResponseHeader(client, '200 OK', 'text/html').SendResponse()
 					ResponseHeader.ResponseHeader().SendUploadResponse(client)
 					client.close()
+					sys.exit(0)
 
 				elif string == 'files':
 					print "POST in second elif"
@@ -201,6 +242,7 @@ def HandlePOST(client, req, cur, directory):
 					ServerFunctions.ServerFunctions(client,fileName,directory).RetrFile(False)
 					logging.info("Retrieved file %s; POST!"%(fileName))
 					client.close()
+					sys.exit(0)
 
 				else:
 					print "POST in else"
@@ -214,4 +256,5 @@ def HandlePOST(client, req, cur, directory):
 				ResponseHeader.ResponseHeader().SendAuthenticationResponse(client)
 				logging.error("User tried incorrect username or password; POST!")
 				client.close()
+				sys.exit(0)
 				

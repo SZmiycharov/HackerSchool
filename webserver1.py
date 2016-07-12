@@ -48,23 +48,33 @@ class Server(object):
 			try:
 				req = ''
 				data = ''
-				req = client.recv(10000000)
+				while True:
+					data = client.recv(1024)
+					req += data
+					if '\r\n\r\n' in req:
+						print "broke because two newlines"
+						break
 				request_method = req.split(' ')[0]
-
-				if(request_method == 'GET'):
-					print "in GET method"
-					RequestHandler.HandleGET(client, req, self.directory)	
-			
-				elif(request_method == 'POST'):
-					print "in POST method"
-					RequestHandler.HandlePOST(client, req, cur, self.directory)
-					
-				else:
-					client.sendall("Cannot recognize request method <should be POST or GET>!")
-					logging.error("Could not recognize request!")
-					client.close()
+				print "*********************************"
+				print req
+				print "*********************************"
 			except:
+				sys.stderr.write("Fail with socket") 
 				client.close()
+				sys.exit(0)
+
+			if(request_method == 'GET'):
+				print "in GET method"
+				RequestHandler.HandleGET(client, req, self.directory)	
+			elif(request_method == 'POST'):
+				print "in POST method"
+				RequestHandler.HandlePOST(client, req, cur, self.directory)	
+			else:
+				client.sendall("Cannot recognize request method <should be POST or GET>!")
+				logging.error("Could not recognize request!")
+				client.close()
+				sys.exit(0)
+			
 
 def recv_timeout(the_socket,timeout=2):
     #make socket non blocking
@@ -114,18 +124,21 @@ if __name__ == "__main__":
 	for opt, arg in opts:
 		if opt == '-h':
 			print 'webserver1.py -p <port> -f <directory>'
-			sys.exit()
+			sys.exit(0)
 	    	elif opt in ("-p", "--port"):
 			port = arg
 		elif opt in ("-f", "--directory"):
 			directory = arg
+		else:
+			print 'webserver1.py -p <port> -f <directory>'
+			sys.exit(0)
 	port = int(port)
-	if (port>=64000 or port<=1): 
+	if (port>=65000 or port<=1): 
 		print("should specify port as parameter!")
-		sys.exit()
+		sys.exit(0)
 	if not os.path.isdir(directory):
 		print("not a valid directory")
-		sys.exit()
+		sys.exit(0)
 		
 	print("                      **********SERVER STARTED**********")
 	Server('', port, directory).listen()

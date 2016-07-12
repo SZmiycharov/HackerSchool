@@ -1,5 +1,6 @@
 import ResponseHeader
 import re
+import logging
 
 class ServerFunctions:
 	def __init__(self, client = '', fileName = '', directory = ''):
@@ -58,7 +59,9 @@ class ServerFunctions:
 					ResponseHeader.ResponseHeader(self.client, '200 OK', 'image/png').SendResponse()
 				elif(fileType == 'jpg'):
 					ResponseHeader.ResponseHeader(self.client, '200 OK', 'image/jpeg').SendResponse()
-				
+				elif(fileType == 'gif'):
+					ResponseHeader.ResponseHeader(self.client, '200 OK', 'image/gif').SendResponse()
+
 				while True:
 					fileData = f.read()
 					if fileData == '': break

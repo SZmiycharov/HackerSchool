@@ -1,3 +1,5 @@
+import logging
+
 class ResponseHeader:
 	def __init__(self, client = '', returnCode = '200 OK', contenttype = 'text/html', fileExtension = 'txt', http = 'HTTP/1.1'):
 		self.client = client
@@ -13,6 +15,7 @@ Content-Type: %s\n\n"""%(self.http, self.returnCode, self.contenttype))
 		self.client.sendall("""%s %s
 Server: SLAVI
 Content-Type: %s\n\n"""%(self.http, self.returnCode, self.contenttype))
+
 
 	def SendFileResponse(self):
 		self.client.sendall("""%s %s
