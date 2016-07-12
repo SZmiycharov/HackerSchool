@@ -7,10 +7,12 @@ class ResponseHeader:
 		self.fileExtension = fileExtension
 
 	def SendResponse(self):
+		print ("""%s %s
+Server: SLAVI
+Content-Type: %s\n\n"""%(self.http, self.returnCode, self.contenttype))
 		self.client.sendall("""%s %s
 Server: SLAVI
-Content-Type: %s\n
-"""%(self.http, self.returnCode, self.contenttype))
+Content-Type: %s\n\n"""%(self.http, self.returnCode, self.contenttype))
 
 	def SendFileResponse(self):
 		self.client.sendall("""%s %s
@@ -49,18 +51,20 @@ Content-Length: 0\n\n""")
 			</html>""")
 
 	def SendSumResponse(self, client, sumOfBoth):
-		print("""
-			<html>
-			<body>
-			<p><b> sum: %d </b></p>
-			</body>
-			</html>""" % (sumOfBoth))
 		client.sendall("""
 			<html>
 			<body>
 			<p><b> sum: %d </b></p>
 			</body>
 			</html>""" % (sumOfBoth))
+
+	def SendUploadResponse(self, client):
+		client.sendall("""
+			<html>
+			<body>
+			<p><b> ASHDHASDH:  </b></p>
+			</body>
+			</html>""")
 
 	def SendNoSuchFileResponse(self, client):
 		client.sendall("""
@@ -71,7 +75,7 @@ Content-Length: 0\n\n""")
 			</html>""")
 
 	def SendFormForUpload(self, client):
-		client.sendall("""<form action="http://localhost:8080/files/success.png" enctype="multipart/form-data" method="post">
+		client.sendall("""<form action="http://localhost:8080/upload" enctype="multipart/form-data" method="post">
 <p>Please specify a file, or a set of files:<br>
 <input type="file" name="datafile"></p>
 <div>

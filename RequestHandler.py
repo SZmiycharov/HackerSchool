@@ -39,6 +39,12 @@ def HTTPBasicAuthentication(req, cur):
 						for row in rows:
 							if row[0] == password:
 								credentialsCorrect = True
+							else: 
+								print "HTTPBasicAuthentication in else 1"
+								client.close()
+					else:
+						print "HTTPBasicAuthentication in else 1" 
+						client.close()
 	return credentialsCorrect
 
 
@@ -62,12 +68,6 @@ def HandleGET(client, req, directory):
 					ResponseHeader.ResponseHeader().SendNoSuchFileResponse()
 					logging.error("File could not be found; GET!")
 					client.close()
-
-			elif string == 'upload':
-				print "in upload"
-				ResponseHeader.ResponseHeader(client).SendResponse()
-				ResponseHeader.ResponseHeader().SendFormForUpload(client)		
-				client.close()
 
 			elif string.split('?')[0] == 'download':
 				print "in GET download"
@@ -133,7 +133,9 @@ def HandlePOST(client, req, cur, directory):
 			file_requested = req.split(' ')[1].split('\n')[0]
 			string = req.split(' ')[1].split('/')[1]
 			credentialsCorrect = HTTPBasicAuthentication(req, cur)
+
 			if credentialsCorrect:
+				print "credentials are correct!"
 				if string == 'scripts':
 					print "POST in first if"
 					maxvalue = req.split('\n')[-1].split('=')[1]
@@ -174,24 +176,31 @@ def HandlePOST(client, req, cur, directory):
 						logging.info("Returned sum of %s and %s; POST"%(a,b))
 						client.close()
 
+				elif string == 'upload':
+					print "in handlepost upload"
+					contType = req.split('Content-Type')[2].split(': ')[1].split('\n')[0].split('\r')[0]
+
+					print "contType: %s"%(contType)
+					#fileToUpload = req.split('Content-Type')[2].split(': ')[1].split(contType)[1].split('-----------------------------')[0].split('\r\n\r\n')[1].split('\n\r')[0]
+					fileToUpload = req.split('\r\n\r\n')[2]
+					if contType == 'text/plain':
+						ServerFunctions.ServerFunctions().uploadFile('txt', fileToUpload, directory)
+					elif contType == 'text/x-python':
+						ServerFunctions.ServerFunctions().uploadFile('py', fileToUpload, directory)
+					elif contType == 'image/jpeg':
+						ServerFunctions.ServerFunctions().uploadFile('jpg', fileToUpload, directory)
+					elif contType == 'image/png':
+						ServerFunctions.ServerFunctions().uploadFile('png', fileToUpload, directory)
+
+					ResponseHeader.ResponseHeader(client, '200 OK', 'text/html').SendResponse()
+					ResponseHeader.ResponseHeader().SendUploadResponse(client)
+					client.close()
+
 				elif string == 'files':
 					print "POST in second elif"
 					fileName = file_requested.split('/')[2]
 					ServerFunctions.ServerFunctions(client,fileName,directory).RetrFile(False)
 					logging.info("Retrieved file %s; POST!"%(fileName))
-					if fileName == 'success.png':
-						contType = req.split('Content-Type')[2].split(': ')[1].split('\n')[0]
-						contType = contType.split('\r')[0]
-						fileToUpload = req.split('Content-Type:')[2].split('\n\n')[1].split('\n--------')[0]
-
-						if contType == 'text/plain':
-							ServerFunctions.ServerFunctions().uploadFile('txt', fileToUpload, directory)
-						elif contType == 'text/x-python':
-							ServerFunctions.ServerFunctions().uploadFile('py', fileToUpload, directory)
-						elif contType == 'image/jpeg':
-							ServerFunctions.ServerFunctions().uploadFile('jpg', fileToUpload, directory)
-						elif contType == 'image/png':
-							ServerFunctions.ServerFunctions().uploadFile('png', fileToUpload, directory)
 					client.close()
 
 				else:
@@ -202,6 +211,7 @@ def HandlePOST(client, req, cur, directory):
 					client.close()
 			
 			else:
+				print "Credentials not correct!"
 				ResponseHeader.ResponseHeader().SendAuthenticationResponse(client)
 				logging.error("User tried incorrect username or password; POST!")
 				client.close()

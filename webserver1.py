@@ -48,9 +48,8 @@ class Server(object):
 			try:
 				req = ''
 				data = ''
-				req = recv_timeout(client, 5)
+				req = client.recv(10000000)
 				request_method = req.split(' ')[0]
-				print req
 
 				if(request_method == 'GET'):
 					print "in GET method"
