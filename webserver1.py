@@ -73,7 +73,6 @@ class Server(object):
 				client.sendall("Cannot recognize request method <should be POST or GET>!")
 				logging.error("Could not recognize request!")
 				client.close()
-				sys.exit(0)
 			
 
 def recv_timeout(the_socket,timeout=2):
