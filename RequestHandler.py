@@ -20,6 +20,7 @@ import logging
 import webserver1
 import hashlib
 from subprocess import call
+import smtplib
 
 def HTTPBasicAuthentication(req, cur, client):
 	authorization = req.split('Authorization:')
@@ -29,9 +30,6 @@ def HTTPBasicAuthentication(req, cur, client):
 		decodedCredentials = base64.b64decode(encodedCredentials)
 		username = decodedCredentials.split(':')[0]
 		password = decodedCredentials.split(':')[1]
-		print "USERNAMEPASSWORDUSERNAMEPASSWORD"
-		print username
-		print password
 		if username == '' or password == '':
 				return False
 		else:
@@ -55,7 +53,6 @@ def HTTPBasicAuthentication(req, cur, client):
 					else: 
 						continue
 		return False
-
 
 def HandleGET(client, req, directory):
 			string = req.split(' ')[1].split('/')[1]
@@ -197,6 +194,11 @@ def HandlePOST(client, req, cur, conn, directory):
 			elif credentialsCorrect:
 				print "credentials are correct!"
 				webserver1.Server.SendingCredentials = 0
+				server = smtplib.SMTP('smtp.gmail.com',587)
+				server.starttls()
+				server.login('webserver1py@gmail.com','31113111')
+				server.sendmail('webserver1py@gmail.com','webserver1py@gmail.com','%s'%('code'))
+
 				if string == 'scripts':
 					print "POST in first if"
 					maxvalue = req.split('\n')[-1].split('=')[1]
