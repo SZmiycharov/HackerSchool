@@ -1,5 +1,18 @@
 import math
-from graph import Graph
+
+def find_all_paths(graph, start, end, path=[]):
+        path = path + [start]
+        if start == end:
+            return [path]
+        if not graph.has_key(start):
+            return []
+        paths = []
+        for node in graph[start]:
+            if node not in path:
+                newpaths = find_all_paths(graph, node, end, path)
+                for newpath in newpaths:
+                    paths.append(newpath)
+        return paths
 
 
 def HaveTwoPoints(r1, x1, y1, r2, x2, y2):
@@ -53,20 +66,18 @@ for i in range(n):
 	yci.append(y)
 	rove.append(r) 	
 
-helperDict = {}
+graph = {}
 for i in range(n):
-	helperDict[i] = []
-print "***********"
+	graph[i] = []
 for i in range(0, n-1):
     for j in range(0, n):
                 if i!=j:
                         if HaveTwoPoints(rove[i], hiksove[i], yci[i], rove[j], hiksove[j], yci[j]):
-                        		helperDict[i].append(j)
+                        		graph[i].append(j)
 
-print helperDict
+print graph
 
-graph = Graph(helperDict)
-path = graph.find_all_paths(0, n-1)
+path = find_all_paths(graph, 0, n-1)
 print(path)
 
 answer = 100000
