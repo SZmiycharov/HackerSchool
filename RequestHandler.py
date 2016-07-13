@@ -36,11 +36,11 @@ def HTTPBasicAuthentication(req, cur, client):
 				cur.execute("""SELECT username FROM users""")
 				rows = cur.fetchall()
 				for row in rows:
-					if row[0] == username:
+					if row[0] == base64.b64encode(username):
 						cur.execute("""SELECT password FROM users""")
 						rows = cur.fetchall()
 						for row in rows:
-							if row[0] == password:
+							if row[0] == base64.b64encode(password):
 								return True
 							else: 
 								return False
@@ -169,13 +169,14 @@ def HandleGET(client, req, directory):
 def HandlePOST(client, req, cur, conn, directory):
 			string = req.split(' ')[1].split('/')[1]
 			credentialsCorrect = HTTPBasicAuthentication(req, cur, client)
-			webserver1.Server.SendingCredentials += 1
 
 			if string == 'regSucceeded':
 					user = req.split('"username"')[1].split('---')[0].split('\n')[2].split('\r')[0]
 					print user
 					passw = req.split('"password"')[1].split('---')[0].split('\n')[2].split('\r')[0]
 					print passw
+					user = base64.b64encode(user)
+					passw = base64.b64encode(passw)
 					print "INSERT INTO users(username,password) VALUES ('{}','{}')".format(user,passw)
 					cur.execute("INSERT INTO users(username,password) VALUES ('{}','{}')".format(user,passw))
 					conn.commit()
@@ -185,6 +186,7 @@ def HandlePOST(client, req, cur, conn, directory):
 
 			elif credentialsCorrect:
 				print "credentials are correct!"
+				webserver1.Server.SendingCredentials = 0
 				if string == 'scripts':
 					print "POST in first if"
 					maxvalue = req.split('\n')[-1].split('=')[1]
@@ -283,12 +285,14 @@ def HandlePOST(client, req, cur, conn, directory):
 			
 			else:
 				print "Credentials not correct!"
-				if webserver1.Server.SendingCredentials == 1:
+				if webserver1.Server.SendingCredentials == 0:
+					webserver1.Server.SendingCredentials += 1
 					print "User tried incorrect username/password"
 					ResponseHeader.ResponseHeader().SendAuthenticationResponse(client)
 					logging.error("User tried incorrect username or password; POST!")
 					client.close()
 				else:
+					webserver1.Server.SendingCredentials = 0
 					print "Sending registration form!"
 					ResponseHeader.ResponseHeader(client).SendResponse()
 					ResponseHeader.ResponseHeader().SendRegistrationForm(client)
