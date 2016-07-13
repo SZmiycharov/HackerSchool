@@ -31,6 +31,8 @@ class Server(object):
     	self.directory = directory
     	self.clienttimeout = clienttimeout
     	self.socklisten = socklisten
+    	self.DownloadedFiles = 0
+    	self.UploadedFiles = 0
     
     def listen(self):
 		self.sock = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
@@ -40,8 +42,19 @@ class Server(object):
 		while True:
 			client, address = self.sock.accept()
 			print "Connection from: " + `address`
-			client.settimeout(self.clienttimeout)
-			threading.Thread(target = self.listenToClient,args = (client,)).start()
+			try:
+				child_pid = os.fork()
+				if child_pid == 0:
+					print "true"
+					childpid = os.getpid()
+					self.listenToClient(client)
+				else:
+					continue
+			except OSError, e:
+				print "except oserror"
+				sys.exit(1)
+			print resource.getrusage(resource.RUSAGE_SELF).ru_maxrss
+		sys.exit()
 		
     def listenToClient(self, client):
 		while True:
@@ -61,7 +74,7 @@ class Server(object):
 			except:
 				sys.stderr.write("Fail with socket") 
 				client.close()
-				sys.exit(0)
+				sys.exit(1)
 
 			if(request_method == 'GET'):
 				print "in GET method"
