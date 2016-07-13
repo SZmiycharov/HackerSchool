@@ -172,11 +172,12 @@ def HandlePOST(client, req, cur, conn, directory):
 			webserver1.Server.SendingCredentials += 1
 
 			if string == 'regSucceeded':
-					user = req.split('"username"')[1].split('---')[0].split('\n')[2]
+					user = req.split('"username"')[1].split('---')[0].split('\n')[2].split('\r')[0]
 					print user
-					passw = req.split('"password"')[1].split('---')[0].split('\n')[2]
+					passw = req.split('"password"')[1].split('---')[0].split('\n')[2].split('\r')[0]
 					print passw
-					cur.execute("INSERT INTO users(username,password) VALUES ('%s','%s')"%(user,passw))
+					print "INSERT INTO users(username,password) VALUES ('{}','{}')".format(user,passw)
+					cur.execute("INSERT INTO users(username,password) VALUES ('{}','{}')".format(user,passw))
 					conn.commit()
 					ResponseHeader.ResponseHeader(client).SendResponse()
 					ResponseHeader.ResponseHeader().SendSuccessfulSignUp(client)
@@ -184,7 +185,6 @@ def HandlePOST(client, req, cur, conn, directory):
 
 			elif credentialsCorrect:
 				print "credentials are correct!"
-
 				if string == 'scripts':
 					print "POST in first if"
 					maxvalue = req.split('\n')[-1].split('=')[1]

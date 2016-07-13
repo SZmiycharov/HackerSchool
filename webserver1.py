@@ -57,7 +57,7 @@ class Server(object):
 				print req
 				print "**************End of request*******************"
 			except:
-				sys.stderr.write("Fail with socket") 
+				sys.stderr.write("Fail with socket\n\n") 
 				client.close()
 				sys.exit(0)
 
