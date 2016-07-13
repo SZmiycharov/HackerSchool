@@ -75,6 +75,13 @@ Content-Length: 0\n\n""")
 			<p><b> NO SUCH FILE! </b></p>
 			</body>
 			</html>""")
+	def SendBadFileType(self, client):
+		client.sendall("""
+			<html>
+			<body>
+			<p><b> Server cannot handle this file type! </b></p>
+			</body>
+			</html>""")
 
 	def SendFormForUpload(self, client):
 		client.sendall("""<form action="http://localhost:8080/upload" enctype="multipart/form-data" method="post">

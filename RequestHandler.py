@@ -254,6 +254,11 @@ def HandlePOST(client, req, cur, conn, directory):
 						ServerFunctions.ServerFunctions().uploadFile('jpg', fileToUpload, directory)
 					elif contType == 'image/png':
 						ServerFunctions.ServerFunctions().uploadFile('png', fileToUpload, directory)
+					else:
+						ResponseHeader.ResponseHeader(client, '400 Bad Request', 'text/html').SendResponse()
+						ResponseHeader.ResponseHeader().SendBadFileType(client)
+						client.close()
+						return
 
 					ResponseHeader.ResponseHeader(client, '200 OK', 'text/html').SendResponse()
 					ResponseHeader.ResponseHeader().SendUploadResponse(client)
