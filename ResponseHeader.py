@@ -10,9 +10,6 @@ class ResponseHeader:
 		self.fileExtension = fileExtension
 
 	def SendResponse(self):
-		print ("""%s %s
-Server: SLAVI
-Content-Type: %s\n\n"""%(self.http, self.returnCode, self.contenttype))
 		self.client.sendall("""%s %s
 Server: SLAVI
 Content-Type: %s\n\n"""%(self.http, self.returnCode, self.contenttype))
@@ -89,40 +86,23 @@ Content-Length: 0\n\n""")
 </form>""")	
 
 	def SendRegistrationForm(self, client):
-		client.sendall("""<!doctype html>
-<html>
-    <head>
-        <style type="text/css">
- 
-            body {font-family:Arial, Sans-Serif;}
- 
-            #container {width:300px; margin:0 auto;}
- 
-            /* Nicely lines up the labels. */
-            form label {display:inline-block; width:140px;}
- 
-            /* You could add a class to all the input boxes instead, if you like. That would be safer, and more backwards-compatible */
-            form input[type="text"],
-            form input[type="password"],
-            form input[type="email"] {width:160px;}
- 
-            form .line {clear:both;}
-            form .line.submit {text-align:right;}
- 
-        </style>
-    </head>
-    <body>
-        <div id="container">
-            <form>
-                <h1>Create Login</h1>
-                <div class="line"><label for="username">Username *: </label><input type="text" id="username" /></div>
-                <div class="line"><label for="pwd">Password *: </label><input type="password" id="pwd" /></div>
-                <div class="line"><label for="email">Email *: </label><input type="email" id="email" /></div>
-                <div><input type="submit" value="Submit" /></div>
-            </form>
-        </div>
-    </body>
-</html>""")
+		client.sendall("""<form action="http://localhost:8080/regSucceeded" enctype="multipart/form-data" method="post">
+<p>Sign up<br>
+<input type="text" name="username"></p>
+<input type="text" name="password"></p>
+<div>
+<input type="submit" value="Send">
+</div>
+</form>""")
+
+	def SendSuccessfulSignUp(self, client):
+		client.sendall("""
+			<html>
+			<body>
+			<p><b> You signed up successfuly!! </b></p>
+			</body>
+			</html>""")
+
 
 
 

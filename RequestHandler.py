@@ -18,6 +18,7 @@ import ServerFunctions
 import base64
 import logging
 import webserver1
+from subprocess import call
 
 def HTTPBasicAuthentication(req, cur, client):
 	authorization = req.split('Authorization:')
@@ -50,25 +51,30 @@ def HTTPBasicAuthentication(req, cur, client):
 def HandleGET(client, req, directory):
 			string = req.split(' ')[1].split('/')[1]
 			print "string: %s" %(string)
+
 			if string == 'scripts':
 				print "GET in first if"
-				maxvalue = req.split(' ')[1].split('MAX=')[1].split('\n')[0]
-				if len(req.split(' ')[1].split('?')[0].split('/')[2])>=2:
-					command = "python %s -m %s"%(req.split(' ')[1].split('?')[0].split('/')[2], maxvalue)
-				temp = str(req.split(' ')[1].split('?')[0].split('/')[2])
-				if os.path.isfile(temp):
-					print "GET after os path isfile"
-					output = subprocess.check_output(command, shell=True)
-					ResponseHeader.ResponseHeader(client, '200 OK', 'text/html').SendResponse()
-	   				client.sendall(output)
-					logging.info("Returned 2 random numbers less than %s; GET!"%(maxvalue))
-					client.close()
-				else:
-					ResponseHeader.ResponseHeader(client, '400 Bad Request', 'text/html').SendResponse()
-					ResponseHeader.ResponseHeader().SendNoSuchFileResponse()
-					logging.error("File could not be found; GET!")
-					client.close()
-
+				print len(req.split(' ')[1].split('MAX='))
+				if len(req.split(' ')[1].split('MAX='))>1:
+					maxvalue = req.split(' ')[1].split('MAX=')[1].split('\n')[0]
+					if len(req.split(' ')[1].split('?')[0].split('/')[2])>=2:
+						command = "python %s -m %s"%(req.split(' ')[1].split('?')[0].split('/')[2], maxvalue)
+					temp = str(req.split(' ')[1].split('?')[0].split('/')[2])
+					if os.path.isfile(temp):
+						print "GET after os path isfile"
+						output = subprocess.check_output(command, shell=True)
+						ResponseHeader.ResponseHeader(client, '200 OK', 'text/html').SendResponse()
+		   				client.sendall(output)
+						logging.info("Returned 2 random numbers less than %s; GET!"%(maxvalue))
+						client.close()
+					else:
+						ResponseHeader.ResponseHeader(client, '400 Bad Request', 'text/html').SendResponse()
+						ResponseHeader.ResponseHeader().SendNoSuchFileResponse()
+						logging.error("File could not be found; GET!")
+						client.close()
+				elif str(req.split(' ')[1].split('/')[2]) == 'registrationForm.php':
+					subprocess.check_output("php registrationForm.php", shell=True)
+				
 			elif string == '':
 				ResponseHeader.ResponseHeader(client, '200 OK', 'text/html').SendResponse()
 				client.sendall('''<!DOCTYPE html>
@@ -144,8 +150,7 @@ def HandleGET(client, req, directory):
 					print "GET in second if"
 					ServerFunctions.ServerFunctions(client,fileName,directory).RetrFile(False)
 					logging.info("Retrieved file %s; GET!"%(fileName))
-					client.close()
-					
+					client.close()	
 				else:
 					print "GET in third elif"
 					ResponseHeader.ResponseHeader(client, '400 Bad Request', 'text/html').SendResponse()
@@ -161,13 +166,25 @@ def HandleGET(client, req, directory):
 				logging.error("Bad command; user tried: %s; GET!"%(string))
 				client.close()
 
-def HandlePOST(client, req, cur, directory):
+def HandlePOST(client, req, cur, conn, directory):
 			string = req.split(' ')[1].split('/')[1]
 			credentialsCorrect = HTTPBasicAuthentication(req, cur, client)
 			webserver1.Server.SendingCredentials += 1
 
-			if credentialsCorrect:
+			if string == 'regSucceeded':
+					user = req.split('"username"')[1].split('---')[0].split('\n')[2]
+					print user
+					passw = req.split('"password"')[1].split('---')[0].split('\n')[2]
+					print passw
+					cur.execute("INSERT INTO users(username,password) VALUES ('%s','%s')"%(user,passw))
+					conn.commit()
+					ResponseHeader.ResponseHeader(client).SendResponse()
+					ResponseHeader.ResponseHeader().SendSuccessfulSignUp(client)
+					client.close()
+
+			elif credentialsCorrect:
 				print "credentials are correct!"
+
 				if string == 'scripts':
 					print "POST in first if"
 					maxvalue = req.split('\n')[-1].split('=')[1]
@@ -189,7 +206,18 @@ def HandlePOST(client, req, cur, directory):
 						ResponseHeader.ResponseHeader().SendNoSuchFileResponse()
 						logging.error("File %s could not be found; POST!"%(req.split(' ')[1].split('?')[0].split('/')[2]))
 						client.close()	
-									
+							
+				elif string == '':
+					ResponseHeader.ResponseHeader(client, '200 OK', 'text/html').SendResponse()
+					client.sendall('''<!DOCTYPE html>
+									<html>
+									<body>
+									<h1 style="color:red;">SLAVI THE BEST :D</h1>
+									</body>
+									</html>
+									''')
+					client.close()
+
 				elif string == 'sum':
 					print "POST in first elif"
 					parameters = req.split()[-1]
@@ -251,12 +279,14 @@ def HandlePOST(client, req, cur, directory):
 			else:
 				print "Credentials not correct!"
 				if webserver1.Server.SendingCredentials == 1:
+					print "User tried incorrect username/password"
 					ResponseHeader.ResponseHeader().SendAuthenticationResponse(client)
 					logging.error("User tried incorrect username or password; POST!")
+					client.close()
 				else:
+					print "Sending registration form!"
 					ResponseHeader.ResponseHeader(client).SendResponse()
 					ResponseHeader.ResponseHeader().SendRegistrationForm(client)
-					print "NOW WE should send registration form"
-				client.close()
+					client.close()
 				
 				

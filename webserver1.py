@@ -53,9 +53,9 @@ class Server(object):
 				data = ''
 				req = recv_timeout(client, 5)
 				request_method = req.split(' ')[0]
-				print "*********************************"
+				print "**************Beginning of request*******************"
 				print req
-				print "*********************************"
+				print "**************End of request*******************"
 			except:
 				sys.stderr.write("Fail with socket") 
 				client.close()
@@ -66,7 +66,7 @@ class Server(object):
 				RequestHandler.HandleGET(client, req, self.directory)	
 			elif(request_method == 'POST'):
 				print "in POST method"
-				RequestHandler.HandlePOST(client, req, cur, self.directory)	
+				RequestHandler.HandlePOST(client, req, cur, conn, self.directory)	
 			else:
 				client.sendall("Cannot recognize request method <should be POST or GET>!")
 				logging.error("Could not recognize request!")
