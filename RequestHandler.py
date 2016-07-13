@@ -21,6 +21,7 @@ import webserver1
 import hashlib
 from subprocess import call
 import smtplib
+import random
 
 def HTTPBasicAuthentication(req, cur, client):
 	authorization = req.split('Authorization:')
@@ -36,9 +37,7 @@ def HTTPBasicAuthentication(req, cur, client):
 				cur.execute("""SELECT username FROM users""")
 				rows = cur.fetchall()
 				for row in rows:
-					print "row0:"
 					print row[0]
-					print "\n hashlib..."
 					print hashlib.md5(username.encode()).hexdigest()
 					if row[0] == hashlib.md5(username.encode()).hexdigest():
 						print "username is correct!"
@@ -181,11 +180,14 @@ def HandlePOST(client, req, cur, conn, directory):
 					print user
 					passw = req.split('"password"')[1].split('---')[0].split('\n')[2].split('\r')[0]
 					print passw
+					mail = req.split('"mail"')[1].split('---')[0].split('\n')[2].split('\r')[0]
+					print mail
+
 					user = hashlib.md5(user.encode()).hexdigest()
 					passw = hashlib.md5(passw.encode()).hexdigest()
 
-					cur.execute("""INSERT INTO users(username,password) SELECT '{}','{}' 
-							WHERE NOT EXISTS (SELECT * FROM users WHERE username = '{}' AND password = '{}')""".format(user,passw,user,passw))
+					cur.execute("""INSERT INTO users(username,password,mail) SELECT '{}','{}','{}' 
+							WHERE NOT EXISTS (SELECT * FROM users WHERE username = '{}' AND password = '{}')""".format(user,passw,mail,user,passw))
 					conn.commit()
 					ResponseHeader.ResponseHeader(client).SendResponse()
 					ResponseHeader.ResponseHeader().SendSuccessfulSignUp(client)
@@ -193,11 +195,21 @@ def HandlePOST(client, req, cur, conn, directory):
 
 			elif credentialsCorrect:
 				print "credentials are correct!"
+				encodedCredentials = req.split('Authorization:')[1].split('\r\n')[0].split(' ')[2]
+				decodedCredentials = base64.b64decode(encodedCredentials)
+				username = decodedCredentials.split(':')[0]
+				password = decodedCredentials.split(':')[1]
+				username = hashlib.md5(username.encode()).hexdigest()
+				password = hashlib.md5(password.encode()).hexdigest()
+				cur.execute("""SELECT mail FROM users WHERE username = '%s' AND password = '%s'"""%(username,password))
+				rows = cur.fetchall()
+				mail = rows[0][0]
+				authenticationCode = random.randrange(10000,10000000)
 				webserver1.Server.SendingCredentials = 0
 				server = smtplib.SMTP('smtp.gmail.com',587)
 				server.starttls()
 				server.login('webserver1py@gmail.com','31113111')
-				server.sendmail('webserver1py@gmail.com','webserver1py@gmail.com','%s'%('code'))
+				server.sendmail('webserver1py@gmail.com',mail,'%s'%(authenticationCode))
 
 				if string == 'scripts':
 					print "POST in first if"

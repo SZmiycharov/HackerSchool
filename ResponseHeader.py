@@ -97,6 +97,7 @@ Content-Length: 0\n\n""")
 <p><b>Sign up</b><br>
 Username: <input type="text" name="username"></p>
 Password: <input type="password" name="password"></p>
+Mail: <input type="text" name="mail"></p>
 <div>
 <input type="submit" value="Send">
 </div>
