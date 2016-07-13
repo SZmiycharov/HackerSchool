@@ -18,6 +18,7 @@ import ServerFunctions
 import base64
 import logging
 import webserver1
+import hashlib
 from subprocess import call
 
 def HTTPBasicAuthentication(req, cur, client):
@@ -28,24 +29,32 @@ def HTTPBasicAuthentication(req, cur, client):
 		decodedCredentials = base64.b64decode(encodedCredentials)
 		username = decodedCredentials.split(':')[0]
 		password = decodedCredentials.split(':')[1]
+		print "USERNAMEPASSWORDUSERNAMEPASSWORD"
+		print username
+		print password
 		if username == '' or password == '':
-				ResponseHeader.ResponseHeader().SendAuthenticationResponse(client)
-				logging.info("Wrong username/password; POST!")
-				client.close()
+				return False
 		else:
 				cur.execute("""SELECT username FROM users""")
 				rows = cur.fetchall()
 				for row in rows:
-					if row[0] == base64.b64encode(username):
+					print "row0:"
+					print row[0]
+					print "\n hashlib..."
+					print hashlib.md5(username.encode()).hexdigest()
+					if row[0] == hashlib.md5(username.encode()).hexdigest():
+						print "username is correct!"
 						cur.execute("""SELECT password FROM users""")
 						rows = cur.fetchall()
 						for row in rows:
-							if row[0] == base64.b64encode(password):
+							if row[0] == hashlib.md5(password.encode()).hexdigest():
+								print "pass is correct"
 								return True
 							else: 
-								return False
+								continue
 					else: 
-						return False
+						continue
+		return False
 
 
 def HandleGET(client, req, directory):
@@ -175,8 +184,8 @@ def HandlePOST(client, req, cur, conn, directory):
 					print user
 					passw = req.split('"password"')[1].split('---')[0].split('\n')[2].split('\r')[0]
 					print passw
-					user = base64.b64encode(user)
-					passw = base64.b64encode(passw)
+					user = hashlib.md5(user.encode()).hexdigest()
+					passw = hashlib.md5(passw.encode()).hexdigest()
 
 					cur.execute("""INSERT INTO users(username,password) SELECT '{}','{}' 
 							WHERE NOT EXISTS (SELECT * FROM users WHERE username = '{}' AND password = '{}')""".format(user,passw,user,passw))
