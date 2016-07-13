@@ -19,7 +19,7 @@ import base64
 import logging
 import webserver1
 
-def HTTPBasicAuthentication(req, cur):
+def HTTPBasicAuthentication(req, cur, client):
 	authorization = req.split('Authorization:')
 	credentialsCorrect = False
 	if len(authorization) == 2:
@@ -40,13 +40,12 @@ def HTTPBasicAuthentication(req, cur):
 						rows = cur.fetchall()
 						for row in rows:
 							if row[0] == password:
-								credentialsCorrect = True
-								break
+								return True
 							else: 
-								client.close()
+								return False
 					else: 
-						client.close()
-	return credentialsCorrect
+						return False
+
 
 def HandleGET(client, req, directory):
 			string = req.split(' ')[1].split('/')[1]
@@ -164,7 +163,8 @@ def HandleGET(client, req, directory):
 
 def HandlePOST(client, req, cur, directory):
 			string = req.split(' ')[1].split('/')[1]
-			credentialsCorrect = HTTPBasicAuthentication(req, cur)
+			credentialsCorrect = HTTPBasicAuthentication(req, cur, client)
+			webserver1.Server.SendingCredentials += 1
 
 			if credentialsCorrect:
 				print "credentials are correct!"
@@ -250,8 +250,13 @@ def HandlePOST(client, req, cur, directory):
 			
 			else:
 				print "Credentials not correct!"
-				ResponseHeader.ResponseHeader().SendAuthenticationResponse(client)
-				logging.error("User tried incorrect username or password; POST!")
+				if webserver1.Server.SendingCredentials == 1:
+					ResponseHeader.ResponseHeader().SendAuthenticationResponse(client)
+					logging.error("User tried incorrect username or password; POST!")
+				else:
+					ResponseHeader.ResponseHeader(client).SendResponse()
+					ResponseHeader.ResponseHeader().SendRegistrationForm(client)
+					print "NOW WE should send registration form"
 				client.close()
 				
 				

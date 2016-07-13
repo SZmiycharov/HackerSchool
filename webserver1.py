@@ -25,6 +25,7 @@ except:
 cur = conn.cursor()
 
 class Server(object):
+    SendingCredentials = 0
     DownloadedFiles = 0	
     UploadedFiles = 0
     def __init__(self, host = '', port = 8080, directory = '/home/slavi/Desktop', clienttimeout = 60, socklisten = 5):
