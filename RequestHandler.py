@@ -17,6 +17,7 @@ import ResponseHeader
 import ServerFunctions
 import base64
 import logging
+import webserver1
 
 def HTTPBasicAuthentication(req, cur):
 	authorization = req.split('Authorization:')
@@ -72,15 +73,15 @@ def HandleGET(client, req, directory):
 			elif string == '':
 				ResponseHeader.ResponseHeader(client, '200 OK', 'text/html').SendResponse()
 				client.sendall('''<!DOCTYPE html>
-<html>
-<body>
+								<html>
+								<body>
 
-<h1 style="color:red;">SLAVI THE BEST :D</h1>
+								<h1 style="color:red;">SLAVI THE BEST :D</h1>
 
 
-</body>
-</html>
-''')
+								</body>
+								</html>
+								''')
 				client.close()
 
 			elif string.split('?')[0] == 'download':
@@ -90,6 +91,8 @@ def HandleGET(client, req, directory):
 					print "GET in second if"
 					ServerFunctions.ServerFunctions(client, fileName, directory).RetrFile()
 					logging.info("Retrieved file %s; GET!"%(fileName))
+					webserver1.Server.DownloadedFiles += 1
+					print "Downloaded files: %s"%(webserver1.Server.DownloadedFiles)
 					client.close()
 				else:
 					print "GET in third elif"
@@ -160,7 +163,6 @@ def HandleGET(client, req, directory):
 				client.close()
 
 def HandlePOST(client, req, cur, directory):
-			file_requested = req.split(' ')[1].split('\n')[0]
 			string = req.split(' ')[1].split('/')[1]
 			credentialsCorrect = HTTPBasicAuthentication(req, cur)
 
@@ -187,8 +189,7 @@ def HandlePOST(client, req, cur, directory):
 						ResponseHeader.ResponseHeader().SendNoSuchFileResponse()
 						logging.error("File %s could not be found; POST!"%(req.split(' ')[1].split('?')[0].split('/')[2]))
 						client.close()	
-						
-				
+									
 				elif string == 'sum':
 					print "POST in first elif"
 					parameters = req.split()[-1]
@@ -210,8 +211,7 @@ def HandlePOST(client, req, cur, directory):
 						ResponseHeader.ResponseHeader(client, '200 OK', 'text/html').SendResponse()
 						ResponseHeader.ResponseHeader().SendSumResponse(client, sumOfBoth)
 						logging.info("Returned sum of %s and %s; POST"%(a,b))
-						client.close()
-						
+						client.close()						
 
 				elif string == 'upload':
 					print "in handlepost upload"
@@ -234,6 +234,7 @@ def HandlePOST(client, req, cur, directory):
 
 				elif string == 'files':
 					print "POST in second elif"
+					file_requested = req.split(' ')[1].split('\n')[0]
 					fileName = file_requested.split('/')[2]
 					ServerFunctions.ServerFunctions(client,fileName,directory).RetrFile(False)
 					logging.info("Retrieved file %s; POST!"%(fileName))

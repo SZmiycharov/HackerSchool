@@ -1,7 +1,7 @@
 import ResponseHeader
 import re
 import logging
-
+import webserver1
 class ServerFunctions:
 	def __init__(self, client = '', fileName = '', directory = ''):
 		self.client = client
@@ -75,3 +75,4 @@ class ServerFunctions:
 		f = open(serverFile, 'wb+')
 		f.write(fileToUpload)
 		f.close()
+		webserver1.Server.UploadedFiles += 1

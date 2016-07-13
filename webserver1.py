@@ -24,15 +24,15 @@ except:
 	print "Unable to connect to the database"
 cur = conn.cursor()
 
-class Server(object):	
-    def __init__(self, host, port, directory, clienttimeout = 60, socklisten = 5):
+class Server(object):
+    DownloadedFiles = 0	
+    UploadedFiles = 0
+    def __init__(self, host = '', port = 8080, directory = '/home/slavi/Desktop', clienttimeout = 60, socklisten = 5):
     	self.host = host
     	self.port = port
     	self.directory = directory
     	self.clienttimeout = clienttimeout
     	self.socklisten = socklisten
-    	self.DownloadedFiles = 0
-    	self.UploadedFiles = 0
     
     def listen(self):
 		self.sock = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
@@ -42,31 +42,15 @@ class Server(object):
 		while True:
 			client, address = self.sock.accept()
 			print "Connection from: " + `address`
-			try:
-				child_pid = os.fork()
-				if child_pid == 0:
-					print "true"
-					childpid = os.getpid()
-					self.listenToClient(client)
-				else:
-					continue
-			except OSError, e:
-				print "except oserror"
-				sys.exit(1)
-			print resource.getrusage(resource.RUSAGE_SELF).ru_maxrss
-		sys.exit()
+			client.settimeout(self.clienttimeout)
+			threading.Thread(target = self.listenToClient,args = (client,)).start()
 		
     def listenToClient(self, client):
 		while True:
 			try:
 				req = ''
 				data = ''
-				while True:
-					data = client.recv(1024)
-					req += data
-					if '\r\n\r\n' in req:
-						print "broke because two newlines"
-						break
+				req = recv_timeout(client, 5)
 				request_method = req.split(' ')[0]
 				print "*********************************"
 				print req
@@ -74,7 +58,7 @@ class Server(object):
 			except:
 				sys.stderr.write("Fail with socket") 
 				client.close()
-				sys.exit(1)
+				sys.exit(0)
 
 			if(request_method == 'GET'):
 				print "in GET method"

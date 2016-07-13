@@ -1,4 +1,5 @@
 import logging
+import webserver1
 
 class ResponseHeader:
 	def __init__(self, client = '', returnCode = '200 OK', contenttype = 'text/html', fileExtension = 'txt', http = 'HTTP/1.1'):
@@ -65,9 +66,10 @@ Content-Length: 0\n\n""")
 		client.sendall("""
 			<html>
 			<body>
-			<p><b> Download complete!  </b></p>
+			<p><b> Upload complete!  </b></p>
+			<p> %s files uploaded already! </p
 			</body>
-			</html>""")
+			</html>"""%(webserver1.Server.UploadedFiles))
 
 	def SendNoSuchFileResponse(self, client):
 		client.sendall("""
