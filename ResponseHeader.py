@@ -75,6 +75,7 @@ Content-Length: 0\n\n""")
 			<p><b> NO SUCH FILE! </b></p>
 			</body>
 			</html>""")
+
 	def SendBadFileType(self, client):
 		client.sendall("""
 			<html>
@@ -110,6 +111,15 @@ Mail: <input type="text" name="mail"></p>
 			<p><b> You signed up successfuly!! </b></p>
 			</body>
 			</html>""")
+
+	def SendCodeForm(self, client):
+		client.sendall("""<form action="http://localhost:8080/regSucceeded" enctype="multipart/form-data" method="post">
+<p><b>Check your email for code and enter it:</b><br>
+Code: <input type="code" name="code"></p>
+<div>
+<input type="submit" value="Send">
+</div>
+</form>""")
 
 
 
