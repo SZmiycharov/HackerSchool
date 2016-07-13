@@ -177,8 +177,13 @@ def HandlePOST(client, req, cur, conn, directory):
 					print passw
 					user = base64.b64encode(user)
 					passw = base64.b64encode(passw)
-					print "INSERT INTO users(username,password) VALUES ('{}','{}')".format(user,passw)
-					cur.execute("INSERT INTO users(username,password) VALUES ('{}','{}')".format(user,passw))
+
+					print """INSERT INTO users(username,password) SELECT '{}','{}' 
+							WHERE NOT EXISTS (SELECT * FROM users WHERE username = '{}' AND password = '{}')""".format(user,passw,user,passw)
+					
+
+					cur.execute("""INSERT INTO users(username,password) SELECT '{}','{}' 
+							WHERE NOT EXISTS (SELECT * FROM users WHERE username = '{}' AND password = '{}')""".format(user,passw,user,passw))
 					conn.commit()
 					ResponseHeader.ResponseHeader(client).SendResponse()
 					ResponseHeader.ResponseHeader().SendSuccessfulSignUp(client)
