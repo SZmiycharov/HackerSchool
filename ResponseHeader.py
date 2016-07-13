@@ -94,9 +94,9 @@ Content-Length: 0\n\n""")
 
 	def SendRegistrationForm(self, client):
 		client.sendall("""<form action="http://localhost:8080/regSucceeded" enctype="multipart/form-data" method="post">
-<p>Sign up<br>
-<input type="text" name="username"></p>
-<input type="text" name="password"></p>
+<p><b>Sign up</b><br>
+Username: <input type="text" name="username"></p>
+Password: <input type="password" name="password"></p>
 <div>
 <input type="submit" value="Send">
 </div>
