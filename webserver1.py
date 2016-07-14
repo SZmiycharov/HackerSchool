@@ -28,6 +28,7 @@ class Server(object):
     SendingCredentials = 0
     DownloadedFiles = 0	
     UploadedFiles = 0
+    authenticationCode = 0
     def __init__(self, host = '', port = 8080, directory = '/home/slavi/Desktop', clienttimeout = 60, socklisten = 5):
     	self.host = host
     	self.port = port

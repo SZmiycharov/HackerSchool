@@ -112,8 +112,16 @@ Mail: <input type="text" name="mail"></p>
 			</body>
 			</html>""")
 
+	def SendUnsuccessfulSignUp(self, client):
+		client.sendall("""
+			<html>
+			<body>
+			<p><b> Code was incorrect! You failed! </b></p>
+			</body>
+			</html>""")
+
 	def SendCodeForm(self, client):
-		client.sendall("""<form action="http://localhost:8080/regSucceeded" enctype="multipart/form-data" method="post">
+		client.sendall("""<form action="http://localhost:8080/code" enctype="multipart/form-data" method="post">
 <p><b>Check your email for code and enter it:</b><br>
 Code: <input type="code" name="code"></p>
 <div>

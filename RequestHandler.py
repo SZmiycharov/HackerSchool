@@ -24,7 +24,6 @@ import smtplib
 import random
 
 
-ToSendCodeForm = True
 def HTTPBasicAuthentication(req, cur, client):
 	authorization = req.split('Authorization:')
 	credentialsCorrect = False
@@ -195,34 +194,43 @@ def HandlePOST(client, req, cur, conn, directory):
 					ResponseHeader.ResponseHeader().SendSuccessfulSignUp(client)
 					client.close()
 
-			elif credentialsCorrect:
-				if ToSendCodeForm:
-					print "credentials are correct!"
-					encodedCredentials = req.split('Authorization:')[1].split('\r\n')[0].split(' ')[2]
-					decodedCredentials = base64.b64decode(encodedCredentials)
-					username = decodedCredentials.split(':')[0]
-					password = decodedCredentials.split(':')[1]
-					username = hashlib.md5(username.encode()).hexdigest()
-					password = hashlib.md5(password.encode()).hexdigest()
-					cur.execute("""SELECT mail FROM users WHERE username = '%s' AND password = '%s'"""%(username,password))
-					rows = cur.fetchall()
-					mail = rows[0][0]
-					authenticationCode = random.randrange(10000,10000000)
-					webserver1.Server.SendingCredentials = 0
-					server = smtplib.SMTP('smtp.gmail.com',587)
-					server.starttls()
-					server.login('webserver1py@gmail.com','31113111')
-					server.sendmail('webserver1py@gmail.com',mail,'%s'%(authenticationCode))
-					ResponseHeader.ResponseHeader(client).SendResponse()
-					ResponseHeader.ResponseHeader().SendCodeForm(client)
-					client.close()
-					ToSendCodeForm = False
-					return
-				else:
+			if string == 'code':
+				code = req.split('name="code"')[1].split('\n')[2].split('\r')[0]
+				code = int(code)
+				print "code: {}".format(code)
+				print "webserver1.Server.authenticationCode: {}".format(webserver1.Server.authenticationCode)
+				if code == webserver1.Server.authenticationCode:
+					print "code is correct!"
 					ResponseHeader.ResponseHeader(client).SendResponse()
 					ResponseHeader.ResponseHeader().SendSuccessfulSignUp(client)
 					client.close()
-					return
+				else:
+					print "NOT correct code!"
+					ResponseHeader.ResponseHeader(client).SendResponse()
+					ResponseHeader.ResponseHeader().SendUnsuccessfulSignUp(client)
+					client.close()
+
+			elif credentialsCorrect:
+				print "credentials are correct!"
+				encodedCredentials = req.split('Authorization:')[1].split('\r\n')[0].split(' ')[2]
+				decodedCredentials = base64.b64decode(encodedCredentials)
+				username = decodedCredentials.split(':')[0]
+				password = decodedCredentials.split(':')[1]
+				username = hashlib.md5(username.encode()).hexdigest()
+				password = hashlib.md5(password.encode()).hexdigest()
+				cur.execute("""SELECT mail FROM users WHERE username = '%s' AND password = '%s'"""%(username,password))
+				rows = cur.fetchall()
+				mail = rows[0][0]
+				webserver1.Server.authenticationCode = random.randrange(10000,10000000)
+				webserver1.Server.SendingCredentials = 0
+				server = smtplib.SMTP('smtp.gmail.com',587)
+				server.starttls()
+				server.login('webserver1py@gmail.com','31113111')
+				server.sendmail('webserver1py@gmail.com',mail,'%s'%(webserver1.Server.authenticationCode))
+				ResponseHeader.ResponseHeader(client).SendResponse()
+				ResponseHeader.ResponseHeader().SendCodeForm(client)
+				client.close()
+				return
 
 				if string == 'scripts':
 					print "POST in first if"
