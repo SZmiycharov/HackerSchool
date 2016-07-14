@@ -17,6 +17,7 @@ import ResponseHeader
 import ServerFunctions
 import RequestHandler
 import ssl
+import asyncore
 
 logging.basicConfig(format='%(asctime)s %(message)s',filename='/home/slavi/Desktop/webserver1.log',level=logging.DEBUG )
 try:
@@ -28,61 +29,54 @@ cur = conn.cursor()
 ssl_keyfile = "/home/slavi/Desktop/Tasks-Telebid/ssl_key"
 ssl_certfile = "/home/slavi/Desktop/Tasks-Telebid/ssl_cert"
 
-class Server(object):
+
+class ListenToClient(asyncore.dispatcher_with_send):
+	directory = '/home/slavi/Desktop'
+	def handle_read(self):
+		while True:
+			try:
+				req = ''
+				data = ''
+				req = recv_timeout(self,5)
+				request_method = req.split(' ')[0]
+				print req
+			except:
+				sys.stderr.write("Fail with socket\n\n") 
+
+			if(request_method == 'GET'):
+				print "in GET method"
+				RequestHandler.HandleGET(self, req, directory)	
+			elif(request_method == 'POST'):
+				print "in POST method"
+				RequestHandler.HandlePOST(self, req, cur, conn, directory)	
+			else:
+				self.sendall("Cannot recognize request method <should be POST or GET>!")
+				logging.error("Could not recognize request!")
+				self.close()
+
+
+
+class Server(asyncore.dispatcher):
     SendingCredentials = 0
     DownloadedFiles = 0	
     UploadedFiles = 0
     authenticationCode = 0
     def __init__(self, host = '', port = 8080, directory = '/home/slavi/Desktop', clienttimeout = 60, socklisten = 5):
+    	asyncore.dispatcher.__init__(self)
     	self.host = host
     	self.port = port
     	self.directory = directory
     	self.clienttimeout = clienttimeout
     	self.socklisten = socklisten
+
+    	self.create_socket(socket.AF_INET, socket.SOCK_STREAM)
+    	self.set_reuse_addr()
+    	self.bind((host,port))
+    	self.listen(self.socklisten)
     
-    def listen(self):
-		self.sock = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
-		self.sock.setsockopt(socket.SOL_SOCKET, socket.SO_REUSEADDR, 1)
-		self.sock.bind((self.host, self.port))
-		self.sock.listen(self.socklisten)
-		while True:
-			client, address = self.sock.accept()
-			print "Connection from: " + `address`
-			client.settimeout(self.clienttimeout)
-			wrappedClient = ssl.wrap_socket(client, 
-												server_side=True,
-												certfile=ssl_certfile,
- 												keyfile=ssl_keyfile, 
-												ssl_version=ssl.PROTOCOL_SSLv23
-                                                  )
-
-			threading.Thread(target = self.listenToClient,args = (wrappedClient,)).start()
-		
-    def listenToClient(self, client):
-		while True:
-			try:
-				req = ''
-				data = ''
-				req = recv_timeout(client, 5)
-				request_method = req.split(' ')[0]
-				print "**************Beginning of request*******************"
-				print repr(req)
-				print "**************End of request*******************"
-			except:
-				sys.stderr.write("Fail with socket\n\n") 
-				client.close()
-				sys.exit(0)
-
-			if(request_method == 'GET'):
-				print "in GET method"
-				RequestHandler.HandleGET(client, req, self.directory)	
-			elif(request_method == 'POST'):
-				print "in POST method"
-				RequestHandler.HandlePOST(client, req, cur, conn, self.directory)	
-			else:
-				client.sendall("Cannot recognize request method <should be POST or GET>!")
-				logging.error("Could not recognize request!")
-				client.close()
+    def handle_accept(self):
+    	client,address = self.accept()
+    	handler = ListenToClient(client) 		    
 			
 def recv_timeout(the_socket,timeout=2):
     #make socket non blocking
@@ -149,4 +143,5 @@ if __name__ == "__main__":
 		sys.exit(0)
 		
 	print("                      **********SERVER STARTED**********")
-	Server('', port, directory).listen()
+	server = Server('')
+	asyncore.loop()

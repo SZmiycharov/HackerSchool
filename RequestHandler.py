@@ -127,26 +127,22 @@ def HandleGET(client, req, directory):
 							ResponseHeader.ResponseHeader(client, '400 Bad Request', 'text/html').SendResponse()
 							ResponseHeader.ResponseHeader().SendBadParametersResponse(client)
 							logging.error("Bad parameters for sum; GET!")
-							client.close()
 							
 						else:
 							sumOfBoth = a + b
 							ResponseHeader.ResponseHeader(client, '200 OK', 'text/html').SendResponse()
 							ResponseHeader.ResponseHeader().SendSumResponse(client, sumOfBoth)
 							logging.info("Found sum of %s and %s; GET!"%(a,b))
-							client.close()
 							
 					else:
 						ResponseHeader.ResponseHeader(client, '400 Bad Request', 'text/html').SendResponse()
 						ResponseHeader.ResponseHeader().SendBadParametersResponse(client)
 						logging.error("Bad parameters for sum; GET!")
-						client.close()
 						
 				else:
 					ResponseHeader.ResponseHeader(client, '400 Bad Request', 'text/html').SendResponse()
 					ResponseHeader.ResponseHeader().SendBadParametersResponse(client)
 					logging.error("Bad parameters for sum; GET!")
-					client.close()
 					
 			
 			elif string == 'files':
