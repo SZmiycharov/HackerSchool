@@ -16,6 +16,7 @@ import cgi
 import ResponseHeader
 import ServerFunctions
 import RequestHandler
+import ssl
 
 logging.basicConfig(format='%(asctime)s %(message)s',filename='/home/slavi/Desktop/webserver1.log',level=logging.DEBUG )
 try:
@@ -23,6 +24,9 @@ try:
 except:
 	print "Unable to connect to the database"
 cur = conn.cursor()
+
+ssl_keyfile = "/home/slavi/Desktop/Tasks-Telebid/ssl_key"
+ssl_certfile = "/home/slavi/Desktop/Tasks-Telebid/ssl_cert"
 
 class Server(object):
     SendingCredentials = 0
@@ -45,7 +49,14 @@ class Server(object):
 			client, address = self.sock.accept()
 			print "Connection from: " + `address`
 			client.settimeout(self.clienttimeout)
-			threading.Thread(target = self.listenToClient,args = (client,)).start()
+			wrappedClient = ssl.wrap_socket(client, 
+												server_side=True,
+												certfile=ssl_certfile,
+ 												keyfile=ssl_keyfile, 
+												ssl_version=ssl.PROTOCOL_SSLv23
+                                                  )
+
+			threading.Thread(target = self.listenToClient,args = (wrappedClient,)).start()
 		
     def listenToClient(self, client):
 		while True:
@@ -55,7 +66,7 @@ class Server(object):
 				req = recv_timeout(client, 5)
 				request_method = req.split(' ')[0]
 				print "**************Beginning of request*******************"
-				print req
+				print repr(req)
 				print "**************End of request*******************"
 			except:
 				sys.stderr.write("Fail with socket\n\n") 
@@ -73,7 +84,6 @@ class Server(object):
 				logging.error("Could not recognize request!")
 				client.close()
 			
-
 def recv_timeout(the_socket,timeout=2):
     #make socket non blocking
     the_socket.setblocking(0)
