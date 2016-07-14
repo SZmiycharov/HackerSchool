@@ -19,6 +19,9 @@ import RequestHandler
 import ssl
 import asyncore
 
+ssl_keyfile = "/home/slavi/Desktop/HackerSchool/ssl_key"
+ssl_certfile = "/home/slavi/Desktop/HackerSchool/ssl_cert"
+
 logging.basicConfig(format='%(asctime)s %(message)s',filename='/home/slavi/Desktop/webserver1.log',level=logging.DEBUG )
 try:
 	conn = psycopg2.connect("dbname='httpAuth' user='slavi' host='localhost' password='3111'")
@@ -37,7 +40,7 @@ class ListenToClient(asyncore.dispatcher_with_send):
 			try:
 				req = ''
 				data = ''
-				req = recv_timeout(self,5)
+				req = self.recv(8192)
 				request_method = req.split(' ')[0]
 				print req
 			except:
@@ -53,8 +56,6 @@ class ListenToClient(asyncore.dispatcher_with_send):
 				self.sendall("Cannot recognize request method <should be POST or GET>!")
 				logging.error("Could not recognize request!")
 				self.close()
-
-
 
 class Server(asyncore.dispatcher):
     SendingCredentials = 0
@@ -76,6 +77,10 @@ class Server(asyncore.dispatcher):
     
     def handle_accept(self):
     	client,address = self.accept()
+    	client = ssl.wrap_socket(client,
+                                 server_side=True,
+                                 certfile="server.crt",
+                                 keyfile="server.key")
     	handler = ListenToClient(client) 		    
 			
 def recv_timeout(the_socket,timeout=2):
