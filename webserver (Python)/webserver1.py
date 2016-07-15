@@ -4,7 +4,6 @@ import threading
 import sys, getopt
 import os
 import time
-import getrandom
 import subprocess
 import os.path
 import logging
@@ -24,7 +23,7 @@ ssl_certfile = "/home/slavi/Desktop/HackerSchool/ssl_cert"
 
 logging.basicConfig(format='%(asctime)s %(message)s',filename='/home/slavi/Desktop/webserver1.log',level=logging.DEBUG )
 try:
-	conn = psycopg2.connect("dbname='httpAuth' user='slavi' host='localhost' password='3111'")
+	conn = psycopg2.connect("dbname='httpAuth' user='postgres' host='' password='3111'")
 except:
 	print "Unable to connect to the database"
 cur = conn.cursor()

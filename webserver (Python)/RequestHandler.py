@@ -4,7 +4,6 @@ import threading
 import sys, getopt
 import os
 import time
-import getrandom
 import subprocess
 import os.path
 import logging
