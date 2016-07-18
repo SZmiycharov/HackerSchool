@@ -71,12 +71,12 @@ def HandleGET(client, req, directory):
 						ResponseHeader.ResponseHeader(client, '200 OK', 'text/html').SendResponse()
 		   				client.sendall(output)
 						logging.info("Returned 2 random numbers less than %s; GET!"%(maxvalue))
-						client.close()
+						
 					else:
 						ResponseHeader.ResponseHeader(client, '400 Bad Request', 'text/html').SendResponse()
 						ResponseHeader.ResponseHeader().SendNoSuchFileResponse()
 						logging.error("File could not be found; GET!")
-						client.close()
+						
 				elif str(req.split(' ')[1].split('/')[2]) == 'registrationForm.php':
 					subprocess.check_output("php registrationForm.php", shell=True)
 				
@@ -92,7 +92,7 @@ def HandleGET(client, req, directory):
 								</body>
 								</html>
 								''')
-				client.close()
+				
 
 			elif string.split('?')[0] == 'download':
 				print "in GET download"
@@ -103,13 +103,13 @@ def HandleGET(client, req, directory):
 					logging.info("Retrieved file %s; GET!"%(fileName))
 					webserver1.Server.DownloadedFiles += 1
 					print "Downloaded files: %s"%(webserver1.Server.DownloadedFiles)
-					client.close()
+					
 				else:
 					print "GET in third elif"
 					ResponseHeader.ResponseHeader(client, '400 Bad Request', 'text/html').SendResponse()
 					ResponseHeader.ResponseHeader().SendCannotUnderstandCommandResponse(client)
 					logging.error("Bad command; user tried: %s; GET!"%(string))
-					client.close()
+					
 
 			elif string.split('?')[0] == 'sum':
 				print "GET in first elif"
@@ -126,26 +126,26 @@ def HandleGET(client, req, directory):
 							ResponseHeader.ResponseHeader(client, '400 Bad Request', 'text/html').SendResponse()
 							ResponseHeader.ResponseHeader().SendBadParametersResponse(client)
 							logging.error("Bad parameters for sum; GET!")
-							client.close()
+							
 							
 						else:
 							sumOfBoth = a + b
 							ResponseHeader.ResponseHeader(client, '200 OK', 'text/html').SendResponse()
 							ResponseHeader.ResponseHeader().SendSumResponse(client, sumOfBoth)
 							logging.info("Found sum of %s and %s; GET!"%(a,b))
-							client.close()
+							
 							
 					else:
 						ResponseHeader.ResponseHeader(client, '400 Bad Request', 'text/html').SendResponse()
 						ResponseHeader.ResponseHeader().SendBadParametersResponse(client)
 						logging.error("Bad parameters for sum; GET!")
-						client.close()
+						
 						
 				else:
 					ResponseHeader.ResponseHeader(client, '400 Bad Request', 'text/html').SendResponse()
 					ResponseHeader.ResponseHeader().SendBadParametersResponse(client)
 					logging.error("Bad parameters for sum; GET!")
-					client.close()
+					
 					
 			
 			elif string == 'files':
@@ -155,13 +155,13 @@ def HandleGET(client, req, directory):
 					print "GET in second if"
 					ServerFunctions.ServerFunctions(client,fileName,directory).RetrFile(False)
 					logging.info("Retrieved file %s; GET!"%(fileName))
-					client.close()	
+						
 				else:
 					print "GET in third elif"
 					ResponseHeader.ResponseHeader(client, '400 Bad Request', 'text/html').SendResponse()
 					ResponseHeader.ResponseHeader().SendCannotUnderstandCommandResponse(client)
 					logging.error("Bad command; user tried: %s; GET!"%(string))
-					client.close()
+					
 					
 
 			else:
@@ -169,7 +169,7 @@ def HandleGET(client, req, directory):
 				ResponseHeader.ResponseHeader(client, '400 Bad Request', 'text/html').SendResponse()
 				ResponseHeader.ResponseHeader().SendCannotUnderstandCommandResponse(client)
 				logging.error("Bad command; user tried: %s; GET!"%(string))
-				client.close()
+				
 
 def HandlePOST(client, req, cur, conn, directory):
 			string = req.split(' ')[1].split('/')[1]
@@ -186,12 +186,13 @@ def HandlePOST(client, req, cur, conn, directory):
 					user = hashlib.md5(user.encode()).hexdigest()
 					passw = hashlib.md5(passw.encode()).hexdigest()
 
-					cur.execute("""INSERT INTO users(username,password,mail) SELECT '{}','{}','{}' 
-							WHERE NOT EXISTS (SELECT * FROM users WHERE username = '{}' AND password = '{}')""".format(user,passw,mail,user,passw))
+					cur.execute("""INSERT INTO users(username,password,mail) 
+							SELECT '{}','{}','{}' 
+							WHERE NOT EXISTS (
+								SELECT * FROM users WHERE username = '{}' AND password = '{}')""".format(user,passw,mail,user,passw))
 					conn.commit()
 					ResponseHeader.ResponseHeader(client).SendResponse()
 					ResponseHeader.ResponseHeader().SendSuccessfulSignUp(client)
-					client.close()
 
 			if string == 'code':
 				code = req.split('name="code"')[1].split('\n')[2].split('\r')[0]
@@ -202,12 +203,10 @@ def HandlePOST(client, req, cur, conn, directory):
 					print "code is correct!"
 					ResponseHeader.ResponseHeader(client).SendResponse()
 					ResponseHeader.ResponseHeader().SendSuccessfulSignUp(client)
-					client.close()
 				else:
 					print "NOT correct code!"
 					ResponseHeader.ResponseHeader(client).SendResponse()
 					ResponseHeader.ResponseHeader().SendUnsuccessfulSignUp(client)
-					client.close()
 
 			elif credentialsCorrect:
 				print "credentials are correct!"
@@ -228,7 +227,6 @@ def HandlePOST(client, req, cur, conn, directory):
 				server.sendmail('webserver1py@gmail.com',mail,'%s'%(webserver1.Server.authenticationCode))
 				ResponseHeader.ResponseHeader(client).SendResponse()
 				ResponseHeader.ResponseHeader().SendCodeForm(client)
-				client.close()
 				return
 
 				if string == 'scripts':
@@ -245,13 +243,13 @@ def HandlePOST(client, req, cur, conn, directory):
 						ResponseHeader.ResponseHeader(client, '200 OK', 'text/html').SendResponse()
 		   				client.sendall(output)
 						logging.info("Executed program: %s; POST!"%(req.split(' ')[1].split('?')[0].split('/')[2]))
-						client.close()
+						
 						
 					else:
 						ResponseHeader.ResponseHeader(client, '400 Bad Request', 'text/html').SendResponse()
 						ResponseHeader.ResponseHeader().SendNoSuchFileResponse()
 						logging.error("File %s could not be found; POST!"%(req.split(' ')[1].split('?')[0].split('/')[2]))
-						client.close()	
+							
 							
 				elif string == '':
 					ResponseHeader.ResponseHeader(client, '200 OK', 'text/html').SendResponse()
@@ -262,7 +260,7 @@ def HandlePOST(client, req, cur, conn, directory):
 									</body>
 									</html>
 									''')
-					client.close()
+					
 
 				elif string == 'sum':
 					print "POST in first elif"
@@ -278,14 +276,14 @@ def HandlePOST(client, req, cur, conn, directory):
 						ResponseHeader.ResponseHeader(client, '400 Bad Request', 'text/html').SendResponse()
 						ResponseHeader.ResponseHeader().SendBadParametersResponse(client)
 						logging.error("Bad parameters for sum; POST!"%())
-						client.close()
+						
 						
 					else:
 						sumOfBoth = a + b
 						ResponseHeader.ResponseHeader(client, '200 OK', 'text/html').SendResponse()
 						ResponseHeader.ResponseHeader().SendSumResponse(client, sumOfBoth)
 						logging.info("Returned sum of %s and %s; POST"%(a,b))
-						client.close()						
+												
 
 				elif string == 'upload':
 					print "in handlepost upload"
@@ -303,12 +301,12 @@ def HandlePOST(client, req, cur, conn, directory):
 					else:
 						ResponseHeader.ResponseHeader(client, '400 Bad Request', 'text/html').SendResponse()
 						ResponseHeader.ResponseHeader().SendBadFileType(client)
-						client.close()
+						
 						return
 
 					ResponseHeader.ResponseHeader(client, '200 OK', 'text/html').SendResponse()
 					ResponseHeader.ResponseHeader().SendUploadResponse(client)
-					client.close()
+					
 					
 
 				elif string == 'files':
@@ -317,7 +315,7 @@ def HandlePOST(client, req, cur, conn, directory):
 					fileName = file_requested.split('/')[2]
 					ServerFunctions.ServerFunctions(client,fileName,directory).RetrFile(False)
 					logging.info("Retrieved file %s; POST!"%(fileName))
-					client.close()
+					
 					
 
 				else:
@@ -325,7 +323,7 @@ def HandlePOST(client, req, cur, conn, directory):
 					ResponseHeader.ResponseHeader(client, '400 Bad Request', 'text/html').SendResponse()
 					ResponseHeader.ResponseHeader().SendCannotUnderstandCommandResponse(client)
 					logging.error("Wrong command; user tried: %s; POST"%(string))
-					client.close()
+					
 			
 			else:
 				print "Credentials not correct!"
@@ -334,12 +332,12 @@ def HandlePOST(client, req, cur, conn, directory):
 					print "User tried incorrect username/password"
 					ResponseHeader.ResponseHeader().SendAuthenticationResponse(client)
 					logging.error("User tried incorrect username or password; POST!")
-					client.close()
+					
 				else:
 					webserver1.Server.SendingCredentials = 0
 					print "Sending registration form!"
 					ResponseHeader.ResponseHeader(client).SendResponse()
 					ResponseHeader.ResponseHeader().SendRegistrationForm(client)
-					client.close()
+					
 				
 				
