@@ -195,6 +195,42 @@ while(1)
         
         shutdown($client_socket, 1);
     }
+
+    elsif ($request_method eq 'POST')
+    {
+        print "req method is POST\n";
+        if ($command eq '/sum')
+        {
+            print "in sum POST\n";
+            @parameters = split / /, $data;
+            $parameters = @parameters[-1];
+            @parameters = split /\n/, $parameters;
+            $parameters = @parameters[-1];
+            print "params: $parameters***\n";
+
+            @numbers = split /&/, $parameters;
+            $a = @numbers[0];
+            @a = split /=/, $a;
+            $a = @a[1];
+            print "a: $a\n";
+
+            $b = @numbers[1];
+            @b = split /=/, $b;
+            $b = @b[1];
+            print "b: $b\n";
+            $sum = $a+$b;
+
+            $data = ("HTTP/1.1 200 OK
+            SERVER: Slavi
+            Content-Type: text/html\n\n<html>
+            <body>
+            <p><b>SUM: $sum</b></p>
+            </body>
+            </html>");
+            $client_socket->send($data);
+
+        }
+    }
 }
  
 $socket->close();
