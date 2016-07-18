@@ -130,50 +130,65 @@ while(1)
             my @fileType = split /\./, $fileName;
             my $fileType = $fileType[1];
 
+            my $filePath = "$directory/$fileName";
+
             my $header;
-            if ($fileType eq 'jpg')
+            if (-f $filePath)
             {
-                $header = "HTTP/1.1 200 OK
-                SERVER: Slavi
-                Content-Type: image/jpeg\n\n";
+                if ($fileType eq 'jpg')
+                {
+                    $header = "HTTP/1.1 200 OK
+                    SERVER: Slavi
+                    Content-Type: image/jpeg\n\n";
+                }
+                elsif ($fileType eq 'py')
+                {
+                    $header = "HTTP/1.1 200 OK
+                    SERVER: Slavi
+                    Content-Type: text/plain\n\n";
+                }
+                elsif ($fileType eq 'txt')
+                {
+                    $header = "HTTP/1.1 200 OK
+                    SERVER: Slavi
+                    Content-Type: text/plain\n\n";
+                }
+                elsif ($fileType eq 'png')
+                {
+                    $header = "HTTP/1.1 200 OK
+                    SERVER: Slavi
+                    Content-Type: image/png\n\n";
+                }
+                elsif ($fileType eq 'html')
+                {
+                    $header = "HTTP/1.1 200 OK
+                    SERVER: Slavi
+                    Content-Type: text/html\n\n";
+                }
+                
+                $client_socket->send($header);
+                open(my $fh, '<:encoding(UTF-8)', $filePath)
+                    or die "Could not open file '$fileName' $!";
+                binmode($fh);
+
+                while(<$fh>)
+                {
+                    $client_socket->send($_);
+                }
+                close $fh;
             }
-            elsif ($fileType eq 'py')
+            else
             {
-                $header = "HTTP/1.1 200 OK
-                SERVER: Slavi
-                Content-Type: text/plain\n\n";
-            }
-            elsif ($fileType eq 'txt')
-            {
-                $header = "HTTP/1.1 200 OK
-                SERVER: Slavi
-                Content-Type: text/plain\n\n";
-            }
-            elsif ($fileType eq 'png')
-            {
-                $header = "HTTP/1.1 200 OK
-                SERVER: Slavi
-                Content-Type: image/png\n\n";
-            }
-            elsif ($fileType eq 'html')
-            {
-                $header = "HTTP/1.1 200 OK
-                SERVER: Slavi
-                Content-Type: text/html\n\n";
+                my $data = "HTTP/1.1 404 Not Found
+                    SERVER: Slavi
+                        Content-Type: text/html\n\n<html>
+                        <body>
+                        <p><b>No such file!</b></p>
+                        </body>
+                        </html>";
+                $client_socket->send($data);
             }
             
-            $client_socket->send($header);
-            my $filePath = "$directory/$fileName";
-            print "filePath: $filePath";
-            open(my $fh, '<:encoding(UTF-8)', $filePath)
-                or die "Could not open file '$fileName' $!";
-            binmode($fh);
-
-            while(<$fh>)
-            {
-                $client_socket->send($_);
-            }
-            close $fh;
         }
 
         elsif ($command eq '/download')
@@ -364,6 +379,17 @@ while(1)
                     <p><b>SUM: $sum</b></p>
                     </body>
                     </html>");
+                    $client_socket->send($data);
+                }
+                else 
+                {
+                    my $data = "HTTP/1.1 404 Not Found
+                    SERVER: Slavi
+                        Content-Type: text/html\n\n<html>
+                        <body>
+                        <p><b>Bad parameters!</b></p>
+                        </body>
+                        </html>";
                     $client_socket->send($data);
                 }
                     
