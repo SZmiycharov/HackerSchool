@@ -228,7 +228,26 @@ while(1)
             </body>
             </html>");
             $client_socket->send($data);
+        }
 
+        elsif($command eq 'scripts')
+        {
+            print "in scripts POST\n";
+            @parameters = split / /, $data;
+            $parameters = @parameters[-1];
+            @parameters = split /\n/, $parameters;
+            $parameters = @parameters[-1];
+            #script=test.py
+            @script = split /=/, $parameters;
+            $script = @script[1];
+            print "Script: $script\n";
+            
+            $result = `python $script`;
+            $header = "HTTP/1.1 200 OK
+                SERVER: Slavi
+                Content-Type: text/html\n\n";
+            $client_socket->send($header);
+            $client_socket->send($result);
         }
     }
 }
