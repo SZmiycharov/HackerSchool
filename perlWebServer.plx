@@ -221,11 +221,12 @@ while(1)
 
     elsif ($request_method eq 'POST')
     {
-        print "**********\n$req*****************\n";
+        print "req method is POST\n";
+
         my @authorization = split /Authorization:/, $req;
-        $credentialsCorrect = 0;
+        my $credentialsCorrect = 0;
         my $authorization = @authorization;
-        OUTER: if ($authorization == 2)
+        if ($authorization == 2)
         {
             my @encodedCredentials = split /Authorization:/, $req;
             my $encodedCredentials = @encodedCredentials[1];
@@ -245,7 +246,6 @@ while(1)
             if(username eq '' || password eq '')
             {
                 $credentialsCorrect = 0;
-                last OUTER;
             }
             else
             {
@@ -258,7 +258,7 @@ while(1)
                 {
                    print $DBI::errstr;
                 }
-                while(my @row = $sth->fetchrow_array())
+                OUTER: while(my @row = $sth->fetchrow_array())
                 {
                     if ($row[0] eq $username)
                     {
@@ -274,23 +274,27 @@ while(1)
                         {
                             if($row[0] eq $password)
                             {
-                                print "password correct!\n";
+                                print "YES credentialsCorrect!!!\n";
+                                $credentialsCorrect = 1;
+                                print "HERE credentialsCorrect: $credentialsCorrect\n";
+                                last OUTER;
+                            }
+                            else
+                            {
+                                $credentialsCorrect = 0;
                             }
                         }
                     }
+                    else
+                    {
+                        $credentialsCorrect = 0;
+                    }
                 }
-
-
-
-                $query = $dbh->prepare("SELECT username FROM users");
-                $result = $query->execute();
-                print "result from query: $result \n";
             }
         }
+        print "credentialsCorrect: $credentialsCorrect\n";
 
-
-        print "req method is POST\n";
-        if (0)
+        if ($credentialsCorrect)
         {
             print "in post if\n";
             if ($command eq '/sum')
