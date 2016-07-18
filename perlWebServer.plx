@@ -37,6 +37,14 @@ while(1)
 
     print "command: $command\n";
 
+    if ($command ne '/sum' && $command ne '/files' && $command ne '/download')
+    {
+        #/scripts/test.py
+        @command = split /\//, $command;
+        $command = @command[1];
+        print "now command is: $command\n";
+    }
+
 
     if ($request_method eq 'GET')
     {
@@ -124,20 +132,6 @@ while(1)
             }
         }
 
-        elsif ($command eq 'scripts')
-        {
-            print "in GET scripts\n";
-            @script = split /\//, $secondPartOfRequest;
-            $script = @script[2];
-            print "script: $script\n";
-            $result = `python $script`;
-            $header = "HTTP/1.1 200 OK
-                SERVER: Slavi
-                Content-Type: text/html\n\n";
-            $client_socket->send($header);
-            $client_socket->send($result);
-        }
-
         elsif ($command eq '/download')
         {
             print "in GET download!\n";
@@ -182,6 +176,22 @@ while(1)
                 $client_socket->send($_);
             }
         }
+
+        elsif ($command eq 'scripts')
+        {
+            print "in GET scripts\n";
+            @script = split /\//, $secondPartOfRequest;
+            $script = @script[2];
+            print "script: $script\n";
+            $result = `python $script`;
+            $header = "HTTP/1.1 200 OK
+                SERVER: Slavi
+                Content-Type: text/html\n\n";
+            $client_socket->send($header);
+            $client_socket->send($result);
+        }
+
+        
         
         shutdown($client_socket, 1);
     }
