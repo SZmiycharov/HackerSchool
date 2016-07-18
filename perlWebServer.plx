@@ -23,11 +23,11 @@ while(1)
     my $client_port = $client_socket->peerport();
     print "connection from $client_address:$client_port\n";
  
-    my $data = "";
-    $client_socket->recv($data, 8192);
-    print "received data: $data\n";
+    my $req = "";
+    $client_socket->recv($req, 8192);
+    print "received req: $req\n";
 
-    @params = split / /, $data;
+    @params = split / /, $req;
     $request_method = @params[0];
     print "req method: $request_method\n";
 
@@ -37,7 +37,7 @@ while(1)
 
     print "command: $command\n";
 
-    if ($command ne '/sum' && $command ne '/files' && $command ne '/download')
+    if ($command ne '/sum' && $command ne '/files' && $command ne '/download' && $command ne '/upload')
     {
         #/scripts/test.py
         @command = split /\//, $command;
@@ -75,6 +75,24 @@ while(1)
             </body>
             </html>");
             $client_socket->send($data);
+        }
+
+        elsif($command eq '/upload')
+        {
+            print "in upload GET\n";
+            $header = "HTTP/1.1 200 OK
+                SERVER: Slavi
+                Content-Type: text/html\n\n";
+            $client_socket->send($header);
+            $client_socket->send("<html>
+            <body>
+            <form action='http://localhost:8080/upload' method='post' enctype='multipart/form-data'>
+                Select file to upload:
+                <input type='file' name='fileToUpload' id='fileToUpload'>
+                <input type='submit' value='Upload Image' name='submit'>
+            </form>
+            </body>
+            </html>");
         }
 
         elsif ($command eq '/files')
@@ -130,6 +148,7 @@ while(1)
             {
                 $client_socket->send($_);
             }
+            close $fh;
         }
 
         elsif ($command eq '/download')
@@ -175,6 +194,7 @@ while(1)
             {
                 $client_socket->send($_);
             }
+            close $fh;
         }
 
         elsif ($command eq 'scripts')
@@ -191,8 +211,6 @@ while(1)
             $client_socket->send($result);
         }
 
-        
-        
         shutdown($client_socket, 1);
     }
 
@@ -202,7 +220,7 @@ while(1)
         if ($command eq '/sum')
         {
             print "in sum POST\n";
-            @parameters = split / /, $data;
+            @parameters = split / /, $req;
             $parameters = @parameters[-1];
             @parameters = split /\n/, $parameters;
             $parameters = @parameters[-1];
@@ -233,11 +251,10 @@ while(1)
         elsif($command eq 'scripts')
         {
             print "in scripts POST\n";
-            @parameters = split / /, $data;
+            @parameters = split / /, $req;
             $parameters = @parameters[-1];
             @parameters = split /\n/, $parameters;
             $parameters = @parameters[-1];
-            #script=test.py
             @script = split /=/, $parameters;
             $script = @script[1];
             print "Script: $script\n";
@@ -249,6 +266,52 @@ while(1)
             $client_socket->send($header);
             $client_socket->send($result);
         }
+
+        elsif ($command eq '/upload')
+        {
+            print "in upload POST \n";
+            @fileToUpload = split /\r\n\r\n/, req;
+            $fileToUpload = @fileToUpload[2];
+            @fileToUpload = split /----/, $fileToUpload;
+            $fileToUpload = @fileToUpload[0];
+            @fileToUpload = split /\n\r\n/, $fileToUpload;
+            $fileToUpload = @fileToUpload[0];
+
+            @contType = split /Content-Type/, req;
+            $contType = @contType[2];
+            @contType = split /: /, $contType;
+            $contType = @contType[1];
+            @contType = split /\n/, $contType;
+            $contType = @contType[0];
+            @contType = split /\r/, $contType;
+            $contType = @contType[0];
+
+            if($contType eq 'text/plain')
+            {
+                $serverfile = "$directory/newfile.txt";
+                open(my $fh, '>', $serverfile) or die "Could not open file '$serverfile': $!\n";
+                binmode($fh);
+                print $fh $fileToUpload;
+                close $fh;
+            }
+            $header = "HTTP/1.1 200 OK
+                SERVER: Slavi
+                Content-Type: image/jpeg\n\n";
+
+            $client_socket->send($header);
+            open(my $fh, '<:encoding(UTF-8)', '/home/slavi/Desktop/success.jpg')
+                or die "Could not open file '$fileName' $!";
+            binmode($fh);
+
+            while(<$fh>)
+            {
+                $client_socket->send($_);
+            }
+            close $fh;
+
+        }
+
+        
     }
 }
  
