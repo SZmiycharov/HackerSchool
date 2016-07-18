@@ -151,40 +151,23 @@ while(1)
 
             if ($fileType eq 'jpg')
             {
-                print "HERE!!!!\n";
-                $header = "HTTP/1.1 200 OK
-Server: SLAVI
-Content-Type: image/jpeg
-Content-Disposition: attachment; filename='file.jpg'\n\n";
-                print "$header***********"
+                $header = "HTTP/1.1 200 OK\nServer: SLAVI\nContent-Type: image/jpeg\nContent-Disposition: attachment; filename='file.jpg'\n\n";
             }
             elsif ($fileType eq 'py')
             {
-                $header = "HTTP/1.1 200 OK
-                Server: SLAVI
-                Content-Type: text/plain
-                Content-Disposition: attachment; filename=file.$fileType\n\n";
+                $header = "HTTP/1.1 200 OK\nServer: SLAVI\nContent-Type: image/jpeg\nContent-Disposition: attachment; filename='file.py'\n\n";
             }
             elsif ($fileType eq 'txt')
             {
-                $header = "HTTP/1.1 200 OK
-                Server: SLAVI
-                Content-Type: text/plain
-                Content-Disposition: attachment; filename=file.$fileType\n\n";
+                $header = "HTTP/1.1 200 OK\nServer: SLAVI\nContent-Type: image/jpeg\nContent-Disposition: attachment; filename='file.txt'\n\n";
             }
             elsif ($fileType eq 'png')
             {
-                $header = "HTTP/1.1 200 OK
-                Server: SLAVI
-                Content-Type: image/png
-                Content-Disposition: attachment; filename=file.$fileType\n\n";
+                $header = "HTTP/1.1 200 OK\nServer: SLAVI\nContent-Type: image/jpeg\nContent-Disposition: attachment; filename='file.png'\n\n";
             }
             elsif ($fileType eq 'html')
             {
-                $header = "HTTP/1.1 200 OK
-                Server: SLAVI
-                Content-Type: text/html
-                Content-Disposition: attachment; filename=file.$fileType\n\n";
+                $header = "HTTP/1.1 200 OK\nServer: SLAVI\nContent-Type: image/jpeg\nContent-Disposition: attachment; filename='file.html'\n\n";
             }
 
             $client_socket->send($header);
