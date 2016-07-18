@@ -35,6 +35,13 @@ while(1)
     @command = split /\?/, $secondPartOfRequest;
     $command = @command[0];
     print "command: $command\n";
+    if((command ne '/sum') && (command ne '/files'))
+    {
+        print "command is not sum or files!\n";
+        @command = split /\//, $command;
+        $command = @command[1];
+        print "now command is: $command\n";
+    }
 
     if ($request_method eq 'GET')
     {
@@ -57,14 +64,15 @@ while(1)
             print "$sum\n";
 
             $data = ("HTTP/1.1 200 OK
-    SERVER: Slavi
-    Content-Type: text/html\n\n<html>
-    <body>
-    <p><b>SUM: $sum</b></p>
-    </body>
-    </html>");
+            SERVER: Slavi
+            Content-Type: text/html\n\n<html>
+            <body>
+            <p><b>SUM: $sum</b></p>
+            </body>
+            </html>");
             $client_socket->send($data);
         }
+
         elsif ($command eq '/files')
         {
             @fileName = split /\?/, $secondPartOfRequest;
@@ -110,11 +118,25 @@ while(1)
             open(my $fh, '<:encoding(UTF-8)', $filePath)
                 or die "Could not open file '$fileName' $!";
             binmode($fh);
-            
+
             while(<$fh>)
             {
                 $client_socket->send($_);
             }
+        }
+
+        elsif ($command eq 'scripts')
+        {
+            #$secondPartOfRequest = /scripts/getrandom.py
+            @script = split /\//, $secondPartOfRequest;
+            $script = @script[2];
+            print "script: $script\n";
+            $result = `python $script`;
+            $header = "HTTP/1.1 200 OK
+                SERVER: Slavi
+                Content-Type: text/html\n\n";
+            $client_socket->send($header);
+            $client_socket->send($result);
         }
         
         shutdown($client_socket, 1);
