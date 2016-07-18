@@ -65,21 +65,52 @@ while(1)
     </html>");
             $client_socket->send($data);
         }
-        #$secondPartOfRequest = /files?svzmobile.jpg
         elsif ($command eq '/files')
         {
             @fileName = split /\?/, $secondPartOfRequest;
             $fileName = @fileName[1];
             print "fileName: $fileName\n";
-            $header = "HTTP/1.1 200 OK
-            SERVER: Slavi
-            Content-Type: image/jpeg\n\n";
+            @fileType = split /\./, $fileName;
+            $fileType = @fileType[1];
+
+            if ($fileType eq 'jpg')
+            {
+                $header = "HTTP/1.1 200 OK
+                SERVER: Slavi
+                Content-Type: image/jpeg\n\n";
+            }
+            elsif ($fileType eq 'py')
+            {
+                $header = "HTTP/1.1 200 OK
+                SERVER: Slavi
+                Content-Type: text/plain\n\n";
+            }
+            elsif ($fileType eq 'txt')
+            {
+                $header = "HTTP/1.1 200 OK
+                SERVER: Slavi
+                Content-Type: text/plain\n\n";
+            }
+            elsif ($fileType eq 'png')
+            {
+                $header = "HTTP/1.1 200 OK
+                SERVER: Slavi
+                Content-Type: image/png\n\n";
+            }
+            elsif ($fileType eq 'html')
+            {
+                $header = "HTTP/1.1 200 OK
+                SERVER: Slavi
+                Content-Type: text/html\n\n";
+            }
+            
             $client_socket->send($header);
             $filePath = "$directory/$fileName";
             print "filePath: $filePath";
             open(my $fh, '<:encoding(UTF-8)', $filePath)
                 or die "Could not open file '$fileName' $!";
             binmode($fh);
+            
             while(<$fh>)
             {
                 $client_socket->send($_);
