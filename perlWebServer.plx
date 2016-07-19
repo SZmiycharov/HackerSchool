@@ -5,12 +5,15 @@ use MIME::Base64;
 use DBI;
 use threads;
 use Scalar::Util qw(looks_like_number);
+use Digest::MD5 qw(md5 md5_hex md5_base64);
+
 
 my $port = 8080;
 my $directory = '/home/slavi/Desktop';
 $| = 1;
 my $portFromCMD = $ARGV[0];
 my $dirFromCMD = $ARGV[1];
+my $sendingCredentials = 0;
 
 if (looks_like_number($portFromCMD) && $portFromCMD>0 && $portFromCMD<60000)
 {
@@ -322,6 +325,57 @@ while(1)
     elsif ($request_method eq 'POST')
     {
         print "req method is POST\n";
+        my @string = split / /, $req;
+        my $string = $string[1];
+        @string = split /\//, $string;
+        $string = $string[1];
+
+        if ($string eq 'regSucceeded')
+        {
+            my @user = split /"username"/,$req;
+            my $user = $user[1];
+            @user = split /---/,$user;
+            $user = $user[0];
+            @user = split /\n/, $user;
+            $user = $user[2];
+            @user = split /\r/, $user;
+            $user = $user[0];
+
+            my @passw = split /"username"/,$req;
+            my $passw = $passw[1];
+            @passw = split /---/,$passw;
+            $passw = $passw[0];
+            @passw = split /\n/, $passw;
+            $passw = $passw[2];
+            @passw = split /\r/, $passw;
+            $passw = $passw[0];
+
+            my @mail = split /"username"/,$req;
+            my $mail = $mail[1];
+            @mail = split /---/,$mail;
+            $mail = $mail[0];
+            @mail = split /\n/, $mail;
+            $mail = $mail[2];
+            @mail = split /\r/, $mail;
+            $mail = $mail[0];
+
+            my $hashedPassw = md5_hex($passw);
+
+            my $sth = $dbh->prepare( "INSERT INTO users(username, password, mail) VALUES($user, $hashedPassw, $mail)" );
+            my $rv = $sth->execute() or die $DBI::errstr;
+            if($rv < 0)
+            {
+               print $DBI::errstr;
+            }
+            my $data = "HTTP/1.1 200 OK
+            SERVER: Slavi
+            Content-Type: text/html\n\n<html>
+            <body>
+            <p>Registration successful!</p></body</html>";
+            $client_socket->send($data);
+
+
+        }
 
         my @authorization = split /Authorization:/, $req;
         my $credentialsCorrect = 0;
@@ -372,7 +426,7 @@ while(1)
                         }
                         while(my @row = $sth->fetchrow_array())
                         {
-                            if($row[0] eq $password)
+                            if($row[0] eq md5_hex($password))
                             {
                                 $credentialsCorrect = 1;
                                 last OUTER;
@@ -568,12 +622,26 @@ while(1)
 
         else
         {
-            print "in post else\n";
-            $client_socket->send("HTTP/1.1 401 Access Denied
-WWW-Authenticate: Basic realm='Authenticate yourself!'
-Content-Length: 0\n\n");
-        }
-        shutdown($client_socket, 1);
+            if ($sendingCredentials == 0)
+            {
+                $sendingCredentials += 1;
+                $client_socket->send("HTTP/1.1 401 Access Denied\nWWW-Authenticate: Basic realm='Authenticate yourself!'\nContent-Length: 0\n\n");
+                shutdown($client_socket, 1);
+            }
+            else
+            {
+                $sendingCredentials = 0;
+                $client_socket->send("<form action='http://localhost:8080/regSucceeded' enctype='multipart/form-data' method="post">
+<p><b>Sign up</b><br>
+Username: <input type='text' name='username'></p>
+Password: <input type='password' name='password'></p>
+Mail: <input type='text' name='mail'></p>
+<div>
+<input type='submit' value='Send'>
+</div>
+</form>");
+            }
+        }  
     }
 
     else 
