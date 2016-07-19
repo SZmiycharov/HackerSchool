@@ -1,6 +1,6 @@
 use strict;
 use warnings;
-use IO::Socket::INET;
+use IO::Socket::SSL;
 use MIME::Base64;
 use DBI;
 use threads;
@@ -29,12 +29,15 @@ my $dbh = DBI->connect('dbi:Pg:dbname=httpAuth;host=10.20.1.129','postgres','311
 die "canno connect to database: $!\n" unless $dbh;
 
 # creating a listening socket
-my $socket = new IO::Socket::INET (
+my $socket = IO::Socket::SSL->new (
     LocalHost => '',
     LocalPort => $port,
     Proto => 'tcp',
     Listen => 5,
-    Reuse => 1
+    Reuse => 1,
+    SSL_cert_file => '/home/slavi/Desktop/HackerSchool/server.crt',
+    SSL_key_file => '/home/slavi/Desktop/HackerSchool/server.key',
+    Timeout => 200
 );
 die "cannot create socket $!\n" unless $socket;
 print "\t*******************SERVER STARTED*******************\n";
@@ -48,7 +51,7 @@ while(1)
     print "connection from $client_address:$client_port\n";
  
     my $req = "";
-    $client_socket->recv($req, 327680);
+    $client_socket->sysread($req, 327680);
 
     my @params = split / /, $req;
     my $request_method = $params[0];
@@ -63,7 +66,7 @@ while(1)
                     <p><b>Bad request!</b></p>
                     </body>
                     </html>");
-        $client_socket->send($data);
+        $client_socket->print($data);
     }
 
     my $secondPartOfRequest = $params[1];
@@ -108,7 +111,7 @@ while(1)
                     <p><b>SUM: $sum</b></p>
                     </body>
                     </html>");
-                    $client_socket->send($data);
+                    $client_socket->print($data);
                 }
             else 
             {
@@ -119,7 +122,7 @@ while(1)
                     <p><b>Bad parameters!</b></p>
                     </body>
                     </html>";
-                $client_socket->send($data);
+                $client_socket->print($data);
             }
             
         }
@@ -130,8 +133,8 @@ while(1)
             my $header = "HTTP/1.1 200 OK
                 SERVER: Slavi
                 Content-Type: text/html\n\n";
-            $client_socket->send($header);
-            $client_socket->send("<html>
+            $client_socket->print($header);
+            $client_socket->print("<html>
             <body>
             <form action='http://localhost:8080/upload' method='post' enctype='multipart/form-data'>
                 Select file to upload:
@@ -189,14 +192,14 @@ while(1)
                     Content-Type: text/html\n\n";
                 }
                 
-                $client_socket->send($header);
+                $client_socket->print($header);
                 open(my $fh, '<:encoding(UTF-8)', $filePath)
                     or die "Could not open file '$fileName' $!";
                 binmode($fh);
 
                 while(<$fh>)
                 {
-                    $client_socket->send($_);
+                    $client_socket->print($_);
                 }
                 close $fh;
             }
@@ -209,7 +212,7 @@ while(1)
                         <p><b>No such file!</b></p>
                         </body>
                         </html>";
-                $client_socket->send($data);
+                $client_socket->print($data);
             }
         }
 
@@ -257,33 +260,20 @@ while(1)
                         <p><b>No such file!</b></p>
                         </body>
                         </html>";
-                $client_socket->send($data);
+                $client_socket->print($data);
             }
             
-            $client_socket->send($header);
+            $client_socket->print($header);
             my $filePath = "$directory/$fileName";
             print "filePath: $filePath";
-            if (-f $filePath)
-            {
-                open(my $fh, '<:encoding(UTF-8)', $filePath)
-                or die "Could not open file '$fileName' $!";
-                binmode($fh);
-            }
-            else
-            {
-               my $data = "HTTP/1.1 404 Not Found
-                    SERVER: Slavi
-                        Content-Type: text/html\n\n<html>
-                        <body>
-                        <p><b>No such file!</b></p>
-                        </body>
-                        </html>";
-                $client_socket->send($data); 
-            }
+
+            open(my $fh, '<:encoding(UTF-8)', $filePath)
+            or die "Could not open file '$fileName' $!";
+            binmode($fh);
 
             while(<$fh>)
             {
-                $client_socket->send($_);
+                $client_socket->print($_);
             }
             close $fh;
         }
@@ -298,20 +288,20 @@ while(1)
             my $header = "HTTP/1.1 200 OK
                 SERVER: Slavi
                 Content-Type: text/html\n\n";
-            $client_socket->send($header);
-            $client_socket->send($result);
+            $client_socket->print($header);
+            $client_socket->print($result);
         }
 
         else
         {
             my $header = "HTTP/1.1 404 Not Found\nSERVER: Slavi\nContent-type: text/html\n\n";
-            $client_socket->send($header);
+            $client_socket->print($header);
             my $body = "<html>
             <body>
             <p><b>Server does not support this command!</b></p>
             </body>
             </html>";
-            $client_socket->send($body);
+            $client_socket->print($body);
         }
 
         shutdown($client_socket, 1);
@@ -429,7 +419,7 @@ while(1)
                     <p><b>SUM: $sum</b></p>
                     </body>
                     </html>");
-                    $client_socket->send($data);
+                    $client_socket->print($data);
                 }
                 else 
                 {
@@ -440,7 +430,7 @@ while(1)
                         <p><b>Bad parameters!</b></p>
                         </body>
                         </html>";
-                    $client_socket->send($data);
+                    $client_socket->print($data);
                 }
                     
             }
@@ -465,8 +455,8 @@ while(1)
                 my $header = "HTTP/1.1 200 OK
                     SERVER: Slavi
                     Content-Type: text/html\n\n";
-                $client_socket->send($header);
-                $client_socket->send($result);
+                $client_socket->print($header);
+                $client_socket->print($result);
             }
 
             elsif ($command eq '/upload')
@@ -525,14 +515,14 @@ while(1)
                     SERVER: Slavi
                     Content-Type: image/jpeg\n\n";
 
-                $client_socket->send($header);
+                $client_socket->print($header);
                 open(my $fh2, '<:encoding(UTF-8)', '/home/slavi/Desktop/success.jpg')
                     or die "Could not open file: $!";
                 binmode($fh2);
 
                 while(<$fh2>)
                 {
-                    $client_socket->send($_);
+                    $client_socket->print($_);
                 }
                 close $fh2;
             } 
@@ -540,20 +530,20 @@ while(1)
             else
             {
                 my $header = "HTTP/1.1 404 Not Found\nSERVER: Slavi\nContent-type: text/html\n\n";
-                $client_socket->send($header);
+                $client_socket->print($header);
                 my $body = "<html>
                 <body>
                 <p><b>Server does not support this command!</b></p>
                 </body>
                 </html>";
-                $client_socket->send($body);
+                $client_socket->print($body);
             }
         }
 
         else
         {
             print "in post else\n";
-            $client_socket->send("HTTP/1.1 401 Access Denied
+            $client_socket->print("HTTP/1.1 401 Access Denied
 WWW-Authenticate: Basic realm='Authenticate yourself!'
 Content-Length: 0\n\n");
         }
@@ -569,7 +559,7 @@ Content-Length: 0\n\n");
                     <p><b>Server does not support such request method (only POST and GET supported!)</b></p>
                     </body>
                     </html>");
-        $client_socket->send($data);
+        $client_socket->print($data);
     }
 }
  
