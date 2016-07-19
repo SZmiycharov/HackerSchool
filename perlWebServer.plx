@@ -6,11 +6,24 @@ use DBI;
 use threads;
 use Scalar::Util qw(looks_like_number);
 
-# auto-flush on socket
-$| = 1;
 my $port = 8080;
 my $directory = '/home/slavi/Desktop';
+$| = 1;
+my $portFromCMD = $ARGV[0];
+my $dirFromCMD = $ARGV[1];
 
+if (looks_like_number($portFromCMD) && $portFromCMD>0 && $portFromCMD<60000)
+{
+    print "yey took port from CMD!\n";
+    $port = $portFromCMD;
+    print "port: $port\n";
+}
+if (-d $dirFromCMD)
+{
+    print "yeyy dir is correct!!\n";
+    $directory = $dirFromCMD;
+    print "dir: $directory\n";
+}
 
 my $dbh = DBI->connect('dbi:Pg:dbname=httpAuth;host=10.20.1.129','postgres','3111',{AutoCommit=>1,RaiseError=>1,PrintError=>0});
 die "canno connect to database: $!\n" unless $dbh;
@@ -36,11 +49,22 @@ while(1)
  
     my $req = "";
     $client_socket->recv($req, 327680);
-    print "****************\nreq: $req\n****************\n";
 
     my @params = split / /, $req;
     my $request_method = $params[0];
     print "req method: $request_method\n";
+
+    if ($params[1] eq '')
+    {
+        my $data = ("HTTP/1.1 404 Not Found
+                    SERVER: Slavi
+                    Content-Type: text/html\n\n<html>
+                    <body>
+                    <p><b>Bad request!</b></p>
+                    </body>
+                    </html>");
+        $client_socket->send($data);
+    }
 
     my $secondPartOfRequest = $params[1];
     my @command = split /\?/, $secondPartOfRequest;
@@ -63,7 +87,6 @@ while(1)
             my $data = $params[1];
             my @params = split /\?/, $data;
             $data = $params[1];
-            #a=5&b=2
             @params = split /&/, $data;
             my $a = $params[0];
             my $b = $params[1];
@@ -188,7 +211,6 @@ while(1)
                         </html>";
                 $client_socket->send($data);
             }
-            
         }
 
         elsif ($command eq '/download')
@@ -201,35 +223,63 @@ while(1)
             print "fileName: $fileName\n";
             my @fileType = split /\./, $fileName;
             my $fileType = $fileType[1];
-
             my $header;
-            if ($fileType eq 'jpg')
-            {
-                $header = "HTTP/1.1 200 OK\nServer: SLAVI\nContent-Type: image/jpeg\nContent-Disposition: attachment; filename='file.jpg'\n\n";
-            }
-            elsif ($fileType eq 'py')
-            {
-                $header = "HTTP/1.1 200 OK\nServer: SLAVI\nContent-Type: image/jpeg\nContent-Disposition: attachment; filename='file.py'\n\n";
-            }
-            elsif ($fileType eq 'txt')
-            {
-                $header = "HTTP/1.1 200 OK\nServer: SLAVI\nContent-Type: image/jpeg\nContent-Disposition: attachment; filename='file.txt'\n\n";
-            }
-            elsif ($fileType eq 'png')
-            {
-                $header = "HTTP/1.1 200 OK\nServer: SLAVI\nContent-Type: image/jpeg\nContent-Disposition: attachment; filename='file.png'\n\n";
-            }
-            elsif ($fileType eq 'html')
-            {
-                $header = "HTTP/1.1 200 OK\nServer: SLAVI\nContent-Type: image/jpeg\nContent-Disposition: attachment; filename='file.html'\n\n";
-            }
 
+            if (-f my $filePath)
+            {
+                if ($fileType eq 'jpg')
+                {
+                    $header = "HTTP/1.1 200 OK\nServer: SLAVI\nContent-Type: image/jpeg\nContent-Disposition: attachment; filename='file.jpg'\n\n";
+                }
+                elsif ($fileType eq 'py')
+                {
+                    $header = "HTTP/1.1 200 OK\nServer: SLAVI\nContent-Type: image/jpeg\nContent-Disposition: attachment; filename='file.py'\n\n";
+                }
+                elsif ($fileType eq 'txt')
+                {
+                    $header = "HTTP/1.1 200 OK\nServer: SLAVI\nContent-Type: image/jpeg\nContent-Disposition: attachment; filename='file.txt'\n\n";
+                }
+                elsif ($fileType eq 'png')
+                {
+                    $header = "HTTP/1.1 200 OK\nServer: SLAVI\nContent-Type: image/jpeg\nContent-Disposition: attachment; filename='file.png'\n\n";
+                }
+                elsif ($fileType eq 'html')
+                {
+                    $header = "HTTP/1.1 200 OK\nServer: SLAVI\nContent-Type: image/jpeg\nContent-Disposition: attachment; filename='file.html'\n\n";
+                }
+            }
+            else
+            {
+                my $data = "HTTP/1.1 404 Not Found
+                    SERVER: Slavi
+                        Content-Type: text/html\n\n<html>
+                        <body>
+                        <p><b>No such file!</b></p>
+                        </body>
+                        </html>";
+                $client_socket->send($data);
+            }
+            
             $client_socket->send($header);
             my $filePath = "$directory/$fileName";
             print "filePath: $filePath";
-            open(my $fh, '<:encoding(UTF-8)', $filePath)
+            if (-f $filePath)
+            {
+                open(my $fh, '<:encoding(UTF-8)', $filePath)
                 or die "Could not open file '$fileName' $!";
-            binmode($fh);
+                binmode($fh);
+            }
+            else
+            {
+               my $data = "HTTP/1.1 404 Not Found
+                    SERVER: Slavi
+                        Content-Type: text/html\n\n<html>
+                        <body>
+                        <p><b>No such file!</b></p>
+                        </body>
+                        </html>";
+                $client_socket->send($data); 
+            }
 
             while(<$fh>)
             {
@@ -466,7 +516,7 @@ while(1)
                     $serverfile = "$directory/newfile.png";
                 }
 
-                open(my $fh, '>', $serverfile) or die "Could not open file '$serverfile': $!\n";
+                open(my $fh, '>', $serverfile);
                 binmode($fh);
                 print $fh $fileToUpload;
                 close $fh;
@@ -508,6 +558,18 @@ WWW-Authenticate: Basic realm='Authenticate yourself!'
 Content-Length: 0\n\n");
         }
         shutdown($client_socket, 1);
+    }
+
+    else 
+    {
+        my $data = ("HTTP/1.1 404 Not Found
+                    SERVER: Slavi
+                    Content-Type: text/html\n\n<html>
+                    <body>
+                    <p><b>Server does not support such request method (only POST and GET supported!)</b></p>
+                    </body>
+                    </html>");
+        $client_socket->send($data);
     }
 }
  
