@@ -281,12 +281,27 @@ while(1)
             my @script = split /\//, $secondPartOfRequest;
             my $script = $script[2];
             print "script: $script\n";
-            my $result = `python $script`;
-            my $header = "HTTP/1.1 200 OK
-                SERVER: Slavi
-                Content-Type: text/html\n\n";
-            $client_socket->send($header);
-            $client_socket->send($result);
+            if(-e $script)
+            {
+                my $result = `python $script`;
+                my $header = "HTTP/1.1 200 OK
+                    SERVER: Slavi
+                    Content-Type: text/html\n\n";
+                $client_socket->send($header);
+                $client_socket->send($result);
+            }
+            else
+            {
+                my $data = ("HTTP/1.1 404 Not Found
+                    SERVER: Slavi
+                    Content-Type: text/html\n\n<html>
+                    <body>
+                    <p><b>No such file!</b></p>
+                    </body>
+                    </html>");
+                $client_socket->send($data);
+            }
+            
         }
 
         else
@@ -447,13 +462,27 @@ while(1)
                 @script = split /=/, $parameters;
                 $script = $script[1];
                 print "Script: $script\n";
-                
-                my $result = `python $script`;
-                my $header = "HTTP/1.1 200 OK
+                if(-e $script)
+                {
+                    my $result = `python $script`;
+                    my $header = "HTTP/1.1 200 OK
+                        SERVER: Slavi
+                        Content-Type: text/html\n\n";
+                    $client_socket->send($header);
+                    $client_socket->send($result);
+                }
+                else
+                {
+                    my $data = ("HTTP/1.1 404 Not Found
                     SERVER: Slavi
-                    Content-Type: text/html\n\n";
-                $client_socket->send($header);
-                $client_socket->send($result);
+                    Content-Type: text/html\n\n<html>
+                    <body>
+                    <p><b>No such file!</b></p>
+                    </body>
+                    </html>");
+                    $client_socket->send($data);
+                }
+                
             }
 
             elsif ($command eq '/upload')
