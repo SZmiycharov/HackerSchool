@@ -40,7 +40,7 @@ my $socket = new IO::Socket::INET (
     Reuse => 1
 );
 die "cannot create socket $!\n" unless $socket;
-print "\t*******************SERVER STARTED*******************\n";
+print "\t*******************SERVER STARTED*******************\n\n\n\n";
 
 while(1)
 {
@@ -49,17 +49,38 @@ while(1)
     my $client_address = $client_socket->peerhost();
     my $client_port = $client_socket->peerport();
     print "connection from $client_address:$client_port\n";
-    
+    my $contentLength;
+    my @contentLength;
 
     my $req = "";
     my $buffer = "";
+    my @buffer;
+
     while(index($req,"\r\n\r\n") == -1)
     {
-        $client_socket->recv($req, 1024);
-        print "currentReq: $req\n";
+        $client_socket->recv($buffer, 10);
+        $req = $req.$buffer;
     }
-    
     print "*************\n$req\n*************\n";
+    while(true)
+    {
+        
+    }
+    $client_socket->recv($buffer, 1024);
+    print "buffer: $buffer\n";
+
+    my @helper = split /Content-Length/, $req;
+    if (scalar @helper > 1)
+    {
+        @contentLength = split /Content-Length:/, $req;
+        $contentLength = $contentLength[1];
+        @contentLength = split /\n/,$contentLength;
+        $contentLength = $contentLength[0];
+        @contentLength = split / /, $contentLength;
+        $contentLength = $contentLength[1];
+        print "contentLength: $contentLength\n";
+    }
+ 
 
     my @params = split / /, $req;
     my $request_method = $params[0];
