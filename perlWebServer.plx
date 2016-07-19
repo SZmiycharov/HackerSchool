@@ -29,7 +29,7 @@ if (-d $dirFromCMD)
 }
 
 my $dbh = DBI->connect('dbi:Pg:dbname=httpAuth;host=10.20.1.129','postgres','3111',{AutoCommit=>1,RaiseError=>1,PrintError=>0});
-die "canno connect to database: $!\n" unless $dbh;
+die "cannot connect to database: $!\n" unless $dbh;
 
 # creating a listening socket
 my $socket = new IO::Socket::INET (
@@ -49,9 +49,17 @@ while(1)
     my $client_address = $client_socket->peerhost();
     my $client_port = $client_socket->peerport();
     print "connection from $client_address:$client_port\n";
- 
+    
+
     my $req = "";
-    $client_socket->recv($req, 327680);
+    my $buffer = "";
+    while(index($req,"\r\n\r\n") == -1)
+    {
+        $client_socket->recv($req, 1024);
+        print "currentReq: $req\n";
+    }
+    
+    print "*************\n$req\n*************\n";
 
     my @params = split / /, $req;
     my $request_method = $params[0];
@@ -273,9 +281,7 @@ while(1)
                         </body>
                         </html>";
                 $client_socket->send($data);
-            }
-
-            
+            }            
         }
 
         elsif ($command eq 'scripts')
@@ -332,6 +338,7 @@ while(1)
 
         if ($string eq 'regSucceeded')
         {
+            print "in reqSucceeded!\n";
             my @user = split /"username"/,$req;
             my $user = $user[1];
             @user = split /---/,$user;
@@ -340,8 +347,9 @@ while(1)
             $user = $user[2];
             @user = split /\r/, $user;
             $user = $user[0];
+            print "user: $user\n";
 
-            my @passw = split /"username"/,$req;
+            my @passw = split /"password"/,$req;
             my $passw = $passw[1];
             @passw = split /---/,$passw;
             $passw = $passw[0];
@@ -349,8 +357,9 @@ while(1)
             $passw = $passw[2];
             @passw = split /\r/, $passw;
             $passw = $passw[0];
+            print "passw: $passw\n";
 
-            my @mail = split /"username"/,$req;
+            my @mail = split /"mail"/,$req;
             my $mail = $mail[1];
             @mail = split /---/,$mail;
             $mail = $mail[0];
@@ -358,10 +367,12 @@ while(1)
             $mail = $mail[2];
             @mail = split /\r/, $mail;
             $mail = $mail[0];
+            print "mail: $mail\n";
 
             my $hashedPassw = md5_hex($passw);
+            print "hashedPassw: $hashedPassw\n";
 
-            my $sth = $dbh->prepare( "INSERT INTO users(username, password, mail) VALUES($user, $hashedPassw, $mail)" );
+            my $sth = $dbh->prepare( "INSERT INTO users(username, password, mail) VALUES('$user', '$hashedPassw', '$mail')" );
             my $rv = $sth->execute() or die $DBI::errstr;
             if($rv < 0)
             {
@@ -373,275 +384,286 @@ while(1)
             <body>
             <p>Registration successful!</p></body</html>";
             $client_socket->send($data);
-
-
         }
-
-        my @authorization = split /Authorization:/, $req;
-        my $credentialsCorrect = 0;
-        my $authorization = @authorization;
-        if ($authorization == 2)
+        else
         {
-            my @encodedCredentials = split /Authorization:/, $req;
-            my $encodedCredentials = $encodedCredentials[1];
-            @encodedCredentials = split /\r\n/, $encodedCredentials;
-            $encodedCredentials = $encodedCredentials[0];
-            @encodedCredentials = split / /, $encodedCredentials;
-            $encodedCredentials = $encodedCredentials[2];
-
-            my $decodedCredentials = decode_base64($encodedCredentials);
-
-            my @username = split /:/, $decodedCredentials;
-            my $username = $username[0];
-            my @password = split /:/, $decodedCredentials;
-            my $password = $password[1];
-            print "username: $username ; password: $password\n";
-
-            if($username eq '' || $password eq '')
+            my @authorization = split /Authorization:/, $req;
+        
+            my $authorization = @authorization;
+            my $credentialsCorrect = 0;
+            if ($authorization == 2)
             {
-                $credentialsCorrect = 0;
-            }
-            else
-            {
-                print "gonna execute query!\n";
+                print "received credentials\n";
+                my @encodedCredentials = split /Authorization:/, $req;
+                my $encodedCredentials = $encodedCredentials[1];
+                @encodedCredentials = split /\r\n/, $encodedCredentials;
+                $encodedCredentials = $encodedCredentials[0];
+                @encodedCredentials = split / /, $encodedCredentials;
+                $encodedCredentials = $encodedCredentials[2];
 
-                my $stmt = qq(SELECT username FROM users;);
-                my $sth = $dbh->prepare( $stmt );
-                my $rv = $sth->execute() or die $DBI::errstr;
-                if($rv < 0)
-                {
-                   print $DBI::errstr;
-                }
-                OUTER: while(my @row = $sth->fetchrow_array())
-                {
-                    if ($row[0] eq $username)
-                    {
-                        print "username correct!\n";
-                        my $stmt = qq(SELECT password FROM users;);
-                        my $sth = $dbh->prepare( $stmt );
-                        my $rv = $sth->execute() or die $DBI::errstr;
-                        if($rv < 0)
-                        {
-                           print $DBI::errstr;
-                        }
-                        while(my @row = $sth->fetchrow_array())
-                        {
-                            if($row[0] eq md5_hex($password))
-                            {
-                                $credentialsCorrect = 1;
-                                last OUTER;
-                            }
-                            else
-                            {
-                                $credentialsCorrect = 0;
-                            }
-                        }
-                    }
-                    else
-                    {
-                        $credentialsCorrect = 0;
-                    }
-                }
-            }
-        }
+                my $decodedCredentials = decode_base64($encodedCredentials);
 
-        if ($credentialsCorrect)
-        {
-            print "in post if\n";
-            if ($command eq '/sum')
-            {
-                my @parameters;
-                my $parameters;
-                print "in sum POST\n";
-                @parameters = split / /, $req;
-                $parameters = $parameters[-1];
-                @parameters = split /\n/, $parameters;
-                $parameters = $parameters[-1];
-                print "params: $parameters***\n";
+                my @username = split /:/, $decodedCredentials;
+                my $username = $username[0];
+                my @password = split /:/, $decodedCredentials;
+                my $password = $password[1];
+                print "username: $username ; password: $password\n";
 
-                my @numbers;
-                @numbers = split /&/, $parameters;
-                my $a;
-                my @a;
-                $a = $numbers[0];
-                @a = split /=/, $a;
-                $a = $a[1];
-                print "a: $a\n";
-                my $b;
-                my @b;
-                $b = $numbers[1];
-                @b = split /=/, $b;
-                $b = $b[1];
-                print "b: $b\n";
-                my $sum;
-                if (looks_like_number($a) & looks_like_number($b))
+                if($username eq '' || $password eq '')
                 {
-                    $sum = $a+$b;
-                    my $data;
-                    $data = ("HTTP/1.1 200 OK
-                    SERVER: Slavi
-                    Content-Type: text/html\n\n<html>
-                    <body>
-                    <p><b>SUM: $sum</b></p>
-                    </body>
-                    </html>");
-                    $client_socket->send($data);
-                }
-                else 
-                {
-                    my $data = "HTTP/1.1 404 Not Found
-                    SERVER: Slavi
-                        Content-Type: text/html\n\n<html>
-                        <body>
-                        <p><b>Bad parameters!</b></p>
-                        </body>
-                        </html>";
-                    $client_socket->send($data);
-                }
-                    
-            }
-
-            elsif($command eq 'scripts')
-            {
-                print "in scripts POST\n";
-                my @parameters;
-                my $parameters;
-                @parameters = split / /, $req;
-                $parameters = $parameters[-1];
-                @parameters = split /\n/, $parameters;
-                $parameters = $parameters[-1];
-
-                my @script;
-                my $script;
-                @script = split /=/, $parameters;
-                $script = $script[1];
-                print "Script: $script\n";
-                if(-e $script)
-                {
-                    my $result = `python $script`;
-                    my $header = "HTTP/1.1 200 OK
-                        SERVER: Slavi
-                        Content-Type: text/html\n\n";
-                    $client_socket->send($header);
-                    $client_socket->send($result);
+                    $credentialsCorrect = 0;
                 }
                 else
                 {
-                    my $data = ("HTTP/1.1 404 Not Found
-                    SERVER: Slavi
-                    Content-Type: text/html\n\n<html>
-                    <body>
-                    <p><b>No such file!</b></p>
-                    </body>
-                    </html>");
-                    $client_socket->send($data);
+                    print "gonna execute query!\n";
+
+                    my $stmt = qq(SELECT username FROM users;);
+                    my $sth = $dbh->prepare( $stmt );
+                    my $rv = $sth->execute() or die $DBI::errstr;
+                    if($rv < 0)
+                    {
+                       print $DBI::errstr;
+                    }
+                    OUTER: while(my @row = $sth->fetchrow_array())
+                    {
+                        if ($row[0] eq $username)
+                        {
+                            print "username correct!\n";
+                            my $stmt = qq(SELECT password FROM users;);
+                            my $sth = $dbh->prepare( $stmt );
+                            my $rv = $sth->execute() or die $DBI::errstr;
+                            if($rv < 0)
+                            {
+                               print $DBI::errstr;
+                            }
+                            while(my @row = $sth->fetchrow_array())
+                            {
+                                if($row[0] eq md5_hex($password))
+                                {
+                                    print "password correct!\n";
+                                    $credentialsCorrect = 1;
+                                    last OUTER;
+                                    print "we should not be here!\n\n\n";
+                                }
+                                else
+                                {
+                                    print "not correct password!\n";
+                                }
+                            }
+                        }
+                        else
+                        {
+                            print "not correct username!\n";
+                        }
+                    }
                 }
-                
             }
 
-            elsif ($command eq '/upload')
+            if ($credentialsCorrect)
             {
-                print "in upload POST \n";
-                my @fileToUpload;
-                my $fileToUpload;
-                @fileToUpload = split /\r\n\r\n/, $req;
-                $fileToUpload = $fileToUpload[2];
-                @fileToUpload = split /----/, $fileToUpload;
-                $fileToUpload = $fileToUpload[0];
-                @fileToUpload = split /\n\r\n/, $fileToUpload;
-                $fileToUpload = $fileToUpload[0];
-                print "fileToUpload: $fileToUpload\n";
-
-                my @contType;
-                my $contType;
-                @contType = split /Content-Type/, $req;
-                $contType = $contType[2];
-                @contType = split /: /, $contType;
-                $contType = $contType[1];
-                @contType = split /\n/, $contType;
-                $contType = $contType[0];
-                @contType = split /\r/, $contType;
-                $contType = $contType[0];
-                print "contType: $contType\n";
-
-                my $serverfile;
-                if($contType eq 'text/plain')
+                $sendingCredentials = 0;
+                print "in post if\n";
+                if ($command eq '/sum')
                 {
-                    $serverfile = "$directory/newfile.txt";
-                }
-                elsif($contType eq 'text/x-python')
-                {
-                    $serverfile = "$directory/newfile.py";
-                }
-                elsif($contType eq 'text/html')
-                {
-                    $serverfile = "$directory/newfile.html";
-                }
-                elsif($contType eq 'image/jpeg')
-                {
-                    $serverfile = "$directory/newfile.jpg";
-                }
-                elsif($contType eq 'image/png')
-                {
-                    $serverfile = "$directory/newfile.png";
+                    my @parameters;
+                    my $parameters;
+                    print "in sum POST\n";
+                    @parameters = split / /, $req;
+                    $parameters = $parameters[-1];
+                    @parameters = split /\n/, $parameters;
+                    $parameters = $parameters[-1];
+                    print "params: $parameters***\n";
+
+                    my @numbers;
+                    @numbers = split /&/, $parameters;
+                    my $a;
+                    my @a;
+                    $a = $numbers[0];
+                    @a = split /=/, $a;
+                    $a = $a[1];
+                    print "a: $a\n";
+                    my $b;
+                    my @b;
+                    $b = $numbers[1];
+                    @b = split /=/, $b;
+                    $b = $b[1];
+                    print "b: $b\n";
+                    my $sum;
+                    if (looks_like_number($a) & looks_like_number($b))
+                    {
+                        $sum = $a+$b;
+                        my $data;
+                        $data = ("HTTP/1.1 200 OK
+                        SERVER: Slavi
+                        Content-Type: text/html\n\n<html>
+                        <body>
+                        <p><b>SUM: $sum</b></p>
+                        </body>
+                        </html>");
+                        $client_socket->send($data);
+                    }
+                    else 
+                    {
+                        my $data = "HTTP/1.1 404 Not Found
+                        SERVER: Slavi
+                            Content-Type: text/html\n\n<html>
+                            <body>
+                            <p><b>Bad parameters!</b></p>
+                            </body>
+                            </html>";
+                        $client_socket->send($data);
+                    }
+                        
                 }
 
-                open(my $fh, '>', $serverfile);
-                binmode($fh);
-                print $fh $fileToUpload;
-                close $fh;
-
-                my $header = "HTTP/1.1 200 OK
-                    SERVER: Slavi
-                    Content-Type: image/jpeg\n\n";
-
-                $client_socket->send($header);
-                open(my $fh2, '<:encoding(UTF-8)', '/home/slavi/Desktop/success.jpg')
-                    or die "Could not open file: $!";
-                binmode($fh2);
-
-                while(<$fh2>)
+                elsif($command eq 'scripts')
                 {
-                    $client_socket->send($_);
+                    print "in scripts POST\n";
+                    my @parameters;
+                    my $parameters;
+                    @parameters = split / /, $req;
+                    $parameters = $parameters[-1];
+                    @parameters = split /\n/, $parameters;
+                    $parameters = $parameters[-1];
+
+                    my @script;
+                    my $script;
+                    @script = split /=/, $parameters;
+                    $script = $script[1];
+                    print "Script: $script\n";
+                    if(-e $script)
+                    {
+                        my $result = `python $script`;
+                        my $header = "HTTP/1.1 200 OK
+                            SERVER: Slavi
+                            Content-Type: text/html\n\n";
+                        $client_socket->send($header);
+                        $client_socket->send($result);
+                    }
+                    else
+                    {
+                        my $data = ("HTTP/1.1 404 Not Found
+                        SERVER: Slavi
+                        Content-Type: text/html\n\n<html>
+                        <body>
+                        <p><b>No such file!</b></p>
+                        </body>
+                        </html>");
+                        $client_socket->send($data);
+                    }
+                    
                 }
-                close $fh2;
-            } 
+
+                elsif ($command eq '/upload')
+                {
+                    print "in upload POST \n";
+                    my @fileToUpload;
+                    my $fileToUpload;
+                    @fileToUpload = split /\r\n\r\n/, $req;
+                    $fileToUpload = $fileToUpload[2];
+                    @fileToUpload = split /----/, $fileToUpload;
+                    $fileToUpload = $fileToUpload[0];
+                    @fileToUpload = split /\n\r\n/, $fileToUpload;
+                    $fileToUpload = $fileToUpload[0];
+                    print "fileToUpload: $fileToUpload\n";
+
+                    my @contType;
+                    my $contType;
+                    @contType = split /Content-Type/, $req;
+                    $contType = $contType[2];
+                    @contType = split /: /, $contType;
+                    $contType = $contType[1];
+                    @contType = split /\n/, $contType;
+                    $contType = $contType[0];
+                    @contType = split /\r/, $contType;
+                    $contType = $contType[0];
+                    print "contType: $contType\n";
+
+                    my $serverfile;
+                    if($contType eq 'text/plain')
+                    {
+                        $serverfile = "$directory/newfile.txt";
+                    }
+                    elsif($contType eq 'text/x-python')
+                    {
+                        $serverfile = "$directory/newfile.py";
+                    }
+                    elsif($contType eq 'text/html')
+                    {
+                        $serverfile = "$directory/newfile.html";
+                    }
+                    elsif($contType eq 'image/jpeg')
+                    {
+                        $serverfile = "$directory/newfile.jpg";
+                    }
+                    elsif($contType eq 'image/png')
+                    {
+                        $serverfile = "$directory/newfile.png";
+                    }
+
+                    open(my $fh, '>', $serverfile);
+                    binmode($fh);
+                    print $fh $fileToUpload;
+                    close $fh;
+
+                    my $header = "HTTP/1.1 200 OK
+                        SERVER: Slavi
+                        Content-Type: image/jpeg\n\n";
+
+                    $client_socket->send($header);
+                    open(my $fh2, '<:encoding(UTF-8)', '/home/slavi/Desktop/success.jpg')
+                        or die "Could not open file: $!";
+                    binmode($fh2);
+
+                    while(<$fh2>)
+                    {
+                        $client_socket->send($_);
+                    }
+                    close $fh2;
+                } 
+
+                else
+                {
+                    my $header = "HTTP/1.1 404 Not Found\nSERVER: Slavi\nContent-type: text/html\n\n";
+                    $client_socket->send($header);
+                    my $body = "<html>
+                    <body>
+                    <p><b>Server does not support this command!</b></p>
+                    </body>
+                    </html>";
+                    $client_socket->send($body);
+                }
+            }
 
             else
             {
-                my $header = "HTTP/1.1 404 Not Found\nSERVER: Slavi\nContent-type: text/html\n\n";
-                $client_socket->send($header);
-                my $body = "<html>
-                <body>
-                <p><b>Server does not support this command!</b></p>
-                </body>
-                </html>";
-                $client_socket->send($body);
+                print "credentials not correct!\n";
+                print "sendingCredentials: $credentialsCorrect\n";
+                if ($sendingCredentials == 0)
+                {
+                    $sendingCredentials += 1;
+                    $client_socket->send("HTTP/1.1 401 Access Denied\nWWW-Authenticate: Basic realm='Authenticate yourself!'\nContent-Length: 0\n\n");
+                    shutdown($client_socket, 1);
+                }
+                else
+                {
+                    print "sending registration form!\n";
+                    $sendingCredentials = 0;
+                    $client_socket->send("HTTP/1.1 200 OK\nSERVER: Slavi\nContent-Type: text/html\n\n");
+                    $client_socket->send("<form action='http://localhost:8080/regSucceeded' enctype='multipart/form-data' method='post'>
+                        <p><b>Sign up</b><br>
+                        Username: <input type='text' name='username'></p>
+                        Password: <input type='password' name='password'></p>
+                        Mail: <input type='text' name='mail'></p>
+                        <div>
+                        <input type='submit' value='Send'>
+                        </div>
+                        </form>");
+                }
             }
         }
 
-        else
-        {
-            if ($sendingCredentials == 0)
-            {
-                $sendingCredentials += 1;
-                $client_socket->send("HTTP/1.1 401 Access Denied\nWWW-Authenticate: Basic realm='Authenticate yourself!'\nContent-Length: 0\n\n");
-                shutdown($client_socket, 1);
-            }
-            else
-            {
-                $sendingCredentials = 0;
-                $client_socket->send("<form action='http://localhost:8080/regSucceeded' enctype='multipart/form-data' method="post">
-<p><b>Sign up</b><br>
-Username: <input type='text' name='username'></p>
-Password: <input type='password' name='password'></p>
-Mail: <input type='text' name='mail'></p>
-<div>
-<input type='submit' value='Send'>
-</div>
-</form>");
-            }
-        }  
+          
     }
 
     else 
@@ -656,5 +678,5 @@ Mail: <input type='text' name='mail'></p>
         $client_socket->send($data);
     }
 }
- 
+
 $socket->close();
