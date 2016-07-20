@@ -84,8 +84,10 @@ answer = 100000
 for x in path:
 	if len(x)-1 < answer:
 		answer = len(x) - 1
-
-print "The answer: %s"%(answer)
+if (answer == 10000):
+	print "The answer: None!"
+else:
+	print "The answer: %s"%(answer)
 
 
 

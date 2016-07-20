@@ -6,7 +6,7 @@ use DBI;
 use threads;
 use Scalar::Util qw(looks_like_number);
 use Digest::MD5 qw(md5 md5_hex md5_base64);
-
+use Tie::File;
 
 my $port = 8080;
 my $directory = '/home/slavi/Desktop';
@@ -57,12 +57,143 @@ while(1)
     my $req = "";
     my $buffer = "";
     my @buffer;
+    my $response;
+    my @boundary;
+    my $boundary;
+    my $tempFile;
+    my $help;
 
-    while(index($req,"\r\n\r\n") == -1)
+    while($response = <$client_socket>)
     {
-        $client_socket->recv($buffer, 50);
-        $req = $req.$buffer;
+        print "response:$response\n";
+        @contentLength = split /Content-Length: /, $response;
+        @boundary = split /boundary=/, $response;
+        if (scalar @boundary > 1)
+        {
+            $boundary = $boundary[1];
+            print "boundary: $boundary\n";
+        }
+        if (scalar @contentLength > 1)
+        {
+            $contentLength = $contentLength[1];
+        }
+        @contentType = split /Content-Type: /, $response;
+        if(scalar @contentType > 1)
+        {
+            $contentType = $contentType[1];
+            @contentType = split /\r\n\r\n/, $contentType;
+            $contentType = $contentType[0];
+            @contentType = split /\r\n/, $contentType;
+            $contentType = $contentType[0];
+            print "contentType: $contentType\n";
+            my $lastHelp = "";
+            my $i = 0;
+
+            if ($contentType eq 'image/jpeg')
+            {
+                $tempFile = '/home/slavi/Desktop/temp.jpg';
+                open(my $tmp, '>', $tempFile);
+                binmode($tmp);
+                $\ = "\n";
+                while ($help = <$client_socket>)
+                {
+                    if ($i != 0)
+                    {
+                        print "help: $help\n";
+                        print $tmp $help;
+                    }
+                    if (($lastHelp eq "" || $lastHelp eq "\n") && $help eq $boundary)
+                    {
+                        print "FAILLL";
+                    }
+                    $i += 1;
+                    $lastHelp = $help;
+                }
+                close $tmp;
+            }
+            elsif ($contentType eq 'text/plain')
+            {
+                $tempFile = '/home/slavi/Desktop/temp.txt';
+                open(my $tmp, '>', $tempFile);
+                binmode($tmp);
+                $\ = "\n";
+                while ($help = <$client_socket>)
+                {
+                    if ($i != 0)
+                    {
+                        print "help: $help\n";
+                        print $tmp $help;
+                    }
+                    if (($lastHelp eq "" || $lastHelp eq "\n") && $help eq $boundary)
+                    {
+                        print "FAILLL";
+                    }
+                    $i += 1;
+                    $lastHelp = $help;
+                }
+                close $tmp;
+            }
+            elsif ($contentType eq 'image/png')
+            {
+                $tempFile = '/home/slavi/Desktop/temp.png';
+                open(my $tmp, '>', $tempFile);
+                binmode($tmp);
+                $\ = "\n";
+                while ($help = <$client_socket>)
+                {
+                    if ($i != 0)
+                    {
+                        print "help: $help";
+                        print $tmp $help;
+                    }
+                    if (($lastHelp eq "" || $lastHelp eq "\n") && $help eq $boundary)
+                    {
+                        print "FAILLL";
+                    }
+                    $i += 1;
+                    $lastHelp = $help;
+                }
+                close $tmp;
+            }
+            elsif ($contentType eq "text/html")
+            {
+                $tempFile = '/home/slavi/Desktop/temp.html';
+                open(my $tmp, '>', $tempFile);
+                binmode($tmp);
+                $\ = "\n";
+                my $i = 0;
+                while ($help = <$client_socket>)
+                {
+                    if ($i != 0)
+                    {
+                        print $tmp $help;
+                    }
+                    print "\n\n";
+                    print "lasthelp: $lastHelp";
+                    print "help: $help";
+                    if ($help eq "--".$boundary)
+                    {
+                        tie @lines, Tie::File, $tempFile or die "can't update $file: $!";
+                        delete $lines[-1];
+
+
+
+
+
+
+
+
+
+                    }
+                    $i += 1;
+                    $lastHelp = $help;
+                    
+                }
+                close $tmp;
+            }
+        }
     }
+    print "out of while!\n";
 
     open(my $out, '>:raw', '/home/slavi/Desktop/sample.bin') or die "Unable to open: $!";
     my @helper = split /Content-Length/, $req;
@@ -75,6 +206,7 @@ while(1)
         $contentLength = $contentLength[0];
         @contentLength = split / /, $contentLength;
         $contentLength = $contentLength[1];
+
 
         print "contentLength: $contentLength\n";
         my $file;
@@ -94,7 +226,6 @@ while(1)
             }
             $client_socket->recv($buffer, $readNumBytes);
             $lengthReqSoFar += length($buffer);
-            $req = $req.$buffer;
             print $out $buffer;
             my $filelength = length($file);
             if($lengthReqSoFar+$bytesDifference >= $contentLength)
@@ -103,7 +234,6 @@ while(1)
                 last OUTER;
             }
         }
-        print "\n*********$req**********\n";
     }
  
     my @params = split / /, $req;
