@@ -53,7 +53,7 @@ while(1)
     my $contentType;
     my @contentType;
 
-    my $req = "";
+    our $req = "";
     my $buffer = "";
     my @buffer;
     my $response;
@@ -61,16 +61,21 @@ while(1)
     my $boundary;
     my $tempFile;
     my $help;
+    my $counter = 0;
 
     LOOPWHILE: while($response = <$client_socket>)
     {
+        if ($counter == 0)
+        {
+            $req = $response;
+        }
+        $counter += 1;
         print "response:$response\n";
         @contentLength = split /Content-Length: /, $response;
         @boundary = split /boundary=/, $response;
         if (scalar @boundary > 1)
         {
             $boundary = $boundary[1];
-            print "boundary: $boundary\n";
         }
         if (scalar @contentLength > 1)
         {
