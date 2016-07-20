@@ -6,7 +6,6 @@ use DBI;
 use threads;
 use Scalar::Util qw(looks_like_number);
 use Digest::MD5 qw(md5 md5_hex md5_base64);
-use Tie::File;
 
 my $port = 8080;
 my $directory = '/home/slavi/Desktop';
@@ -63,7 +62,7 @@ while(1)
     my $tempFile;
     my $help;
 
-    while($response = <$client_socket>)
+    LOOPWHILE: while($response = <$client_socket>)
     {
         print "response:$response\n";
         @contentLength = split /Content-Length: /, $response;
@@ -139,16 +138,26 @@ while(1)
                 open(my $tmp, '>', $tempFile);
                 binmode($tmp);
                 $\ = "\n";
-                while ($help = <$client_socket>)
+                LOOPWHILE: while ($help = <$client_socket>)
                 {
                     if ($i != 0)
                     {
                         print "help: $help";
                         print $tmp $help;
                     }
+                    my $addr;
+                    my $FH;
                     if (($lastHelp eq "" || $lastHelp eq "\n") && $help eq $boundary)
                     {
                         print "FAILLL";
+                        open (FH, "+< $tempFile")               or die "can't update $tempFile: $!";
+                        while ( <FH> ) {
+                            $addr = tell(FH) unless eof(FH);
+                        }
+                        truncate(FH, $addr)                 or die "can't truncate $tempFile: $!";
+                        close FH;
+                        close $tmp;
+                        last LOOPWHILE;
                     }
                     $i += 1;
                     $lastHelp = $help;
@@ -164,30 +173,30 @@ while(1)
                 my $i = 0;
                 while ($help = <$client_socket>)
                 {
-                    if ($i != 0)
+                    
+                    my $addr;
+                    if ($help eq "--".$boundary && $lastHelp eq "\r\n")
+                    {
+                        print "YEEEEEEEE";
+                        open (FH, "+< $tempFile")               or die "can't update $tempFile: $!";
+                        while ( <FH> ) {
+                            $addr = tell(FH) unless eof(FH);
+                        }
+                        truncate(FH, $addr)                 or die "can't truncate $tempFile: $!";
+                        close FH;
+                        close $tmp;
+                        last LOOPWHILE;
+                        
+                    }
+                    elsif ($i != 0)
                     {
                         print $tmp $help;
                     }
                     print "\n\n";
                     print "lasthelp: $lastHelp";
                     print "help: $help";
-                    if ($help eq "--".$boundary)
-                    {
-                        tie @lines, Tie::File, $tempFile or die "can't update $file: $!";
-                        delete $lines[-1];
-
-
-
-
-
-
-
-
-
-                    }
                     $i += 1;
                     $lastHelp = $help;
-                    
                 }
                 close $tmp;
             }
