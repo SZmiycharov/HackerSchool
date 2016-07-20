@@ -40,7 +40,7 @@ my $socket = new IO::Socket::INET (
     Reuse => 1
 );
 die "cannot create socket $!\n" unless $socket;
-print "\t*******************SERVER STARTED*******************\n\n\n\n";
+print "\t*******************SERVER STARTED*******************\n\n\n";
 
 while(1)
 {
@@ -51,6 +51,8 @@ while(1)
     print "connection from $client_address:$client_port\n";
     my $contentLength;
     my @contentLength;
+    my $contentType;
+    my @contentType;
 
     my $req = "";
     my $buffer = "";
@@ -58,18 +60,13 @@ while(1)
 
     while(index($req,"\r\n\r\n") == -1)
     {
-        $client_socket->recv($buffer, 10);
+        $client_socket->recv($buffer, 50);
         $req = $req.$buffer;
     }
-    print "*************\n$req\n*************\n";
-    while(true)
-    {
-        
-    }
-    $client_socket->recv($buffer, 1024);
-    print "buffer: $buffer\n";
 
+    open(my $out, '>:raw', '/home/slavi/Desktop/sample.bin') or die "Unable to open: $!";
     my @helper = split /Content-Length/, $req;
+
     if (scalar @helper > 1)
     {
         @contentLength = split /Content-Length:/, $req;
@@ -78,10 +75,37 @@ while(1)
         $contentLength = $contentLength[0];
         @contentLength = split / /, $contentLength;
         $contentLength = $contentLength[1];
+
         print "contentLength: $contentLength\n";
+        my $file;
+        my $readNumBytes;
+        my $bytesDifference = 100;
+        my $lengthReqSoFar = 0;
+
+        OUTER: while(1)
+        {
+            if ($contentLength>10000)
+            {
+                $readNumBytes = 2048;
+            }
+            else
+            {
+                $readNumBytes = 100;
+            }
+            $client_socket->recv($buffer, $readNumBytes);
+            $lengthReqSoFar += length($buffer);
+            $req = $req.$buffer;
+            print $out $buffer;
+            my $filelength = length($file);
+            if($lengthReqSoFar+$bytesDifference >= $contentLength)
+            {
+                close($out);
+                last OUTER;
+            }
+        }
+        print "\n*********$req**********\n";
     }
  
-
     my @params = split / /, $req;
     my $request_method = $params[0];
     print "req method: $request_method\n";
@@ -466,15 +490,7 @@ while(1)
                                     last OUTER;
                                     print "we should not be here!\n\n\n";
                                 }
-                                else
-                                {
-                                    print "not correct password!\n";
-                                }
                             }
-                        }
-                        else
-                        {
-                            print "not correct username!\n";
                         }
                     }
                 }
