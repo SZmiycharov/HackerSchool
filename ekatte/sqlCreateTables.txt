@@ -1,0 +1,67 @@
+DROP TABLE obstina;
+DROP TABLE grad;
+DROP TABLE oblast;
+
+CREATE TABLE public.oblast
+(
+  id text,
+  oblast text,
+  ekatte text,
+  name text,
+  region text,
+  document text,
+  abc text,
+  CONSTRAINT oblast_pkey PRIMARY KEY (oblast)
+)
+WITH (
+  OIDS=FALSE
+);
+ALTER TABLE public.oblast
+  OWNER TO postgres;
+
+
+CREATE TABLE public.grad
+(
+  id text,
+  ekatte text,
+  t_v_m text,
+  name text,
+  oblast text,
+  obstina text,
+  kmetstvo text,
+  kind text,
+  category text,
+  altitude text,
+  document text,
+  tsb text,
+  abc text,
+  CONSTRAINT grad_pkey PRIMARY KEY (ekatte),
+  FOREIGN KEY (oblast) REFERENCES oblast (oblast)
+)
+WITH (
+  OIDS=FALSE
+);
+ALTER TABLE public.grad
+  OWNER TO postgres;
+
+
+CREATE TABLE public.obstina
+(
+  id text,
+  obstina text,
+  ekatte text,
+  name text,
+  category text,
+  document text,
+  abc text,
+  CONSTRAINT obstina_pkey PRIMARY KEY (abc),
+  FOREIGN KEY (ekatte) REFERENCES grad (ekatte)
+)
+WITH (
+  OIDS=FALSE
+);
+ALTER TABLE public.obstina
+  OWNER TO postgres;
+
+
+
