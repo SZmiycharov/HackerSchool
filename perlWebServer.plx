@@ -4,31 +4,18 @@ use IO::Socket::INET;
 use MIME::Base64;
 use DBI;
 use threads;
-use Scalar::Util qw(looks_like_number);
-use Digest::MD5 qw(md5 md5_hex md5_base64);
+use Memory::Usage;
 
+my $mu = Memory::Usage->new();
+$mu->record('starting work');
+
+# auto-flush on socket
+$| = 1;
 my $port = 8080;
 my $directory = '/home/slavi/Desktop';
-$| = 1;
-my $portFromCMD = $ARGV[0];
-my $dirFromCMD = $ARGV[1];
-my $sendingCredentials = 0;
 
-if (looks_like_number($portFromCMD) && $portFromCMD>0 && $portFromCMD<60000)
-{
-    print "yey took port from CMD!\n";
-    $port = $portFromCMD;
-    print "port: $port\n";
-}
-if (-d $dirFromCMD)
-{
-    print "yeyy dir is correct!!\n";
-    $directory = $dirFromCMD;
-    print "dir: $directory\n";
-}
 
 my $dbh = DBI->connect('dbi:Pg:dbname=httpAuth;host=10.20.1.129','postgres','3111',{AutoCommit=>1,RaiseError=>1,PrintError=>0});
-die "cannot connect to database: $!\n" unless $dbh;
 
 # creating a listening socket
 my $socket = new IO::Socket::INET (
@@ -39,325 +26,109 @@ my $socket = new IO::Socket::INET (
     Reuse => 1
 );
 die "cannot create socket $!\n" unless $socket;
-print "\t*******************SERVER STARTED*******************\n\n\n";
+print "\t*******************SERVER STARTED*******************\n";
 
 while(1)
 {
     my $client_socket = $socket->accept();
-    die "cannot create socket $!\n" unless $client_socket;
     my $client_address = $client_socket->peerhost();
     my $client_port = $client_socket->peerport();
     print "connection from $client_address:$client_port\n";
-    my $contentLength;
-    my @contentLength;
-    my $contentType;
-    my @contentType;
-
-    our $req = "";
-    my $buffer = "";
-    my @buffer;
-    my $response;
-    my @boundary;
-    my $boundary;
-    my $tempFile;
-    my $help;
-    my $counter = 0;
-
-    LOOPWHILE: while($response = <$client_socket>)
+    my $pid;
+    while (not defined ($pid = fork()))
     {
-        if ($counter == 0)
-        {
-            $req = $response;
-        }
-        $counter += 1;
-        print "response:$response\n";
-        @contentLength = split /Content-Length: /, $response;
-        @boundary = split /boundary=/, $response;
-        if (scalar @boundary > 1)
-        {
-            $boundary = $boundary[1];
-        }
-        if (scalar @contentLength > 1)
-        {
-            $contentLength = $contentLength[1];
-        }
-        @contentType = split /Content-Type: /, $response;
-        if(scalar @contentType > 1)
-        {
-            $contentType = $contentType[1];
-            @contentType = split /\r\n\r\n/, $contentType;
-            $contentType = $contentType[0];
-            @contentType = split /\r\n/, $contentType;
-            $contentType = $contentType[0];
-            print "contentType: $contentType\n";
-            my $lastHelp = "";
-            my $i = 0;
-
-            if ($contentType eq 'image/jpeg')
-            {
-                $tempFile = '/home/slavi/Desktop/temp.jpg';
-                open(my $tmp, '>', $tempFile);
-                binmode($tmp);
-                $\ = "\n";
-                while ($help = <$client_socket>)
-                {
-                    if ($i != 0)
-                    {
-                        print "help: $help\n";
-                        print $tmp $help;
-                    }
-                    if (($lastHelp eq "" || $lastHelp eq "\n") && $help eq $boundary)
-                    {
-                        print "FAILLL";
-                    }
-                    $i += 1;
-                    $lastHelp = $help;
-                }
-                close $tmp;
-            }
-            elsif ($contentType eq 'text/plain')
-            {
-                $tempFile = '/home/slavi/Desktop/temp.txt';
-                open(my $tmp, '>', $tempFile);
-                binmode($tmp);
-                $\ = "\n";
-                while ($help = <$client_socket>)
-                {
-                    if ($i != 0)
-                    {
-                        print "help: $help\n";
-                        print $tmp $help;
-                    }
-                    if (($lastHelp eq "" || $lastHelp eq "\n") && $help eq $boundary)
-                    {
-                        print "FAILLL";
-                    }
-                    $i += 1;
-                    $lastHelp = $help;
-                }
-                close $tmp;
-            }
-            elsif ($contentType eq 'image/png')
-            {
-                $tempFile = '/home/slavi/Desktop/temp.png';
-                open(my $tmp, '>', $tempFile);
-                binmode($tmp);
-                $\ = "\n";
-                LOOPWHILE: while ($help = <$client_socket>)
-                {
-                    if ($i != 0)
-                    {
-                        print "help: $help";
-                        print $tmp $help;
-                    }
-                    my $addr;
-                    my $FH;
-                    if (($lastHelp eq "" || $lastHelp eq "\n") && $help eq $boundary)
-                    {
-                        print "FAILLL";
-                        open (FH, "+< $tempFile")               or die "can't update $tempFile: $!";
-                        while ( <FH> ) {
-                            $addr = tell(FH) unless eof(FH);
-                        }
-                        truncate(FH, $addr)                 or die "can't truncate $tempFile: $!";
-                        close FH;
-                        close $tmp;
-                        last LOOPWHILE;
-                    }
-                    $i += 1;
-                    $lastHelp = $help;
-                }
-                close $tmp;
-            }
-            elsif ($contentType eq "text/html")
-            {
-                $tempFile = '/home/slavi/Desktop/temp.html';
-                open(my $tmp, '>', $tempFile);
-                binmode($tmp);
-                $\ = "\n";
-                my $i = 0;
-                while ($help = <$client_socket>)
-                {
-                    
-                    my $addr;
-                    if ($help eq "--".$boundary && $lastHelp eq "\r\n")
-                    {
-                        print "YEEEEEEEE";
-                        open (FH, "+< $tempFile")               or die "can't update $tempFile: $!";
-                        while ( <FH> ) {
-                            $addr = tell(FH) unless eof(FH);
-                        }
-                        truncate(FH, $addr)                 or die "can't truncate $tempFile: $!";
-                        close FH;
-                        close $tmp;
-                        last LOOPWHILE;
-                        
-                    }
-                    elsif ($i != 0)
-                    {
-                        print $tmp $help;
-                    }
-                    print "\n\n";
-                    print "lasthelp: $lastHelp";
-                    print "help: $help";
-                    $i += 1;
-                    $lastHelp = $help;
-                }
-                close $tmp;
-            }
-        }
+        sleep 0.1;
     }
-    print "out of while!\n";
-
-    open(my $out, '>:raw', '/home/slavi/Desktop/sample.bin') or die "Unable to open: $!";
-    my @helper = split /Content-Length/, $req;
-
-    if (scalar @helper > 1)
+    if ($pid)
     {
-        @contentLength = split /Content-Length:/, $req;
-        $contentLength = $contentLength[1];
-        @contentLength = split /\n/,$contentLength;
-        $contentLength = $contentLength[0];
-        @contentLength = split / /, $contentLength;
-        $contentLength = $contentLength[1];
+        close $client_socket; 
+    }
+    else
+    {
+        $client_socket->autoflush(1);
+        close $socket;
+        my $req = "";
+        $client_socket->recv($req, 327680);
+        print "****************\nreq: $req\n****************\n";
 
+        my @params = split / /, $req;
+        my $request_method = $params[0];
+        print "req method: $request_method\n";
 
-        print "contentLength: $contentLength\n";
-        my $file;
-        my $readNumBytes;
-        my $bytesDifference = 100;
-        my $lengthReqSoFar = 0;
+        my $secondPartOfRequest = $params[1];
+        my @command = split /\?/, $secondPartOfRequest;
+        my $command = $command[0];
 
-        OUTER: while(1)
+        if ($command ne '/sum' && $command ne '/files' && $command ne '/download' && $command ne '/upload')
         {
-            if ($contentLength>10000)
-            {
-                $readNumBytes = 2048;
-            }
-            else
-            {
-                $readNumBytes = 100;
-            }
-            $client_socket->recv($buffer, $readNumBytes);
-            $lengthReqSoFar += length($buffer);
-            print $out $buffer;
-            my $filelength = length($file);
-            if($lengthReqSoFar+$bytesDifference >= $contentLength)
-            {
-                close($out);
-                last OUTER;
-            }
+            #/scripts/test.py
+            @command = split /\//, $command;
+            $command = $command[1];
+            print "now command is: $command\n";
         }
-    }
- 
-    my @params = split / /, $req;
-    my $request_method = $params[0];
-    print "req method: $request_method\n";
-
-    if ($params[1] eq '')
-    {
-        my $data = ("HTTP/1.1 404 Not Found
-                    SERVER: Slavi
-                    Content-Type: text/html\n\n<html>
-                    <body>
-                    <p><b>Bad request!</b></p>
-                    </body>
-                    </html>");
-        $client_socket->send($data);
-    }
-
-    my $secondPartOfRequest = $params[1];
-    my @command = split /\?/, $secondPartOfRequest;
-    my $command = $command[0];
-
-    if ($command ne '/sum' && $command ne '/files' && $command ne '/download' && $command ne '/upload')
-    {
-        #/scripts/test.py
-        @command = split /\//, $command;
-        $command = $command[1];
-        print "now command is: $command\n";
-    }
 
 
-    if ($request_method eq 'GET')
-    {
-        if ($command eq '/sum')
+        if ($request_method eq 'GET')
         {
-            print "in GET sum\n";
-            my $data = $params[1];
-            my @params = split /\?/, $data;
-            $data = $params[1];
-            @params = split /&/, $data;
-            my $a = $params[0];
-            my $b = $params[1];
-
-            @params = split /=/, $a;    
-            $a = $params[1];
-
-            @params = split /=/, $b;    
-            $b = $params[1];
-            
-            if (looks_like_number($a) & looks_like_number($b))
-                {
-                    my $sum = $a+$b;
-                    my $data;
-                    $data = ("HTTP/1.1 200 OK
-                    SERVER: Slavi
-                    Content-Type: text/html\n\n<html>
-                    <body>
-                    <p><b>SUM: $sum</b></p>
-                    </body>
-                    </html>");
-                    $client_socket->send($data);
-                }
-            else 
+            if ($command eq '/sum')
             {
-                my $data = "HTTP/1.1 404 Not Found
+                print "in GET sum\n";
+                my $data = $params[1];
+                my @params = split /\?/, $data;
+                $data = $params[1];
+                #a=5&b=2
+                @params = split /&/, $data;
+                my $a = $params[0];
+                my $b = $params[1];
+
+                @params = split /=/, $a;    
+                $a = $params[1];
+
+                @params = split /=/, $b;    
+                $b = $params[1];
+                my $sum = $a + $b;
+                print "$sum\n";
+
+                $data = ("HTTP/1.1 200 OK
                 SERVER: Slavi
-                    Content-Type: text/html\n\n<html>
-                    <body>
-                    <p><b>Bad parameters!</b></p>
-                    </body>
-                    </html>";
+                Content-Type: text/html\n\n<html>
+                <body>
+                <p><b>SUM: $sum</b></p>
+                </body>
+                </html>");
                 $client_socket->send($data);
             }
-            
-        }
 
-        elsif($command eq '/upload')
-        {
-            print "in upload GET\n";
-            my $header = "HTTP/1.1 200 OK
-                SERVER: Slavi
-                Content-Type: text/html\n\n";
-            $client_socket->send($header);
-            $client_socket->send("<html>
-            <body>
-            <form action='http://localhost:8080/upload' method='post' enctype='multipart/form-data'>
-                Select file to upload:
-                <input type='file' name='fileToUpload' id='fileToUpload'>
-                <input type='submit' value='Upload Image' name='submit'>
-            </form>
-            </body>
-            </html>");
-        }
-
-        elsif ($command eq '/files')
-        {
-            print "in GET files\n";
-            my @file = split /\?/, $secondPartOfRequest;
-            my $file = $file[1];
-            my @fileName = split /=/, $file;
-            my $fileName = $fileName[1];
-            print "fileName: $fileName\n";
-            my @fileType = split /\./, $fileName;
-            my $fileType = $fileType[1];
-
-            my $filePath = "$directory/$fileName";
-
-            my $header;
-            if (-f $filePath)
+            elsif($command eq '/upload')
             {
+                print "in upload GET\n";
+                my $header = "HTTP/1.1 200 OK
+                    SERVER: Slavi
+                    Content-Type: text/html\n\n";
+                $client_socket->send($header);
+                $client_socket->send("<html>
+                <body>
+                <form action='http://localhost:8080/upload' method='post' enctype='multipart/form-data'>
+                    Select file to upload:
+                    <input type='file' name='fileToUpload' id='fileToUpload'>
+                    <input type='submit' value='Upload Image' name='submit'>
+                </form>
+                </body>
+                </html>");
+            }
+
+            elsif ($command eq '/files')
+            {
+                print "in GET files\n";
+                my @file = split /\?/, $secondPartOfRequest;
+                my $file = $file[1];
+                my @fileName = split /=/, $file;
+                my $fileName = $fileName[1];
+                print "fileName: $fileName\n";
+                my @fileType = split /\./, $fileName;
+                my $fileType = $fileType[1];
+
+                my $header;
                 if ($fileType eq 'jpg')
                 {
                     $header = "HTTP/1.1 200 OK
@@ -390,6 +161,8 @@ while(1)
                 }
                 
                 $client_socket->send($header);
+                my $filePath = "$directory/$fileName";
+                print "filePath: $filePath";
                 open(my $fh, '<:encoding(UTF-8)', $filePath)
                     or die "Could not open file '$fileName' $!";
                 binmode($fh);
@@ -400,34 +173,19 @@ while(1)
                 }
                 close $fh;
             }
-            else
-            {
-                my $data = "HTTP/1.1 404 Not Found
-                    SERVER: Slavi
-                        Content-Type: text/html\n\n<html>
-                        <body>
-                        <p><b>No such file!</b></p>
-                        </body>
-                        </html>";
-                $client_socket->send($data);
-            }
-        }
 
-        elsif ($command eq '/download')
-        {
-            print "in GET download!\n";
-            my @file = split /\?/, $secondPartOfRequest;
-            my $file = $file[1];
-            my @fileName = split /=/, $file;
-            my $fileName = $fileName[1];
-            print "fileName: $fileName\n";
-            my @fileType = split /\./, $fileName;
-            my $fileType = $fileType[1];
-            my $header;
-            my $filePath = "$directory/$fileName";
-
-            if (-f $filePath)
+            elsif ($command eq '/download')
             {
+                print "in GET download!\n";
+                my @file = split /\?/, $secondPartOfRequest;
+                my $file = $file[1];
+                my @fileName = split /=/, $file;
+                my $fileName = $fileName[1];
+                print "fileName: $fileName\n";
+                my @fileType = split /\./, $fileName;
+                my $fileType = $fileType[1];
+
+                my $header;
                 if ($fileType eq 'jpg')
                 {
                     $header = "HTTP/1.1 200 OK\nServer: SLAVI\nContent-Type: image/jpeg\nContent-Disposition: attachment; filename='file.jpg'\n\n";
@@ -448,10 +206,12 @@ while(1)
                 {
                     $header = "HTTP/1.1 200 OK\nServer: SLAVI\nContent-Type: image/jpeg\nContent-Disposition: attachment; filename='file.html'\n\n";
                 }
+
                 $client_socket->send($header);
+                my $filePath = "$directory/$fileName";
                 print "filePath: $filePath";
                 open(my $fh, '<:encoding(UTF-8)', $filePath)
-                or die "Could not open file '$fileName' $!";
+                    or die "Could not open file '$fileName' $!";
                 binmode($fh);
 
                 while(<$fh>)
@@ -459,28 +219,14 @@ while(1)
                     $client_socket->send($_);
                 }
                 close $fh;
-                }
-            else
-            {
-                my $data = "HTTP/1.1 404 Not Found
-                    SERVER: Slavi
-                        Content-Type: text/html\n\n<html>
-                        <body>
-                        <p><b>No such file!</b></p>
-                        </body>
-                        </html>";
-                $client_socket->send($data);
-            }            
-        }
+            }
 
-        elsif ($command eq 'scripts')
-        {
-            print "in GET scripts\n";
-            my @script = split /\//, $secondPartOfRequest;
-            my $script = $script[2];
-            print "script: $script\n";
-            if(-e $script)
+            elsif ($command eq 'scripts')
             {
+                print "in GET scripts\n";
+                my @script = split /\//, $secondPartOfRequest;
+                my $script = $script[2];
+                print "script: $script\n";
                 my $result = `python $script`;
                 my $header = "HTTP/1.1 200 OK
                     SERVER: Slavi
@@ -488,101 +234,19 @@ while(1)
                 $client_socket->send($header);
                 $client_socket->send($result);
             }
-            else
-            {
-                my $data = ("HTTP/1.1 404 Not Found
-                    SERVER: Slavi
-                    Content-Type: text/html\n\n<html>
-                    <body>
-                    <p><b>No such file!</b></p>
-                    </body>
-                    </html>");
-                $client_socket->send($data);
-            }
-            
+
+            shutdown($client_socket, 1);
         }
 
-        else
+        elsif ($request_method eq 'POST')
         {
-            my $header = "HTTP/1.1 404 Not Found\nSERVER: Slavi\nContent-type: text/html\n\n";
-            $client_socket->send($header);
-            my $body = "<html>
-            <body>
-            <p><b>Server does not support this command!</b></p>
-            </body>
-            </html>";
-            $client_socket->send($body);
-        }
+            print "req method is POST\n";
 
-        shutdown($client_socket, 1);
-    }
-
-    elsif ($request_method eq 'POST')
-    {
-        print "req method is POST\n";
-        my @string = split / /, $req;
-        my $string = $string[1];
-        @string = split /\//, $string;
-        $string = $string[1];
-
-        if ($string eq 'regSucceeded')
-        {
-            print "in reqSucceeded!\n";
-            my @user = split /"username"/,$req;
-            my $user = $user[1];
-            @user = split /---/,$user;
-            $user = $user[0];
-            @user = split /\n/, $user;
-            $user = $user[2];
-            @user = split /\r/, $user;
-            $user = $user[0];
-            print "user: $user\n";
-
-            my @passw = split /"password"/,$req;
-            my $passw = $passw[1];
-            @passw = split /---/,$passw;
-            $passw = $passw[0];
-            @passw = split /\n/, $passw;
-            $passw = $passw[2];
-            @passw = split /\r/, $passw;
-            $passw = $passw[0];
-            print "passw: $passw\n";
-
-            my @mail = split /"mail"/,$req;
-            my $mail = $mail[1];
-            @mail = split /---/,$mail;
-            $mail = $mail[0];
-            @mail = split /\n/, $mail;
-            $mail = $mail[2];
-            @mail = split /\r/, $mail;
-            $mail = $mail[0];
-            print "mail: $mail\n";
-
-            my $hashedPassw = md5_hex($passw);
-            print "hashedPassw: $hashedPassw\n";
-
-            my $sth = $dbh->prepare( "INSERT INTO users(username, password, mail) VALUES('$user', '$hashedPassw', '$mail')" );
-            my $rv = $sth->execute() or die $DBI::errstr;
-            if($rv < 0)
-            {
-               print $DBI::errstr;
-            }
-            my $data = "HTTP/1.1 200 OK
-            SERVER: Slavi
-            Content-Type: text/html\n\n<html>
-            <body>
-            <p>Registration successful!</p></body</html>";
-            $client_socket->send($data);
-        }
-        else
-        {
             my @authorization = split /Authorization:/, $req;
-        
-            my $authorization = @authorization;
             my $credentialsCorrect = 0;
+            my $authorization = @authorization;
             if ($authorization == 2)
             {
-                print "received credentials\n";
                 my @encodedCredentials = split /Authorization:/, $req;
                 my $encodedCredentials = $encodedCredentials[1];
                 @encodedCredentials = split /\r\n/, $encodedCredentials;
@@ -627,14 +291,20 @@ while(1)
                             }
                             while(my @row = $sth->fetchrow_array())
                             {
-                                if($row[0] eq md5_hex($password))
+                                if($row[0] eq $password)
                                 {
-                                    print "password correct!\n";
                                     $credentialsCorrect = 1;
                                     last OUTER;
-                                    print "we should not be here!\n\n\n";
+                                }
+                                else
+                                {
+                                    $credentialsCorrect = 0;
                                 }
                             }
+                        }
+                        else
+                        {
+                            $credentialsCorrect = 0;
                         }
                     }
                 }
@@ -642,7 +312,6 @@ while(1)
 
             if ($credentialsCorrect)
             {
-                $sendingCredentials = 0;
                 print "in post if\n";
                 if ($command eq '/sum')
                 {
@@ -670,31 +339,16 @@ while(1)
                     $b = $b[1];
                     print "b: $b\n";
                     my $sum;
-                    if (looks_like_number($a) & looks_like_number($b))
-                    {
-                        $sum = $a+$b;
-                        my $data;
-                        $data = ("HTTP/1.1 200 OK
-                        SERVER: Slavi
-                        Content-Type: text/html\n\n<html>
-                        <body>
-                        <p><b>SUM: $sum</b></p>
-                        </body>
-                        </html>");
-                        $client_socket->send($data);
-                    }
-                    else 
-                    {
-                        my $data = "HTTP/1.1 404 Not Found
-                        SERVER: Slavi
-                            Content-Type: text/html\n\n<html>
-                            <body>
-                            <p><b>Bad parameters!</b></p>
-                            </body>
-                            </html>";
-                        $client_socket->send($data);
-                    }
-                        
+                    $sum = $a+$b;
+                    my $data;
+                    $data = ("HTTP/1.1 200 OK
+                    SERVER: Slavi
+                    Content-Type: text/html\n\n<html>
+                    <body>
+                    <p><b>SUM: $sum</b></p>
+                    </body>
+                    </html>");
+                    $client_socket->send($data);
                 }
 
                 elsif($command eq 'scripts')
@@ -712,27 +366,13 @@ while(1)
                     @script = split /=/, $parameters;
                     $script = $script[1];
                     print "Script: $script\n";
-                    if(-e $script)
-                    {
-                        my $result = `python $script`;
-                        my $header = "HTTP/1.1 200 OK
-                            SERVER: Slavi
-                            Content-Type: text/html\n\n";
-                        $client_socket->send($header);
-                        $client_socket->send($result);
-                    }
-                    else
-                    {
-                        my $data = ("HTTP/1.1 404 Not Found
-                        SERVER: Slavi
-                        Content-Type: text/html\n\n<html>
-                        <body>
-                        <p><b>No such file!</b></p>
-                        </body>
-                        </html>");
-                        $client_socket->send($data);
-                    }
                     
+                    my $result = `python $script`;
+                    my $header = "HTTP/1.1 200 OK
+                        SERVER: Slavi
+                        Content-Type: text/html\n\n";
+                    $client_socket->send($header);
+                    $client_socket->send($result);
                 }
 
                 elsif ($command eq '/upload')
@@ -782,7 +422,7 @@ while(1)
                         $serverfile = "$directory/newfile.png";
                     }
 
-                    open(my $fh, '>', $serverfile);
+                    open(my $fh, '>', $serverfile) or die "Could not open file '$serverfile': $!\n";
                     binmode($fh);
                     print $fh $fileToUpload;
                     close $fh;
@@ -802,62 +442,25 @@ while(1)
                     }
                     close $fh2;
                 } 
-
-                else
-                {
-                    my $header = "HTTP/1.1 404 Not Found\nSERVER: Slavi\nContent-type: text/html\n\n";
-                    $client_socket->send($header);
-                    my $body = "<html>
-                    <body>
-                    <p><b>Server does not support this command!</b></p>
-                    </body>
-                    </html>";
-                    $client_socket->send($body);
-                }
             }
 
             else
             {
-                print "credentials not correct!\n";
-                print "sendingCredentials: $credentialsCorrect\n";
-                if ($sendingCredentials == 0)
-                {
-                    $sendingCredentials += 1;
-                    $client_socket->send("HTTP/1.1 401 Access Denied\nWWW-Authenticate: Basic realm='Authenticate yourself!'\nContent-Length: 0\n\n");
-                    shutdown($client_socket, 1);
-                }
-                else
-                {
-                    print "sending registration form!\n";
-                    $sendingCredentials = 0;
-                    $client_socket->send("HTTP/1.1 200 OK\nSERVER: Slavi\nContent-Type: text/html\n\n");
-                    $client_socket->send("<form action='http://localhost:8080/regSucceeded' enctype='multipart/form-data' method='post'>
-                        <p><b>Sign up</b><br>
-                        Username: <input type='text' name='username'></p>
-                        Password: <input type='password' name='password'></p>
-                        Mail: <input type='text' name='mail'></p>
-                        <div>
-                        <input type='submit' value='Send'>
-                        </div>
-                        </form>");
-                }
+                print "in post else\n";
+                $client_socket->send("HTTP/1.1 401 Access Denied
+    WWW-Authenticate: Basic realm='Authenticate yourself!'
+    Content-Length: 0\n\n");
             }
+            shutdown($client_socket, 1);
         }
 
-          
-    }
 
-    else 
-    {
-        my $data = ("HTTP/1.1 404 Not Found
-                    SERVER: Slavi
-                    Content-Type: text/html\n\n<html>
-                    <body>
-                    <p><b>Server does not support such request method (only POST and GET supported!)</b></p>
-                    </body>
-                    </html>");
-        $client_socket->send($data);
+        
     }
+ 
+    
 }
-
+ 
 $socket->close();
+$mu->record('ending program');
+$mu->dump();
