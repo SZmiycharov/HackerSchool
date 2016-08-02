@@ -1,11 +1,11 @@
 <!DOCTYPE html >
-  <head>
-    	<meta name="viewport" content="initial-scale=1.0, user-scalable=no" />
-    	<meta http-equiv="content-type" content="text/html; charset=UTF-8"/>
-    	<title>Ekatte places</title>
+<head>
+<meta name="viewport" content="initial-scale=1.0, user-scalable=no" />
+<meta http-equiv="content-type" content="text/html; charset=UTF-8"/>
+<title>Ekatte places</title>
 	<script src="http://code.jquery.com/jquery-latest.js"
             type="text/javascript"></script>
-	<link rel="stylesheet" href="//code.jquery.com/ui/1.11.4/themes/smoothness/jquery-ui.css">
+<link rel="stylesheet" href="//code.jquery.com/ui/1.11.4/themes/smoothness/jquery-ui.css">
   	<script src="//code.jquery.com/jquery-1.10.2.js"></script>
 	<script src="//code.jquery.com/ui/1.11.4/jquery-ui.js"></script>
 
@@ -42,11 +42,12 @@ function myFunction()
 {
 	console.log("Start of myfunction");
 	var input = document.getElementById('mySearch').value;
-	var url = "http://10.20.1.151/helper.php?entry=" + document.getElementById('mySearch').value;
+	var url = "http://localhost/helper.php?entry=" + document.getElementById('mySearch').value;
+	console.log(url);
 	$.ajax({
 		type: "GET",
 		crossDomain: true,
-		url: "http://10.20.1.151/helper.php?entry=" + document.getElementById('mySearch').value,
+		url: "http://localhost/helper.php?entry=" + document.getElementById('mySearch').value,
 		dataType: "xml",
 		success: function(xml) 
 		{		
