@@ -63,8 +63,9 @@ cur.execute('''INSERT INTO obstina(obstina, ekatte, name, category, document, ab
 	SELECT obstina, ekatte, name, category, document, abc, oblast FROM helperobstina''')
 conn.commit()
 
-cur.execute('''INSERT INTO selishte(ekatte, t_v_m, name, oblast, obstina, kmetstvo, kind, category) 
-	SELECT ekatte, t_v_m, name, oblast, obstina, kmetstvo, kind, category FROM helperselishte''')
+cur.execute('''INSERT INTO selishte(ekatte, t_v_m, name, oblast, obstina, kmetstvo, kind, category, altitude, document, tsb, abc) 
+	SELECT ekatte, t_v_m, name, oblast, obstina, kmetstvo, kind, category, altitude, document, tsb, abc FROM helperselishte''')
+conn.commit()
 
 
 
