@@ -1,6 +1,4 @@
-DROP TABLE obstina;
-DROP TABLE grad;
-DROP TABLE oblast;
+
 
 CREATE TABLE public.oblast
 (
@@ -20,7 +18,27 @@ ALTER TABLE public.oblast
   OWNER TO postgres;
 
 
-CREATE TABLE public.grad
+CREATE TABLE public.obstina
+(
+  id text,
+  obstina text,
+  ekatte text,
+  name text,
+  category text,
+  document text,
+  abc text,
+  oblast text,
+  CONSTRAINT obstina_pkey PRIMARY KEY (obstina),
+  FOREIGN KEY (oblast) REFERENCES oblast (oblast)
+)
+WITH (
+  OIDS=FALSE
+);
+ALTER TABLE public.obstina
+  OWNER TO postgres;
+  
+
+CREATE TABLE public.selishte
 (
   id text,
   ekatte text,
@@ -35,33 +53,17 @@ CREATE TABLE public.grad
   document text,
   tsb text,
   abc text,
-  CONSTRAINT grad_pkey PRIMARY KEY (ekatte),
-  FOREIGN KEY (oblast) REFERENCES oblast (oblast)
+  CONSTRAINT selishte_pkey PRIMARY KEY (ekatte),
+  FOREIGN KEY (obstina) REFERENCES obstina (obstina)
 )
 WITH (
   OIDS=FALSE
 );
-ALTER TABLE public.grad
+ALTER TABLE public.selishte
   OWNER TO postgres;
 
 
-CREATE TABLE public.obstina
-(
-  id text,
-  obstina text,
-  ekatte text,
-  name text,
-  category text,
-  document text,
-  abc text,
-  CONSTRAINT obstina_pkey PRIMARY KEY (abc),
-  FOREIGN KEY (ekatte) REFERENCES grad (ekatte)
-)
-WITH (
-  OIDS=FALSE
-);
-ALTER TABLE public.obstina
-  OWNER TO postgres;
+
 
 
 
