@@ -1,4 +1,9 @@
-
+DROP TABLE selishte;
+DROP TABLE obstina;
+DROP TABLE oblast;
+DROP TABLE helperselishte;
+DROP TABLE helperobstina;
+DROP TABLE helperoblast;
 
 CREATE TABLE public.oblast
 (
@@ -20,7 +25,6 @@ ALTER TABLE public.oblast
 
 CREATE TABLE public.obstina
 (
-  id text,
   obstina text,
   ekatte text,
   name text,
@@ -40,7 +44,6 @@ ALTER TABLE public.obstina
 
 CREATE TABLE public.selishte
 (
-  id text,
   ekatte text,
   t_v_m text,
   name text,
@@ -62,8 +65,60 @@ WITH (
 ALTER TABLE public.selishte
   OWNER TO postgres;
 
+CREATE TABLE public.helperSelishte
+(
+  id text,
+  ekatte text,
+  t_v_m text,
+  name text,
+  oblast text,
+  obstina text,
+  kmetstvo text,
+  kind text,
+  category text,
+  altitude text,
+  document text,
+  tsb text,
+  abc text
+)
+WITH (
+  OIDS=FALSE
+);
+ALTER TABLE public.helperSelishte
+  OWNER TO postgres;
 
 
+CREATE TABLE public.helperObstina
+(
+  id text,
+  obstina text,
+  ekatte text,
+  name text,
+  category text,
+  document text,
+  abc text
+)
+WITH (
+  OIDS=FALSE
+);
+ALTER TABLE public.helperObstina
+  OWNER TO postgres;
+
+CREATE TABLE public.helperOblast
+(
+  id text,
+  oblast text,
+  ekatte text,
+  name text,
+  region text,
+  document text,
+  abc text
+)
+WITH (
+  OIDS=FALSE
+);
+ALTER TABLE public.helperOblast
+  OWNER TO postgres;
 
 
 
