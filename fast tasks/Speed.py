@@ -1,166 +1,105 @@
-import sys
+class Graph(object):
+    maxSpeed = -1000
+    minSpeed = 1000
 
-class Vertex:
-    def __init__(self, node):
-        self.id = node
-        self.adjacent = {}
-        # Set distance to infinity for all nodes
-        self.distance = sys.maxint
-        # Mark all nodes unvisited        
-        self.visited = False  
-        # Predecessor
-        self.previous = None
-
-    def add_neighbor(self, neighbor, weight=0):
-        self.adjacent[neighbor] = weight
-
-    def get_connections(self):
-        return self.adjacent.keys()  
-
-    def get_id(self):
-        return self.id
-
-    def get_weight(self, neighbor):
-        return self.adjacent[neighbor]
-
-    def set_distance(self, dist):
-        self.distance = dist
-
-    def get_distance(self):
-        return self.distance
-
-    def set_previous(self, prev):
-        self.previous = prev
-
-    def set_visited(self):
-        self.visited = True
-
-    def __str__(self):
-        return str(self.id) + ' adjacent: ' + str([x.id for x in self.adjacent])
-
-class Graph:
     def __init__(self):
-        self.vert_dict = {}
-        self.num_vertices = 0
+        self.g = {}
+
+    def add(self, vertex1, vertex2, weight):
+        if vertex1 not in self.g:
+            self.g[vertex1] = {}
+
+        if vertex2 not in self.g:
+            self.g[vertex2] = {}
+
+        self.g[vertex1][vertex2] = weight
+        self.g[vertex2][vertex1] = weight
+
+    def has_link(self, v1, v2):
+        return v2 in self[v1] or v1 in self[v2]
+
+    def edges(self):
+        data = []
+
+        for from_vertex, destinations in self.g.items():
+            for to_vertex, weight in destinations.items():
+                if (to_vertex, from_vertex, weight) not in data:
+                    data.append((from_vertex, to_vertex, weight))
+
+        return data
+
+    def sorted_by_weight(self, desc=False):
+        return sorted(self.edges(), key=lambda x: x[2], reverse=desc)
+
+    def spanning_tree(self, minimum=True):
+        mst = Graph()
+        parent = {}
+        rank = {}
+
+        def find_parent(vertex):
+            while parent[vertex] != vertex:
+                vertex = parent[vertex]
+
+            return vertex
+
+        def union(root1, root2):
+            if rank[root1] > rank[root2]:
+                parent[root2] = root1
+            else:
+                parent[root2] = root1
+
+                if rank[root2] == rank[root1]:
+                    rank[root2] += 1
+
+        for vertex in self.g:
+            parent[vertex] = vertex
+            rank[vertex] = 0
+
+        for v1, v2, weight in self.sorted_by_weight(not minimum):
+            parent1 = find_parent(v1)
+            parent2 = find_parent(v2)
+
+            if parent1 != parent2:
+                mst.add(v1, v2, weight)
+                union(parent1, parent2)
+
+            if len(self) == len(mst):
+                break
+
+        return mst
+
+    def __len__(self):
+        return len(self.g.keys())
+
+    def __getitem__(self, node):
+        return self.g[node]
 
     def __iter__(self):
-        return iter(self.vert_dict.values())
+        for edge in self.edges():
+            yield edge
 
-    def add_vertex(self, node):
-        self.num_vertices = self.num_vertices + 1
-        new_vertex = Vertex(node)
-        self.vert_dict[node] = new_vertex
-        return new_vertex
-
-    def get_vertex(self, n):
-        if n in self.vert_dict:
-            return self.vert_dict[n]
-        else:
-            return None
-
-    def add_edge(self, frm, to, cost = 0):
-        if frm not in self.vert_dict:
-            self.add_vertex(frm)
-        if to not in self.vert_dict:
-            self.add_vertex(to)
-
-        self.vert_dict[frm].add_neighbor(self.vert_dict[to], cost)
-        self.vert_dict[to].add_neighbor(self.vert_dict[frm], cost)
-
-    def get_vertices(self):
-        return self.vert_dict.keys()
-
-    def set_previous(self, current):
-        self.previous = current
-
-    def get_previous(self, current):
-        return self.previous
-
-def shortest(v, path):
-    ''' make shortest path from v.previous'''
-    if v.previous:
-        path.append(v.previous.get_id())
-        shortest(v.previous, path)
-    return
-
-import heapq
-
-def dijkstra(aGraph, start):
-    print '''Dijkstra's shortest path'''
-    # Set the distance for the start node to zero 
-    start.set_distance(0)
-
-    # Put tuple pair into the priority queue
-    unvisited_queue = [(v.get_distance(),v) for v in aGraph]
-    heapq.heapify(unvisited_queue)
-
-    while len(unvisited_queue):
-        # Pops a vertex with the smallest distance 
-        uv = heapq.heappop(unvisited_queue)
-        current = uv[1]
-        current.set_visited()
-
-        #for next in v.adjacent:
-        for next in current.adjacent:
-            # if visited, skip
-            if next.visited:
-                continue
-            new_dist = current.get_distance() + current.get_weight(next)
-            
-            if new_dist < next.get_distance():
-                next.set_distance(new_dist)
-                next.set_previous(current)
-                print 'updated : current = %s next = %s new_dist = %s' \
-                        %(current.get_id(), next.get_id(), next.get_distance())
-            else:
-                print 'not updated : current = %s next = %s new_dist = %s' \
-                        %(current.get_id(), next.get_id(), next.get_distance())
-
-        # Rebuild heap
-        # 1. Pop every item
-        while len(unvisited_queue):
-            heapq.heappop(unvisited_queue)
-        # 2. Put all vertices not visited into the queue
-        unvisited_queue = [(v.get_distance(),v) for v in aGraph if not v.visited]
-        heapq.heapify(unvisited_queue)
+    def __str__(self):
+        for edge in self.edges():
+            if edge[2] < Graph.minSpeed:
+                Graph.minSpeed = edge[2]
+            elif edge[2] > Graph.maxSpeed:
+                Graph.maxSpeed = edge[2]
+                print self.maxSpeed
+        return "\n".join('from %s to %s: %d' % edge for edge in self.edges())
 
 
-if __name__ == '__main__':
+graph = Graph()
 
-    g = Graph()
+graph.add('1', '3', 2)
+graph.add('4', '2', 8)
+graph.add('1', '2', 11)
+graph.add('1', '4', 3)
+graph.add('1', '3', 6)
+graph.add('5', '3', 5)
+graph.add('3', '6', 9)
+graph.add('7', '6', 6)
+graph.add('5', '6', 3)
+graph.add('2', '5', 7)
 
-    g.add_vertex('a')
-    g.add_vertex('b')
-    g.add_vertex('c')
-    g.add_vertex('d')
-    g.add_vertex('e')
-    g.add_vertex('f')
-
-    g.add_edge('a', 'b', 20)  
-    g.add_edge('b', 'c', 6)
-    g.add_edge('c', 'd', 40)
-    g.add_edge('d', 'a', 5)
-    g.add_edge('d', 'b', 50)
-
-    maxSpeed = 10000000000
-    minSpeed = -10000000000
-    currentSpeed = 0
-
-    print 'Graph data:'
-    for v in g:
-        for w in v.get_connections():
-            vid = v.get_id()
-            wid = w.get_id()
-            print '( %s , %s, %3d)'  % ( vid, wid, v.get_weight(w))
-            currentSpeed = v.get_weight(w)
-            if currentSpeed<minSpeed:
-                minSpeed = currentSpeed
-            elif currentSpeed>maxSpeed:
-                maxSpeed += maxspeed - currentSpeed
-
-            
-    dijkstra(g, g.get_vertex('a')) 
-    print "minspeed: %s ; maxSpeed: %s" %()
-
-
- 
+print(graph.spanning_tree())
+print "Maxspeed: %d ; Minspeed: %d" %(Graph.maxSpeed, Graph.minSpeed)
