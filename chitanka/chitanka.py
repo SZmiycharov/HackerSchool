@@ -1,28 +1,41 @@
-import mechanize
-from time import sleep
+#!/usr/bin/env python
+# -*- coding: utf-8 -*-
 
-#Make a Browser (think of this as chrome or firefox etc)
-br = mechanize.Browser()
+import os
+import psycopg2
+import re
+
+conn = psycopg2.connect("host='' port='5432' dbname='chitanka' user='postgres' password=''")
+cur = conn.cursor()
+
+i = 0
+
+for filename in os.listdir("/home/slavi/Desktop/books"):
+    if filename.endswith(".txt"):
+        with open("/home/slavi/Desktop/books/" + filename, 'r') as f:
+            lines = f.read()
+            for split0 in lines.split(' '):
+                for split1 in split0.split(','):
+                    for split2 in split1.split('.'):
+                        for split3 in split2.split('?'):
+                            for split4 in split3.split('!'):
+                                for split5 in split4.split(':'):
+                                    for split6 in split5.split('...'):
+                                        for word in split6.split(): 
+                                            if word != "" and word != "-" and word != "\r\n":
+                                                print(word.decode('utf-8').lower())
+                                                word = word.decode('utf-8').lower()
+                                                query = "INSERT INTO dictionary SELECT \'" + word + "\' WHERE NOT EXISTS (SELECT * FROM dictionary WHERE words = \'" + word + "\')"
+                                                cur.execute(query)
+                                                conn.commit()
+cur.execute("SELECT count(*) FROM dictionary")
+WordsInBGLanguage = cur.fetchone()
+WordsInBGLanguage = WordsInBGLanguage[0]
+print "According to my dictionary, WordsInBGLanguage are: {}".format(WordsInBGLanguage)
 
 
-# Open your site
-br.open('http://pypi.python.org/pypi/xlwt')
-
-filetypes=[".zip",".exe",".tar.gz"] #you will need to do some kind of pattern matching on your files
-myfiles=[]
-for l in br.links():
-    for t in filetypes:
-        if t in str(l): #check if this link has the file extension we want (you may choose to use reg expressions or something)
-            myfiles.append(l)
+                
 
 
-def downloadlink(l):
-    f=open("/home/slavi/Desktop/" + l.text,"w") #perhaps you should open in a better way & ensure that file doesn't already exist.
-    br.click_link(l)
-    f.write(br.response().read())
-    print l.text," has been downloaded"
-    #br.back()
 
-for l in myfiles:
-    sleep(1) #throttle so you dont hammer the site
-    downloadlink(l)
+
