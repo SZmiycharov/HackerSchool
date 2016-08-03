@@ -9,25 +9,24 @@ conn = psycopg2.connect("host='' port='5432' dbname='chitanka' user='postgres' p
 cur = conn.cursor()
 
 i = 0
+delimiters = "a", "...", "(c)"
+regexPattern = '|'.join(map(re.escape, delimiters))
+re.split(regexPattern, example)
 
 for filename in os.listdir("/home/slavi/Desktop/books"):
     if filename.endswith(".txt"):
         with open("/home/slavi/Desktop/books/" + filename, 'r') as f:
             lines = f.read()
-            for split0 in lines.split(' '):
-                for split1 in split0.split(','):
-                    for split2 in split1.split('.'):
-                        for split3 in split2.split('?'):
-                            for split4 in split3.split('!'):
-                                for split5 in split4.split(':'):
-                                    for split6 in split5.split('...'):
-                                        for word in split6.split(): 
-                                            if word != "" and word != "-" and word != "\r\n":
-                                                print(word.decode('utf-8').lower())
-                                                word = word.decode('utf-8').lower()
-                                                query = "INSERT INTO dictionary SELECT \'" + word + "\' WHERE NOT EXISTS (SELECT * FROM dictionary WHERE words = \'" + word + "\')"
-                                                cur.execute(query)
-                                                conn.commit()
+            for word in re.split(regexPattern, lines):
+                   if word != "" and word != "-" and word != "\r\n":
+                        i+= 1
+                       print(word.decode('utf-8').lower())
+                       word = word.decode('utf-8').lower()
+                       query = "INSERT INTO dictionary SELECT \'" + word + "\' WHERE NOT EXISTS (SELECT * FROM dictionary WHERE words = \'" + word + "\')"
+                       cur.execute(query)
+                       conn.commit()
+    print "FINISHED READING BOOK\n\n"
+
 cur.execute("SELECT count(*) FROM dictionary")
 WordsInBGLanguage = cur.fetchone()
 WordsInBGLanguage = WordsInBGLanguage[0]

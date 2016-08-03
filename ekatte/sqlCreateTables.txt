@@ -5,74 +5,74 @@ DROP TABLE helperselishte;
 DROP TABLE helperobstina;
 DROP TABLE helperoblast;
 
-CREATE TABLE public.oblast
+CREATE TABLE public.oblasti
 (
   id text,
-  oblast text,
+  oblast_kod text,
   ekatte text,
   name text,
   region text,
   document text,
   abc text,
-  CONSTRAINT oblast_pkey PRIMARY KEY (oblast)
+  CONSTRAINT oblasti_pkey PRIMARY KEY (oblast_kod)
 )
 WITH (
   OIDS=FALSE
 );
-ALTER TABLE public.oblast
+ALTER TABLE public.oblasti
   OWNER TO postgres;
 
 
-CREATE TABLE public.obstina
+CREATE TABLE public.obstini
 (
-  obstina text,
+  obstina_kod text,
   ekatte text,
   name text,
   category text,
   document text,
   abc text,
   oblast text,
-  CONSTRAINT obstina_pkey PRIMARY KEY (obstina),
-  FOREIGN KEY (oblast) REFERENCES oblast (oblast)
+  CONSTRAINT obstini_pkey PRIMARY KEY (obstina_kod),
+  FOREIGN KEY (oblast) REFERENCES oblasti (oblast_kod)
 )
 WITH (
   OIDS=FALSE
 );
-ALTER TABLE public.obstina
+ALTER TABLE public.obstini
   OWNER TO postgres;
   
 
-CREATE TABLE public.selishte
+CREATE TABLE public.selishta
 (
   ekatte text,
   t_v_m text,
   name text,
-  oblast text,
-  obstina text,
-  kmetstvo text,
+  oblast_kod text,
+  obstina_kod text,
+  kmetstvo_kod text,
   kind text,
   category text,
   altitude text,
   document text,
   tsb text,
   abc text,
-  CONSTRAINT selishte_pkey PRIMARY KEY (ekatte),
-  FOREIGN KEY (obstina) REFERENCES obstina (obstina)
+  CONSTRAINT selishta_pkey PRIMARY KEY (ekatte),
+  FOREIGN KEY (obstina_kod) REFERENCES obstini (obstina_kod)
 )
 WITH (
   OIDS=FALSE
 );
-ALTER TABLE public.selishte
+ALTER TABLE public.selishta
   OWNER TO postgres;
 
-CREATE TABLE public.helperSelishte
+CREATE TABLE public.helperSelishta
 (
   id text,
   ekatte text,
   t_v_m text,
   name text,
-  oblast text,
-  obstina text,
+  oblast_kod text,
+  obstina_kod text,
   kmetstvo text,
   kind text,
   category text,
@@ -84,14 +84,14 @@ CREATE TABLE public.helperSelishte
 WITH (
   OIDS=FALSE
 );
-ALTER TABLE public.helperSelishte
+ALTER TABLE public.helperSelishta
   OWNER TO postgres;
 
 
-CREATE TABLE public.helperObstina
+CREATE TABLE public.helperObstini
 (
   id text,
-  obstina text,
+  obstina_kod text,
   ekatte text,
   name text,
   category text,
@@ -101,13 +101,13 @@ CREATE TABLE public.helperObstina
 WITH (
   OIDS=FALSE
 );
-ALTER TABLE public.helperObstina
+ALTER TABLE public.helperObstini
   OWNER TO postgres;
 
-CREATE TABLE public.helperOblast
+CREATE TABLE public.helperOblasti
 (
   id text,
-  oblast text,
+  oblast_kod text,
   ekatte text,
   name text,
   region text,
@@ -117,7 +117,7 @@ CREATE TABLE public.helperOblast
 WITH (
   OIDS=FALSE
 );
-ALTER TABLE public.helperOblast
+ALTER TABLE public.helperOblasti
   OWNER TO postgres;
 
 
