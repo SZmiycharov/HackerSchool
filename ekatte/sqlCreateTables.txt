@@ -1,9 +1,9 @@
-DROP TABLE selishte;
-DROP TABLE obstina;
-DROP TABLE oblast;
-DROP TABLE helperselishte;
-DROP TABLE helperobstina;
-DROP TABLE helperoblast;
+DROP TABLE selishta;
+DROP TABLE obstini;
+DROP TABLE oblasti;
+DROP TABLE helperselishta;
+DROP TABLE helperobstini;
+DROP TABLE helperoblasti;
 
 CREATE TABLE public.oblasti
 (
@@ -31,9 +31,9 @@ CREATE TABLE public.obstini
   category text,
   document text,
   abc text,
-  oblast text,
+  oblast_kod text,
   CONSTRAINT obstini_pkey PRIMARY KEY (obstina_kod),
-  FOREIGN KEY (oblast) REFERENCES oblasti (oblast_kod)
+  FOREIGN KEY (oblast_kod) REFERENCES oblasti (oblast_kod)
 )
 WITH (
   OIDS=FALSE
@@ -73,7 +73,7 @@ CREATE TABLE public.helperSelishta
   name text,
   oblast_kod text,
   obstina_kod text,
-  kmetstvo text,
+  kmetstvo_kod text,
   kind text,
   category text,
   altitude text,

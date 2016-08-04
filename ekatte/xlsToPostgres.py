@@ -26,7 +26,7 @@ cur.execute("DELETE FROM helperObstini WHERE abc = 'abc'")
 cur.execute('ALTER TABLE helperOblasti DROP COLUMN "id"')
 cur.execute("DELETE FROM helperOblasti WHERE abc = 'abc'")
 
-cur.execute('ALTER TABLE public.helperobstini ADD COLUMN oblast_kod text')
+cur.execute('ALTER TABLE helperObstini ADD COLUMN oblast_kod text')
 conn.commit()
 
 cur.execute('''UPDATE helperobstini
@@ -38,19 +38,19 @@ conn.commit()
 
 data_xls = pd.read_excel('/home/slavi/Desktop/ekatte/important/Ek_obl.xls', index_col=None)
 data_xls.to_csv('/home/slavi/Desktop/Ek_obl.csv', encoding='utf-8')
-cur.execute("COPY oblast_kod FROM '/home/slavi/Desktop/Ek_obl.csv' DELIMITER ',' CSV")
+cur.execute("COPY oblasti FROM '/home/slavi/Desktop/Ek_obl.csv' DELIMITER ',' CSV")
 cur.execute('ALTER TABLE oblasti DROP COLUMN "id"')
 cur.execute("DELETE FROM oblasti WHERE abc = 'abc'")
 conn.commit()
 
 cur.execute('''INSERT INTO obstini(obstina_kod, ekatte, name, category, document, abc, oblast_kod) 
-	SELECT obstina_kod, ekatte, name, category, document, abc, oblast_kod FROM helperobstina''')
-cur.execute('''INSERT INTO selishta(ekatte, t_v_m, name, oblast_kod, obstina_kod, kmetstvo)kod, kind, category, altitude, document, tsb, abc) 
-	SELECT ekatte, t_v_m, name, oblast_kod, obstina_kod, kmetstvo)kod, kind, category, altitude, document, tsb, abc FROM helperselishte''')
+	SELECT obstina_kod, ekatte, name, category, document, abc, oblast_kod FROM helperobstini''')
+cur.execute('''INSERT INTO selishta(ekatte, t_v_m, name, oblast_kod, obstina_kod, kmetstvo_kod, kind, category, altitude, document, tsb, abc) 
+	SELECT ekatte, t_v_m, name, oblast_kod, obstina_kod, kmetstvo_kod, kind, category, altitude, document, tsb, abc FROM helperselishta''')
 conn.commit()
 
 cur.execute('''DROP TABLE helperSelishta''')
-cur.execute('''DROP TABLE helperselishtrOblasti''')
+cur.execute('''DROP TABLE helperOblasti''')
 cur.execute('''DROP TABLE helperObstini''')
 conn.commit()
 
