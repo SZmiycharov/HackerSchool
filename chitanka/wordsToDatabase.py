@@ -16,17 +16,17 @@ try:
 		startInner = time.clock()
 		for line in f:
 			iterator += 1
-			if iterator%1000 == 0:
-				timeTakenFor1000words = time.clock() - startInner
+			if iterator%200000 == 0:
+				timeTakenFor200000words = time.clock() - startInner
 
 				print "{} words iterated!".format(iterator)
-				print "Time taken for 1k words: {} seconds".format(timeTakenFor1000words)
+				print "Time taken for 200k words: {} seconds".format(timeTakenFor200000words)
 
 				startInner = time.clock()
 			try:
-				if not line.isspace():
-					word = line.split('\n')[0].lower()
-					query = "INSERT INTO dictionary VALUES ('{}')".format(word)
+				if not line.isspace() and not line.isdigit():
+					word = line.split('\n')[0].decode('utf-8').lower()
+					query = "INSERT INTO dictionary VALUES ('%s')"%(word)
 					cur.execute(query)
 					conn.commit()
 			except:

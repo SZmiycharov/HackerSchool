@@ -7,7 +7,7 @@ import time
 import fileinput
 
 i = 0
-delimiters = "...", ",", " ", ".", "!", "?", "-", "_", "—","  ", "    ", '""', "(", ")", '„', '“', '«', '»'
+delimiters = "...", ",", " ", ".", "!", "?", "-", "_", "—","  ", "    ", '""', "(", ")", '„', '“', '«', '»', ' '
 regexPattern = '|'.join(map(re.escape, delimiters))
 start = time.clock()
 
