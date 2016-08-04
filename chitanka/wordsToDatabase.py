@@ -16,11 +16,11 @@ try:
 		startInner = time.clock()
 		for line in f:
 			iterator += 1
-			if iterator%200000 == 0:
-				timeTakenFor200000words = time.clock() - startInner
+			if iterator%100000 == 0:
+				timeTakenFor100000words = time.clock() - startInner
 
 				print "{} words iterated!".format(iterator)
-				print "Time taken for 200k words: {} seconds".format(timeTakenFor200000words)
+				print "Time taken for 100k words: {} seconds".format(timeTakenFor100000words)
 
 				startInner = time.clock()
 			try:

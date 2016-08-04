@@ -20,10 +20,11 @@ for line in fileinput.input():
             i += 1
             f.write(word + "\n")
             if i%500000 == 0:
-              print "500k words done!"
+              print "{} words done!".format(i)
   except IOError:
       print "Could not open file:"
       sys.exit()
+f.close()
 
 timeTaken = time.clock() - start
 print "Time taken<in seconds>: {}".format(timeTaken)
