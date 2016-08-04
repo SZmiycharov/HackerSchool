@@ -10,11 +10,12 @@ $cn = pg_connect($strCnx);
 
 $entry = $_GET['entry'];
 
-$query = "SELECT selishte.t_v_m, selishte.name, oblast.name as oblast, obstina.name as obstina
-  FROM selishte
-  INNER JOIN obstina ON selishte.obstina = obstina.obstina
-  INNER JOIN oblast ON selishte.oblast = oblast.oblast
-  WHERE selishte.name LIKE '{$entry}%'";
+$query = "SELECT selishta.t_v_m, selishta.name, oblasti.name as oblast, obstini.name as obstina
+  FROM selishta
+  INNER JOIN obstini ON selishta.obstina_kod = obstini.obstina_kod
+  INNER JOIN oblasti ON selishta.oblast_kod = oblasti.oblast_kod
+  WHERE selishta.name LIKE '{$entry}%'";
+
 $result = pg_query($query);
 header("Content-type: text/xml");
 
