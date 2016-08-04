@@ -4,3 +4,18 @@ wget -r -nH -nd -np -R index.html* -P /home/slavi/Desktop/books  https://chitank
 - list all files from directory books that are txt
 - unzip \*.zip - unzip all files from directory
 - cat Frank_Hyrbyrt_-_Barierata_Santaroga_-2205-b.jpg | python /home/slavi/Desktop/HackerSchool/chitanka/chitanka.py - podavane na vsi4ki dumi ot knigata na script-a
+- cat /home/slavi/Desktop/books/*.txt | python /home/slavi/Desktop/HackerSchool/chitanka/chitanka.py - vsichki txt filove v papkata
+
+
+Shema:
+1. wget -r -nH -nd -np -R index.html* -P /home/slavi/Desktop/books  https://chitanka.info/books
+
+2. unzip \*.zip - unzip all files from directory
+
+3. cat /home/slavi/Desktop/books/*.txt | python /home/slavi/Desktop/HackerSchool/chitanka/chitanka.py
+- Podavat se vsi4ki knigi ot standart input; obhojdat se i dumite im se zapisvat vuv fail - po edna duma na red
+
+4. python /home/slavi/Desktop/HackerSchool/chitanka/wordsToDatabase.py
+- Obhojda se faila s dumite, vsqka se insertva v bazata
+- V bazata kolonata words e primary key (unique constraint) i se insertvat samo unikalni dumi
+- Predi insert dumite tolower

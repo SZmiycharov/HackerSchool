@@ -7,19 +7,20 @@ import time
 import fileinput
 
 i = 0
-delimiters = "...", ",", " ", ".", "!", "?", "-", "_", "—","  "
+delimiters = "...", ",", " ", ".", "!", "?", "-", "_", "—","  ", "    ", '""', "(", ")", '„', '“', '«', '»'
 regexPattern = '|'.join(map(re.escape, delimiters))
 start = time.clock()
 
 for line in fileinput.input():
   try:
-      f = open('/home/slavi/Desktop/HackerSchool/chitanka/words.txt', 'a')
+      f = open('/home/slavi/Desktop/words.txt', 'a')
       with f:
         for word in re.split(regexPattern, line):
           if not word.isspace():
-            print word.lower()
             i += 1
-            f.write(word + "\n")  
+            f.write(word + "\n")
+            if i%500000 == 0:
+              print "500k words done!"
   except IOError:
       print "Could not open file:"
       sys.exit()
