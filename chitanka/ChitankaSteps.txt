@@ -3,4 +3,4 @@ wget -r -nH -nd -np -R index.html* -P /home/slavi/Desktop/books  https://chitank
 2. python script:
 - list all files from directory books that are txt
 - unzip \*.zip - unzip all files from directory
-- cat Frank_Hyrbyrt_-_Barierata_Santaroga_-2205-b.jpg | chitanka.py - podavane na vsi4ki dumi ot knigata na script-a
+- cat Frank_Hyrbyrt_-_Barierata_Santaroga_-2205-b.jpg | python /home/slavi/Desktop/HackerSchool/chitanka/chitanka.py - podavane na vsi4ki dumi ot knigata na script-a
