@@ -3,39 +3,61 @@ import networkx as nx
 minForAnswer = 10000000
 maxForAnswer = -10000000
 
-weights = [3,5,8,16,8,19,72,9,6,5,28,15,19,16,13,1,6]
-
-G = nx.Graph()
-G.add_edge(1,2,weight=3)
-G.add_edge(1,2,weight=5)
-G.add_edge(1,3,weight=8)
-G.add_edge(2,4,weight=16)
-G.add_edge(3,5,weight=8)
-G.add_edge(3,6,weight=19)
-G.add_edge(5,6,weight=72)
-G.add_edge(7,8,weight=9)
-G.add_edge(1,9,weight=6)
-G.add_edge(4,7,weight=5)
-G.add_edge(3,8,weight=28)
-G.add_edge(4,2,weight=15)
-G.add_edge(3,6,weight=19)
-G.add_edge(7,8,weight=16)
-G.add_edge(2,10,weight=13)
-G.add_edge(1,10,weight=1)
-G.add_edge(4,5,weight=6)
 
 
+#N - broi naseleni mesta ; M - broi putishta ; F i T - nodes ; S - skorost na rebroto
 
 maxweight = -1000000
 minweight = 1000000
 difference = 1000000
 currentMax = -100000000
 currentMin = 100000000
-
-nodes = [1,2,3,4,5,6,7, 8, 9, 10]
-nodeshelper = nodes[:]
+nodes = []
+weights = []
 iteration = 0
 
+
+
+while True:
+  try:
+     line = raw_input("Enter N M: ")
+     N = int(line.split(' ')[0])
+     M = int(line.split(' ')[1])       
+  except StandardError:
+     print("Not an integer!")
+     continue
+  else:
+     if(N<2 or N>1000 or M<1 or M>10000):
+         print("Incorrect values!")
+         continue
+     else:
+        break
+
+for i in range(N):
+    nodes.append(i+1)
+nodeshelper = nodes[:]
+
+G = nx.Graph()
+
+for i in range(M):
+    while True:
+      try:
+         line = raw_input("Enter F T S: ")
+         F = int(line.split(' ')[0])
+         T = int(line.split(' ')[1])
+         S = int(line.split(' ')[2])
+
+         weights.append(S)
+         G.add_edge(F, T,weight=S)
+      except StandardError:
+         print("Not an integer!")
+         continue
+      else:
+         if(F<1 or F>N or T<1 or T>N or S<1 or S>30000):
+             print("Incorrect values!")
+             continue
+         else:
+            break
 
 for x in weights:
     for y in weights:
