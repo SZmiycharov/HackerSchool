@@ -42,4 +42,4 @@ print "Total time taken: {} seconds".format(timeTaken)
 cur.execute("SELECT count(*) FROM dictionary")
 WordsInBGLanguage = cur.fetchone()
 WordsInBGLanguage = WordsInBGLanguage[0]
-print "According to my dictionary, WordsInBGLanguage are: {}".format(WordsInBGLanguage)
+print "According to my dictionary, words in BG language are: {}".format(WordsInBGLanguage)
