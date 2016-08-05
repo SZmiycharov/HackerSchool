@@ -30,7 +30,6 @@ try:
 					cur.execute(query)
 					conn.commit()
 			except:
-				conn.commit()
 				pass
 		timeTaken = time.clock() - startMain
 		print "Total time taken: {} seconds".format(timeTaken)
