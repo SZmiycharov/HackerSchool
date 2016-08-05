@@ -37,6 +37,7 @@ for x in weights:
             minweight = y
             maxweight = x
         H = nx.Graph([(u,v,d) for (u,v,d) in  G.edges(data=True) if d['weight']>minweight and d['weight']<maxweight])
+
         print "edges in H: {}".format(H.edges())
         for h in H.edges():
             try:
@@ -51,13 +52,15 @@ for x in weights:
 
         try:
             if nx.edge_connectivity(H) and len(nodeshelper) == 0:
-                for p in H.edges():
-                    firstindex = p[0]
-                    secondindex = p[1]
-                    weight = G[firstindex][secondindex]['weight']
+                print "CONNECTED WITH ALL NODES!!!"
+                print len(H.edges())
+                for slavi in H.edges():
+                    
+                    weight = G[slavi[0]][slavi[1]]['weight']
+                    print "weight: {}".format(weight)
                     if weight > currentMax:
                         currentMax = weight
-                    elif weight < currentMin:
+                    if weight < currentMin:
                         currentMin = weight
                 if difference > currentMax - currentMin:
                     difference = currentMax - currentMin
@@ -65,6 +68,7 @@ for x in weights:
                     maxForAnswer = currentMax
                     minForAnswer = currentMin      
         except:
+            print "in except!"
             pass
         nodeshelper = nodes[:]
         iteration += 1
