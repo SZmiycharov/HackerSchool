@@ -17,8 +17,7 @@ else:
 i = 0
 delimiters = "...", ",", " ", ".", "!", "?", "-", "_", "—","  ", "    ", '""', "(", ")", '„', '“', '«', '»', ' ', '[', ']'
 regexPattern = '|'.join(map(re.escape, delimiters))
-start = time.clock()
-
+start = time.time()
 
 try:
       f = open('/home/slavi/Desktop/words.txt', 'a')
@@ -27,19 +26,17 @@ except IOError:
       sys.exit()
 
 for line in fileinput.input():
-        for word in re.split(regexPattern, line):
-          if not word.isspace():
-            i += 1
-            f.write(word + "\n")
-            if i%500000 == 0:
-              print "{} words done!".format(i)
+  for word in re.split(regexPattern, line):
+    if not word.isspace():
+      i += 1
+      f.write(word + "\n")
+      if i%500000 == 0:
+        print "{} words done!".format(i)
 f.close()
-
-
 fileinput.close()
 
 
-timeTaken = time.clock() - start
+timeTaken = time.time() - start
 print "Time taken<in seconds>: {}".format(timeTaken)
 print "Words: {}".format(i)
 
