@@ -6,16 +6,27 @@ maxForAnswer = -10000000
 weights = [1, 7, 6, 12, 3, 9]
 
 G = nx.Graph()
-G.add_edge(1,3,weight=2)
-G.add_edge(4,2,weight=8)
-G.add_edge(1,2,weight=11)
-G.add_edge(1,4,weight=3)
-G.add_edge(1,3,weight=6)
-G.add_edge(5,3,weight=5)
-G.add_edge(3,6,weight=9)
-G.add_edge(7,6,weight=6)
-G.add_edge(5,6,weight=3)
-G.add_edge(2,5,weight=7)
+G.add_edge(1,2,weight=3)
+G.add_edge(1,2,weight=5)
+G.add_edge(1,3,weight=8)
+G.add_edge(2,4,weight=16)
+G.add_edge(3,5,weight=8)
+G.add_edge(3,6,weight=19)
+G.add_edge(5,6,weight=72)
+G.add_edge(7,8,weight=9)
+G.add_edge(1,9,weight=6)
+G.add_edge(4,7,weight=5)
+
+
+G.add_edge(3,8,weight=28)
+G.add_edge(4,2,weight=15)
+G.add_edge(3,6,weight=19)
+G.add_edge(7,8,weight=16)
+G.add_edge(2,10,weight=13)
+G.add_edge(1,10,weight=1)
+G.add_edge(4,5,weight=6)
+
+
 
 maxweight = -1000000
 minweight = 1000000
@@ -56,8 +67,11 @@ for x in weights:
                 print "CONNECTED WITH ALL NODES!!!"
                 print len(H.edges())
                 for slavi in H.edges():
-                    
-                    weight = G[slavi[0]][slavi[1]]['weight']
+                    try:
+                        weight = G[slavi[0]][slavi[1]]['weight']
+                    except:
+                        print "weight does not exist!"
+                        pass
                     print "weight: {}".format(weight)
                     if weight > currentMax:
                         currentMax = weight
