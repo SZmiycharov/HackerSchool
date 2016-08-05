@@ -24,19 +24,20 @@ currentMax = -100000000
 currentMin = 100000000
 
 nodes = [1,2,3,4,5,6,7]
-nodeshelper = nodes
+nodeshelper = nodes[:]
 iteration = 0
 
 for x in weights:
     for y in weights:
         print "iteration: {}".format(iteration)
+        print "({} {})".format(x,y)
         if x<y:
             minweight = x
             maxweight = y
         else:
             minweight = y
             maxweight = x
-        H = nx.Graph([(u,v,d) for (u,v,d) in  G.edges(data=True) if d['weight']>minweight and d['weight']<maxweight])
+        H = nx.Graph([(u,v,d) for (u,v,d) in  G.edges(data=True) if d['weight']>=minweight and d['weight']<=maxweight])
 
         print "edges in H: {}".format(H.edges())
         for h in H.edges():
@@ -70,6 +71,8 @@ for x in weights:
         except:
             print "in except!"
             pass
+        currentMin = 1000000
+        currentMax = -1000000
         nodeshelper = nodes[:]
         iteration += 1
         print "\n"
