@@ -88,30 +88,30 @@ for x in weights:
 
 
         helper = 0
-        for hel in sorted(nx.connected_components(G), key = len, reverse=True):
-            for i in hel:
-                helper += 1
-            if helper == len(nodes):
+        
+        for hel in sorted(nx.connected_components(H), key = len, reverse=True):
+            print hel
+            if len(hel) == len(nodes):
+                print "YES HAHAHHA"
                 IsConnected = True
-            else:
-                helper = 0
-
+                print IsConnected
         if len(nodeshelper) == 0 and IsConnected:
             print "CONNECTED WITH ALL NODES!!!"
             for slavi in H.edges():
                 try:
                     for asd in G[slavi[0]][slavi[1]]:
                         weight = G[slavi[0]][slavi[1]][asd]['weight']
-                        print "weight: {}".format(weight)
-                        if weight > currentMax:
-                            currentMax = weight
-                        if weight < currentMin:
-                            currentMin = weight
+                        
+                        if weight <= maxweight and weight >= minweight:
+                            print "weight: {}".format(weight)
+                            if weight > currentMax:
+                                currentMax = weight
+                            if weight < currentMin:
+                                currentMin = weight
                 except KeyError:
                     pass
             if difference > currentMax - currentMin:
                 difference = currentMax - currentMin
-                print "NEW DIFFERENCE: {} ; currentMax: {} ; currentMin: {}".format(difference, currentMax, currentMin)
                 maxForAnswer = currentMax
                 minForAnswer = currentMin      
 
@@ -119,6 +119,7 @@ for x in weights:
         currentMax = -1000000
         nodeshelper = nodes[:]
         iteration += 1
+        IsConnected = False
         print "\n"
 
 
