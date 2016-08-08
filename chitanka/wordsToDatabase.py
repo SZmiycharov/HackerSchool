@@ -5,6 +5,8 @@ import psycopg2
 import time
 import sys
 
+psycopg2.extensions.register_type(psycopg2.extensions.UNICODE)
+psycopg2.extensions.register_type(psycopg2.extensions.UNICODEARRAY)
 conn = psycopg2.connect("host='' port='5432' dbname='chitanka' user='postgres' password=''")
 cur = conn.cursor()
 
@@ -26,12 +28,11 @@ try:
 			try:
 				if not line.isspace() and not line.isdigit():
 					word = line.split('\n')[0].decode('utf-8').lower()
-					SQL = "INSERT INTO dictionary (word) VALUES (%s);"
-					data = (word, )
-					cur.execute(SQL, data)
+					cur.execute("INSERT INTO dictionary VALUES ('%s');"% (word))
 					conn.commit()
-			except:
-				conn.commit()
+			except Exception as e:
+				conn.rollback()
+				print e
 				pass
 		timeTaken = time.time() - startMain
 		print "Total time taken: {} seconds".format(timeTaken)
