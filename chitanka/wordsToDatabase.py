@@ -43,3 +43,4 @@ cur.execute("SELECT count(*) FROM dictionary")
 WordsInBGLanguage = cur.fetchone()
 WordsInBGLanguage = WordsInBGLanguage[0]
 print "According to my dictionary, WordsInBGLanguage are: {}".format(WordsInBGLanguage)
+conn.close()
