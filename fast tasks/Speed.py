@@ -92,9 +92,7 @@ for x in weights:
         for hel in sorted(nx.connected_components(H), key = len, reverse=True):
             print hel
             if len(hel) == len(nodes):
-                print "YES HAHAHHA"
                 IsConnected = True
-                print IsConnected
         if len(nodeshelper) == 0 and IsConnected:
             print "CONNECTED WITH ALL NODES!!!"
             for slavi in H.edges():
