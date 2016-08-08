@@ -15,7 +15,7 @@ currentMin = 100000000
 nodes = []
 weights = []
 iteration = 0
-
+IsConnected = False
 
 
 while True:
@@ -33,11 +33,12 @@ while True:
      else:
         break
 
+G = nx.MultiGraph()
+
 for i in range(N):
     nodes.append(i+1)
+    G.add_node(i)
 nodeshelper = nodes[:]
-
-G = nx.MultiDiGraph()
 
 for i in range(M):
     while True:
@@ -62,13 +63,16 @@ for i in range(M):
 for x in weights:
     for y in weights:
         print "iteration: {}".format(iteration)
+        print (x,y)
         if x<y:
             minweight = x
             maxweight = y
         else:
             minweight = y
             maxweight = x
-        H = nx.Graph([(u,v,d) for (u,v,d) in  G.edges(data=True) if d['weight']>=minweight and d['weight']<=maxweight])
+        H = nx.MultiGraph([(u,v,d) for (u,v,d) in  G.edges(data=True) if d['weight']>=minweight and d['weight']<=maxweight])
+
+
 
         print "edges in H: {}".format(H.edges())
         for h in H.edges():
@@ -83,17 +87,28 @@ for x in weights:
         print "nodeshelper: {}".format(nodeshelper)
 
 
-        if len(nodeshelper) == 0 and nx.edge_connectivity(H):
+        helper = 0
+        for hel in sorted(nx.connected_components(G), key = len, reverse=True):
+            for i in hel:
+                helper += 1
+            if helper == len(nodes):
+                IsConnected = True
+            else:
+                helper = 0
+
+        if len(nodeshelper) == 0 and IsConnected:
             print "CONNECTED WITH ALL NODES!!!"
-            print len(H.edges())
             for slavi in H.edges():
-                for asd in G[slavi[0]][slavi[1]]:
-                    weight = G[slavi[0]][slavi[1]][asd]['weight']
-                    print "weight: {}".format(weight)
-                    if weight > currentMax:
-                        currentMax = weight
-                    if weight < currentMin:
-                        currentMin = weight
+                try:
+                    for asd in G[slavi[0]][slavi[1]]:
+                        weight = G[slavi[0]][slavi[1]][asd]['weight']
+                        print "weight: {}".format(weight)
+                        if weight > currentMax:
+                            currentMax = weight
+                        if weight < currentMin:
+                            currentMin = weight
+                except KeyError:
+                    pass
             if difference > currentMax - currentMin:
                 difference = currentMax - currentMin
                 print "NEW DIFFERENCE: {} ; currentMax: {} ; currentMin: {}".format(difference, currentMax, currentMin)
@@ -108,5 +123,11 @@ for x in weights:
 
 
 print "Minspeed: {} ; Maxspeed: {} ;".format(minForAnswer, maxForAnswer)
+print "\n\n"
+print G.edges()
+
+
+
+
 
 
