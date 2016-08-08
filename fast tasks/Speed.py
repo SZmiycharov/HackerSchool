@@ -37,7 +37,7 @@ for i in range(N):
     nodes.append(i+1)
 nodeshelper = nodes[:]
 
-G = nx.Graph()
+G = nx.MultiDiGraph()
 
 for i in range(M):
     while True:
@@ -87,13 +87,14 @@ for x in weights:
             print "CONNECTED WITH ALL NODES!!!"
             print len(H.edges())
             for slavi in H.edges():
-                weight = G[slavi[0]][slavi[1]]['weight']
-                print "weight: {}".format(weight)
-                if weight > currentMax:
-                    currentMax = weight
-                if weight < currentMin:
-                    currentMin = weight
-            if difference >= currentMax - currentMin and currentMin<=minForAnswer:
+                for asd in G[slavi[0]][slavi[1]]:
+                    weight = G[slavi[0]][slavi[1]][asd]['weight']
+                    print "weight: {}".format(weight)
+                    if weight > currentMax:
+                        currentMax = weight
+                    if weight < currentMin:
+                        currentMin = weight
+            if difference > currentMax - currentMin:
                 difference = currentMax - currentMin
                 print "NEW DIFFERENCE: {} ; currentMax: {} ; currentMin: {}".format(difference, currentMax, currentMin)
                 maxForAnswer = currentMax
