@@ -93,7 +93,7 @@ for x in weights:
                     currentMax = weight
                 if weight < currentMin:
                     currentMin = weight
-            if difference > currentMax - currentMin:
+            if difference >= currentMax - currentMin and currentMin<=minForAnswer:
                 difference = currentMax - currentMin
                 print "NEW DIFFERENCE: {} ; currentMax: {} ; currentMin: {}".format(difference, currentMax, currentMin)
                 maxForAnswer = currentMax
