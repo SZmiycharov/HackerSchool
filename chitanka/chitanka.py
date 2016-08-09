@@ -7,6 +7,7 @@ import time
 import fileinput
 import sys
 import select
+import langid
 
 if select.select([sys.stdin,],[],[],0.0)[0]:
     pass
@@ -15,7 +16,7 @@ else:
     sys.exit()
 
 i = 0
-delimiters = "...", ",", " ", ".", "!", "?", "-", "_", "—","  ", "    ", '""', "(", ")", '„', '“', '«', '»', ' ', '[', ']'
+delimiters = "...", ",", " ", ".", "!", "?", "-", "_", "—","  ", "    ", '""', "(", ")", '„', '“', '«', '»', ' ', '[', ']', '\t', ':', '|', '\n', '\t\t'
 regexPattern = '|'.join(map(re.escape, delimiters))
 start = time.time()
 
@@ -27,9 +28,9 @@ except IOError:
 
 for line in fileinput.input():
   for word in re.split(regexPattern, line):
-    if not word.isspace():
+    if not word.isspace() and not word.isdigit():
       i += 1
-      f.write(word + "\n")
+      f.write(word + "\n ")
       if i%500000 == 0:
         print "{} words done!".format(i)
 f.close()

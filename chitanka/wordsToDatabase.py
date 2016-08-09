@@ -25,16 +25,14 @@ try:
 				print "Time taken for 100k words: {} seconds".format(timeTakenFor100000words)
 				startInner = time.time()
 			try:
-				if not line.isspace() and not line.isdigit():
-					
-					word = line.split('\n')[0].decode('utf-8').lower()
-					if langid.classify(word)[0] == 'ru' or langid.classify(word)[0] == 'bg': 
-						query = "INSERT INTO dictionary VALUES ('%s');"% (word)
-						cur.execute(query)
-						conn.commit()
-			except Exception as e:
+				word = line.split('\n')[0].decode('utf-8').lower()
+				query = "INSERT INTO dictionary VALUES ('%s');"% (word)
+				cur.execute(query)
+			except:
 				conn.rollback()
 				pass
+			else:
+				conn.commit()
 		timeTaken = time.time() - startMain
 		print "Total time taken: {} seconds".format(timeTaken)
 except IOError:
@@ -45,4 +43,5 @@ cur.execute("SELECT count(*) FROM dictionary")
 WordsInBGLanguage = cur.fetchone()
 WordsInBGLanguage = WordsInBGLanguage[0]
 print "According to my dictionary, WordsInBGLanguage are: {}".format(WordsInBGLanguage)
+cur.close()
 conn.close()
