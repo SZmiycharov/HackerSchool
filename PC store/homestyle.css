@@ -1,12 +1,8 @@
 body {
-	margin: 0;
-	padding: 0;
-	text-align: left;
-	font: 12px Arial, Helvetica, sans-serif;
-	font-size: 13px;
-	color: #061C37;
-	background: #ccccff;
-	background-repeat:repeat-x;
+	background: #555 url(data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAUAAAAFCAYAAACNbyblAAAAGXRFWHRTb2Z0d2FyZQBBZG9iZSBJbWFnZVJlYWR5ccllPAAAAB9JREFUeNpi/P//PwM6YGLAAuCCmpqacC2MRGsHCDAA+fIHfeQbO8kAAAAASUVORK5CYII=);
+        font: 13px 'Lucida sans', Arial, Helvetica;
+        color: #eee;
+        text-align: center;
 }
 *
 {
@@ -53,10 +49,11 @@ div.menu li{
 {
 width:880px;
 height:auto;
-background-color:#FFF;
+background-color:#E9DEDE;
 padding-left:10px;
 padding-right:10px;
 padding-bottom:5px;
+color:#000000;
 }
 
 #footer
@@ -91,7 +88,7 @@ color:#7198E1;
 #menu a {
 	float: left;
 	width: 100px;
-	height: 40px;
+	height: 28px;
 	display: block;
 	text-align: center;
 	text-decoration: none;
