@@ -2,6 +2,15 @@
 <meta charset="UTF-8"> 
 <html>
 <body>
+<meta name="viewport" content="initial-scale=1.0, user-scalable=no" />
+<meta http-equiv="content-type" content="text/html; charset=UTF-8"/>
+<title>Monitor</title>
+    <script src="http://code.jquery.com/jquery-latest.js"
+            type="text/javascript"></script>
+<link rel="stylesheet" href="//code.jquery.com/ui/1.11.4/themes/smoothness/jquery-ui.css">
+    <script src="//code.jquery.com/jquery-1.10.2.js"></script>
+    <script src="//code.jquery.com/ui/1.11.4/jquery-ui.js"></script>
+
 
 <style>
  body {
@@ -143,28 +152,95 @@
   text-decoration:none;
 }	
 
+.button {
+    background-color: #d83c3c;
+    border: none;
+    color: white;
+    padding: 10px 15px;
+    text-align: center;
+    text-decoration: none;
+    display: inline-block;
+    font-size: 16px;
+    margin: 1px 1px;
+    cursor: pointer;
+}
+
 
 </style>
 
 
 <form class="form-wrapper cf">
   	<input id="maker" type="text" placeholder="Search monitors..." required>
-	  <button onclick="test()" type="submit">Search</button>
+	  <button onclick="GetResults()" type="submit">Search</button>
 </form>
 
-<button type="button" onclick="GoHome()">HOME</button>
+<button class="button" type="button" onclick="GoHome()">HOME</button>
 
 
 <script>
 
-function test() {
-	var maker = document.getElementById('maker').value
-	console.log(maker)
-}
 
 function GoHome() {
     console.log("in gohome function")
     window.location.href = "file:///home/slavi/Desktop/HackerSchool/PC%20store/home.html#";
+}
+
+
+function getParameterByName(name, url) 
+{
+    if (!url) url = window.location.href;
+    name = name.replace(/[\[\]]/g, "\\$&");
+    var regex = new RegExp("[?&]" + name + "(=([^&#]*)|&|#|$)", "i"),
+    results = regex.exec(url);
+    if (!results) return null;
+    if (!results[2]) return '';
+    return decodeURIComponent(results[2].replace(/\+/g, " "));
+}
+
+function downloadUrl(url, callgetParameterByNameback) 
+{
+    var request = window.ActiveXObject ?
+    new ActiveXObject('Microsoft.XMLHTTP') :
+    new XMLHttpRequest;
+    request.onreadystatechange = function() 
+    {
+            if (request.readyState == 4) 
+        {
+                callgetParameterByNameback(request, request.status);
+        }
+    };
+    request.open('GET', url, true);
+    request.send(null);
+}
+
+function GetResults() 
+{
+    console.log("Start of myfunction");
+    var maker = document.getElementById('maker').value
+    var url = "http://localhost/PostgreResultsToXml.php?maker=" + maker;
+    console.log(url);
+    $.ajax(
+    {
+        type: "GET",
+        crossDomain: true,
+        url: "http://localhost/PostgreResultsToXml.php?maker=" + maker,
+        dataType: "xml",
+        success: function(xml) 
+        {       
+            console.log("start of ajax success");   
+            downloadUrl(url, function(data) 
+            {             
+                console.log(document.createTextNode(helper[i].getAttribute("name") + " "));
+                console.log(document.createTextNode(helper[i].getAttribute("id") + " "));
+                console.log(document.createTextNode(helper[i].getAttribute("country") + " "));
+            });
+        },
+        error: function (jqXHR, textStatus, error) 
+        {
+            console.log('Error: ' + error.message);
+            alert("ERROR" + error.message);
+        }
+    });
 }
 
 </script>
