@@ -16,27 +16,28 @@ function gohome() {
 }
 
 function monitor() {
-
+    console.log("in monitor function")
+    window.location.href = "file:///home/slavi/Desktop/HackerSchool/PC%20store/monitor.html#";
 }
 
 function keyboard() {
     console.log("in gohome function")
-    window.location.href = "file:///home/slavi/Desktop/HackerSchool/PC%20store/home.html#";
+    window.location.href = "file:///home/slavi/Desktop/HackerSchool/PC%20store/keyboard.html#";
 }
 
 function hdd() {
     console.log("in hdd function")
-    window.location.href = "file:///home/slavi/Desktop/HackerSchool/PC%20store/home.html#";
+    window.location.href = "file:///home/slavi/Desktop/HackerSchool/PC%20store/hdd.html#";
 }
 
 function ram() {
     console.log("in ram function")
-    window.location.href = "file:///home/slavi/Desktop/HackerSchool/PC%20store/home.html#";
+    window.location.href = "file:///home/slavi/Desktop/HackerSchool/PC%20store/ram.html#";
 }
 
 function gpu() {
     console.log("in gpu function")
-    window.location.href = "file:///home/slavi/Desktop/HackerSchool/PC%20store/home.html#";
+    window.location.href = "file:///home/slavi/Desktop/HackerSchool/PC%20store/gpu.html#";
 }
 
 </script>
@@ -48,12 +49,11 @@ function gpu() {
         <div id="menu">
             <ul>
                 <li onclick="gohome()" class="menuitem"><a href="#">Home</a></li>
-                <li class="menuitem"><a href="#">Monitor</a></li>
-                <li class="menuitem"><a href="#">Keyboard</a></li>
-                <li class="menuitem"><a href="#">HDD</a></li>
-                <li class="menuitem"><a href="#">RAM</a></li>
-                <li class="menuitem"><a href="#">GPU</a></li>
-                <li class="menuitem"><a href="#">SoundCrd</a></li>
+                <li onclick="monitor()" class="menuitem"><a href="#">Monitor</a></li>
+                <li onclick="keyboard()" class="menuitem"><a href="#">Keyboard</a></li>
+                <li onclick="hdd()" class="menuitem"><a href="#">HDD</a></li>
+                <li onclick="ram()" class="menuitem"><a href="#">RAM</a></li>
+                <li onclick="gpu()" class="menuitem"><a href="#">GPU</a></li>
             </ul>
         </div>
         

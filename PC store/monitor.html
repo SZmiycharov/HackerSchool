@@ -15,8 +15,6 @@
         color: #ccc;
     }
     
-    /*-------------------------------------*/
-    
     .cf:before, .cf:after{
       content:"";
       display:table;
@@ -28,9 +26,7 @@
 
     .cf{
       zoom:1;
-    }
-
-    /*-------------------------------------*/	
+    }	
     
     .form-wrapper {
         width: 450px;
@@ -156,12 +152,19 @@
 	  <button onclick="test()" type="submit">Search</button>
 </form>
 
+<button type="button" onclick="GoHome()">HOME</button>
+
+
 <script>
 
 function test() {
 	var maker = document.getElementById('maker').value
 	console.log(maker)
-	
+}
+
+function GoHome() {
+    console.log("in gohome function")
+    window.location.href = "file:///home/slavi/Desktop/HackerSchool/PC%20store/home.html#";
 }
 
 </script>

@@ -15,8 +15,6 @@
         color: #ccc;
     }
     
-    /*-------------------------------------*/
-    
     .cf:before, .cf:after{
       content:"";
       display:table;
@@ -28,9 +26,7 @@
 
     .cf{
       zoom:1;
-    }
-
-    /*-------------------------------------*/	
+    }   
     
     .form-wrapper {
         width: 450px;
@@ -86,7 +82,7 @@
     }    
     
     .form-wrapper button {
-		overflow: visible;
+        overflow: visible;
         position: relative;
         float: right;
         border: 0;
@@ -104,9 +100,9 @@
         text-shadow: 0 -1px 0 rgba(0, 0 ,0, .3);
     }   
       
-    .form-wrapper button:hover{		
+    .form-wrapper button:hover{     
         background: #e54040;
-    }	
+    }   
       
     .form-wrapper button:active,
     .form-wrapper button:focus{   
@@ -145,23 +141,30 @@
 .byline p a{
   color:#d83c3c;
   text-decoration:none;
-}	
+}   
 
 
 </style>
 
 
 <form class="form-wrapper cf">
-  	<input id="maker" type="text" placeholder="Search hdds..." required>
-	  <button onclick="test()" type="submit">Search</button>
+    <input id="maker" type="text" placeholder="Search hdds..." required>
+      <button onclick="test()" type="submit">Search</button>
 </form>
+
+<button type="button" onclick="GoHome()">HOME</button>
+
 
 <script>
 
 function test() {
-	var maker = document.getElementById('maker').value
-	console.log(maker)
-	
+    var maker = document.getElementById('maker').value
+    console.log(maker)
+}
+
+function GoHome() {
+    console.log("in gohome function")
+    window.location.href = "file:///home/slavi/Desktop/HackerSchool/PC%20store/home.html#";
 }
 
 </script>
