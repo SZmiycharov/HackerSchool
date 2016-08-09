@@ -42,40 +42,36 @@ function myFunction()
 {
 	console.log("Start of myfunction");
 	var input = document.getElementById('mySearch').value;
-	var url = "http://localhost/helper.php?entry=" + document.getElementById('mySearch').value;
+	var url = "http://localhost/helper.php?maker=" + document.getElementById('mySearch').value;
 	console.log(url);
 	$.ajax({
 		type: "GET",
 		crossDomain: true,
-		url: "http://localhost/helper.php?entry=" + document.getElementById('mySearch').value,
+		url: "http://localhost/helper.php?maker=" + document.getElementById('mySearch').value,
 		dataType: "xml",
 		success: function(xml) 
 		{		
 			console.log("start of ajax success");	
 			downloadUrl(url, function(data) 
 			{		
-      				var xml = data.responseXML;
-        			var helper = xml.documentElement.getElementsByTagName("place");
-				//ASSERT(helper !== null); // slavi
-				
+      			var xml = data.responseXML;
+        		var helper = xml.documentElement.getElementsByTagName("place");
 				var ul = document.getElementById("list");
   				
 				$(list).empty();
-        			for (var i = 0; i < helper.length; i++) 
-				{   //TRACE("Option", i, option);
-					//option to be displayed properly
+        		for (var i = 0; i < helper.length; i++) 
+				{   
 					console.log("in for cycle");
 
 					var li = document.createElement("li");
 					
-	 				li.appendChild(document.createTextNode(helper[i].getAttribute("name") + " "));
+		 			li.appendChild(document.createTextNode(helper[i].getAttribute("name") + " "));
 					li.appendChild(document.createTextNode(helper[i].getAttribute("id") + " "));
 					li.appendChild(document.createTextNode(helper[i].getAttribute("country") + " "));
-	  				ul.appendChild(li);
-					
-       				}
+		  			ul.appendChild(li);
+       			}
 				
-     			 });
+     		});
 		},
     		error: function (jqXHR, textStatus, error) 
 		{

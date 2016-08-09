@@ -8,9 +8,9 @@ $host = '';
 $strCnx = "port=$port dbname=$db user=$user password=$passwd";
 $cn = pg_connect($strCnx);
 
-$entry = $_GET['entry'];
+$maker = $_GET['maker'];
 
-$query = "SELECT name, id, country FROM Makers WHERE name LIKE '{$entry}%'";
+$query = "SELECT name, id, country FROM Makers WHERE name LIKE '{$maker}%'";
 
 $result = pg_query($query);
 header("Content-type: text/xml");
