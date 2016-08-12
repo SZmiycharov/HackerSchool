@@ -1,0 +1,9 @@
+<img src="{{ category.category_logo }}">
+
+<h1>{{ category.name }}</h1>
+
+<ul>
+    {% for product in category.product_set.all %}
+        <li>{{ product.maker }} {{ product.model }}</li>
+    {% endfor %}
+</ul>

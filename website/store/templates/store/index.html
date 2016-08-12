@@ -1,0 +1,10 @@
+{% if all_categories %}
+    <h3>Here are all categories:</h3>
+    <ul>
+        {% for category in all_categories %}
+        <li><a href="/store/{{ category.id }}">{{ category.name }}</a></li>
+        {% endfor %}
+    </ul>
+{% else %}
+    <h3>You don't have any categories</h3>
+{% endif %}
