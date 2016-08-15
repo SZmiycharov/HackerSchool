@@ -26,12 +26,14 @@
         <!-- Items -->
         <div class="collapse navbar-collapse" id="topNavBar">
             <ul class="nav navbar-nav">
-                <li class="active">
+                {% url 'store:index' as indexUrl %}
+                <li {% if indexUrl in request.path %} class="active"{% endif %}>
                     <a href="{% url 'store:index' %}">
                         <span class="glyphicon glyphicon-list" aria-hidden="true"></span>&nbsp;Categories
                     </a>
                 </li>
-                <li class="">
+                {% url 'store:products' as productsUrl %}
+                <li {% if request.path == productsUrl %} class="active"{% endif %}>
                     <a href="{% url 'store:products' %}">
                         <span class="glyphicon glyphicon-phone" aria-hidden="true"></span>&nbsp;Products
                     </a>
