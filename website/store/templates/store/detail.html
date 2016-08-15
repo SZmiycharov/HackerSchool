@@ -1,9 +1,14 @@
-<img src="{{ category.category_logo }}">
+{% extends 'store/base.html' %}
+{% block title %}Category details{% endblock %}
 
-<h1>{{ category.name }}</h1>
+{% block body %}
+    <img src="{{ category.category_logo }}">
 
-<ul>
-    {% for product in category.product_set.all %}
-        <li>{{ product.maker }} {{ product.model }}</li>
-    {% endfor %}
-</ul>
+    <h1>{{ category.name }}</h1>
+
+    <ul>
+        {% for product in category.product_set.all %}
+            <li>{{ product.maker }} {{ product.model }}</li>
+        {% endfor %}
+    </ul>
+{% endblock %}
