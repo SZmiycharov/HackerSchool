@@ -21,6 +21,7 @@ class Product(models.Model):
     price = models.IntegerField()
     category = models.ForeignKey(Category)
     product_logo = models.FileField()
+    is_in_shopCart = models.BooleanField(default=False)
 
     def __str__(self):
         return self.maker + ' ' + self.model

@@ -29,7 +29,7 @@ body{
 }
 
 .textForProducts{
-    margin:0px 0;
+    margin-bottom: 0px;
 }
 
 .forDescription{
@@ -40,9 +40,9 @@ body{
 .allProdImg{
     height: 5%;
     width: 10%;
-    margin: 10px 0;
+    margin-bottom: 10px;
 }
 
 .productDescription{
-    text-align: inherit;
+    margin-top: 35px;
 }

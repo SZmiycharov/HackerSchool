@@ -6,9 +6,11 @@
     <h2>All products:</h2>
     <ul class="allProducts" style="list-style-type:none">
         {% for product in all_products %}
+            <h4 class="productDescription">{{ product.maker }} {{ product.model }} - {{ product.price }}lv.</h4>
             <img class="allProdImg" src="{{ product.product_logo.url }}"
                  title="{{ product.maker }} {{ product.model }}"><br>
-            <h4 class="productDescription">{{ product.maker }} {{ product.model }} - {{ product.price }}lv.</h4>
+            <button  type="button">Add to Cart</button>
+
 
         {% endfor %}
     </ul>

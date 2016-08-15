@@ -1,0 +1,18 @@
+{% extends 'store/base.html' %}
+{% block title %}Shopping cart{% endblock %}
+
+{% block body %}
+    <ul class="allProducts" style="list-style-type:none">
+        {% if all_products_in_shopCart %}
+            {% for product in all_products_in_shopCart %}
+                <h4 class="productDescription">{{ product.maker }} {{ product.model }} - {{ product.price }}lv.</h4>
+                <img class="allProdImg" src="{{ product.product_logo.url }}"
+                     title="{{ product.maker }} {{ product.model }}"><br>
+                <button type="button">Remove from cart</button>
+            {% endfor %}
+        {% else %}
+            <h2>Only steaks in shopping-cart :) :)!</h2>
+            <img src="https://s-media-cache-ak0.pinimg.com/564x/d2/50/f1/d250f1ae569889d1372798c00b9aa16a.jpg">
+        {% endif %}
+    </ul>
+{% endblock %}
