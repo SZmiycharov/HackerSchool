@@ -1,0 +1,13 @@
+{% extends 'store/base.html' %}
+{% block title %}All products{% endblock %}
+
+
+{% block body %}
+    <h2>All products:</h2>
+    <ul class="allProducts" style="list-style-type:none">
+        {% for product in category.product_set.all %}
+            <h3>YOLO</h3>
+
+        {% endfor %}
+    </ul>
+{% endblock %}
