@@ -1,8 +1,12 @@
+<!-- Loads the path to your static files -->
+{% load staticfiles %}
+<link rel="stylesheet" type="text/css" href= "{% static 'store/style.css' %}" />
+
 {% if all_categories %}
     <h3>Here are all categories:</h3>
     <ul>
         {% for category in all_categories %}
-        <li><a href="/store/{{ category.id }}">{{ category.name }}</a></li>
+        <li><a href="{% url 'store:detail' category.id %}">{{ category.name }}</a></li>
         {% endfor %}
     </ul>
 {% else %}
