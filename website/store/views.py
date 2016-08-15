@@ -1,12 +1,15 @@
+from django.views import generic
 from .models import Category
-from django.shortcuts import render, get_object_or_404
 
 
-def index(request):
-    all_categories = Category.objects.all()
-    return render(request, 'store/index.html', {'all_categories': all_categories,})
+class IndexView(generic.ListView):
+    template_name = 'store/index.html'
+    context_object_name = 'all_categories'
+
+    def get_queryset(self):
+        return Category.objects.all()
 
 
-def detail(request, category_id):
-    category = get_object_or_404(Category, pk=category_id)
-    return render(request, 'store/detail.html', {'category': category,})
+class DetailView(generic.DetailView):
+    model = Category
+    template_name = 'store/detail.html'

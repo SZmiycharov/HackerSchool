@@ -3,12 +3,16 @@
 {% block body %}
     {% if all_categories %}
         <h3>Here are all categories:</h3>
-        <ul>
+        <ul style="list-style-type:none">
             {% for category in all_categories %}
-            <li><a href="{% url 'store:detail' category.id %}">{{ category.name }}</a></li>
+                <li class="list">
+                    <a href="{% url 'store:detail' category.id %}">
+                        <img class="img" src="{{ category.category_logo.url }}" class="img-responsive" title="{{ category.name }}"><br>
+                    </a>
+                </li>
             {% endfor %}
         </ul>
     {% else %}
-        <h3>You don't have any categories</h3>
+        <h3>You don't have any categories!</h3>
     {% endif %}
 {% endblock %}

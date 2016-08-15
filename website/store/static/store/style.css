@@ -10,3 +10,33 @@ body{
     font-family: 'Fjalla One', sans-serif;
     font-size: 165%;
 }
+
+.img:hover{
+    opacity: 0.75;
+}
+
+.img {
+    height: 10%;
+    width: 15%;
+}
+
+.list{
+  margin: 10px 0;
+}
+
+.products{
+    margin: 10px 0;
+}
+
+.textForProducts{
+    margin:0px 0;
+}
+
+.forDescription{
+    height: 5%;
+    width: 10%;
+}
+
+.forDescription:hover{
+    opacity: 0.75;
+}

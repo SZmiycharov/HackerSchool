@@ -2,13 +2,16 @@
 {% block title %}Category details{% endblock %}
 
 {% block body %}
-    <img src="{{ category.category_logo }}">
-
-    <h1>{{ category.name }}</h1>
-
-    <ul>
+    <h2>{{ category.name }}</h2>
+    <img src="{{ category.category_logo.url }}" title="{{ category.name }}">
+    <h3>All {{ category.name }}s:</h3>
+    <ul class="products" style="list-style-type:none">
         {% for product in category.product_set.all %}
-            <li>{{ product.maker }} {{ product.model }}</li>
+            <h5>
+                <li class="textForProducts">{{ product.maker }} {{ product.model }} - {{ product.price }}lv.</li>
+                <img class="forDescription" src="{{ product.product_logo.url }}" title="{{ product.maker }} {{ product.model }}"><br>
+            </h5>
+
         {% endfor %}
     </ul>
 {% endblock %}
