@@ -4,8 +4,8 @@ from django.db import models
 
 
 class Category(models.Model):
-    name = models.CharField(max_length=16)
-    category_logo = models.FileField()
+    name = models.CharField(max_length=16, blank=True)
+    category_logo = models.FileField(blank=True)
 
     def __str__(self):
         return self.name
@@ -15,13 +15,13 @@ class Category(models.Model):
 
 
 class Product(models.Model):
-    maker = models.CharField(max_length=32)
-    model = models.CharField(max_length=32)
-    description = models.TextField()
-    price = models.IntegerField()
+    maker = models.CharField(max_length=32, blank=True)
+    model = models.CharField(max_length=32, blank=True)
+    description = models.TextField(blank=True)
+    price = models.IntegerField(blank=True)
     category = models.ForeignKey(Category)
-    product_logo = models.FileField()
-    is_in_shopCart = models.BooleanField(default=False)
+    product_logo = models.FileField(blank=True)
+    is_in_shopCart = models.BooleanField(default=False, blank=True)
 
     def __str__(self):
         return self.maker + ' ' + self.model
