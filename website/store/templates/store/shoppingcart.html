@@ -5,10 +5,11 @@
     <ul class="allProducts" style="list-style-type:none">
         {% if all_products_in_shopCart %}
             {% for product in all_products_in_shopCart %}
-                <h4 class="productDescription">{{ product.maker }} {{ product.model }} - {{ product.price }}lv.</h4>
-                <img class="allProdImg" src="{{ product.product_logo.url }}"
-                     title="{{ product.maker }} {{ product.model }}"><br>
-                <button type="button">Remove from cart</button>
+                <form method="get" action="">
+                    <h4>{{ product.maker }} {{ product.model }} - {{ product.price }}lv.</h4>
+                    <input type="image" src="{{ product.product_logo.url }}" title="{{ product.maker }} {{ product.model }}" width="160" height="90">
+                    <button type="submit" class="btn btn-default">Remove from cart</button>
+                </form>
             {% endfor %}
         {% else %}
             <h2>Only steaks in shopping-cart :) :)!</h2>

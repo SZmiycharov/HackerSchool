@@ -1,6 +1,7 @@
 from django.views import generic
 from .models import Category, Product
 
+searchedfor = ''
 
 class IndexView(generic.ListView):
     template_name = 'store/index.html'
@@ -38,10 +39,14 @@ class SearchDetailsView(generic.ListView):
     template_name = 'store/searchdetails.html'
     context_object_name = 'searchresults'
     querystring = ''
-    paginate_by = 10
+    paginate_by = 20
 
     def get_queryset(self):
-        return Product.objects.all().filter(maker__icontains=self.request.GET.urlencode().split('=')[1])
+        if len(self.request.GET.urlencode().split('q='))>1:
+            global searchedfor
+            searchedfor = self.request.GET.urlencode().split('q=')[1]
+
+        return Product.objects.all().filter(maker__icontains=searchedfor)
 
 
 
