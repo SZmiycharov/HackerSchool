@@ -1,0 +1,17 @@
+{% extends 'store/base.html' %}
+{% block title %}Search details{% endblock %}
+
+{% block body %}
+    <ul class="allProducts" style="list-style-type:none">
+        {% if searchresults %}
+            {% for product in searchresults %}
+                <h4 class="productDescription">{{ product.maker }} {{ product.model }} - {{ product.price }}lv.</h4>
+                <img class="allProdImg" src="{{ product.product_logo.url }}"
+                     title="{{ product.maker }} {{ product.model }}"><br>
+                <button type="button">Add to cart</button>
+            {% endfor %}
+        {% else %}
+            <h2>No matches for your search!</h2>
+        {% endif %}
+    </ul>
+{% endblock %}
