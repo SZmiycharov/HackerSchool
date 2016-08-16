@@ -42,13 +42,14 @@
 
             <form class="navbar-form navbar-left" role="search" method="get" action="{% url 'store:searchdetails' %}">
                 <div class="form-group">
-                    <input type="text" class="form-control" name="q" value="">
+                    <input type="text" class="form-control" name="q" value="{{ request.GET.q }}">
                 </div>
                 <button type="submit" class="btn btn-default">Search</button>
             </form>
 
             <ul class="nav navbar-nav navbar-right">
-                <li class="">
+                {% url 'store:shoppingCart' as shoppingCart %}
+                <li {% if request.path == shoppingCart %} class="active"{% endif %}>
                     <a href="{% url 'store:shoppingCart' %}">
                         <span class="glyphicon glyphicon-shopping-cart" aria-hidden="true"></span>&nbsp;Shopping-cart
                     </a>

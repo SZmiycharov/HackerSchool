@@ -6,7 +6,7 @@
         {% if searchresults %}
             {% for product in searchresults %}
                 <form method="get" action="">
-                    <h4 class="allProdImg">{{ product.maker }} {{ product.model }} - {{ product.price }}lv.</h4>
+                    <h4>{{ product.maker }} {{ product.model }} - {{ product.price }}lv.</h4>
                     <input type="image" src="{{ product.product_logo.url }}" title="{{ product.maker }} {{ product.model }}" width="160" height="100">
                     <button type="submit" class="btn btn-default">Add to cart</button>
                 </form>

@@ -39,7 +39,7 @@ class SearchDetailsView(generic.ListView):
     template_name = 'store/searchdetails.html'
     context_object_name = 'searchresults'
     querystring = ''
-    paginate_by = 20
+    paginate_by = 10
 
     def get_queryset(self):
         if len(self.request.GET.urlencode().split('q='))>1:
