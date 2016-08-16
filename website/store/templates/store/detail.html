@@ -6,15 +6,12 @@
     <img src="{{ category.category_logo.url }}" title="{{ category.name }}">
     <h3>All {{ category.name }}s:</h3>
     <ul class="products" style="list-style-type:none">
-
         {% for product in category.product_set.all %}
-            <h5>
-                <li class="textForProducts">{{ product.maker }} {{ product.model }} - {{ product.price }}lv.</li>
-
-                <img onclick="alert('{{ product.description }}')" class="forDescription"
-                     src="{{ product.product_logo.url }}" title="{{ product.maker }} {{ product.model }}"><br>
-                <button type="button">Add to Cart</button>
-            </h5>
+            <form method="get" action="">
+                <h4 class="productDescription">{{ product.maker }} {{ product.model }} - {{ product.price }}lv.</h4>
+                <input type="image" class="forDescription" src="{{ product.product_logo.url }}" title="{{ product.maker }} {{ product.model }}" width="160" height="100">
+                <button type="submit" class="btn btn-default">Add to cart</button>
+            </form>
         {% endfor %}
     </ul>
 {% endblock %}

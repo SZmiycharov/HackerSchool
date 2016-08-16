@@ -44,3 +44,4 @@ class SearchDetailsView(generic.ListView):
         return Product.objects.all().filter(maker__icontains=self.request.GET.urlencode().split('=')[1])
 
 
+

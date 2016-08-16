@@ -5,12 +5,15 @@
 {% block body %}
     <h2>All products:</h2>
     <ul class="allProducts" style="list-style-type:none">
-        {% for product in all_products %}
+
+    {% for product in all_products %}
+        <form method="get" action="">
             <h4 class="productDescription">{{ product.maker }} {{ product.model }} - {{ product.price }}lv.</h4>
-            <img class="allProdImg" src="{{ product.product_logo.url }}"
-                 title="{{ product.maker }} {{ product.model }}"><br>
-            <button  type="button">Add to Cart</button>
-        {% endfor %}
+            <input type="image" src="{{ product.product_logo.url }}" title="{{ product.maker }} {{ product.model }}" width="160" height="100">
+            <button type="submit" class="btn btn-default">Add to cart</button>
+        </form>
+    {% endfor %}
+
     </ul>
     {% if is_paginated %}
             <div class="pagination">
