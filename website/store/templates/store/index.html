@@ -6,9 +6,12 @@
         <ul style="list-style-type:none">
             {% for category in all_categories %}
                 <li class="list">
-                    <a href="{% url 'store:detail' category.id %}">
-                        <img class="img" src="{{ category.category_logo.url }}" class="img-responsive" title="{{ category.name }}"><br>
-                    </a>
+
+                    <div class="pagebreak">
+                        <a style="page-break-after:always;" href="{% url 'store:detail' category.id %}">
+                            <img class="img" src="{{ category.category_logo.url }}" class="img-responsive" title="{{ category.name }}"><br>
+                        </a>
+                    </div>
                 </li>
             {% endfor %}
         </ul>
