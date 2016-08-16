@@ -1,9 +1,11 @@
 from django.views import generic
 from .models import Category, Product
 
+
 class IndexView(generic.ListView):
     template_name = 'store/index.html'
     context_object_name = 'all_categories'
+    paginate_by = 10
 
     def get_queryset(self):
         return Category.objects.all()
@@ -17,6 +19,7 @@ class DetailView(generic.DetailView):
 class ProductsView(generic.ListView):
     template_name = 'store/products.html'
     context_object_name = 'all_products'
+    paginate_by = 10
 
     def get_queryset(self):
         return Product.objects.all()
@@ -25,6 +28,7 @@ class ProductsView(generic.ListView):
 class ShoppingCartView(generic.ListView):
     template_name = 'store/shoppingcart.html'
     context_object_name = 'all_products_in_shopCart'
+    paginate_by = 10
 
     def get_queryset(self):
         return Product.objects.all().filter(is_in_shopCart=True)
@@ -34,8 +38,9 @@ class SearchDetailsView(generic.ListView):
     template_name = 'store/searchdetails.html'
     context_object_name = 'searchresults'
     querystring = ''
+    paginate_by = 10
 
     def get_queryset(self):
-        return Product.objects.all().filter(maker__icontains = self.request.GET.urlencode().split('=')[1])
+        return Product.objects.all().filter(maker__icontains=self.request.GET.urlencode().split('=')[1])
 
 

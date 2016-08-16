@@ -7,7 +7,6 @@
     <h3>All {{ category.name }}s:</h3>
     <ul class="products" style="list-style-type:none">
 
-
         {% for product in category.product_set.all %}
             <h5>
                 <li class="textForProducts">{{ product.maker }} {{ product.model }} - {{ product.price }}lv.</li>
@@ -16,7 +15,6 @@
                      src="{{ product.product_logo.url }}" title="{{ product.maker }} {{ product.model }}"><br>
                 <button type="button">Add to Cart</button>
             </h5>
-
         {% endfor %}
     </ul>
 {% endblock %}
