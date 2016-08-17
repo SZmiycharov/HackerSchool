@@ -53,9 +53,9 @@ class SearchDetailsView(generic.ListView):
         return Product.objects.all().filter(maker__icontains=searchedfor)
 
 
-class UserFormView(View):
+class RegisterView(View):
     form_class = UserForm
-    template_name = 'store/registration_form.html'
+    template_name = 'store/register.html'
 
     #display blank form
     def get(self, request):

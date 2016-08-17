@@ -10,5 +10,5 @@ urlpatterns = [
     url(r'^products/$', views.ProductsView.as_view(), name='products'),
     url(r'^shoppingCart/$', views.ShoppingCartView.as_view(), name='shoppingCart'),
     url(r'^searchdetails/$', views.SearchDetailsView.as_view(), name='searchdetails'),
-    url(r'^register/$', views.UserFormView.as_view(), name='register'),
+    url(r'^register/$', views.RegisterView.as_view(), name='register'),
 ]
