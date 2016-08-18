@@ -10,7 +10,7 @@ class CategoryAdmin(admin.ModelAdmin):
 
 class ProductAdmin(admin.ModelAdmin):
     list_display = ('maker', 'model', 'price', 'created', 'modified')
-    fields = ('maker', 'model', 'description', 'price', 'category', 'product_logo', 'created')
+    fields = ('maker', 'model', 'description', 'price', 'category', 'product_logo')
     search_fields = ['maker', 'model']
     date_hierarchy = 'created'
 

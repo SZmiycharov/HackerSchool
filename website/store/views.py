@@ -14,6 +14,7 @@ from django.utils.http import is_safe_url
 
 searchedfor = ''
 
+
 class IndexView(generic.ListView):
     template_name = 'store/index.html'
     context_object_name = 'all_categories'

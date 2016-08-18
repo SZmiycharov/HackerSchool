@@ -11,7 +11,6 @@ class Category(models.Model):
     category_logo = models.FileField(blank=True)
     created = models.DateTimeField(editable=False, default=timezone.now())
     modified = models.DateTimeField(editable=False, default=timezone.now())
-    id = models.CharField(max_length=100, blank=False, primary_key=True, default=str(binascii.hexlify(os.urandom(8))))
 
     def __str__(self):
         return self.name
@@ -37,7 +36,6 @@ class Product(models.Model):
     is_in_shopCart = models.BooleanField(default=False, blank=True)
     created = models.DateTimeField(editable=False, default=timezone.now())
     modified = models.DateTimeField(editable=False, default=timezone.now())
-    id = models.CharField(max_length=100, blank=False, primary_key=True, default=str(binascii.hexlify(os.urandom(8))))
 
     def __str__(self):
         return self.maker + ' ' + self.model
