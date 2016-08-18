@@ -4,11 +4,12 @@ from django.db import models
 from django.utils import timezone
 
 
+
 class Category(models.Model):
     name = models.CharField(max_length=16, blank=True)
     category_logo = models.FileField(blank=True)
-    created = models.DateTimeField(editable=False)
-    modified = models.DateTimeField()
+    created = models.DateTimeField(editable=False, default=timezone.now())
+    modified = models.DateTimeField(editable=False, default=timezone.now())
 
     def __str__(self):
         return self.name
@@ -32,8 +33,8 @@ class Product(models.Model):
     category = models.ForeignKey(Category)
     product_logo = models.FileField()
     is_in_shopCart = models.BooleanField(default=False, blank=True)
-    created = models.DateTimeField(editable=False)
-    modified = models.DateTimeField()
+    created = models.DateTimeField(editable=False, default=timezone.now())
+    modified = models.DateTimeField(editable=False, default=timezone.now())
 
     def __str__(self):
         return self.maker + ' ' + self.model
