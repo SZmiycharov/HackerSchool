@@ -8,7 +8,7 @@
     <ul class="products" style="list-style-type:none">
         {% for product in category.product_set.all %}
             <form method="get" action="">
-                <h4 class="productDescription">{{ product.maker }} {{ product.model }} - {{ product.price }}lv.</h4>
+                <h4 class="productDescription">{{ product.maker }} {{ product.model }} - <i style="color:red">{{ product.price }}</i></h4>
                 <input type="image" class="forDescription" src="{{ product.product_logo.url }}" title="{{ product.maker }} {{ product.model }}" width="160" height="90">
                 <button type="submit" class="btn btn-default">Add to cart</button>
             </form>
