@@ -98,7 +98,7 @@ class RegisterView(View):
 
 class LoginView(View):
     form_class = AuthenticationForm
-    template_name = 'store/register.html'
+    template_name = 'store/login.html'
 
     # display blank form
     def get(self, request):
@@ -133,7 +133,7 @@ class LogoutView(View):
 
     def get(self, request):
         logout(request)
-        return redirect('store:index')
+        return redirect('store:logout')
 
 
 
