@@ -133,7 +133,7 @@ class LogoutView(View):
 
     def get(self, request):
         logout(request)
-        return redirect('store:logout')
+        return render(request, self.template_name)
 
 
 

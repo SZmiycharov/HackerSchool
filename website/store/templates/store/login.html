@@ -4,23 +4,6 @@
 
 {% block style %}
     <style>
-        .newbtn{
-          background:#2ecc71;
-          width:65px;
-          color:white;
-          border-radius:4px;
-          border: #27ae60 1px solid;
-          margin-top:0px;
-          margin-bottom:0px;
-          float:left;
-          margin-right:55px;
-          font-weight:800;
-          font-size:1.2em;
-          padding: 0px;
-        }
-        .newbtn:hover{
-          background:#2CC06B;
-        }
         #newbtn2{
           float:left;
           background:#393e42;
@@ -31,9 +14,10 @@
           border: #2980b9 1px solid;
           margin-top:0px;
           margin-bottom:0px;
-          margin-right:0px;
+          margin-right:425px;
           font-weight:800;
           font-size:0.8em;
+          float:right;
         }
         #newbtn2:hover{
         background:#000000;
@@ -52,12 +36,12 @@
                     {% if error_message %}
                         <p><strong>{{ error_message }}</strong></p>
                     {% endif %}
-                    <form class="form-horizontal" role="form" action="" method="post" enctype="multipart/form-data">
+                    <form class="form-horizontal" role="form" method="post" enctype="multipart/form-data">
                         {% csrf_token %}
                         {% include 'store/form_template.html' %}
                         <div class="form-group">
                             <div class="col-sm-offset-2 col-sm-10">
-                                <a href="{% url 'store:index' %}"><div class="newbtn">Sign In</div></a>
+                                <button type="submit" class="btn btn-success">Sign in</button>
                                 <a href="{% url 'store:register' %}"><div id="newbtn2">Sign Up</div></a>
                             </div>
                         </div>
