@@ -55,13 +55,13 @@
                     </a>
                 </li>
                 <li class="">
-                    {% if not user.is_authenticated %}
-                        <a href="{% url 'store:login' %}">
-                           <span class="glyphicon glyphicon-log-in" aria-hidden="true"></span>&nbsp;Log in
+                    {% if user.is_authenticated %}
+                        <a href="{% url 'store:logout' %}">
+                            <span class="glyphicon glyphicon-log-out" aria-hidden="true"></span>&nbsp;Log out
                         </a>
                     {% else %}
                         <a href="{% url 'store:login' %}">
-                            <span class="glyphicon glyphicon-log-out" aria-hidden="true"></span>&nbsp;Log out
+                           <span class="glyphicon glyphicon-log-in" aria-hidden="true"></span>&nbsp;Log in
                         </a>
                     {% endif %}
                 </li>
