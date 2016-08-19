@@ -55,15 +55,25 @@
                     </a>
                 </li>
                 <li class="">
-                    <a href="{% url 'store:register' %}">
-                        <span class="glyphicon glyphicon-log-in" aria-hidden="true"></span>&nbsp;Log in
-                    </a>
+                    {% if not user.is_authenticated %}
+                        <a href="{% url 'store:login' %}">
+                           <span class="glyphicon glyphicon-log-in" aria-hidden="true"></span>&nbsp;Log in
+                        </a>
+                    {% else %}
+                        <a href="{% url 'store:login' %}">
+                            <span class="glyphicon glyphicon-log-out" aria-hidden="true"></span>&nbsp;Log out
+                        </a>
+                    {% endif %}
                 </li>
             </ul>
 
         </div>
     </div>
 </nav>
+
+{% block style %}
+{% endblock %}
+
 {% block body %}
 {% endblock %}
 </body>

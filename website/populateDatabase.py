@@ -1,23 +1,28 @@
 from store.models import Category, Product
+import random
+import string
 
-fields = ['maker', 'model', 'description', 'price', 'category', 'product_logo', 'is_in_shopCart']
-pics = ['cpu_amd.jpeg', 'cpu_intel.jpeg', 'GPU.jpeg', 'index.jpeg', 'keyboard.jpg'] 
+pics = ['cpu_amd.jpeg', 'cpu_intel.jpeg', 'GPU.jpeg', 'gpu_amd', 'gpu_nvidia', 'index.jpeg', 'keyboard.jpg', 'keyboard_hp.jpg', 'keyboard_razor.png']
 
+IsInShoppingCart = [True, False]
+iteration = 0
 
-
-for i in range(5000):
+for i in range(10000):
 	for j in pics:
 		a = Category()
-		a.name = 'category' + str(i)
-		a.category_logo = j
+		a.name = ''.join(random.choice(string.ascii_uppercase) for _ in range(6))
+		a.category_logo = random.choice(pics)
 		a.save()
 
-		b = Product()
-		b.maker = 'maker' + str(i)
-		b.model = 'model' + str(i)
-		b.description = 'descr' + str(i)
-		b.price = i
-		b.category = a
-		b.product_logo = j
-		b.is_in_shopCart = True
-		b.save()
+		for k in range(10):
+			b = Product()
+			b.maker = ''.join(random.choice(string.ascii_uppercase) for _ in range(6))
+			b.model = ''.join(random.choice(string.digits) for _ in range(6))
+			b.description = 'descr' + str(i) + ''.join(random.choice(string.ascii_uppercase + string.digits) for _ in range(25))
+			b.price = ''.join(random.choice(string.digits) for _ in range(3))
+			b.category = a
+			b.product_logo = random.choice(pics)
+			b.is_in_shopCart = random.choice(IsInShoppingCart)
+			b.save()
+			iteration += 1
+			print "iteration: {}".format(iteration)

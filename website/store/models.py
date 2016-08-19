@@ -37,6 +37,7 @@ class Category(models.Model):
 class Product(models.Model):
     maker = models.CharField(max_length=32, blank=True)
     model = models.CharField(max_length=32, blank=True)
+    id = models.CharField(max_length=100, primary_key=True, default=f)
     description = models.TextField(blank=True)
     price = MoneyField(max_digits=10, decimal_places=2, default_currency='BGN')
     category = models.ForeignKey(Category)

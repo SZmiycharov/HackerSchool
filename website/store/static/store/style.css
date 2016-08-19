@@ -1,51 +1,51 @@
 body{
-    background: white url("images/background.jpg");
+    background: white url("images/background.jpg") !important;
 }
 
 .navbar{
-    border-radius: 0;
+    border-radius: 0 !important;
 }
 
 .navbar-brand{
-    font-family: 'Fjalla One', sans-serif;
-    font-size: 165%;
+    font-family: 'Fjalla One', sans-serif !important;
+    font-size: 165% !important;
 }
 
 .img:hover{
-    opacity: 0.75;
+    opacity: 0.75 !important;
 }
 
 .list{
-  margin: 10px 0;
+  margin: 10px 0 !important;
 }
 
 .products{
-    margin: 10px 0;
+    margin: 10px 0 !important;
 }
 
 .textForProducts{
-    margin-bottom: 0px;
+    margin-bottom: 0px !important;
 }
 
 .forDescription{
-    height: 5%;
-    width: 10%;
+    height: 5% !important;
+    width: 10% !important;
 }
 
 .allProdImg{
-    height: 5%;
-    width: 10%;
-    margin-bottom: 10px;
+    height: 5% !important;
+    width: 10% !important;
+    margin-bottom: 10px !important;
 }
 
 .productDescription{
-    margin-top: 35px;
+    margin-top: 35px !important;
 }
 
 .pagebreak {
-    page-break-before: always;
+    page-break-before: always !important;
 }
 
 .btn{
-    vertical-align: top;
+    vertical-align: top !important;
 }

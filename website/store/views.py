@@ -14,7 +14,6 @@ from django.utils.http import is_safe_url
 
 searchedfor = ''
 
-
 class IndexView(generic.ListView):
     template_name = 'store/index.html'
     context_object_name = 'all_categories'
@@ -96,7 +95,8 @@ class RegisterView(View):
 
 
 class LoginView(FormView):
-    success_url = '/auth/home/'
+    success_url = '/index/'
+    template_name = 'store/login.html'
     form_class = AuthenticationForm
     redirect_field_name = REDIRECT_FIELD_NAME
 
@@ -127,10 +127,8 @@ class LoginView(FormView):
 
 
 class LogoutView(RedirectView):
-    """
-    Provides users the ability to logout
-    """
-    url = '/auth/login/'
+    success_url = '/index/'
+    template_name = 'store/logout.html'
 
     def get(self, request, *args, **kwargs):
         auth_logout(request)
