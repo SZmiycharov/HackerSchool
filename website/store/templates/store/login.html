@@ -39,8 +39,11 @@
                     <form class="form-horizontal" role="form" method="post" enctype="multipart/form-data">
                         {% csrf_token %}
                         {% include 'store/form_template.html' %}
+                        <label><input name="remember" type="checkbox">Remember me</label>
                         <div class="form-group">
+
                             <div class="col-sm-offset-2 col-sm-10">
+
                                 <button type="submit" class="btn btn-success">Sign in</button>
                                 <a href="{% url 'store:register' %}"><div id="newbtn2">Sign Up</div></a>
                             </div>
