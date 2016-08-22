@@ -2,7 +2,7 @@ from store.models import Category, Product
 import random
 import string
 
-pics = ['cpu_amd.jpeg', 'cpu_intel.jpeg', 'GPU.jpeg', 'gpu_amd', 'gpu_nvidia', 'index.jpeg', 'keyboard.jpg', 'keyboard_hp.jpg', 'keyboard_razor.png']
+pics = ['cpu_amd.jpeg', 'cpu_intel.jpeg', 'GPU.jpeg', 'gpu_amd.jpg', 'gpu_nvidia.jpeg', 'index.jpeg', 'keyboard.jpg', 'keyboard_hp.jpg', 'keyboard_razor.png']
 
 IsInShoppingCart = [True, False]
 iteration = 0
