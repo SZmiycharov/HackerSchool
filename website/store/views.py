@@ -12,6 +12,7 @@ from django.views.decorators.cache import never_cache
 from django.utils.http import is_safe_url
 import pdb
 import sys
+from registration.forms import RegistrationFormUniqueEmail
 
 searchedfor = ''
 
@@ -64,7 +65,7 @@ class SearchDetailsView(generic.ListView):
 
 
 class RegisterView(View):
-    form_class = RegisterForm
+    form_class = RegistrationFormUniqueEmail
     template_name = 'store/register.html'
 
     def get(self, request):
