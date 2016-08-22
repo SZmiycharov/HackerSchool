@@ -19,27 +19,34 @@
     <h2>All products:</h2>
     <ul class="allProducts" style="list-style-type:none">
 
-    <form action="" method="post">
-        {% csrf_token %}
-        <div class="row" style="min-height:63px;">
-
-            <div class="row" style="min-height:63px;">
-                <div class="form-group col-md-1">
-                    <label>Цена</label>
-                        <select class="input-sm form-control select2-trigger" data-val="true"
-                                id="WeightCategoryId" name="price"><option value="">Избери</option>
-                            <option value="1"><100</option>
-                            <option value="2">100-200</option>
-                            <option value="3">200-300 </option>
-                            <option value="3">300-400</option>
-                            <option value="3">400-500</option>
-                            <option value="3">500+</option>
+    <form action="{% url 'store:products' %}" method="get">
+                {% csrf_token %}
+                <div class="row" style="min-height:63px;">
+                    <div class="form-group col-md-1">
+                        <label>Модел</label>
+                        <select class="input-sm form-control select2-trigger" id="model" name="model"><option value="">Избери</option>
+                            {% for product in all_products %}
+                                <option value="{{ product.model }}">{{ product.model }}</option>
+                            {% endfor %}
                         </select>
+                    </div>
+
+                    <div class="row" style="min-height:63px;">
+                        <div class="form-group col-md-1">
+                            <label>Цена</label>
+                                <select class="input-sm form-control select2-trigger" id="price" name="priceCategory"><option value="">Избери</option>
+                                    <option value="1"><100</option>
+                                    <option value="2">100-200</option>
+                                    <option value="3">200-300 </option>
+                                    <option value="4">300-400</option>
+                                    <option value="5">400-500</option>
+                                    <option value="6">500+</option>
+                                </select>
+                        </div>
+                    </div>
                 </div>
-            </div>
-        </div>
-        <button type="submit">Търси</button>
-    </form>
+                <button type="submit">Търси</button>
+            </form>
 
     {% for product in all_products %}
         <form method="get" action="">

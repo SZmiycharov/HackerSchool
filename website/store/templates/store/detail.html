@@ -12,9 +12,6 @@
         select.input-sm{
             margin-left: 25px;
         }
-
-
-
     </style>
 {% endblock %}
 
@@ -22,15 +19,14 @@
     <h2>Category: <i>{{ category.name }}</i></h2>
     <img height="135" width="240" src="{{ category.category_logo.url }}" title="{{ category.name }}">
 
-
-    <form action="" method="post">
+    <form action="{% url 'store:detail' %}" method="post">
         {% csrf_token %}
         <div class="row" style="min-height:63px;">
             <div class="form-group col-md-1">
                 <label>Модел</label>
-                <select class="input-sm form-control select2-trigger" id="MakeIds" name="MakeIds"><option value="">Избери</option>
+                <select class="input-sm form-control select2-trigger" id="model" name="model"><option value="">Избери</option>
                 {% for product in category.product_set.all %}
-                    <option value="{{ product.id }}">{{ product.model }}</option>
+                    <option value="{{ product.model }}">{{ product.model }}</option>
                 {% endfor %}
                 </select>
             </div>
@@ -38,7 +34,7 @@
             <div class="row" style="min-height:63px;">
                 <div class="form-group col-md-1">
                     <label>Цена</label>
-                        <select class="input-sm form-control select2-trigger" data-val="true" data-val-number="The field WeightCategoryId must be a number." id="WeightCategoryId" name="WeightCategoryId"><option value="">Избери</option>
+                        <select class="input-sm form-control select2-trigger" id="priceCategory" name="priceCategory"><option value="">Избери</option>
                             <option value="1"><100</option>
                             <option value="2">100-200</option>
                             <option value="3">200-300 </option>
