@@ -81,7 +81,8 @@ class RegisterView(View):
             user = form.save(commit=False)
 
             username = form.cleaned_data['username']
-            password = form.cleaned_data['password']
+            password = form.clean_password2()
+            print >> sys.stderr, password
             user.set_password(password)
             user.save()
 
