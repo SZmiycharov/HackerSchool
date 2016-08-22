@@ -57,9 +57,48 @@ class SearchDetailsView(generic.ListView):
     paginate_by = 10
 
     def get_queryset(self):
+        print >> sys.stderr, "\nin SearchDetailsView queryset\n"
+
         if len(self.request.GET.urlencode().split('q='))>1:
             global searchedfor
-            searchedfor = self.request.GET.urlencode().split('q=')[1]
+            searchedfor = self.request.GET.urlencode().split('q=')[1].split('&')[0]
+
+        if len(self.request.GET.urlencode().split('model='))>1 and len(self.request.GET.urlencode().split('priceCategory='))>1:
+            model = self.request.GET.urlencode().split('model=')[1].split('&')[0]
+            priceCategory = self.request.GET.urlencode().split('priceCategory=')[1].split('&')[0]
+            if model is not None and priceCategory is not None:
+                print >> sys.stderr, "pricecategory: {}".format(priceCategory)
+                if priceCategory == '1':
+                    return Product.objects.all().filter(maker__icontains=searchedfor, price__lte=100)
+                elif priceCategory == '2':
+                    return Product.objects.all().filter(maker__icontains=searchedfor, price__gte=100, price__lte=200, model__icontains=model)
+                elif priceCategory == '3':
+                    return Product.objects.all().filter(maker__icontains=searchedfor, price__gte=200, price__lte=300, model__icontains=model)
+                elif priceCategory == '4':
+                    return Product.objects.all().filter(maker__icontains=searchedfor, price__gte=300, price__lte=400, model__icontains=model)
+                elif priceCategory == '5':
+                    return Product.objects.all().filter(maker__icontains=searchedfor, price__gte=400, price__lt=500, model__icontains=model)
+                elif priceCategory == '6':
+                    return Product.objects.all().filter(maker__icontains=searchedfor, price__gte=500, model__icontains=model)
+
+        if len(self.request.GET.urlencode().split('model='))>1:
+            model = self.request.GET.urlencode().split('model=')[1].split('&')[0]
+            return Product.objects.all().filter(maker__icontains=searchedfor, model__icontains=model)
+
+        if len(self.request.GET.urlencode().split('priceCategory='))>1:
+            priceCategory = self.request.GET.urlencode().split('priceCategory=')[1].split('&')[0]
+            if priceCategory == '1':
+                return Product.objects.all().filter(maker__icontains=searchedfor, price__gte=100)
+            elif priceCategory == '2':
+                return Product.objects.all().filter(maker__icontains=searchedfor, price__gte=100, price__lte=200)
+            elif priceCategory == '3':
+                return Product.objects.all().filter(maker__icontains=searchedfor, price__gte=200, price__lte=300)
+            elif priceCategory == '4':
+                return Product.objects.all().filter(maker__icontains=searchedfor, price__gte=300, price__lte=400)
+            elif priceCategory == '5':
+                return Product.objects.all().filter(maker__icontains=searchedfor, price__gte=400, price__lt=500)
+            elif priceCategory == '6':
+                return Product.objects.all().filter(maker__icontains=searchedfor, price__lte=500)
 
         return Product.objects.all().filter(maker__icontains=searchedfor)
 
