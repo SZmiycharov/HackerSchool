@@ -1,9 +1,6 @@
 {% extends 'store/base.html' %}
 
 {% block body %}
-    {% if user.is_authenticated %}
-        <h1>USER IS AUTHENTICATED!!!!!</h1>
-    {% endif %}
     {% if all_categories %}
         <h3>Here are all categories:</h3>
         <ul style="list-style-type:none">

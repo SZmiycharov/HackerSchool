@@ -48,12 +48,6 @@
             </form>
 
             <ul class="nav navbar-nav navbar-right">
-                {% url 'store:shoppingCart' as shoppingCart %}
-                <li {% if request.path == shoppingCart %} class="active"{% endif %}>
-                    <a href="{% url 'store:shoppingCart' %}">
-                        <span class="glyphicon glyphicon-shopping-cart" aria-hidden="true"></span>&nbsp;Shopping-cart
-                    </a>
-                </li>
                 <li class="">
                     {% if user.is_authenticated %}
                         <a href="{% url 'store:logout' %}">

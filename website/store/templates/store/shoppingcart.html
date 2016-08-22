@@ -8,7 +8,6 @@
                 <form method="get" action="">
                     <h4>{{ product.maker }} {{ product.model }} - <i style="color:red">{{ product.price }}</i></h4>
                     <input type="image" src="{{ product.product_logo.url }}" title="{{ product.maker }} {{ product.model }}" width="160" height="90">
-                    <button type="submit" class="btn btn-default">Remove from cart</button>
                 </form>
             {% endfor %}
         {% else %}

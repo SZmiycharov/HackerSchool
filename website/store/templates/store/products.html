@@ -10,7 +10,14 @@
         <form method="get" action="">
             <h4 class="productDescription">{{ product.maker }} {{ product.model }} - <i style="color:red">{{ product.price }}</i></h4>
             <input type="image" src="{{ product.product_logo.url }}" title="{{ product.maker }} {{ product.model }}" width="160" height="90">
-            <button type="submit" class="btn btn-default">Add to cart</button>
+        </form>
+        <form action="https://www.paypal.com/cgi-bin/webscr" method="post">
+            <input type="hidden" name="cmd" value="_xclick">
+            <input type="hidden" name="business" value="s.zmiycharov@gmail.com">
+            <input type="hidden" name="item_name" value="Item Name">
+            <input type="hidden" name="currency_code" value="USD">
+            <input type="hidden" name="amount" value="{{ product.price|floatformat:2 }}">
+            <input type="image" src="https://www.paypalobjects.com/en_US/i/btn/btn_buynow_LG.gif" name="submit" alt="Make payments with PayPal - it's fast, free and secure!">
         </form>
     {% endfor %}
 
