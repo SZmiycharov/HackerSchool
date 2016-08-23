@@ -12,9 +12,6 @@
         select.input-sm{
             margin-left: 25px;
         }
-
-
-
     </style>
 {% endblock %}
 
@@ -22,16 +19,11 @@
     <h2>Category: <i>{{ category.name }}</i></h2>
     <img height="135" width="240" src="{{ category.category_logo.url }}" title="{{ category.name }}">
 
-    <form action="{% url 'store:detail' category.id %}" method="post">
-        {% csrf_token %}
-        <div class="row" style="min-height:63px;">
+    <form action="{% url 'store:detail' category.id %}?model={{ request.GET.model }}&priceCategory={{ request.GET.priceCategory }}" method="get">
+        <div style="margin-left: 10px;" class="row" style="min-height:63px;">
             <div class="form-group col-md-1">
                 <label>Модел</label>
-                <select class="input-sm form-control select2-trigger" id="model" name="model"><option value="">Избери</option>
-                {% for product in category.product_set.all %}
-                    <option value="{{ product.model }}">{{ product.model }}</option>
-                {% endfor %}
-                </select>
+                <input type="text" name="model" {% if request.GET.model %}value="{{ request.GET.model }}"{% else %}value=""{% endif %} size="12">
             </div>
 
             <div class="row" style="min-height:63px;">
@@ -41,20 +33,20 @@
                             <option value="1"><100</option>
                             <option value="2">100-200</option>
                             <option value="3">200-300 </option>
-                            <option value="3">300-400</option>
-                            <option value="3">400-500</option>
-                            <option value="3">500+</option>
+                            <option value="4">300-400</option>
+                            <option value="5">400-500</option>
+                            <option value="6">500+</option>
                         </select>
                 </div>
             </div>
         </div>
-        <button type="submit">Търси</button>
+        <button style="margin-left: 25px;" type="submit">Търси</button>
     </form>
 
 
     <h3>All <i>{{ category.name }}</i>s:</h3>
     <ul class="products" style="list-style-type:none">
-        {% for product in category.product_set.all %}
+        {% for product in all_products %}
             <form method="get" action="">
                 <h4 class="productDescription">{{ product.maker }} {{ product.model }} - <i style="color:red">{{ product.price }}</i></h4>
                 <input type="image" class="forDescription" src="{{ product.product_logo.url }}" title="{{ product.maker }} {{ product.model }}" width="160" height="90">
@@ -69,4 +61,20 @@
             </form>
         {% endfor %}
     </ul>
+
+    {% if is_paginated %}
+            <div class="pagination">
+                <span class="page-links">
+                    {% if page_obj.has_previous %}
+                        <a href="{% url 'store:detail' %}?page={{ page_obj.previous_page_number }}&model={{ request.GET.model }}&priceCategory={{ request.GET.priceCategory }}"><- previous</a>
+                    {% endif %}
+                    <span class="page-current">
+                        Page {{ page_obj.number }} of {{ page_obj.paginator.num_pages }}.
+                    </span>
+                    {% if page_obj.has_next %}
+                        <a href="{% url 'store:detail' %}?page={{ page_obj.next_page_number }}&model={{ request.GET.model }}&priceCategory={{ request.GET.priceCategory }}">next -></a>
+                    {% endif %}
+                </span>
+            </div>
+    {% endif %}
 {% endblock %}

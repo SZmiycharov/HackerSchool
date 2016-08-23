@@ -27,8 +27,63 @@ class IndexView(generic.ListView):
 
 
 class DetailView(generic.DetailView):
-    model = Category
     template_name = 'store/detail.html'
+    model = Category
+
+    def get_context_data(self, **kwargs):
+        pk = self.kwargs['pk']
+        context = super(DetailView, self).get_context_data(**kwargs)
+
+        if len(self.request.GET.urlencode().split('model=')) > 1 and len(
+                self.request.GET.urlencode().split('priceCategory=')) > 1:
+            model = self.request.GET.urlencode().split('model=')[1].split('&')[0]
+            priceCategory = self.request.GET.urlencode().split('priceCategory=')[1].split('&')[0]
+
+            if model != '' and priceCategory != '':
+                if priceCategory == '1':
+                    context['all_products'] = Product.objects.all().filter(category_id__exact=pk, price__lte=100)
+                elif priceCategory == '2':
+                    context['all_products'] = Product.objects.all().filter(category_id__exact=pk, price__gte=100, price__lte=200, model__icontains=model)
+                elif priceCategory == '3':
+                    context['all_products'] = Product.objects.all().filter(category_id__exact=pk, price__gte=200, price__lte=300, model__icontains=model)
+                elif priceCategory == '4':
+                    context['all_products'] = Product.objects.all().filter(category_id__exact=pk, price__gte=300, price__lte=400, model__icontains=model)
+                elif priceCategory == '5':
+                    context['all_products'] = Product.objects.all().filter(category_id__exact=pk, price__gte=400, price__lt=500, model__icontains=model)
+                elif priceCategory == '6':
+                    context['all_products'] = Product.objects.all().filter(category_id__exact=pk, price__gte=500, model__icontains=model)
+                return context
+
+            elif model != '':
+                model = self.request.GET.urlencode().split('model=')[1].split('&')[0]
+                context['all_products'] = Product.objects.all().filter(category_id__exact=pk, maker__icontains=searchedfor, model__icontains=model)
+                return context
+
+            elif priceCategory != '':
+                print >> sys.stderr, "only priceCategory chosen"
+                priceCategory = self.request.GET.urlencode().split('priceCategory=')[1].split('&')[0]
+                if priceCategory == '1':
+                    context['all_products'] = Product.objects.all().filter(category_id=pk, price__lte=100)
+                elif priceCategory == '2':
+                    context['all_products'] = Product.objects.all().filter(category_id__exact=pk, price__gte=100, price__lte=200)
+                elif priceCategory == '3':
+                    context['all_products'] = Product.objects.all().filter(category_id__exact=pk, price__gte=200, price__lte=300)
+                elif priceCategory == '4':
+                    context['all_products'] = Product.objects.all().filter(category_id__exact=pk, price__gte=300, price__lte=400)
+                elif priceCategory == '5':
+                    context['all_products'] = Product.objects.all().filter(category_id__exact=pk, price__gte=400, price__lt=500)
+                elif priceCategory == '6':
+                    context['all_products'] = Product.objects.all().filter(category_id__exact=pk, price__gte=500)
+                return context
+
+            else:
+                context['all_products'] = Product.objects.all().filter(category_id__exact=pk)
+                return context
+
+        print >> sys.stderr, "RETURNING ALL!!!"
+        context['all_products'] = Product.objects.all().filter(category_id__exact=pk)
+        return context
+
 
 
 class ProductsView(generic.ListView):
