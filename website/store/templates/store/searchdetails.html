@@ -18,16 +18,11 @@
 {% block body %}
     <ul class="allProducts" style="list-style-type:none">
         {% if searchresults %}
-            <form action="{% url 'store:searchdetails' %}" method="get">
-                {% csrf_token %}
+            <form action="{% url 'store:searchdetails' %}?model={{ request.GET.model }}&priceCategory={{ request.GET.priceCategory }}" method="get">
                 <div class="row" style="min-height:63px;">
                     <div class="form-group col-md-1">
                         <label>Модел</label>
-                        <select class="input-sm form-control select2-trigger" id="model" name="model"><option value="">Избери</option>
-                            {% for product in searchresults %}
-                                <option value="{{ product.model }}">{{ product.model }}</option>
-                            {% endfor %}
-                        </select>
+                        <input type="text" name="model" {% if request.GET.model %}value="{{ request.GET.model }}"{% else %}value=""{% endif %} size="12">
                     </div>
 
                     <div class="row" style="min-height:63px;">
@@ -70,13 +65,13 @@
             <div class="pagination">
                 <span class="page-links">
                     {% if page_obj.has_previous %}
-                        <a href="{% url 'store:searchdetails' %}?page={{ page_obj.previous_page_number }}"><- previous</a>
+                        <a href="{% url 'store:searchdetails' %}?page={{ page_obj.previous_page_number }}?model={{ request.GET.model }}&priceCategory={{ request.GET.priceCategory }}"><- previous</a>
                     {% endif %}
                     <span class="page-current">
                         Page {{ page_obj.number }} of {{ page_obj.paginator.num_pages }}.
                     </span>
                     {% if page_obj.has_next %}
-                        <a href="{% url 'store:searchdetails' %}?page={{ page_obj.next_page_number }}">next -></a>
+                        <a href="{% url 'store:searchdetails' %}?page={{ page_obj.next_page_number }}?model={{ request.GET.model }}&priceCategory={{ request.GET.priceCategory }}">next -></a>
                     {% endif %}
                 </span>
             </div>
