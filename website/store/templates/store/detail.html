@@ -12,6 +12,9 @@
         select.input-sm{
             margin-left: 25px;
         }
+
+
+
     </style>
 {% endblock %}
 
@@ -19,7 +22,7 @@
     <h2>Category: <i>{{ category.name }}</i></h2>
     <img height="135" width="240" src="{{ category.category_logo.url }}" title="{{ category.name }}">
 
-    <form action="{% url 'store:detail' %}" method="post">
+    <form action="{% url 'store:detail' category.id %}" method="post">
         {% csrf_token %}
         <div class="row" style="min-height:63px;">
             <div class="form-group col-md-1">
@@ -47,12 +50,6 @@
         </div>
         <button type="submit">Търси</button>
     </form>
-
-
-
-
-
-
 
 
     <h3>All <i>{{ category.name }}</i>s:</h3>

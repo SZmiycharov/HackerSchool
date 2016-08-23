@@ -80,8 +80,6 @@ class ProductsView(generic.ListView):
         return Product.objects.all()
 
 
-
-
 class SearchDetailsView(generic.ListView):
     template_name = 'store/searchdetails.html'
     context_object_name = 'searchresults'
