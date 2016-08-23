@@ -85,7 +85,6 @@ class DetailView(generic.DetailView):
         return context
 
 
-
 class ProductsView(generic.ListView):
     template_name = 'store/products.html'
     context_object_name = 'all_products'

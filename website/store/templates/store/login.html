@@ -33,8 +33,12 @@
             <div class="panel panel-default">
                 <div class="panel-body">
                     <h3>Log in</h3>
-                    {% if error_message %}
-                        <p><strong>{{ error_message }}</strong></p>
+                    {% if form.non_field_errors %}
+                        <ul class='form-errors'>
+                            {% for error in form.non_field_errors %}
+                                <li style="color:red;"><strong>{{ error }}</strong></li>
+                            {% endfor %}
+                        </ul>
                     {% endif %}
                     <form class="form-horizontal" role="form" method="post" enctype="multipart/form-data">
                         {% csrf_token %}
