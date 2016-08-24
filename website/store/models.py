@@ -25,6 +25,9 @@ class Category(models.Model):
 
     class Meta:
         verbose_name_plural = 'categories'
+        permissions = (
+            ('view_task', 'View task'),
+        )
 
     def save(self, *args, **kwargs):
         # On save, update timestamps
