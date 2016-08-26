@@ -2,9 +2,8 @@ from __future__ import unicode_literals
 from djmoney.models.fields import MoneyField
 from django.db import models
 from django.utils import timezone
-import os
-import binascii
 import uuid
+from django.contrib.auth.models import User
 
 
 def f():
@@ -14,7 +13,8 @@ def f():
 
 
 class Category(models.Model):
-    name = models.CharField(max_length=16, blank=True, db_index=True)
+    allowed_user = models.ManyToManyField(User)
+    name = models.CharField(max_length=16, blank=True, db_index=True, unique=True)
     id = models.CharField(max_length=100, primary_key=True, default=f)
     category_logo = models.FileField(blank=True)
     created = models.DateTimeField(editable=False, default=timezone.now(), db_index=True)
@@ -45,6 +45,7 @@ class Product(models.Model):
     is_in_shopCart = models.BooleanField(default=False, blank=True)
     created = models.DateTimeField(editable=False, default=timezone.now(), db_index=True)
     modified = models.DateTimeField(editable=False, default=timezone.now())
+    quantity = models.IntegerField(default=1)
 
     def __str__(self):
         return self.maker + ' ' + self.model
@@ -55,6 +56,10 @@ class Product(models.Model):
             self.created = timezone.now()
         self.modified = timezone.now()
         return super(Product, self).save(*args, **kwargs)
+
+
+    class Meta:
+        unique_together = ('maker', 'model',)
 
 
 

@@ -8,6 +8,12 @@ class CategoryAdmin(admin.ModelAdmin):
     search_fields = ['name']
     list_per_page = 50
 
+    def get_queryset(self, request):
+        qs = super(CategoryAdmin, self).get_queryset(request)
+        if request.user.is_superuser:
+            return qs
+        return qs.filter(allowed_user=request.user)
+
 
 class ProductAdmin(admin.ModelAdmin):
     list_display = ('maker', 'model', 'price', 'created', 'modified')
