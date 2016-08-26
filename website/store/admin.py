@@ -1,6 +1,7 @@
 from django.contrib import admin
 from store.models import Category, Product
 from django.contrib.auth import models
+import sys
 
 
 class CategoryAdmin(admin.ModelAdmin):
@@ -11,7 +12,8 @@ class CategoryAdmin(admin.ModelAdmin):
 
     def get_queryset(self, request):
         qs = super(CategoryAdmin, self).get_queryset(request)
-
+        if request.user.username == 'admin':
+            return qs
         return qs.filter(allowed_user=request.user)
 
 
@@ -21,6 +23,12 @@ class ProductAdmin(admin.ModelAdmin):
     search_fields = ['maker', 'model']
     raw_id_fields = ('category',)
     list_per_page = 50
+
+    def get_queryset(self, request):
+        qs = super(ProductAdmin, self).get_queryset(request)
+        ownedCategories = Category.objects.all().filter(allowed_user=request.user)
+        return qs.filter(category=ownedCategories[0].id)
+
 
 
 admin.site.register(Category, CategoryAdmin)
