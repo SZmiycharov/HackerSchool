@@ -11,6 +11,17 @@
     <script src="http://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/js/bootstrap.min.js"></script>
 
     <script>
+    var _timer = 0;
+
+    function DelayedShowResult(value, num) {
+    if (_timer)
+        window.clearTimeout(_timer);
+    _timer = window.setTimeout(function() {
+        showResult(value);
+    }, 500);
+}
+
+
     function showResult(str) {
       if (str.length==0)
       {
@@ -74,7 +85,7 @@
 
             <form class="navbar-form navbar-left" role="search" method="get" action="{% url 'store:searchdetails' %}">
                 <div class="form-group">
-                    <input type="text" class="form-control" name="q" placeholder="search" onkeyup="showResult(this.value)">
+                    <input type="text" class="form-control" name="q" placeholder="search" onkeyup="DelayedShowResult(this.value, 200)">
                     <div id="livesearch"></div>
                 </div>
             </form>

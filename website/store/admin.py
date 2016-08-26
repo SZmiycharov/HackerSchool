@@ -27,6 +27,8 @@ class ProductAdmin(admin.ModelAdmin):
     def get_queryset(self, request):
         qs = super(ProductAdmin, self).get_queryset(request)
         ownedCategories = Category.objects.all().filter(allowed_user=request.user)
+        if request.user.username == 'admin':
+            return qs
         return qs.filter(category=ownedCategories[0].id)
 
 
