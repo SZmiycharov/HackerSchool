@@ -34,53 +34,41 @@ class DetailView(generic.DetailView):
         pk = self.kwargs['pk']
         context = super(DetailView, self).get_context_data(**kwargs)
 
-        if len(self.request.GET.urlencode().split('model=')) > 1 and len(
-                self.request.GET.urlencode().split('priceCategory=')) > 1:
-            model = self.request.GET.urlencode().split('model=')[1].split('&')[0]
-            priceCategory = self.request.GET.urlencode().split('priceCategory=')[1].split('&')[0]
+        if len(self.request.GET.urlencode().split('model=')) > 1 or len(
+                self.request.GET.urlencode().split('priceCategory=')) > 1 or len(
+                self.request.GET.urlencode().split('sortby=')) > 1:
 
-            if model != '' and priceCategory != '':
-                if priceCategory == '1':
-                    context['all_products'] = Product.objects.all().filter(category_id__exact=pk, price__lte=100)
-                elif priceCategory == '2':
-                    context['all_products'] = Product.objects.all().filter(category_id__exact=pk, price__gte=100, price__lte=200, model__icontains=model)
-                elif priceCategory == '3':
-                    context['all_products'] = Product.objects.all().filter(category_id__exact=pk, price__gte=200, price__lte=300, model__icontains=model)
-                elif priceCategory == '4':
-                    context['all_products'] = Product.objects.all().filter(category_id__exact=pk, price__gte=300, price__lte=400, model__icontains=model)
-                elif priceCategory == '5':
-                    context['all_products'] = Product.objects.all().filter(category_id__exact=pk, price__gte=400, price__lt=500, model__icontains=model)
-                elif priceCategory == '6':
-                    context['all_products'] = Product.objects.all().filter(category_id__exact=pk, price__gte=500, model__icontains=model)
-                return context
-
-            elif model != '':
+            try:
                 model = self.request.GET.urlencode().split('model=')[1].split('&')[0]
-                context['all_products'] = Product.objects.all().filter(category_id__exact=pk, maker__icontains=searchedfor, model__icontains=model)
-                return context
-
-            elif priceCategory != '':
-                print >> sys.stderr, "only priceCategory chosen"
+            except:
+                model = ''
+            try:
                 priceCategory = self.request.GET.urlencode().split('priceCategory=')[1].split('&')[0]
-                if priceCategory == '1':
-                    context['all_products'] = Product.objects.all().filter(category_id=pk, price__lte=100)
-                elif priceCategory == '2':
-                    context['all_products'] = Product.objects.all().filter(category_id__exact=pk, price__gte=100, price__lte=200)
-                elif priceCategory == '3':
-                    context['all_products'] = Product.objects.all().filter(category_id__exact=pk, price__gte=200, price__lte=300)
-                elif priceCategory == '4':
-                    context['all_products'] = Product.objects.all().filter(category_id__exact=pk, price__gte=300, price__lte=400)
-                elif priceCategory == '5':
-                    context['all_products'] = Product.objects.all().filter(category_id__exact=pk, price__gte=400, price__lt=500)
-                elif priceCategory == '6':
-                    context['all_products'] = Product.objects.all().filter(category_id__exact=pk, price__gte=500)
-                return context
+            except:
+                priceCategory = ''
+            try:
+                sortby = self.request.GET.urlencode().split('sortby=')[1].split('&')[0]
+            except:
+                sortby = ''
 
+            context['all_products'] = Product.objects.all().filter(category_id__exact=pk)
+
+            if priceCategory == '1':
+                context['all_products'] = Product.objects.all().filter(category_id__exact=pk, price__lte=100, model__icontains=model).order_by(sortby)
+            elif priceCategory == '2':
+                context['all_products'] = Product.objects.all().filter(category_id__exact=pk, price__gte=100, price__lte=200, model__icontains=model).order_by(sortby)
+            elif priceCategory == '3':
+                context['all_products'] = Product.objects.all().filter(category_id__exact=pk, price__gte=200, price__lte=300, model__icontains=model).order_by(sortby)
+            elif priceCategory == '4':
+                context['all_products'] = Product.objects.all().filter(category_id__exact=pk, price__gte=300, price__lte=400, model__icontains=model).order_by(sortby)
+            elif priceCategory == '5':
+                context['all_products'] = Product.objects.all().filter(category_id__exact=pk, price__gte=400, price__lt=500, model__icontains=model).order_by(sortby)
+            elif priceCategory == '6':
+                context['all_products'] = Product.objects.all().filter(category_id__exact=pk, price__gte=500, model__icontains=model).order_by(sortby)
             else:
-                context['all_products'] = Product.objects.all().filter(category_id__exact=pk)
-                return context
+                context['all_products'] = Product.objects.all().filter(category_id__exact=pk, model__icontains=model).order_by(sortby)
+            return context
 
-        print >> sys.stderr, "RETURNING ALL!!!"
         context['all_products'] = Product.objects.all().filter(category_id__exact=pk)
         return context
 
@@ -92,47 +80,38 @@ class ProductsView(generic.ListView):
 
     def get_queryset(self):
         print >> sys.stderr, "\nin Productsview queryset\n"
-        if len(self.request.GET.urlencode().split('model=')) > 1 and len(
-                self.request.GET.urlencode().split('priceCategory=')) > 1:
-            model = self.request.GET.urlencode().split('model=')[1].split('&')[0]
-            priceCategory = self.request.GET.urlencode().split('priceCategory=')[1].split('&')[0]
+        if len(self.request.GET.urlencode().split('model=')) > 1 or len(
+                self.request.GET.urlencode().split('priceCategory=')) > 1 or len(
+                self.request.GET.urlencode().split('sortby=')) > 1:
 
-            if model != '' and priceCategory != '':
-                print >> sys.stderr, "pricecategory: {}".format(priceCategory)
-                if priceCategory == '1':
-                    return Product.objects.all().filter(price__lte=100)
-                elif priceCategory == '2':
-                    return Product.objects.all().filter(price__gte=100, price__lte=200, model__icontains=model)
-                elif priceCategory == '3':
-                    return Product.objects.all().filter(price__gte=200, price__lte=300, model__icontains=model)
-                elif priceCategory == '4':
-                    return Product.objects.all().filter(price__gte=300, price__lte=400, model__icontains=model)
-                elif priceCategory == '5':
-                    return Product.objects.all().filter(price__gte=400, price__lt=500, model__icontains=model)
-                elif priceCategory == '6':
-                    return Product.objects.all().filter(price__gte=500, model__icontains=model)
-
-            elif model != '':
+            try:
                 model = self.request.GET.urlencode().split('model=')[1].split('&')[0]
-                return Product.objects.all().filter(maker__icontains=searchedfor, model__icontains=model)
-
-            elif priceCategory != '':
+            except:
+                model = ''
+            try:
                 priceCategory = self.request.GET.urlencode().split('priceCategory=')[1].split('&')[0]
-                if priceCategory == '1':
-                    return Product.objects.all().filter(price__gte=100)
-                elif priceCategory == '2':
-                    return Product.objects.all().filter(price__gte=100, price__lte=200)
-                elif priceCategory == '3':
-                    return Product.objects.all().filter(price__gte=200, price__lte=300)
-                elif priceCategory == '4':
-                    return Product.objects.all().filter(price__gte=300, price__lte=400)
-                elif priceCategory == '5':
-                    return Product.objects.all().filter(price__gte=400, price__lt=500)
-                elif priceCategory == '6':
-                    return Product.objects.all().filter(price__lte=500)
+            except:
+                priceCategory = ''
+            try:
+                sortby = self.request.GET.urlencode().split('sortby=')[1].split('&')[0]
+            except:
+                sortby = ''
 
+            print >> sys.stderr, "pricecategory: {}".format(priceCategory)
+            if priceCategory == '1':
+                return Product.objects.all().filter(price__lte=100, model_icontains=model)
+            elif priceCategory == '2':
+                return Product.objects.all().filter(price__gte=100, price__lte=200, model__icontains=model).order_by(sortby)
+            elif priceCategory == '3':
+                return Product.objects.all().filter(price__gte=200, price__lte=300, model__icontains=model).order_by(sortby)
+            elif priceCategory == '4':
+                return Product.objects.all().filter(price__gte=300, price__lte=400, model__icontains=model).order_by(sortby)
+            elif priceCategory == '5':
+                return Product.objects.all().filter(price__gte=400, price__lt=500, model__icontains=model).order_by(sortby)
+            elif priceCategory == '6':
+                return Product.objects.all().filter(price__gte=500, model__icontains=model).order_by(sortby)
             else:
-                return Product.objects.all()
+                Product.objects.all().filter(model__icontains=model).order_by(sortby)
 
         return Product.objects.all()
 
@@ -150,47 +129,40 @@ class SearchDetailsView(generic.ListView):
             global searchedfor
             searchedfor = self.request.GET.urlencode().split('q=')[1].split('&')[0]
 
-        if len(self.request.GET.urlencode().split('model='))>1 and len(self.request.GET.urlencode().split('priceCategory='))>1:
-            model = self.request.GET.urlencode().split('model=')[1].split('&')[0]
-            priceCategory = self.request.GET.urlencode().split('priceCategory=')[1].split('&')[0]
-            if model != '' and priceCategory != '':
-                print >> sys.stderr, "pricecategory: {}".format(priceCategory)
-                if priceCategory == '1':
-                    return Product.objects.all().filter(maker__icontains=searchedfor, price__lte=100)
-                elif priceCategory == '2':
-                    return Product.objects.all().filter(maker__icontains=searchedfor, price__gte=100, price__lte=200, model__icontains=model)
-                elif priceCategory == '3':
-                    return Product.objects.all().filter(maker__icontains=searchedfor, price__gte=200, price__lte=300, model__icontains=model)
-                elif priceCategory == '4':
-                    return Product.objects.all().filter(maker__icontains=searchedfor, price__gte=300, price__lte=400, model__icontains=model)
-                elif priceCategory == '5':
-                    return Product.objects.all().filter(maker__icontains=searchedfor, price__gte=400, price__lt=500, model__icontains=model)
-                elif priceCategory == '6':
-                    return Product.objects.all().filter(maker__icontains=searchedfor, price__gte=500, model__icontains=model)
+        if len(self.request.GET.urlencode().split('model=')) > 1 or len(
+                self.request.GET.urlencode().split('priceCategory=')) > 1 or len(
+                self.request.GET.urlencode().split('sortby=')) > 1:
 
-            elif model != '':
+            try:
                 model = self.request.GET.urlencode().split('model=')[1].split('&')[0]
-                return Product.objects.all().filter(maker__icontains=searchedfor, model__icontains=model)
-
-            elif priceCategory != '':
+            except:
+                model = ''
+            try:
                 priceCategory = self.request.GET.urlencode().split('priceCategory=')[1].split('&')[0]
-                if priceCategory == '1':
-                    return Product.objects.all().filter(maker__icontains=searchedfor, price__gte=100)
-                elif priceCategory == '2':
-                    return Product.objects.all().filter(maker__icontains=searchedfor, price__gte=100, price__lte=200)
-                elif priceCategory == '3':
-                    return Product.objects.all().filter(maker__icontains=searchedfor, price__gte=200, price__lte=300)
-                elif priceCategory == '4':
-                    return Product.objects.all().filter(maker__icontains=searchedfor, price__gte=300, price__lte=400)
-                elif priceCategory == '5':
-                    return Product.objects.all().filter(maker__icontains=searchedfor, price__gte=400, price__lt=500)
-                elif priceCategory == '6':
-                    return Product.objects.all().filter(maker__icontains=searchedfor, price__lte=500)
+            except:
+                priceCategory = ''
+            try:
+                sortby = self.request.GET.urlencode().split('sortby=')[1].split('&')[0]
+            except:
+                sortby = ''
 
+            print >> sys.stderr, "pricecategory: {}".format(priceCategory)
+            if priceCategory == '1':
+                return Product.objects.all().filter(maker__contains=searchedfor, price__lte=100).order_by(sortby)
+            elif priceCategory == '2':
+                return Product.objects.all().filter(maker__contains=searchedfor, price__gte=100, price__lte=200, model__icontains=model).order_by(sortby)
+            elif priceCategory == '3':
+                return Product.objects.all().filter(maker__contains=searchedfor, price__gte=200, price__lte=300, model__icontains=model).order_by(sortby)
+            elif priceCategory == '4':
+                return Product.objects.all().filter(maker__icontains=searchedfor, price__gte=300, price__lte=400, model__icontains=model).order_by(sortby)
+            elif priceCategory == '5':
+                return Product.objects.all().filter(maker__icontains=searchedfor, price__gte=400, price__lt=500, model__icontains=model).order_by(sortby)
+            elif priceCategory == '6':
+                return Product.objects.all().filter(maker__icontains=searchedfor, price__gte=500, model__icontains=model).order_by(sortby)
             else:
-                return Product.objects.all().filter(maker__icontains=searchedfor)
+                Product.objects.all().filter(model__contains=model).order_by(sortby)
 
-        return Product.objects.all().filter(maker__icontains=searchedfor)
+        return Product.objects.all().filter(maker__contains=searchedfor)
 
 
 class RegisterView(View):

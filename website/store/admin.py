@@ -1,5 +1,6 @@
 from django.contrib import admin
 from store.models import Category, Product
+from django.contrib.auth import models
 
 
 class CategoryAdmin(admin.ModelAdmin):

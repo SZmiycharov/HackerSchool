@@ -27,7 +27,7 @@
                     </div>
 
                     <div class="row" style="min-height:63px;">
-                        <div class="form-group col-md-1">
+                        <div id="priceCategory" class="form-group col-md-1">
                             <label>Цена</label>
                                 <select class="input-sm form-control select2-trigger" id="price" name="priceCategory"><option value="">Избери</option>
                                     <option value="1"><100</option>
@@ -39,9 +39,23 @@
                                 </select>
                         </div>
                     </div>
+
+                    <div class="row" style="min-height:63px;">
+                        <div id="sortby" class="form-group col-md-1">
+                            <label>Сортирай по</label>
+                                <select class="input-sm form-control select2-trigger">
+                                    <option value="" disabled selected>Избери</option>
+                                    <option value="price">Цена (възходящо)</option>
+                                    <option value="-price">Цена (низходящо)</option>
+                                    <option value="maker">Производител</option>
+                                    <option value="model">Модел</option>
+                                </select>
+                        </div>
+                    </div>
+
                 </div>
-                <button type="submit">Търси</button>
-            </form>
+                <button class="SrcBtn" type="submit">Търси</button>
+    </form>
 
     {% for product in all_products %}
         <form method="get" action="">
