@@ -7,11 +7,11 @@ class CategoryAdmin(admin.ModelAdmin):
     list_display = ('name', 'created', 'modified')
     search_fields = ['name']
     list_per_page = 50
+    filter_horizontal = ('allowed_user',)
 
     def get_queryset(self, request):
         qs = super(CategoryAdmin, self).get_queryset(request)
-        if request.user.is_superuser:
-            return qs
+
         return qs.filter(allowed_user=request.user)
 
 
