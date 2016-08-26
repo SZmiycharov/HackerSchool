@@ -54,19 +54,40 @@ class DetailView(generic.DetailView):
             context['all_products'] = Product.objects.all().filter(category_id__exact=pk)
 
             if priceCategory == '1':
-                context['all_products'] = Product.objects.all().filter(category_id__exact=pk, price__lte=100, model__icontains=model).order_by(sortby)
+                if sortby != '':
+                    context['all_products'] = Product.objects.all().filter(category_id__exact=pk, price__lte=100, model__icontains=model).order_by(sortby)
+                else:
+                    context['all_products'] = Product.objects.all().filter(category_id__exact=pk, price__lte=100, model__icontains=model)
             elif priceCategory == '2':
-                context['all_products'] = Product.objects.all().filter(category_id__exact=pk, price__gte=100, price__lte=200, model__icontains=model).order_by(sortby)
+                if sortby != '':
+                    context['all_products'] = Product.objects.all().filter(category_id__exact=pk, price__gte=100, price__lte=200, model__icontains=model).order_by(sortby)
+                else:
+                    context['all_products'] = Product.objects.all().filter(category_id__exact=pk, price__gte=100, price__lte=200, model__icontains=model)
             elif priceCategory == '3':
-                context['all_products'] = Product.objects.all().filter(category_id__exact=pk, price__gte=200, price__lte=300, model__icontains=model).order_by(sortby)
+                if sortby != '':
+                    context['all_products'] = Product.objects.all().filter(category_id__exact=pk, price__gte=200, price__lte=300, model__icontains=model).order_by(sortby)
+                else:
+                    context['all_products'] = Product.objects.all().filter(category_id__exact=pk, price__gte=200, price__lte=300, model__icontains=model)
             elif priceCategory == '4':
-                context['all_products'] = Product.objects.all().filter(category_id__exact=pk, price__gte=300, price__lte=400, model__icontains=model).order_by(sortby)
+                if sortby != '':
+                    context['all_products'] = Product.objects.all().filter(category_id__exact=pk, price__gte=300, price__lte=400, model__icontains=model).order_by(sortby)
+                else:
+                    context['all_products'] = Product.objects.all().filter(category_id__exact=pk, price__gte=300, price__lte=400, model__icontains=model)
             elif priceCategory == '5':
-                context['all_products'] = Product.objects.all().filter(category_id__exact=pk, price__gte=400, price__lt=500, model__icontains=model).order_by(sortby)
+                if sortby != '':
+                    context['all_products'] = Product.objects.all().filter(category_id__exact=pk, price__gte=400, price__lt=500, model__icontains=model).order_by(sortby)
+                else:
+                    context['all_products'] = Product.objects.all().filter(category_id__exact=pk, price__gte=400, price__lt=500, model__icontains=model)
             elif priceCategory == '6':
-                context['all_products'] = Product.objects.all().filter(category_id__exact=pk, price__gte=500, model__icontains=model).order_by(sortby)
+                if sortby != '':
+                    context['all_products'] = Product.objects.all().filter(category_id__exact=pk, price__gte=500, model__icontains=model).order_by(sortby)
+                else:
+                    context['all_products'] = Product.objects.all().filter(category_id__exact=pk, price__gte=500, model__icontains=model)
             else:
-                context['all_products'] = Product.objects.all().filter(category_id__exact=pk, model__icontains=model).order_by(sortby)
+                if sortby != '':
+                    context['all_products'] = Product.objects.all().filter(category_id__exact=pk, model__icontains=model).order_by(sortby)
+                else:
+                    context['all_products'] = Product.objects.all().filter(category_id__exact=pk, model__icontains=model)
             return context
 
         context['all_products'] = Product.objects.all().filter(category_id__exact=pk)
@@ -99,19 +120,51 @@ class ProductsView(generic.ListView):
 
             print >> sys.stderr, "pricecategory: {}".format(priceCategory)
             if priceCategory == '1':
-                return Product.objects.all().filter(price__lte=100, model_icontains=model)
+                if sortby != '':
+                    return Product.objects.all().filter(price__lte=100, model_icontains=model).order_by(sortby)
+                else:
+                    return Product.objects.all().filter(price__lte=100, model_icontains=model)
             elif priceCategory == '2':
-                return Product.objects.all().filter(price__gte=100, price__lte=200, model__icontains=model).order_by(sortby)
+                if sortby != '':
+                    return Product.objects.all().filter(price__gte=100, price__lte=200,
+                                                        model__icontains=model).order_by(sortby)
+                else:
+                    return Product.objects.all().filter(price__gte=100, price__lte=200,
+                                                        model__icontains=model)
+
             elif priceCategory == '3':
-                return Product.objects.all().filter(price__gte=200, price__lte=300, model__icontains=model).order_by(sortby)
+                if sortby != '':
+                    return Product.objects.all().filter(price__gte=200, price__lte=300,
+                                                        model__icontains=model).order_by(sortby)
+                else:
+                    return Product.objects.all().filter(price__gte=200, price__lte=300,
+                                                        model__icontains=model)
+
             elif priceCategory == '4':
-                return Product.objects.all().filter(price__gte=300, price__lte=400, model__icontains=model).order_by(sortby)
+                if sortby != '':
+                    return Product.objects.all().filter(price__gte=300, price__lte=400,
+                                                        model__icontains=model).order_by(sortby)
+                else:
+                    return Product.objects.all().filter(price__gte=300, price__lte=400,
+                                                        model__icontains=model).order_by
             elif priceCategory == '5':
-                return Product.objects.all().filter(price__gte=400, price__lt=500, model__icontains=model).order_by(sortby)
+                if sortby != '':
+                    return Product.objects.all().filter(price__gte=400, price__lt=500, model__icontains=model).order_by(
+                        sortby)
+                else:
+                    return Product.objects.all().filter(price__gte=400, price__lt=500, model__icontains=model)
+
             elif priceCategory == '6':
-                return Product.objects.all().filter(price__gte=500, model__icontains=model).order_by(sortby)
+                if sortby != '':
+                    return Product.objects.all().filter(price__gte=500, model__icontains=model).order_by(sortby)
+                else:
+                    return Product.objects.all().filter(price__gte=500, model__icontains=model)
+
             else:
-                Product.objects.all().filter(model__icontains=model).order_by(sortby)
+                if sortby != '':
+                    return Product.objects.all().filter(model__icontains=model).order_by(sortby)
+                else:
+                    return Product.objects.all().filter(model__icontains=model)
 
         return Product.objects.all()
 
@@ -148,19 +201,57 @@ class SearchDetailsView(generic.ListView):
 
             print >> sys.stderr, "pricecategory: {}".format(priceCategory)
             if priceCategory == '1':
-                return Product.objects.all().filter(maker__contains=searchedfor, price__lte=100).order_by(sortby)
+                if sortby != '':
+                    return Product.objects.all().filter(maker__contains=searchedfor, price__lte=100).order_by(sortby)
+                else:
+                    return Product.objects.all().filter(maker__contains=searchedfor, price__lte=100)
+
             elif priceCategory == '2':
-                return Product.objects.all().filter(maker__contains=searchedfor, price__gte=100, price__lte=200, model__icontains=model).order_by(sortby)
+                if sortby != '':
+                    return Product.objects.all().filter(maker__contains=searchedfor, price__gte=100, price__lte=200,
+                                                        model__icontains=model).order_by(sortby)
+                else:
+                    return Product.objects.all().filter(maker__contains=searchedfor, price__gte=100, price__lte=200,
+                                                        model__icontains=model)
+
             elif priceCategory == '3':
-                return Product.objects.all().filter(maker__contains=searchedfor, price__gte=200, price__lte=300, model__icontains=model).order_by(sortby)
+                if sortby != '':
+                    return Product.objects.all().filter(maker__contains=searchedfor, price__gte=200, price__lte=300,
+                                                        model__icontains=model).order_by(sortby)
+                else:
+                    return Product.objects.all().filter(maker__contains=searchedfor, price__gte=200, price__lte=300,
+                                                        model__icontains=model)
+
             elif priceCategory == '4':
-                return Product.objects.all().filter(maker__icontains=searchedfor, price__gte=300, price__lte=400, model__icontains=model).order_by(sortby)
+                if sortby != '':
+                    return Product.objects.all().filter(maker__icontains=searchedfor, price__gte=300, price__lte=400,
+                                                        model__icontains=model).order_by(sortby)
+                else:
+                    return Product.objects.all().filter(maker__icontains=searchedfor, price__gte=300, price__lte=400,
+                                                        model__icontains=model)
+
             elif priceCategory == '5':
-                return Product.objects.all().filter(maker__icontains=searchedfor, price__gte=400, price__lt=500, model__icontains=model).order_by(sortby)
+                if sortby != '':
+                    return Product.objects.all().filter(maker__icontains=searchedfor, price__gte=400, price__lt=500,
+                                                        model__icontains=model).order_by(sortby)
+                else:
+                    return Product.objects.all().filter(maker__icontains=searchedfor, price__gte=400, price__lt=500,
+                                                        model__icontains=model)
+
             elif priceCategory == '6':
-                return Product.objects.all().filter(maker__icontains=searchedfor, price__gte=500, model__icontains=model).order_by(sortby)
+                if sortby != '':
+                    return Product.objects.all().filter(maker__icontains=searchedfor, price__gte=500,
+                                                        model__icontains=model).order_by(sortby)
+                else:
+                    return Product.objects.all().filter(maker__icontains=searchedfor, price__gte=500,
+                                                        model__icontains=model)
+
             else:
-                Product.objects.all().filter(model__contains=model).order_by(sortby)
+                if sortby != '':
+                    Product.objects.all().filter(model__contains=model).order_by(sortby)
+                else:
+                    Product.objects.all().filter(model__contains=model)
+
 
         return Product.objects.all().filter(maker__contains=searchedfor)
 
