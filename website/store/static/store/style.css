@@ -9,6 +9,7 @@ body{
 .navbar-brand{
     font-family: 'Fjalla One', sans-serif !important;
     font-size: 165% !important;
+    padding-top: 15px;
 }
 
 .img:hover{
@@ -48,4 +49,15 @@ body{
 
 .btn{
     vertical-align: top !important;
+}
+
+#livesearch{
+    position:absolute;
+    z-index:10;
+    width: 202px;
+    background-color: aliceblue;
+}
+
+a{
+    color: #337ab7;
 }
