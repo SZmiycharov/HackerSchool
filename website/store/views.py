@@ -3,9 +3,7 @@ from .models import Category, Product
 from django.shortcuts import render, redirect
 from django.contrib.auth import authenticate, login, logout
 from django.views.generic import View
-from django.contrib.auth.forms import AuthenticationForm
 import sys
-from registration.forms import RegistrationFormUniqueEmail
 from .forms import RegisterForm, LoginForm
 
 
@@ -273,7 +271,6 @@ class RegisterView(View):
             user.set_password(password)
             user.save()
 
-            #returns User objects if credentials are correct
             user = authenticate(username=username, password=password)
 
             if user is not None:
@@ -283,6 +280,8 @@ class RegisterView(View):
                     return redirect('store:index')
 
         return render(request, self.template_name, {'form': form})
+
+
 
 
 class LoginView(View):
@@ -323,6 +322,8 @@ class LogoutView(View):
     def get(self, request):
         logout(request)
         return render(request, self.template_name)
+
+
 
 
 

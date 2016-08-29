@@ -28,10 +28,6 @@ body{
     margin-bottom: 0px !important;
 }
 
-.forDescription{
-    height: 5% !important;
-    width: 10% !important;
-}
 
 .allProdImg{
     height: 5% !important;
@@ -62,20 +58,10 @@ a{
     color: #337ab7;
 }
 
-#sortby{
-    top:-90px;
-    left:320px;
-}
 
 #priceCategory{
     top:0px;
     left:-23px;
-}
-
-.SrcBtn{
-    position:relative;
-    top:-132px;
-    left:490px;
 }
 
 #formProducts{

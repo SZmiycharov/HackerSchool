@@ -1,6 +1,49 @@
 {% extends 'store/base.html' %}
 {% block title %}Category details{% endblock %}
 
+
+
+{% block javascript %}
+    <script src="jquery-1.12.4.min.js"></script>
+    <script>
+
+    function updateQueryStringParameter(uri, key, value) {
+      var re = new RegExp("([?&])" + key + "=.*?(&|$)", "i");
+      var separator = uri.indexOf('?') !== -1 ? "&" : "?";
+      if (uri.match(re)) {
+        return uri.replace(re, '$1' + key + "=" + value + '$2');
+      }
+      else {
+        return uri + separator + key + "=" + value;
+      }
+    }
+
+    $(function(){
+      $('#selectPriceCategory').on('change', function () {
+          var pricecat = $(this).val();
+          console.log(pricecat)
+          if (pricecat) {
+              window.location = updateQueryStringParameter(window.location.href, 'priceCategory', pricecat);
+          }
+          return false;
+      });
+    });
+
+    $(function(){
+      $('#selectSortBy').on('change', function () {
+          var sortby = $(this).val();
+          console.log(sortby)
+          if (sortby) {
+              window.location = updateQueryStringParameter(window.location.href, 'sortby', sortby);
+          }
+          return false;
+      });
+    });
+</script>
+{% endblock %}
+
+
+
 {% block style %}
     <style>
         label{
@@ -29,7 +72,7 @@
             <div class="row" style="min-height:63px;">
                 <div id="priceCategory" class="form-group col-md-1">
                     <label>Цена</label>
-                        <select name="priceCategory" class="input-sm form-control select2-trigger" >
+                        <select id="selectPriceCategory" name="priceCategory" class="input-sm form-control select2-trigger" >
                             <option value="" disabled selected>Избери</option>
                             <option value="1"><100</option>
                             <option value="2">100-200</option>
@@ -39,12 +82,10 @@
                             <option value="6">500+</option>
                         </select>
                 </div>
-            </div>
 
-            <div class="row" style="min-height:63px;">
                 <div id="sortby" class="form-group col-md-1">
                     <label>Сортирай по</label>
-                        <select name="sortby" class="input-sm form-control select2-trigger">
+                        <select id="selectSortBy" name="sortby" class="input-sm form-control select2-trigger">
                             <option value="" disabled selected>Избери</option>
                             <option value="price">Цена (възходящо)</option>
                             <option value="-price">Цена (низходящо)</option>
@@ -53,7 +94,6 @@
                         </select>
                 </div>
             </div>
-
         </div>
         <button class="SrcBtn" style="margin-left: 25px;" type="submit">Търси</button>
     </form>
@@ -64,13 +104,13 @@
         {% for product in all_products %}
             <form method="get" action="">
                 <h4 class="productDescription">{{ product.maker }} {{ product.model }} - <i style="color:red">{{ product.price }}</i></h4>
-                <input type="image" class="forDescription" src="{{ product.product_logo.url }}" title="{{ product.maker }} {{ product.model }}" width="160" height="90">
+                <input type="image" class="forDescription" src="{{ product.product_logo.url }}" title="{{ product.maker }} {{ product.model }}" width="180" height="100">
             </form>
             <form action="https://www.paypal.com/cgi-bin/webscr" method="post">
                 <input type="hidden" name="cmd" value="_xclick">
                 <input type="hidden" name="business" value="s.zmiycharov@gmail.com">
-                <input type="hidden" name="item_name" value="Item Name">
-                <input type="hidden" name="currency_code" value="USD">
+                <input type="hidden" name="item_name" value="{{ product.maker }} {{ product.model }}">
+                <input type="hidden" name="currency_code" value="{{ product.currency }}">
                 <input type="hidden" name="amount" value="{{ product.price|floatformat:2 }}">
                 <input type="image" src="https://www.paypalobjects.com/en_US/i/btn/btn_buynow_LG.gif" name="submit" alt="Make payments with PayPal - it's fast, free and secure!">
             </form>

@@ -47,6 +47,9 @@ class Product(models.Model):
     modified = models.DateTimeField(editable=False, default=timezone.now())
     quantity = models.IntegerField(default=1)
 
+    def currency(self):
+        return str(self.price).split(' ')[1]
+
     def __str__(self):
         return self.maker + ' ' + self.model
 
