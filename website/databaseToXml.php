@@ -19,27 +19,36 @@ if ($_SERVER['REQUEST_METHOD'] == 'OPTIONS') {
 $q=$_GET["q"];
 
 $db = new SQLite3('/home/slavi/Desktop/HackerSchool/website/db.sqlite3');
-$results = $db->query("SELECT DISTINCT model FROM (
-						SELECT model,  1 as ordering FROM store_product WHERE model LIKE '{$q}%'
-						UNION 
-						SELECT model, 2 as ordering FROM store_product WHERE model LIKE '%{$q}%')
-						ORDER BY ordering
-						LIMIT 5");
+$stmt = $db->prepare("SELECT DISTINCT maker FROM (
+            SELECT maker, 1 as ordering FROM store_product WHERE maker LIKE ?
+            UNION 
+            SELECT maker, 2 as ordering FROM store_product WHERE maker LIKE ?)
+            ORDER BY ordering
+            LIMIT 5");
+
+$stmt->bindValue(1, "{$q}%");
+$stmt->bindValue(2, "%{$q}%");
+
+
+$results = $stmt->execute();
+
+$hint = '';
+
 
 while ($row = $results->fetchArray()) {
-	if ($hint=="")
-	{
-		  $hint="<a href='" .
-          "http://svzmobile.com'" .
-          "' target='_blank'>" .
-          $row['model'] . "</a>";
-	}
-	else 
-	{
+  if ($hint=="")
+  {
+      $hint="<a href='" .
+          "http://localhost:8000/store/searchdetails?q=" . $row['maker'] .
+          "' target=''>" .
+          $row['maker'] . "</a>";
+  }
+  else 
+  {
           $hint=$hint . "<br /><a href='" .
-          "http://svzmobile.com'" .
-          "' target='_blank'>" .
-          $row['model'] . "</a>";
+          "http://localhost:8000/store/searchdetails?q=" . $row['maker'] .
+          "' target=''>" .
+          $row['maker'] . "</a>";
     }  
 }
 

@@ -1,18 +1,13 @@
 from django.views import generic
 from .models import Category, Product
 from django.shortcuts import render, redirect
-from django.contrib.auth import authenticate, login, REDIRECT_FIELD_NAME, login, logout
-from django.views.generic import View, FormView, RedirectView
-from .forms import RegisterForm, LoginForm
+from django.contrib.auth import authenticate, login, logout
+from django.views.generic import View
 from django.contrib.auth.forms import AuthenticationForm
-from django.views.decorators.csrf import csrf_protect
-from django.views.decorators.debug import sensitive_post_parameters
-from django.utils.decorators import method_decorator
-from django.views.decorators.cache import never_cache
-from django.utils.http import is_safe_url
-import pdb
 import sys
 from registration.forms import RegistrationFormUniqueEmail
+from .forms import RegisterForm, LoginForm
+
 
 searchedfor = ''
 
@@ -257,7 +252,7 @@ class SearchDetailsView(generic.ListView):
 
 
 class RegisterView(View):
-    form_class = RegistrationFormUniqueEmail
+    form_class = RegisterForm
     template_name = 'store/register.html'
 
     def get(self, request):
@@ -291,7 +286,7 @@ class RegisterView(View):
 
 
 class LoginView(View):
-    form_class = AuthenticationForm
+    form_class = LoginForm
     template_name = 'store/login.html'
 
     # display blank form

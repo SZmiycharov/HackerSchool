@@ -31,6 +31,7 @@ ALLOWED_HOSTS = []
 # Application definition
 
 INSTALLED_APPS = [
+    'captcha',
     'autofixture',
     'store.apps.StoreConfig',
     'django.contrib.admin',
@@ -164,4 +165,21 @@ TEMPLATE_LOADERS = (
         'django.template.loaders.app_directories.Loader',
     )),
 )
+
+RECAPTCHA_PUBLIC_KEY = '6LecvigTAAAAAMY0hdChnbwP4RK9lZ2qagcBg8G8'
+RECAPTCHA_PRIVATE_KEY = '6LecvigTAAAAAPzZgw1PQU9i5-uS6RXLpIC1DbPr'
+NOCAPTCHA = True
+RECAPTCHA_USE_SSL = True
+
+
+
+
+
+
+
+
+
+
+
+
 

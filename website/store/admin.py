@@ -18,8 +18,8 @@ class CategoryAdmin(admin.ModelAdmin):
 
 
 class ProductAdmin(admin.ModelAdmin):
-    list_display = ('maker', 'model', 'price', 'created', 'modified')
-    fields = ('maker', 'model', 'description', 'price', 'category', 'product_logo')
+    list_display = ('maker', 'model', 'price', 'created', 'modified', 'quantity')
+    fields = ('maker', 'model', 'description', 'price', 'category', 'product_logo', 'quantity')
     search_fields = ['maker', 'model']
     raw_id_fields = ('category',)
     list_per_page = 50
