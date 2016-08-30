@@ -6,6 +6,7 @@ import uuid
 from django.contrib.auth.models import User
 from imagekit.models import ImageSpecField
 
+
 def f():
     d = uuid.uuid4()
     str = d.hex
@@ -65,3 +66,6 @@ class Product(models.Model):
 
     class Meta:
         unique_together = ('maker', 'model',)
+
+
+

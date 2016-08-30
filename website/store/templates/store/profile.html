@@ -30,7 +30,7 @@
             font-size: 50px;
             font-weight: 300;
             line-height: 32px;
-            margin: 0 0 72px;
+            margin: 35px 0 72px;
             text-align: center;
         }
 
@@ -42,12 +42,19 @@
 {% endblock %}
 
 {% block body %}
-    <h1>User profile:</h1>
+    {% if profilefields %}
+        <h1>User profile:</h1>
 
-    <form action="{% url 'store:updateprofile' %}" method="get">
-      <h2>{{ profilefields.0 }}</h2>
-    <h3>{{ profilefields.1 }}</h3>
-      <button id="submBtn" type="submit">Change field?</button><br>
-    </form>
+        <form action="{% url 'store:updateprofile' %}" method="get">
+          <h2>{{ profilefields.0 }}</h2>
+        <h3>{{ profilefields.1 }}</h3>
+          <button id="submBtn" type="submit">Change field?</button><br>
+        </form>
+    {% else %}
+        <h1>You are not logged in!</h1>
+        <form action="{% url 'store:login' %}" method="get">
+          <button id="submBtn" type="submit">Login?</button><br>
+        </form>
+    {% endif %}
 
 {% endblock %}

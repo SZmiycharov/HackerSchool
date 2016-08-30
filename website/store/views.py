@@ -4,7 +4,8 @@ from django.shortcuts import render, redirect
 from django.contrib.auth import authenticate, login, logout
 from django.views.generic import View
 import sys
-from .forms import RegisterForm, LoginForm, UpdateProfile
+from .forms import RegisterForm, LoginForm, UpdateProfileForm
+from django.contrib.auth.models import User
 
 
 searchedfor = ''
@@ -266,7 +267,6 @@ class RegisterView(View):
 
             username = form.cleaned_data['username']
             password = form.clean_password2()
-            print >> sys.stderr, password
             user.set_password(password)
             user.save()
 
@@ -296,12 +296,9 @@ class LoginView(View):
         print >> sys.stderr, "\nPOST FUNCTION LOGIN\n"
         form = self.form_class(data=request.POST)
 
-        print >> sys.stderr, form.is_valid()
         if form.is_valid():
-            print >> sys.stderr, "\nform is valid\n"
             username = form.cleaned_data['username']
             password = form.cleaned_data['password']
-            print >> sys.stderr, password
 
             user = authenticate(username=username, password=password)
 
@@ -326,23 +323,28 @@ class ProfileView(generic.ListView):
     context_object_name = 'profilefields'
 
     def get_queryset(self):
-        result = [self.request.user.username, self.request.user.email]
-
-        return result
+        if str(self.request.user) != 'AnonymousUser':
+            print >> sys.stderr, self.request.user
+            result = [self.request.user.username, self.request.user.email]
+            return result
+        else:
+            return []
 
 
 class UpdateProfileView(View):
-    form_class = UpdateProfile
+    form_class = UpdateProfileForm
     template_name = 'store/updateprofile.html'
 
     def get(self, request):
-        print >> sys.stderr, "\nGET FUNCTION UpdateProfile\n"
-        form = self.form_class(user=request.user)
+        print >> sys.stderr, "\nGET FUNCTION updateprofile\n"
+        form = self.form_class(None, initial={'username': request.user.username,
+                                              'email': request.user.email,
+                                              })
         return render(request, self.template_name, {'form': form})
 
     def post(self, request):
-        print >> sys.stderr, "\nPOST FUNCTION UpdateProfile\n"
-        form = self.form_class(request.POST, instance=request.user, user=request.user)
+        print >> sys.stderr, "\nPOST FUNCTION updateprofile\n"
+        form = self.form_class(request.POST, instance=request.user)
 
         if form.is_valid():
             user = form.save(commit=False)
@@ -350,9 +352,15 @@ class UpdateProfileView(View):
             username = form.cleaned_data['username']
             password = form.clean_password2()
             user.set_password(password)
-            user.save()
-
-            user = authenticate(username=username, password=password)
+            for curruser in User.objects.all():
+                if curruser.email == user.email:
+                    user.save()
+                    user = authenticate(username=username, password=password)
+                elif user.email == form.cleaned_data['email']:
+                    user.save()
+                    user = authenticate(username=username, password=password)
+                else:
+                    return render(request, self.template_name, {'form': form})
 
             if user is not None:
 

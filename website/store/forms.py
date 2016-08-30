@@ -1,15 +1,27 @@
 from django.contrib.auth.models import User
 from django import forms
 from captcha.fields import ReCaptchaField
-from registration.forms import RegistrationFormUniqueEmail
+from registration.forms import RegistrationFormUniqueEmail, RegistrationForm
 from django.contrib.auth.forms import AuthenticationForm
 import sys
+from django.views.generic.edit import UpdateView
 
 
 class RegisterForm(RegistrationFormUniqueEmail):
     email = forms.EmailField()
-    photo = forms.FileField()
     captcha = ReCaptchaField(label='')
+
+
+class UpdateProfileForm(RegistrationForm):
+    email = forms.EmailField()
+    password1 = forms.CharField(widget=forms.PasswordInput(), label="New password")
+    password2 = forms.CharField(widget=forms.PasswordInput(), label="Confirm new password")
+    captcha = ReCaptchaField(label='')
+
+    class Meta:
+        model = User
+        exclude = ('last_login', 'is_superuser', 'groups',
+                   'user_permissions', 'is_staff', 'is_active', 'date_joined', 'password', 'first_name', 'last_name')
 
 
 class LoginForm(AuthenticationForm):
@@ -20,37 +32,3 @@ class LoginForm(AuthenticationForm):
         model = User
         fields = ['username', 'password']
 
-
-class UpdateProfile(forms.ModelForm):
-    user = ''
-    username = ''
-    email = ''
-
-    def __init__(self, *args, **kwargs):
-        self.user = kwargs.pop('user', None)
-        self.username = forms.CharField(required=False, initial=self.user.username)
-        self.email = forms.EmailField(required=False, initial=self.user.email)
-        print >> sys.stderr, self.user.username
-        super(UpdateProfile, self).__init__(*args, **kwargs)
-
-
-    class Meta:
-        model = User
-        fields = ('username', 'email', 'first_name', 'last_name')
-
-    def clean_email(self):
-        username = self.cleaned_data.get('username')
-        email = self.cleaned_data.get('email')
-
-        if email and User.objects.filter(email=email).exclude(username=username).count():
-            raise forms.ValidationError('This email address is already in use. Please supply a different email address.')
-        return email
-
-    def save(self, commit=True):
-        user = super(RegisterForm, self).save(commit=False)
-        user.email = self.cleaned_data['email']
-
-        if commit:
-            user.save()
-
-        return user

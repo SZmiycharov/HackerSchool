@@ -1,5 +1,6 @@
 {% extends 'store/base.html' %}
 {% block title %}Update profile{% endblock %}
+{% block register_active %}active{% endblock %}
 
 {% block body %}
 <div class="container-fluid">
@@ -17,7 +18,7 @@
                         {% include 'store/form_template.html' %}
                         <div class="form-group">
                             <div class="col-sm-offset-2 col-sm-10">
-                                <button type="submit" class="btn btn-success">Submit</button>
+                                <button type="submit" class="btn btn-success">Update</button>
                             </div>
                         </div>
                     </form>

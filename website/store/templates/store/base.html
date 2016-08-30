@@ -53,7 +53,7 @@
             <ul class="nav navbar-nav navbar-right">
                 {% if user.is_authenticated %}
                     <li class="">
-                    <a href="#">
+                    <a href="{% url 'store:profile' %}">
                         <span class="glyphicon glyphicon-user" aria-hidden="true"></span>&nbsp;Profile
                     </a>
                 </li>
