@@ -139,7 +139,7 @@ class ProductsView(generic.ListView):
                                                         model__icontains=model).order_by(sortby)
                 else:
                     return Product.objects.all().filter(price__gte=300, price__lte=400,
-                                                        model__icontains=model).order_by
+                                                        model__icontains=model)
             elif priceCategory == '5':
                 if sortby != '':
                     return Product.objects.all().filter(price__gte=400, price__lt=500, model__icontains=model).order_by(
