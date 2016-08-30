@@ -1,49 +1,6 @@
 {% extends 'store/base.html' %}
 {% block title %}Category details{% endblock %}
 
-
-
-{% block javascript %}
-    <script src="jquery-1.12.4.min.js"></script>
-    <script>
-
-    function updateQueryStringParameter(uri, key, value) {
-      var re = new RegExp("([?&])" + key + "=.*?(&|$)", "i");
-      var separator = uri.indexOf('?') !== -1 ? "&" : "?";
-      if (uri.match(re)) {
-        return uri.replace(re, '$1' + key + "=" + value + '$2');
-      }
-      else {
-        return uri + separator + key + "=" + value;
-      }
-    }
-
-    $(function(){
-      $('#selectPriceCategory').on('change', function () {
-          var pricecat = $(this).val();
-          console.log(pricecat)
-          if (pricecat) {
-              window.location = updateQueryStringParameter(window.location.href, 'priceCategory', pricecat);
-          }
-          return false;
-      });
-    });
-
-    $(function(){
-      $('#selectSortBy').on('change', function () {
-          var sortby = $(this).val();
-          console.log(sortby)
-          if (sortby) {
-              window.location = updateQueryStringParameter(window.location.href, 'sortby', sortby);
-          }
-          return false;
-      });
-    });
-</script>
-{% endblock %}
-
-
-
 {% block style %}
     <style>
         label{

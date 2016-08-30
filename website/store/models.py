@@ -5,7 +5,6 @@ from django.utils import timezone
 import uuid
 from django.contrib.auth.models import User
 from imagekit.models import ImageSpecField
-from imagekit.processors import ResizeToFill
 
 
 def f():
@@ -18,8 +17,8 @@ class Category(models.Model):
     allowed_user = models.ManyToManyField(User)
     name = models.CharField(max_length=16, blank=True, db_index=True, unique=True)
     id = models.CharField(max_length=100, primary_key=True, default=f)
-    category_logo = models.ImageField(blank=True)
-    category_logo_thumbnail = ImageSpecField(source='category_logo', format='JPEG', options={'quality': 50})
+    category_logo = models.ImageField(blank=True, upload_to='images')
+    category_logo_thumbnail = ImageSpecField(source='category_logo', format='JPEG', options={'quality': 60})
     created = models.DateTimeField(editable=False, default=timezone.now(), db_index=True)
     modified = models.DateTimeField(editable=False, default=timezone.now())
 
@@ -30,6 +29,7 @@ class Category(models.Model):
         verbose_name_plural = 'categories'
 
     def save(self, *args, **kwargs):
+        # On save, update timestamps
         if not self.id:
             self.created = timezone.now()
         self.modified = timezone.now()
@@ -44,7 +44,7 @@ class Product(models.Model):
     price = MoneyField(max_digits=10, decimal_places=2, default_currency='BGN')
     category = models.ForeignKey(Category)
     product_logo = models.ImageField(blank=True)
-    product_logo_thumbnail = ImageSpecField(source='product_logo', format='JPEG', options={'quality': 50})
+    product_logo_thumbnail = ImageSpecField(source='product_logo', format='JPEG', options={'quality': 60})
     is_in_shopCart = models.BooleanField(default=False, blank=True)
     created = models.DateTimeField(editable=False, default=timezone.now(), db_index=True)
     modified = models.DateTimeField(editable=False, default=timezone.now())
@@ -58,6 +58,7 @@ class Product(models.Model):
         return self.maker + ' ' + self.model
 
     def save(self, *args, **kwargs):
+        # On save, update timestamps
         if not self.id:
             self.created = timezone.now()
         self.modified = timezone.now()

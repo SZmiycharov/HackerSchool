@@ -114,9 +114,9 @@ class ProductsView(generic.ListView):
             print >> sys.stderr, "pricecategory: {}".format(priceCategory)
             if priceCategory == '1':
                 if sortby != '':
-                    return Product.objects.all().filter(price__lte=100, model_icontains=model).order_by(sortby)
+                    return Product.objects.all().filter(price__lte=100, model__icontains=model).order_by(sortby)
                 else:
-                    return Product.objects.all().filter(price__lte=100, model_icontains=model)
+                    return Product.objects.all().filter(price__lte=100, model__icontains=model)
             elif priceCategory == '2':
                 if sortby != '':
                     return Product.objects.all().filter(price__gte=100, price__lte=200,
