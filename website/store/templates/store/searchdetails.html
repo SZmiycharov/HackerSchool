@@ -26,6 +26,7 @@
                     <div class="form-group col-md-1">
                         <label>Модел</label>
                         <input type="text" name="model" {% if request.GET.model %}value="{{ request.GET.model }}"{% else %}value=""{% endif %} size="12">
+                        <div id="modelsearch"></div>
                     </div>
 
                     <div class="row" style="min-height:63px;">

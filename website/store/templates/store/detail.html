@@ -24,6 +24,7 @@
             <div class="form-group col-md-1">
                 <label>Модел</label>
                 <input type="text" name="model" {% if request.GET.model %}value="{{ request.GET.model }}"{% else %}value=""{% endif %} size="12">
+                <div id="modelsearch"></div>
             </div>
 
             <div class="row" style="min-height:63px;">
@@ -58,20 +59,24 @@
 
     <h3>All <i>{{ category.name }}</i>s:</h3>
     <ul class="products" style="list-style-type:none">
-        {% for product in all_products %}
-            <form method="get" action="">
-                <h4 class="productDescription">{{ product.maker }} {{ product.model }} - <i style="color:red">{{ product.price }}</i></h4>
-                <input type="image" class="forDescription" src="{{ product.product_logo_thumbnail.url }}" title="{{ product.maker }} {{ product.model }}" width="180" height="100">
-            </form>
-            <form action="https://www.paypal.com/cgi-bin/webscr" method="post">
-                <input type="hidden" name="cmd" value="_xclick">
-                <input type="hidden" name="business" value="s.zmiycharov@gmail.com">
-                <input type="hidden" name="item_name" value="{{ product.maker }} {{ product.model }}">
-                <input type="hidden" name="currency_code" value="{{ product.currency }}">
-                <input type="hidden" name="amount" value="{{ product.price|floatformat:2 }}">
-                <input type="image" src="https://www.paypalobjects.com/en_US/i/btn/btn_buynow_LG.gif" name="submit" alt="Make payments with PayPal - it's fast, free and secure!">
-            </form>
+        {% if all_products %}
+            {% for product in all_products %}
+                <form method="get" action="">
+                    <h4 class="productDescription">{{ product.maker }} {{ product.model }} - <i style="color:red">{{ product.price }}</i></h4>
+                    <input type="image" class="forDescription" src="{{ product.product_logo_thumbnail.url }}" title="{{ product.maker }} {{ product.model }}" width="180" height="100">
+                </form>
+                <form action="https://www.paypal.com/cgi-bin/webscr" method="post">
+                    <input type="hidden" name="cmd" value="_xclick">
+                    <input type="hidden" name="business" value="s.zmiycharov@gmail.com">
+                    <input type="hidden" name="item_name" value="{{ product.maker }} {{ product.model }}">
+                    <input type="hidden" name="currency_code" value="{{ product.currency }}">
+                    <input type="hidden" name="amount" value="{{ product.price|floatformat:2 }}">
+                    <input type="image" src="https://www.paypalobjects.com/en_US/i/btn/btn_buynow_LG.gif" name="submit" alt="Make payments with PayPal - it's fast, free and secure!">
+                </form>
         {% endfor %}
+        {% else %}
+            <h2>No matches!</h2>
+        {% endif %}
     </ul>
 
     {% if is_paginated %}
