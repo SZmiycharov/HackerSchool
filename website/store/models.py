@@ -6,7 +6,6 @@ import uuid
 from django.contrib.auth.models import User
 from imagekit.models import ImageSpecField
 
-
 def f():
     d = uuid.uuid4()
     str = d.hex
@@ -50,7 +49,6 @@ class Product(models.Model):
     modified = models.DateTimeField(editable=False, default=timezone.now())
     quantity = models.IntegerField(default=1)
 
-
     def currency(self):
         return str(self.price).split(' ')[1]
 
@@ -67,7 +65,3 @@ class Product(models.Model):
 
     class Meta:
         unique_together = ('maker', 'model',)
-
-
-
-
