@@ -3,6 +3,7 @@ from django import forms
 from captcha.fields import ReCaptchaField
 from registration.forms import RegistrationFormUniqueEmail
 from django.contrib.auth.forms import AuthenticationForm
+import sys
 
 
 class RegisterForm(RegistrationFormUniqueEmail):
@@ -20,10 +21,22 @@ class LoginForm(AuthenticationForm):
         fields = ['username', 'password']
 
 
-class UpdateProfile(RegistrationFormUniqueEmail):
-    email = forms.EmailField()
-    photo = forms.FileField()
-    captcha = ReCaptchaField(label='')
+class UpdateProfile(forms.ModelForm):
+    user = ''
+    username = ''
+    email = ''
+
+    def __init__(self, *args, **kwargs):
+        self.user = kwargs.pop('user', None)
+        self.username = forms.CharField(required=False, initial=self.user.username)
+        self.email = forms.EmailField(required=False, initial=self.user.email)
+        print >> sys.stderr, self.user.username
+        super(UpdateProfile, self).__init__(*args, **kwargs)
+
+
+    class Meta:
+        model = User
+        fields = ('username', 'email', 'first_name', 'last_name')
 
     def clean_email(self):
         username = self.cleaned_data.get('username')
@@ -34,7 +47,7 @@ class UpdateProfile(RegistrationFormUniqueEmail):
         return email
 
     def save(self, commit=True):
-        user = super(RegistrationFormUniqueEmail, self).save(commit=False)
+        user = super(RegisterForm, self).save(commit=False)
         user.email = self.cleaned_data['email']
 
         if commit:

@@ -101,7 +101,7 @@
             {% for product in searchresults %}
                 <form method="get" action="">
                     <h4>{{ product.maker }} {{ product.model }} - <i style="color:red">{{ product.price }}</i></h4>
-                    <input type="image" src="{{ product.product_logo.url }}" title="{{ product.maker }} {{ product.model }}" width="160" height="100">
+                    <input type="image" src="{{ product.product_logo_thumbnail.url }}" title="{{ product.maker }} {{ product.model }}" width="160" height="100">
                 </form>
 
                 <form action="https://www.paypal.com/cgi-bin/webscr" method="post">

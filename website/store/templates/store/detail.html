@@ -60,7 +60,7 @@
 
 {% block body %}
     <h2>Category: <i>{{ category.name }}</i></h2>
-    <img height="135" width="240" src="{{ category.category_logo.url }}" title="{{ category.name }}">
+    <img height="135" width="240" src="{{ category.category_logo_thumbnail.url }}" title="{{ category.name }}">
 
     <form action="{% url 'store:detail' category.id %}?model={{ request.GET.model }}&priceCategory={{ request.GET.priceCategory }}" method="get">
         <div style="margin-left: 10px;" class="row" style="min-height:63px;">
@@ -104,7 +104,7 @@
         {% for product in all_products %}
             <form method="get" action="">
                 <h4 class="productDescription">{{ product.maker }} {{ product.model }} - <i style="color:red">{{ product.price }}</i></h4>
-                <input type="image" class="forDescription" src="{{ product.product_logo.url }}" title="{{ product.maker }} {{ product.model }}" width="180" height="100">
+                <input type="image" class="forDescription" src="{{ product.product_logo_thumbnail.url }}" title="{{ product.maker }} {{ product.model }}" width="180" height="100">
             </form>
             <form action="https://www.paypal.com/cgi-bin/webscr" method="post">
                 <input type="hidden" name="cmd" value="_xclick">

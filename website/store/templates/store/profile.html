@@ -1,0 +1,53 @@
+{% extends 'store/base.html' %}
+{% block title %}Profile{% endblock %}
+
+
+{% block style %}
+    <style>
+        h1 {
+        color: #111;
+        font-family: 'Helvetica Neue', sans-serif;
+        font-size: 30px;
+        font-weight: bold;
+        letter-spacing: -1px;
+        line-height: 1;
+        text-align: center;
+        }
+
+        h2 {
+        color: #111;
+        font-family: 'Helvetica Neue', sans-serif;
+        font-size: 150px;
+        font-weight: bold;
+        letter-spacing: -1px;
+        line-height: 1;
+        text-align: center;
+        }
+
+        h3 {
+            color: #111;
+            font-family: 'Open Sans', sans-serif;
+            font-size: 50px;
+            font-weight: 300;
+            line-height: 32px;
+            margin: 0 0 72px;
+            text-align: center;
+        }
+
+        #submBtn{
+            float:right;
+            margin-right:920px;
+        }
+    </style>
+{% endblock %}
+
+{% block body %}
+    <h1>User profile:</h1>
+
+    <form action="{% url 'store:updateprofile' %}" method="get">
+      <h2>{{ profilefields.0 }}</h2>
+    <h3>{{ profilefields.1 }}</h3>
+      <button id="submBtn" type="submit">Change field?</button><br>
+    </form>
+
+{% endblock %}

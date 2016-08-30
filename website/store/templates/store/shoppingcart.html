@@ -7,7 +7,7 @@
             {% for product in all_products_in_shopCart %}
                 <form method="get" action="">
                     <h4>{{ product.maker }} {{ product.model }} - <i style="color:red">{{ product.price }}</i></h4>
-                    <input type="image" src="{{ product.product_logo.url }}" title="{{ product.maker }} {{ product.model }}" width="160" height="90">
+                    <input type="image" src="{{ product.product_logo_thumbnail.url }}" title="{{ product.maker }} {{ product.model }}" width="160" height="90">
                 </form>
             {% endfor %}
         {% else %}

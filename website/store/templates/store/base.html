@@ -92,6 +92,15 @@
             </form>
 
             <ul class="nav navbar-nav navbar-right">
+                {% if user.is_authenticated %}
+                    <li class="">
+                    <a href="#">
+                        <span class="glyphicon glyphicon-user" aria-hidden="true"></span>&nbsp;Profile
+                    </a>
+                </li>
+                {% endif %}
+
+
                 <li class="">
                     {% if user.is_authenticated %}
                         <a href="{% url 'store:logout' %}">

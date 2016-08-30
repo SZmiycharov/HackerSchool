@@ -9,7 +9,7 @@
 
                     <div class="pagebreak">
                         <a style="page-break-after:always;" href="{% url 'store:detail' category.id %}">
-                            <img class="img" src="{{ category.category_logo.url }}" class="img-responsive" title="{{ category.name }}" height="135" width="240"><br>
+                            <img class="img" src="{{ category.category_logo_thumbnail.url }}" class="img-responsive" title="{{ category.name }}" height="135" width="240"><br>
                         </a>
                     </div>
                 </li>

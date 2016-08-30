@@ -31,6 +31,7 @@ ALLOWED_HOSTS = []
 # Application definition
 
 INSTALLED_APPS = [
+    'imagekit',
     'captcha',
     'autofixture',
     'store.apps.StoreConfig',
@@ -166,8 +167,8 @@ TEMPLATE_LOADERS = (
     )),
 )
 
-RECAPTCHA_PUBLIC_KEY = '6LcLvygTAAAAAPCLsHdpWOcl5geNn9hl79a9CRsb'
-RECAPTCHA_PRIVATE_KEY = '6LcLvygTAAAAAAdGXmRS7SdJUwbPmn4yRjVeVMWQ'
+RECAPTCHA_PUBLIC_KEY = '6Ldu1igTAAAAADUU4Q9QMZa3e-kUm4atG0-F7AW9'
+RECAPTCHA_PRIVATE_KEY = '6Ldu1igTAAAAALkGVYGP7-R11lz5AXWWfR4FaL7e'
 NOCAPTCHA = True
 RECAPTCHA_USE_SSL = True
 

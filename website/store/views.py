@@ -4,7 +4,7 @@ from django.shortcuts import render, redirect
 from django.contrib.auth import authenticate, login, logout
 from django.views.generic import View
 import sys
-from .forms import RegisterForm, LoginForm
+from .forms import RegisterForm, LoginForm, UpdateProfile
 
 
 searchedfor = ''
@@ -245,7 +245,6 @@ class SearchDetailsView(generic.ListView):
                 else:
                     Product.objects.all().filter(model__contains=model)
 
-
         return Product.objects.all().filter(maker__contains=searchedfor)
 
 
@@ -280,8 +279,6 @@ class RegisterView(View):
                     return redirect('store:index')
 
         return render(request, self.template_name, {'form': form})
-
-
 
 
 class LoginView(View):
@@ -323,6 +320,47 @@ class LogoutView(View):
         logout(request)
         return render(request, self.template_name)
 
+
+class ProfileView(generic.ListView):
+    template_name = 'store/profile.html'
+    context_object_name = 'profilefields'
+
+    def get_queryset(self):
+        result = [self.request.user.username, self.request.user.email]
+
+        return result
+
+
+class UpdateProfileView(View):
+    form_class = UpdateProfile
+    template_name = 'store/updateprofile.html'
+
+    def get(self, request):
+        print >> sys.stderr, "\nGET FUNCTION UpdateProfile\n"
+        form = self.form_class(user=request.user)
+        return render(request, self.template_name, {'form': form})
+
+    def post(self, request):
+        print >> sys.stderr, "\nPOST FUNCTION UpdateProfile\n"
+        form = self.form_class(request.POST, instance=request.user, user=request.user)
+
+        if form.is_valid():
+            user = form.save(commit=False)
+
+            username = form.cleaned_data['username']
+            password = form.clean_password2()
+            user.set_password(password)
+            user.save()
+
+            user = authenticate(username=username, password=password)
+
+            if user is not None:
+
+                if user.is_active:
+                    login(request, user)
+                    return redirect('store:index')
+
+        return render(request, self.template_name, {'form': form})
 
 
 
