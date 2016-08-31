@@ -9,6 +9,53 @@
 
 {% block breadcrumbs %}{% endblock %}
 
+{% block datepicker %}
+    <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>jQuery UI Datepicker - Select a Date Range</title>
+  <link rel="stylesheet" href="//code.jquery.com/ui/1.12.0/themes/base/jquery-ui.css">
+  <link rel="stylesheet" href="/resources/demos/style.css">
+  <script src="https://code.jquery.com/jquery-1.12.4.js"></script>
+  <script src="https://code.jquery.com/ui/1.12.0/jquery-ui.js"></script>
+  {% include 'store/functions.html' %}
+
+  <script>
+  $( function() {
+    var dateFormat = "mm/dd/yy",
+      from = $( "#from" )
+        .datepicker({
+          defaultDate: "+1w",
+          changeMonth: true,
+          numberOfMonths: 1
+        })
+        .on( "change", function() {
+          to.datepicker( "option", "minDate", getDate( this ) );
+        }),
+      to = $( "#to" ).datepicker({
+        defaultDate: "+1w",
+        changeMonth: true,
+        numberOfMonths: 1
+      })
+      .on( "change", function() {
+        from.datepicker( "option", "maxDate", getDate( this ) );
+      });
+
+    function getDate( element ) {
+      var date;
+      try {
+        date = $.datepicker.parseDate( dateFormat, element.value );
+      } catch( error ) {
+        date = null;
+      }
+      return date;
+    }
+  } );
+
+
+
+  </script>
+{% endblock %}
+
 {% block content %}
 <div id="content-main">
 
@@ -47,32 +94,40 @@
     <p>{% trans "You don't have permission to edit anything." %}</p>
 {% endif %}
 </div>
+
 {% endblock %}
+
+
 
 {% block sidebar %}
 <div id="content-related">
     <div class="module" id="recent-actions-module">
+
+        <h5>Date from:</h5><input {% if request.GET.datefrom %}value="{{ request.GET.datefrom }}"{% endif %} size="10" type="text" id="from" name="from" onchange="window.location = updateQueryStringParameter(window.location.href, 'datefrom', this.value);">
+        <h5>Date to:</h5><input {% if request.GET.dateto %}value="{{ request.GET.dateto }}"{% endif %} size="10" type="text" id="to" name="to" onchange="window.location = updateQueryStringParameter(window.location.href, 'dateto', this.value);">
+
         <h2>{% trans 'Recent Actions' %}</h2>
             {% load log %}
-            {% get_admin_log 13 as admin_log %}
+            {% get_admin_log 100000 as admin_log %}
             {% if not admin_log %}
-            <p>{% trans 'None available' %}</p>
+                <p>{% trans 'None available' %}</p>
             {% else %}
-            <ul class="actionlist">
+                <ul class="actionlist">
             {% for entry in admin_log %}
-            <li class="{% if entry.is_addition %}addlink{% endif %}{% if entry.is_change %}changelink{% endif %}{% if entry.is_deletion %}deletelink{% endif %}">
-                {% if entry.is_deletion or not entry.get_admin_url %}
-                    {{ entry.object_repr }}
-                {% else %}
-                    <a href="{{ entry.get_admin_url }}">{{ entry.object_repr }}</a>
-                {% endif %}
-                <br/>
-                {% if entry.content_type %}
-                    <span class="mini quiet">by {{ entry.user }}, on {{ entry.action_time }}</span>
-                {% else %}
-                    <span class="mini quiet">{% trans 'Unknown content' %}</span>
-                {% endif %}
-            </li>
+                <li class="{% if entry.is_addition %}addlink{% endif %}{% if entry.is_change %}changelink{% endif %}{% if entry.is_deletion %}deletelink{% endif %}">
+                    {% if entry.is_deletion or not entry.get_admin_url %}
+                        {{ entry.object_repr }}
+                    {% else %}
+                        <a href="{{ entry.get_admin_url }}">{{ entry.object_repr }}</a>
+                    {% endif %}
+                    <br/>
+                    {% if entry.content_type %}
+                        <h1>{{ entry.action_time|date:" d M Y" }}</h1>
+                        <span class="mini quiet">by {{ entry.user }}, on {{ entry.action_time }}</span>
+                    {% else %}
+                        <span class="mini quiet">{% trans 'Unknown content' %}</span>
+                    {% endif %}
+                </li>
             {% endfor %}
             </ul>
             {% endif %}
