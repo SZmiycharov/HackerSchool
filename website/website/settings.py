@@ -174,6 +174,9 @@ NOCAPTCHA = True
 RECAPTCHA_USE_SSL = True
 
 
+CURRENCIES = ('USD', 'BGN', 'EUR')
+
+
 
 
 

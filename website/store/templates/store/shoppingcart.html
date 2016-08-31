@@ -2,32 +2,11 @@
 {% block title %}Shopping cart{% endblock %}
 
 {% block body %}
-    <ul class="allProducts" style="list-style-type:none">
-        {% if all_products_in_shopCart %}
-            {% for product in all_products_in_shopCart %}
-                <form method="get" action="">
-                    <h4>{{ product.maker }} {{ product.model }} - <i style="color:red">{{ product.price }}</i></h4>
-                    <input type="image" src="{{ product.product_logo_thumbnail.url }}" title="{{ product.maker }} {{ product.model }}" width="160" height="90">
-                </form>
-            {% endfor %}
+    {% if products_in_cart %}
+        {% for product in products_in_cart %}
+            <h1>{{ product.maker }}</h1>
+        {% endfor %}
         {% else %}
-            <h2>Only steaks in shopping-cart :) :)!</h2>
-            <img src="https://s-media-cache-ak0.pinimg.com/564x/d2/50/f1/d250f1ae569889d1372798c00b9aa16a.jpg">
-        {% endif %}
-    </ul>
-    {% if is_paginated %}
-            <div class="pagination">
-                <span class="page-links">
-                    {% if page_obj.has_previous %}
-                        <a href="{% url 'store:index' %}?page={{ page_obj.previous_page_number }}"><- previous</a>
-                    {% endif %}
-                    <span class="page-current">
-                        Page {{ page_obj.number }} of {{ page_obj.paginator.num_pages }}.
-                    </span>
-                    {% if page_obj.has_next %}
-                        <a href="{% url 'store:shoppingCart' %}?page={{ page_obj.next_page_number }}">next -></a>
-                    {% endif %}
-                </span>
-            </div>
-        {% endif %}
+    <h1>No products in shopping cart!</h1>
+    {% endif %}
 {% endblock %}

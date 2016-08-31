@@ -371,7 +371,15 @@ class UpdateProfileView(View):
         return render(request, self.template_name, {'form': form})
 
 
+class ShoppingCartView(generic.ListView):
+    template_name = 'store/shoppingcart.html'
+    context_object_name = 'products_in_cart'
 
+    def get_queryset(self):
+        if self.request.session['shoppingcart']:
+            return Product.objects.filter(id__in=list(self.request.session['shoppingcart']))
+        else:
+            return []
 
 
 

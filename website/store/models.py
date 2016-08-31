@@ -7,7 +7,7 @@ from django.contrib.auth.models import User
 from imagekit.models import ImageSpecField
 from imagekit.processors import ResizeToFill
 from imagekit.models import ProcessedImageField
-
+import django
 
 def f():
     d = uuid.uuid4()
@@ -21,8 +21,8 @@ class Category(models.Model):
     id = models.CharField(max_length=100, primary_key=True, default=f)
     category_logo = ProcessedImageField(upload_to='images', processors=[ResizeToFill(960, 540)], format='JPEG')
     category_logo_thumbnail = ImageSpecField(source='category_logo', format='JPEG', processors=[ResizeToFill(240, 135)])
-    created = models.DateTimeField(editable=False, default=timezone.now(), db_index=True)
-    modified = models.DateTimeField(editable=False, default=timezone.now())
+    created = models.DateTimeField(editable=False, default=django.utils.timezone.now, db_index=True)
+    modified = models.DateTimeField(editable=False, default=django.utils.timezone.now)
 
     def __str__(self):
         return self.name
@@ -44,12 +44,13 @@ class Product(models.Model):
     id = models.CharField(max_length=100, primary_key=True, default=f)
     description = models.TextField(blank=True)
     price = MoneyField(max_digits=10, decimal_places=2, default_currency='BGN')
+    #shoppingcart = models.ForeignKey(ShoppingCart)
     category = models.ForeignKey(Category)
     product_logo = ProcessedImageField(upload_to='images', processors=[ResizeToFill(960, 540)], format='JPEG')
     product_logo_thumbnail = ImageSpecField(source='product_logo', format='JPEG', processors=[ResizeToFill(240, 135)])
     is_in_shopCart = models.BooleanField(default=False, blank=True)
-    created = models.DateTimeField(editable=False, default=timezone.now(), db_index=True)
-    modified = models.DateTimeField(editable=False, default=timezone.now())
+    created = models.DateTimeField(editable=False, default=django.utils.timezone.now, db_index=True)
+    modified = models.DateTimeField(editable=False, default=django.utils.timezone.now)
     quantity = models.IntegerField(default=1)
 
     def currency(self):
@@ -68,6 +69,8 @@ class Product(models.Model):
 
     class Meta:
         unique_together = ('maker', 'model',)
+
+
 
 
 
