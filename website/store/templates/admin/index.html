@@ -107,44 +107,93 @@
         <h5>Date to:</h5><input {% if request.GET.dateto %}value="{{ request.GET.dateto }}"{% endif %} size="10" type="text" id="to" name="to" onchange="window.location = updateQueryStringParameter(window.location.href, 'dateto', this.value);">
         <h2>{% trans 'Recent Actions' %}</h2>
             {% load log %}
-            {% get_admin_log 100000 as admin_log %}
+            {% get_admin_log 10000000 as admin_log %}
             {% if not admin_log %}
                 <p>{% trans 'None available' %}</p>
             {% else %}
                 <ul class="actionlist">
-            {% for entry in admin_log %}
-
-                <li class="{% if entry.is_addition %}addlink{% endif %}{% if entry.is_change %}changelink{% endif %}{% if entry.is_deletion %}deletelink{% endif %}">
-
-
+                {% for entry in admin_log %}
                         {% with request.GET.datefrom as datefrom %}
                             {% with entry.action_time|date:"m/d/Y" as actualdate %}
                                 {% with request.GET.dateto as dateto %}
-                                    {% if datefrom <= actualdate and dateto >= actualdate %}
-                                        {% if entry.is_deletion or not entry.get_admin_url %}
-                                            {{ entry.object_repr }}
-                                        {% else %}
-                                            <a href="{{ entry.get_admin_url }}">{{ entry.object_repr }}</a>
+
+                                    <!-- if datefrom and dateto are provided -->
+
+                                    {% if datefrom and dateto %}
+                                        {% if datefrom <= actualdate and dateto >= actualdate %}
+                                            <li class="{% if entry.is_addition %}addlink{% endif %}{% if entry.is_change %}changelink{% endif %}{% if entry.is_deletion %}deletelink{% endif %}">
+                                                {% if entry.is_deletion or not entry.get_admin_url %}
+                                                    {{ entry.object_repr }}
+                                                {% else %}
+                                                    <a href="{{ entry.get_admin_url }}">{{ entry.object_repr }}</a>
+                                                {% endif %}
+                                                <br/>
+                                                {% if entry.content_type %}
+                                                    <span class="mini quiet">by {{ entry.user }}, on {{ entry.action_time }}</span>
+                                                {% else %}
+                                                    <span class="mini quiet">{% trans 'Unknown content' %}</span>
+                                                {% endif %}
+                                            </li>
                                         {% endif %}
-                                        <br/>
-                                        {% if entry.content_type %}
-                                            <span class="mini quiet">by {{ entry.user }}, on {{ entry.action_time }}</span>
-                                        {% else %}
-                                            <span class="mini quiet">{% trans 'Unknown content' %}</span>
+
+                                        <!-- if only date from is provided -->
+
+                                    {% elif datefrom %}
+                                        {% if datefrom <= actualdate%}
+                                            <li class="{% if entry.is_addition %}addlink{% endif %}{% if entry.is_change %}changelink{% endif %}{% if entry.is_deletion %}deletelink{% endif %}">
+                                                {% if entry.is_deletion or not entry.get_admin_url %}
+                                                    {{ entry.object_repr }}
+                                                {% else %}
+                                                    <a href="{{ entry.get_admin_url }}">{{ entry.object_repr }}</a>
+                                                {% endif %}
+                                                <br/>
+                                                {% if entry.content_type %}
+                                                    <span class="mini quiet">by {{ entry.user }}, on {{ entry.action_time }}</span>
+                                                {% else %}
+                                                    <span class="mini quiet">{% trans 'Unknown content' %}</span>
+                                                {% endif %}
+                                            </li>
                                         {% endif %}
+
+                                        <!-- if only dateto is provided -->
+
+                                    {% elif dateto %}
+                                        {% if dateto >= actualdate %}
+                                            <li class="{% if entry.is_addition %}addlink{% endif %}{% if entry.is_change %}changelink{% endif %}{% if entry.is_deletion %}deletelink{% endif %}">
+                                                {% if entry.is_deletion or not entry.get_admin_url %}
+                                                    {{ entry.object_repr }}
+                                                {% else %}
+                                                    <a href="{{ entry.get_admin_url }}">{{ entry.object_repr }}</a>
+                                                {% endif %}
+                                                <br/>
+                                                {% if entry.content_type %}
+                                                    <span class="mini quiet">by {{ entry.user }}, on {{ entry.action_time }}</span>
+                                                {% else %}
+                                                    <span class="mini quiet">{% trans 'Unknown content' %}</span>
+                                                {% endif %}
+                                            </li>
+                                        {% endif %}
+
+                                    {% else %}
+                                        <li class="{% if entry.is_addition %}addlink{% endif %}{% if entry.is_change %}changelink{% endif %}{% if entry.is_deletion %}deletelink{% endif %}">
+                                            {% if entry.is_deletion or not entry.get_admin_url %}
+                                                {{ entry.object_repr }}
+                                            {% else %}
+                                                <a href="{{ entry.get_admin_url }}">{{ entry.object_repr }}</a>
+                                            {% endif %}
+                                            <br/>
+                                            {% if entry.content_type %}
+                                                <span class="mini quiet">by {{ entry.user }}, on {{ entry.action_time }}</span>
+                                            {% else %}
+                                                <span class="mini quiet">{% trans 'Unknown content' %}</span>
+                                            {% endif %}
+                                        </li>
                                     {% endif %}
                                 {% endwith %}
                             {% endwith %}
                         {% endwith %}
-
-                
-
-
-
-
-                </li>
-            {% endfor %}
-            </ul>
+                {% endfor %}
+                </ul>
             {% endif %}
     </div>
 </div>
