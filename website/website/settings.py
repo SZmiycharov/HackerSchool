@@ -127,7 +127,6 @@ AUTHENTICATION_BACKENDS = (
 SITE_ID = 1
 
 LOGIN_REDIRECT_URL = '/store/'
-LOGOUT_REDIRECT_URL = '/store/logout'
 
 LOGGING = {
     'version': 1,
