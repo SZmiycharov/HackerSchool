@@ -11,6 +11,45 @@
     <script type="text/javascript" src="{% static 'store/jquery-3.1.0.min.js' %}"></script>
     <script type="text/javascript" src="{% static 'store/bootstrap.min.js' %}"></script>
 
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+{% with request.GET.datefrom as datefrom %}
+                            {% with entry.action_time|date:"m/d/Y" as actualdate %}
+                                {% with request.GET.dateto as dateto %}
+                                    {% if datefrom <= actualdate and dateto >= actualdate %}
+                                        <h1>YES</h1>
+                                        <span class="mini quiet">by {{ entry.user }}, on {{ entry.action_time }}</span>
+                                    {% endif %}
+                                {% endwith %}
+                            {% endwith %}
+                        {% endwith %}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
     {% include 'store/functions.html' %}
 </head>
 <body>
