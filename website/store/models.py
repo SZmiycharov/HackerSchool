@@ -71,17 +71,21 @@ class Product(models.Model):
 
 
 class Payments(models.Model):
-    user = models.ForeignKey(User)
+    user = models.ForeignKey(User, editable=False)
     made_at = models.DateTimeField(editable=False, default=django.utils.timezone.now)
     quantity = models.IntegerField(default=1)
     product = models.ForeignKey(Product)
     address = models.CharField(max_length=200)
     phonenumber = models.CharField(max_length=15)
+    processed = models.BooleanField(default=False)
 
 
     def __str__(self):
-        return 'Bought: ' + self.product + ', at: ' + str(self.made_at) + ', by: ' + self.user
+        return str(self.product)
 
+
+    class Meta:
+        verbose_name_plural = 'Payments'
 
 
 

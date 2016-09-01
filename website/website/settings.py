@@ -19,7 +19,6 @@ ALLOWED_HOSTS = []
 # Application definition
 
 INSTALLED_APPS = [
-    'paypal.standard.ipn',
     'imagekit',
     'captcha',
     'autofixture',
