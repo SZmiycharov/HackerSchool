@@ -8,6 +8,8 @@ from imagekit.models import ImageSpecField
 from imagekit.processors import ResizeToFill
 from imagekit.models import ProcessedImageField
 import django
+from phonenumber_field.modelfields import PhoneNumberField
+
 
 def f():
     d = uuid.uuid4()
@@ -44,11 +46,9 @@ class Product(models.Model):
     id = models.CharField(max_length=100, primary_key=True, default=f)
     description = models.TextField(blank=True)
     price = MoneyField(max_digits=10, decimal_places=2, default_currency='BGN')
-    #shoppingcart = models.ForeignKey(ShoppingCart)
     category = models.ForeignKey(Category)
     product_logo = ProcessedImageField(upload_to='images', processors=[ResizeToFill(960, 540)], format='JPEG')
     product_logo_thumbnail = ImageSpecField(source='product_logo', format='JPEG', processors=[ResizeToFill(240, 135)])
-    is_in_shopCart = models.BooleanField(default=False, blank=True)
     created = models.DateTimeField(editable=False, default=django.utils.timezone.now, db_index=True)
     modified = models.DateTimeField(editable=False, default=django.utils.timezone.now)
     quantity = models.IntegerField(default=1)
@@ -66,9 +66,43 @@ class Product(models.Model):
         self.modified = timezone.now()
         return super(Product, self).save(*args, **kwargs)
 
-
     class Meta:
         unique_together = ('maker', 'model',)
+
+
+class Payments(models.Model):
+    user = models.ForeignKey(User)
+    made_at = models.DateTimeField(editable=False, default=django.utils.timezone.now)
+    quantity = models.IntegerField(default=1)
+    product = models.ForeignKey(Product)
+    address = models.CharField(max_length=200)
+    phonenumber = models.CharField(max_length=15)
+
+
+    def __str__(self):
+        return 'Bought: ' + self.product + ', at: ' + str(self.made_at) + ', by: ' + self.user
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 

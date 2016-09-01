@@ -3,8 +3,8 @@ from django import forms
 from captcha.fields import ReCaptchaField
 from registration.forms import RegistrationFormUniqueEmail, RegistrationForm
 from django.contrib.auth.forms import AuthenticationForm
-import sys
-from django.views.generic.edit import UpdateView
+from phonenumber_field.modelfields import PhoneNumberField
+from django.forms import ModelForm, CharField, TextInput, IntegerField
 
 
 class RegisterForm(RegistrationFormUniqueEmail):
@@ -31,4 +31,15 @@ class LoginForm(AuthenticationForm):
     class Meta:
         model = User
         fields = ['username', 'password']
+
+
+class PaymentForm(forms.Form):
+    address = forms.CharField(label='Address', max_length=100)
+    phonenumber = IntegerField(min_value=0, max_value=9999999999999)
+    quantity = IntegerField(min_value=0, max_value=10)
+    captcha = ReCaptchaField(label='')
+
+
+
+
 

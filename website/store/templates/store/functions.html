@@ -63,12 +63,23 @@
     $(function(){
       $('#selectSortBy').on('change', function () {
           var sortby = $(this).val();
-          console.log(sortby)
           if (sortby) {
               window.location = updateQueryStringParameter(window.location.href, 'sortby', sortby);
           }
           return false;
       });
     });
+
+    $(function(){
+      $('#id_quantity').on('change', function () {
+          var quantity = $(this).val();
+          if (quantity) {
+              document.getElementById("payment").innerHTML = "You are paying for " + quantity + " items!";
+          }
+          return false;
+      });
+    });
+
+
 </script>
 

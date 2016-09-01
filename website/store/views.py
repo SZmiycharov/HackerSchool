@@ -1,11 +1,13 @@
 from django.views import generic
-from .models import Category, Product
+from .models import Category, Product, Payments
 from django.shortcuts import render, redirect
 from django.contrib.auth import authenticate, login, logout
 from django.views.generic import View
 import sys
-from .forms import RegisterForm, LoginForm, UpdateProfileForm
+from .forms import RegisterForm, LoginForm, UpdateProfileForm, PaymentForm
 from django.contrib.auth.models import User
+from phonenumber_field.modelfields import PhoneNumberField
+from django.http import HttpResponse
 
 
 searchedfor = ''
@@ -382,8 +384,37 @@ class ShoppingCartView(generic.ListView):
             return []
 
 
+class PaymentView(View):
+    form_class = PaymentForm
+    template_name = 'store/payment.html'
+
+    def get(self, request):
+        print >> sys.stderr, "\nget view payment\n"
+        form = self.form_class(None)
+        return render(request, self.template_name, {'form': form})
+
+    def post(self, request):
+        print >> sys.stderr, "\npost view payment\n"
+        form = self.form_class(request.POST)
+
+        if form.is_valid():
+            address = form.cleaned_data['address']
+            phonenumber = form.cleaned_data['phonenumber']
+            quantity = form.cleaned_data['quantity']
+            print >> sys.stderr, phonenumber
+            payment = Payments(user_id=self.request.user.id, product_id=self.request.GET.get('id', ''), address=address, phonenumber=phonenumber, quantity=quantity)
+            payment.save()
+            return redirect('store:successfulpayment')
+
+        return render(request, self.template_name, {'form': form})
 
 
+
+class SuccessfulPaymentView(View):
+    template_name = 'store/successfulpayment.html'
+
+    def get(self, request):
+        return render(request, self.template_name)
 
 
 
