@@ -391,7 +391,9 @@ class PurchaseView(View):
     def get(self, request):
         print >> sys.stderr, "\nget view purchase\n"
         form = self.form_class(None)
-        return render(request, self.template_name, {'form': form})
+        product = Product.objects.all().filter(id=self.request.GET.get('id', ''))
+        print >> sys.stderr, product
+        return render(request, self.template_name, {'form': form, 'product': product})
 
     def post(self, request):
         print >> sys.stderr, "\npost view purchase\n"
@@ -407,7 +409,6 @@ class PurchaseView(View):
             return redirect('store:successfulpurchase')
 
         return render(request, self.template_name, {'form': form})
-
 
 
 class SuccessfulPaymentView(View):

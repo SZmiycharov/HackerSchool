@@ -73,8 +73,11 @@
     $(function(){
       $('#id_quantity').on('change', function () {
           var quantity = $(this).val();
-          if (quantity) {
-              document.getElementById("payment").innerHTML = "You are paying for " + quantity + " items!";
+          var price = document.getElementById ("purchasedetails").innerText.split(" ")[7];
+          var currency = document.getElementById ("purchasedetails").innerText.split(" ")[8];
+          if (quantity && price) {
+              var summary = quantity * price;
+              document.getElementById("payment").innerHTML = "Total cost: " + summary + currency;
           }
           return false;
       });
