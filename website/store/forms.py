@@ -33,7 +33,7 @@ class LoginForm(AuthenticationForm):
         fields = ['username', 'password']
 
 
-class PaymentForm(forms.Form):
+class PurchaseForm(forms.Form):
     address = forms.CharField(label='Address', max_length=100)
     phonenumber = IntegerField(min_value=0, max_value=9999999999999)
     quantity = IntegerField(min_value=0, max_value=10)

@@ -70,7 +70,7 @@ class Product(models.Model):
         unique_together = ('maker', 'model',)
 
 
-class Payments(models.Model):
+class Purchases(models.Model):
     user = models.ForeignKey(User, editable=False)
     made_at = models.DateTimeField(editable=False, default=django.utils.timezone.now)
     quantity = models.IntegerField(default=1)
@@ -85,7 +85,7 @@ class Payments(models.Model):
 
 
     class Meta:
-        verbose_name_plural = 'Payments'
+        verbose_name_plural = 'Purchases'
 
 
 

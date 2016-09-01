@@ -16,7 +16,7 @@ urlpatterns = [
     url(r'^register/$', views.RegisterView.as_view(), name='register'),
     url(r'^login/$', views.LoginView.as_view(), name='login'),
     url(r'^logout/$', views.LogoutView.as_view(), name='logout'),
-    url(r'^payment/$', views.PaymentView.as_view(), name='payment'),
+    url(r'^purchase/$', views.PurchaseView.as_view(), name='purchase'),
     url(r'^successfulpayment/$', views.SuccessfulPaymentView.as_view(), name='successfulpayment'),
     url(r'^(?P<pk>[0-9a-z-]+)/$', views.DetailView.as_view(), name='detail'),
 ]

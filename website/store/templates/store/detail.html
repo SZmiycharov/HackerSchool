@@ -65,7 +65,7 @@
                     <h4 class="productDescription">{{ product.maker }} {{ product.model }} - <i style="color:red">{{ product.price }}</i></h4>
                     <input type="image" class="forDescription" src="{{ product.product_logo_thumbnail.url }}" title="{{ product.maker }} {{ product.model }}" width="180" height="100">
                 </form>
-                <form action="{% url 'store:payment' %}" method="get">
+                <form action="{% url 'store:purchase' %}" method="get">
                     <input type="hidden" name="id" value="{{ product.id }}">
                     <input type="submit" value="Buy">
                 </form>

@@ -1,10 +1,10 @@
 from django.views import generic
-from .models import Category, Product, Payments
+from .models import Category, Product, Purchases
 from django.shortcuts import render, redirect
 from django.contrib.auth import authenticate, login, logout
 from django.views.generic import View
 import sys
-from .forms import RegisterForm, LoginForm, UpdateProfileForm, PaymentForm
+from .forms import RegisterForm, LoginForm, UpdateProfileForm, PurchaseForm
 from django.contrib.auth.models import User
 from phonenumber_field.modelfields import PhoneNumberField
 from django.http import HttpResponse
@@ -384,17 +384,17 @@ class ShoppingCartView(generic.ListView):
             return []
 
 
-class PaymentView(View):
-    form_class = PaymentForm
-    template_name = 'store/payment.html'
+class PurchaseView(View):
+    form_class = PurchaseForm
+    template_name = 'store/purchase.html'
 
     def get(self, request):
-        print >> sys.stderr, "\nget view payment\n"
+        print >> sys.stderr, "\nget view purchase\n"
         form = self.form_class(None)
         return render(request, self.template_name, {'form': form})
 
     def post(self, request):
-        print >> sys.stderr, "\npost view payment\n"
+        print >> sys.stderr, "\npost view purchase\n"
         form = self.form_class(request.POST)
 
         if form.is_valid():
@@ -402,9 +402,9 @@ class PaymentView(View):
             phonenumber = form.cleaned_data['phonenumber']
             quantity = form.cleaned_data['quantity']
             print >> sys.stderr, phonenumber
-            payment = Payments(user_id=self.request.user.id, product_id=self.request.GET.get('id', ''), address=address, phonenumber=phonenumber, quantity=quantity)
-            payment.save()
-            return redirect('store:successfulpayment')
+            purchase = Purchases(user_id=self.request.user.id, product_id=self.request.GET.get('id', ''), address=address, phonenumber=phonenumber, quantity=quantity)
+            purchase.save()
+            return redirect('store:successfulpurchase')
 
         return render(request, self.template_name, {'form': form})
 

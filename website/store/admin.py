@@ -1,5 +1,5 @@
 from django.contrib import admin
-from store.models import Category, Product, Payments
+from store.models import Category, Product, Purchases
 
 
 class CategoryAdmin(admin.ModelAdmin):
@@ -30,7 +30,7 @@ class ProductAdmin(admin.ModelAdmin):
         return qs.filter(category=ownedCategories[0].id)
 
 
-class PaymentsAdmin(admin.ModelAdmin):
+class PurchasesAdmin(admin.ModelAdmin):
     list_display = ('user', 'address', 'phonenumber', 'made_at', 'quantity', 'product')
     fields = ('address', 'phonenumber', 'quantity', 'product', 'processed')
     search_fields = ['user', 'product']
@@ -38,7 +38,7 @@ class PaymentsAdmin(admin.ModelAdmin):
     list_per_page = 50
 
     def get_queryset(self, request):
-        qs = super(PaymentsAdmin, self).get_queryset(request)
+        qs = super(PurchasesAdmin, self).get_queryset(request)
         if request.user.username == 'admin':
             return qs.filter(processed=False)
         return qs.filter(allowed_user=request.user, processed=False)
@@ -46,6 +46,6 @@ class PaymentsAdmin(admin.ModelAdmin):
 
 admin.site.register(Category, CategoryAdmin)
 admin.site.register(Product, ProductAdmin)
-admin.site.register(Payments, PaymentsAdmin)
+admin.site.register(Purchases, PurchasesAdmin)
 
 
