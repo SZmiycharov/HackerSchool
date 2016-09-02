@@ -32,7 +32,7 @@ class ProductAdmin(admin.ModelAdmin):
 
 class PurchasesAdmin(admin.ModelAdmin):
     list_display = ('user', 'address', 'phonenumber', 'made_at', 'quantity', 'product')
-    fields = ('address', 'phonenumber', 'quantity', 'product', 'processed')
+    fields = ('address', 'phonenumber', 'quantity', 'product', 'delivered')
     search_fields = ['user', 'product']
     raw_id_fields = ('product', )
     list_per_page = 50
@@ -40,8 +40,8 @@ class PurchasesAdmin(admin.ModelAdmin):
     def get_queryset(self, request):
         qs = super(PurchasesAdmin, self).get_queryset(request)
         if request.user.username == 'admin':
-            return qs.filter(processed=False)
-        return qs.filter(allowed_user=request.user, processed=False)
+            return qs.filter(delivered=False)
+        return qs.filter(allowed_user=request.user, delivered=False)
 
 
 admin.site.register(Category, CategoryAdmin)

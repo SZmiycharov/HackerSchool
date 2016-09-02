@@ -380,9 +380,9 @@ class ShoppingCartView(generic.ListView):
     context_object_name = 'products_in_cart'
 
     def get_queryset(self):
-        if self.request.session['shoppingcart']:
+        try:
             return Product.objects.filter(id__in=list(self.request.session['shoppingcart']))
-        else:
+        except KeyError:
             return []
 
 

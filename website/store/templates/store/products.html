@@ -63,11 +63,19 @@
             </form>
             <form action="{% url 'store:purchase' %}" method="get">
                 <input type="hidden" name="id" value="{{ product.id }}">
-                {% if product.quantity > 0 %}
-                    <input type="submit" value="Buy">
-                {% else %}
-                    <input type="submit" value="Not in stock" disabled>
-                {% endif %}
+                    {% if user.is_authenticated %}
+                        {% if product.quantity > 0 %}
+                            <input type="submit" value="Buy">
+                        {% else %}
+                            <input type="submit" value="Not in stock" disabled>
+                        {% endif %}
+                    {% else %}
+                        {% if product.quantity > 0 %}
+                            <input onclick="location.href='{% url store:login %}';" type="button" value="Login to buy">
+                        {% else %}
+                            <input type="submit" value="Not in stock" disabled>
+                        {% endif %}
+                    {% endif %}
             </form>
         {% endfor %}
         {% else %}
