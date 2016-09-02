@@ -8,6 +8,8 @@ from .forms import RegisterForm, LoginForm, UpdateProfileForm, PurchaseForm
 from django.contrib.auth.models import User
 from phonenumber_field.modelfields import PhoneNumberField
 from django.http import HttpResponse
+from django.urls import reverse
+from django.db.models import F
 
 
 searchedfor = ''
@@ -390,9 +392,8 @@ class PurchaseView(View):
 
     def get(self, request):
         print >> sys.stderr, "\nget view purchase\n"
-        form = self.form_class(None)
+        form = self.form_class(product_id=self.request.GET.get('id', ''))
         product = Product.objects.all().filter(id=self.request.GET.get('id', ''))
-        print >> sys.stderr, product
         return render(request, self.template_name, {'form': form, 'product': product})
 
     def post(self, request):
@@ -404,17 +405,25 @@ class PurchaseView(View):
             phonenumber = form.cleaned_data['phonenumber']
             quantity = form.cleaned_data['quantity']
             print >> sys.stderr, phonenumber
-            purchase = Purchases(user_id=self.request.user.id, product_id=self.request.GET.get('id', ''), address=address, phonenumber=phonenumber, quantity=quantity)
+            product_id = self.request.GET.get('id', '')
+
+            purchase = Purchases(user_id=self.request.user.id, product_id=product_id, address=address, phonenumber=phonenumber, quantity=quantity)
             purchase.save()
-            return redirect('store:successfulpurchase')
+            return redirect(reverse('store:successfulpurchase') + '?productid={}&quantity={}'.format(product_id, quantity))
 
-        return render(request, self.template_name, {'form': form})
+        product = Product.objects.all().filter(id=self.request.GET.get('id', ''))
+        return render(request, self.template_name, {'form': form, 'product': product})
 
 
-class SuccessfulPaymentView(View):
-    template_name = 'store/successfulpayment.html'
+class SuccessfulPurchaseView(View):
+    template_name = 'store/successfulpurchase.html'
 
     def get(self, request):
+        product_id = self.request.GET.get('productid', '')
+        quantity = self.request.GET.get('quantity', '')
+        product = Product.objects.all().filter(id=product_id)
+        product.update(quantity=F('quantity')-quantity)
+
         return render(request, self.template_name)
 
 

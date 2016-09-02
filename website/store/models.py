@@ -11,6 +11,7 @@ import django
 from phonenumber_field.modelfields import PhoneNumberField
 
 
+
 def f():
     d = uuid.uuid4()
     str = d.hex

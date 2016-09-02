@@ -63,7 +63,11 @@
             </form>
             <form action="{% url 'store:purchase' %}" method="get">
                 <input type="hidden" name="id" value="{{ product.id }}">
-                <input type="submit" value="Buy">
+                {% if product.quantity > 0 %}
+                    <input type="submit" value="Buy">
+                {% else %}
+                    <input type="submit" value="Not in stock" disabled>
+                {% endif %}
             </form>
         {% endfor %}
         {% else %}

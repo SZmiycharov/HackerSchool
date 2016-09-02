@@ -5,6 +5,8 @@ from registration.forms import RegistrationFormUniqueEmail, RegistrationForm
 from django.contrib.auth.forms import AuthenticationForm
 from phonenumber_field.modelfields import PhoneNumberField
 from django.forms import ModelForm, CharField, TextInput, IntegerField
+from .models import Product
+import sys
 
 
 class RegisterForm(RegistrationFormUniqueEmail):
@@ -34,9 +36,20 @@ class LoginForm(AuthenticationForm):
 
 
 class PurchaseForm(forms.Form):
+    product_id = 'c519e1b3ab3c4cc6'
+
+    def __init__(self, *args, **kwargs):
+        if kwargs.get("product_id", ""):
+            PurchaseForm.product_id = kwargs.pop("product_id")
+            print >> sys.stderr, "purchaseform.product_id: {}".format(PurchaseForm.product_id)
+        super(PurchaseForm, self).__init__(*args, **kwargs)
+
+    product = Product.objects.all().filter(id=product_id)[0]
+    maxquantity = getattr(product, 'quantity')
+
     address = forms.CharField(label='Address', max_length=100)
-    phonenumber = IntegerField(min_value=0, max_value=9999999999999)
-    quantity = IntegerField(min_value=0, max_value=10)
+    phonenumber = IntegerField(min_value=0, max_value=999999999999)
+    quantity = IntegerField(min_value=0, max_value=maxquantity)
     captcha = ReCaptchaField(label='')
 
 
