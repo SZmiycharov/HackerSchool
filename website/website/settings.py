@@ -173,8 +173,9 @@ RECAPTCHA_PRIVATE_KEY = '6Ldu1igTAAAAALkGVYGP7-R11lz5AXWWfR4FaL7e'
 NOCAPTCHA = True
 RECAPTCHA_USE_SSL = True
 
-
 CURRENCIES = ('USD', 'BGN', 'EUR')
+
+SESSION_ENGINE = 'django.contrib.sessions.backends.cache'
 
 
 

@@ -2,15 +2,13 @@ from django.views import generic
 from .models import Category, Product, Purchases
 from django.shortcuts import render, redirect
 from django.contrib.auth import authenticate, login, logout
-from django.views.generic import View
-import sys
+from django.views.generic import View, TemplateView
 from .forms import RegisterForm, LoginForm, UpdateProfileForm, PurchaseForm
 from django.contrib.auth.models import User
-from phonenumber_field.modelfields import PhoneNumberField
 from django.http import HttpResponse
 from django.urls import reverse
 from django.db.models import F
-
+import sys
 
 searchedfor = ''
 
@@ -380,6 +378,26 @@ class ShoppingCartView(generic.ListView):
     context_object_name = 'products_in_cart'
 
     def get_queryset(self):
+        addid = self.request.GET.get('addid', '')
+        removeid = self.request.GET.get('removeid', '')
+
+        if addid:
+            try:
+                session_list = self.request.session['shoppingcart']
+                session_list.append(addid)
+                self.request.session['shoppingcart'] = session_list
+            except:
+                print >> sys.stderr, "flushing cart now!!!"
+                self.request.session['shoppingcart'] = [addid]
+                print "session in except: {}".format(self.request.session['shoppingcart'])
+        elif removeid:
+            try:
+                session_list = self.request.session['shoppingcart']
+                session_list.remove(removeid)
+                self.request.session['shoppingcart'] = session_list
+            except:
+                pass
+
         try:
             return Product.objects.filter(id__in=list(self.request.session['shoppingcart']))
         except KeyError:

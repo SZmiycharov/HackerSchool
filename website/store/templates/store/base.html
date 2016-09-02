@@ -51,11 +51,13 @@
             </form>
 
             <ul class="nav navbar-nav navbar-right">
-                <li class="">
-                        <a href="{% url 'store:shoppingcart' %}">
-                            <span class="glyphicon glyphicon-shopping-cart" aria-hidden="true"></span>&nbsp;Shopping Cart
-                        </a>
-                </li>
+                {% if user.is_authenticated %}
+                    <li class="">
+                            <a href="{% url 'store:shoppingcart' %}">
+                                <span class="glyphicon glyphicon-shopping-cart" aria-hidden="true"></span>&nbsp;Shopping Cart
+                            </a>
+                    </li>
+                {% endif %}
 
                 {% if user.is_authenticated %}
                     <li class="">

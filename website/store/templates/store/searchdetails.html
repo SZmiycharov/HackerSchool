@@ -68,6 +68,7 @@
                     {% if user.is_authenticated %}
                         {% if product.quantity > 0 %}
                             <input type="submit" value="Buy">
+                            <input type="button" value="Add to cart" onclick="location.href='{% url "store:shoppingcart" %}?addid={{ product.id }}';">
                         {% else %}
                             <input type="submit" value="Not in stock" disabled>
                         {% endif %}
