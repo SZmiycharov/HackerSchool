@@ -23,14 +23,14 @@
         <div style="margin-left: 10px;" class="row" style="min-height:63px;">
             <div class="form-group col-md-1">
                 <label>Модел</label>
-                <input type="text" name="model" {% if request.GET.model %}value="{{ request.GET.model }}"{% else %}value=""{% endif %} size="12">
+                <input id="searchformodel" type="text" name="model" {% if request.GET.model %}value="{{ request.GET.model }}"{% else %}value=""{% endif %} size="12">
                 <div id="modelsearch"></div>
             </div>
 
             <div class="row" style="min-height:63px;">
                 <div id="priceCategory" class="form-group col-md-1">
                     <label>Цена</label>
-                        <select id="selectPriceCategory" name="priceCategory" class="input-sm form-control select2-trigger" >
+                        <select id="selectPriceCategory" name="priceCategory" class="input-sm form-control select2-trigger" multiple>
                             <option value="" disabled selected>Избери</option>
                             <option value="1"><100</option>
                             <option value="2">100-200</option>
@@ -53,7 +53,6 @@
                 </div>
             </div>
         </div>
-        <button class="SrcBtn" style="margin-left: 25px;" type="submit">Търси</button>
     </form>
 
 

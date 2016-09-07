@@ -1,13 +1,23 @@
 <script>
     var _timer = 0;
 
-    function DelayedShowResult(value, num) {
+    function DelayedShowResult(value) {
       if (_timer)
           window.clearTimeout(_timer);
       _timer = window.setTimeout(function() {
           showResult(value);
       }, 200);
     }
+
+    function DelayedModelFilter(model) {
+      if (_timer)
+          window.clearTimeout(_timer);
+      _timer = window.setTimeout(function() {
+          window.location = updateQueryStringParameter(window.location.href, 'model', model);
+      }, 200);
+    }
+
+
 
     function showResult(str) {
       if (str.length==0)
@@ -71,6 +81,17 @@
     });
 
     $(function(){
+      $('#searchformodel').on('keyup', function () {
+          var model = $(this).val();
+          if (model) {
+              DelayedModelFilter(model);
+
+          }
+          return false;
+      });
+    });
+
+    $(function(){
       $('#id_quantity').on('change', function () {
           var quantity = $(this).val();
           var price = document.getElementById ("purchasedetails").innerText.split(" ")[7];
@@ -82,6 +103,9 @@
           return false;
       });
     });
+
+
+
 
 
 </script>

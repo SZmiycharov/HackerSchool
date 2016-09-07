@@ -23,14 +23,14 @@
                 <div class="row" style="min-height:63px;">
                     <div class="form-group col-md-1">
                         <label>Модел</label>
-                        <input type="text" name="model" {% if request.GET.model %}value="{{ request.GET.model }}"{% else %}value=""{% endif %} size="12">
+                        <input id="searchformodel" type="text" name="model" {% if request.GET.model %}value="{{ request.GET.model }}"{% else %}value=""{% endif %} size="12">
                         <div id="modelsearch"></div>
                     </div>
 
                     <div class="row" style="min-height:63px;">
                         <div id="priceCategory" class="form-group col-md-1">
                             <label>Цена</label>
-                                <select id="selectPriceCategory" name="priceCategory" class="input-sm form-control select2-trigger" id="price" ><option value="">Избери</option>
+                                <select id="selectPriceCategory" name="priceCategory" class="input-sm form-control select2-trigger" id="price" multiple><option value="">Избери</option>
                                     <option value="1"><100</option>
                                     <option value="2">100-200</option>
                                     <option value="3">200-300 </option>
@@ -52,7 +52,6 @@
                     </div>
 
                 </div>
-                <button class="SrcBtn" type="submit">Търси</button>
     </form>
 
     {% if all_products %}
@@ -72,7 +71,7 @@
                         {% endif %}
                     {% else %}
                         {% if product.quantity > 0 %}
-                            <input onclick="location.href='{% url store:login %}';" type="button" value="Login to buy">
+                            <input onclick="location.href='{% url "store:login" %}';" type="button" value="Login to buy">
                         {% else %}
                             <input type="submit" value="Not in stock" disabled>
                         {% endif %}
