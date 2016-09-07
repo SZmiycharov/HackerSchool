@@ -9,6 +9,8 @@ from django.http import HttpResponse
 from django.urls import reverse
 from django.db.models import F
 import sys
+from django.db import transaction
+
 
 searchedfor = ''
 
@@ -416,12 +418,12 @@ class PurchaseView(View):
 
     def post(self, request):
         print >> sys.stderr, "\npost view purchase\n"
-        form = self.form_class(request.POST)
+        form = self.form_class(request.POST, product_id=self.request.GET.get('id', ''))
 
         if form.is_valid():
             address = form.cleaned_data['address']
             phonenumber = form.cleaned_data['phonenumber']
-            quantity = form.cleaned_data['quantity']
+            quantity = 1
             print >> sys.stderr, phonenumber
             product_id = self.request.GET.get('id', '')
 
@@ -440,7 +442,11 @@ class SuccessfulPurchaseView(View):
         product_id = self.request.GET.get('productid', '')
         quantity = self.request.GET.get('quantity', '')
         product = Product.objects.all().filter(id=product_id)
-        product.update(quantity=F('quantity')-quantity)
+        try:
+            with transaction.atomic():
+                product.update(quantity=F('quantity') - quantity)
+        except:
+            print >> sys.stderr, "Fail with updating product quantity!"
 
         return render(request, self.template_name)
 

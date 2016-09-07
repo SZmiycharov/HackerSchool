@@ -8,6 +8,7 @@ from django.forms import ModelForm, CharField, TextInput, IntegerField
 from .models import Product
 import sys
 
+
 class RegisterForm(RegistrationFormUniqueEmail):
     email = forms.EmailField()
     captcha = ReCaptchaField(label='')
@@ -42,12 +43,10 @@ class PurchaseForm(forms.Form):
             product = Product.objects.all().filter(id=product_id)[0]
             maxquantity = getattr(product, 'quantity')
             super(PurchaseForm, self).__init__(*args, **kwargs)
-            self.fields['address'] = forms.CharField(label='Address', max_length=100)
-            self.fields['phonenumber'] = IntegerField(min_value=0, max_value=999999999999)
             self.fields['quantity'] = IntegerField(min_value=0, max_value=maxquantity)
-            self.fields['captcha'] = ReCaptchaField(label='')
 
-
+    address = forms.CharField(label='Address', max_length=100)
+    phonenumber = IntegerField(min_value=0, max_value=999999999999)
 
 
 
