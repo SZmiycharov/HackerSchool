@@ -390,27 +390,51 @@ class ShoppingCartView(generic.ListView):
     def get_queryset(self):
         addid = self.request.GET.get('addid', '')
         removeid = self.request.GET.get('removeid', '')
+        reducequantityid = self.request.GET.get('reducequantityid', '')
+        increasequantityid = self.request.GET.get('increasequantityid', '')
 
-        if addid:
-            try:
-                session_list = self.request.session['shoppingcart']
-                if addid in self.request.session['shoppingcart'].keys():
-                    session_list[addid] += 1
-                else:
-                    session_list[addid] = 1
-                self.request.session['shoppingcart'] = session_list
-            except:
-                self.request.session['shoppingcart'] = {addid: 1}
-        elif removeid:
-            try:
-                session_list = self.request.session['shoppingcart']
-                if session_list[removeid] == 1:
+        try:
+            print >> sys.stderr, self.request.META['HTTP_REFERER']
+            if addid:
+                try:
+                    session_list = self.request.session['shoppingcart']
+                    if addid in self.request.session['shoppingcart'].keys():
+                        session_list[addid] += 1
+                    else:
+                        session_list[addid] = 1
+                    self.request.session['shoppingcart'] = session_list
+                except:
+                    self.request.session['shoppingcart'] = {addid: 1}
+            elif removeid:
+                try:
+                    session_list = self.request.session['shoppingcart']
                     del session_list[removeid]
-                else:
-                    session_list[removeid] -= 1
-                self.request.session['shoppingcart'] = session_list
-            except:
-                pass
+                    self.request.session['shoppingcart'] = session_list
+                except:
+                    pass
+
+            elif reducequantityid:
+                try:
+                    session_list = self.request.session['shoppingcart']
+                    session_list[reducequantityid] -= 1
+                    if session_list[reducequantityid] == 0:
+                        del session_list[reducequantityid]
+                    self.request.session['shoppingcart'] = session_list
+                except:
+                    pass
+
+            elif increasequantityid:
+                try:
+                    session_list = self.request.session['shoppingcart']
+                    if session_list[increasequantityid] < Product.objects.filter(id=increasequantityid)[0].quantity:
+                        session_list[increasequantityid] += 1
+                    self.request.session['shoppingcart'] = session_list
+                except:
+                    pass
+
+        except:
+            print >> sys.stderr, "No previous url"
+
 
         try:
             return Product.objects.filter(id__in=list(self.request.session['shoppingcart']))
@@ -464,8 +488,9 @@ class PurchaseView(View):
                 if self.request.GET.get('fromshoppingcart', ''):
                     products = Product.objects.filter(id__in=list(self.request.session['shoppingcart'].keys()))
                     for product in products:
+                        print >> sys.stderr, product.id
                         purchase = Purchases(user_id=self.request.user.id, product_id=product.id,
-                                             address=address, phonenumber=phonenumber, quantity=self.request.session['shoppingcart'][product_id])
+                                             address=address, phonenumber=phonenumber, quantity=self.request.session['shoppingcart'][product.id])
                         purchase.save()
                     return redirect(reverse('store:successfulpurchase') + '?fromshoppingcart={}'.format(True))
                 else:
@@ -492,19 +517,36 @@ class SuccessfulPurchaseView(View):
             try:
                 with transaction.atomic():
                     product.update(quantity=F('quantity') - quantity)
-            except:
-                print >> sys.stderr, "Fail with updating product quantity!"
+                    try:
+                        session_list = self.request.session['shoppingcart']
+                        session_list[product_id] -= 1
+                        if session_list[product_id] == 0:
+                            del session_list[product_id]
+                        self.request.session['shoppingcart'] = session_list
+                    except:
+                        pass
+            except Exception, e:
+                print e
+                print >> sys.stderr, "Fail with updating product quantity 1!"
 
         elif self.request.GET.get('fromshoppingcart', ''):
             products = Product.objects.filter(id__in=list(self.request.session['shoppingcart'].keys()))
             for product in products:
                 try:
                     with transaction.atomic():
-                        product.update(quantity=F('quantity') - self.request.session['shoppingcart'][product.id])
-                except:
-                    print >> sys.stderr, "Fail with updating product quantity!"
-
-
+                        Product.objects.all().filter(id=product.id).update(quantity=F('quantity') - int(self.request.session['shoppingcart'][product.id]))
+                        try:
+                            session_list = self.request.session['shoppingcart']
+                            session_list[product.id] -= 1
+                            if session_list[product.id] == 0:
+                                del session_list[product.id]
+                            self.request.session['shoppingcart'] = session_list
+                        except:
+                            pass
+                except Exception, e:
+                    print e
+                    print >> sys.stderr, self.request.session['shoppingcart'][product.id]
+                    print >> sys.stderr, "Fail with updating product quantity 2!"
 
         return render(request, self.template_name)
 
