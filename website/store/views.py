@@ -32,60 +32,80 @@ class DetailView(generic.DetailView):
         pk = self.kwargs['pk']
         context = super(DetailView, self).get_context_data(**kwargs)
 
-        if len(self.request.GET.urlencode().split('model=')) > 1 or len(
-                self.request.GET.urlencode().split('priceCategory=')) > 1 or len(
-                self.request.GET.urlencode().split('sortby=')) > 1:
-
-            try:
-                model = self.request.GET.urlencode().split('model=')[1].split('&')[0]
-            except:
-                model = ''
-            try:
-                priceCategory = self.request.GET.urlencode().split('priceCategory=')[1].split('&')[0]
-            except:
-                priceCategory = ''
-            try:
-                sortby = self.request.GET.urlencode().split('sortby=')[1].split('&')[0]
-            except:
-                sortby = ''
-
+        if self.request.GET.get('model', '') or self.request.GET.get('priceCategory', '') or self.request.GET.get('sortby', ''):
+            model = self.request.GET.get('model', '')
+            priceCategory = self.request.GET.get('priceCategory', '')
+            sortby = self.request.GET.get('sortby', '')
+            query = []
             context['all_products'] = Product.objects.all().filter(category_id__exact=pk)
 
-            if priceCategory == '1':
+            if priceCategory:
+                print "filter: pricecategory"
+                multiplePriceCategories = priceCategory.split(',')
+
+                for categ in multiplePriceCategories:
+                    if categ == '1':
+                        if sortby != '':
+                            query.extend(
+                                list(Product.objects.filter(category_id__exact=pk, price__lte=100, model__icontains=model).order_by(sortby)))
+                        else:
+                            query.extend(list(Product.objects.filter(category_id__exact=pk, price__lte=100, model__icontains=model)))
+
+                    elif categ == '2':
+                        if sortby != '':
+                            query.extend(list(
+                                Product.objects.filter(category_id__exact=pk, price__gte=100, price__lte=200, model__icontains=model).order_by(
+                                    sortby)))
+                        else:
+                            query.extend(
+                                list(Product.objects.filter(category_id__exact=pk, price__gte=100, price__lte=200, model__icontains=model)))
+
+                    elif categ == '3':
+                        if sortby != '':
+                            query.extend(list(
+                                Product.objects.filter(category_id__exact=pk, price__gte=200, price__lte=300, model__icontains=model).order_by(
+                                    sortby)))
+                        else:
+                            query.extend(
+                                list(Product.objects.filter(category_id__exact=pk, price__gte=200, price__lte=300, model__icontains=model)))
+
+                    elif categ == '4':
+                        if sortby != '':
+                            query.extend(list(
+                                Product.objects.filter(category_id__exact=pk, price__gte=300, price__lte=400, model__icontains=model).order_by(
+                                    sortby)))
+                        else:
+                            query.extend(
+                                list(Product.objects.filter(category_id__exact=pk, price__gte=300, price__lte=400, model__icontains=model)))
+
+                    elif categ == '5':
+                        if sortby != '':
+                            query.extend(list(
+                                Product.objects.filter(category_id__exact=pk, price__gte=400, price__lt=500, model__icontains=model).order_by(
+                                    sortby)))
+                        else:
+                            query.extend(
+                                list(Product.objects.filter(category_id__exact=pk, price__gte=400, price__lt=500, model__icontains=model)))
+
+                    elif categ == '6':
+                        if sortby != '':
+                            query.extend(
+                                list(Product.objects.filter(category_id__exact=pk, price__gte=500, model__icontains=model).order_by(sortby)))
+                        else:
+                            query.extend(list(Product.objects.filter(category_id__exact=pk, price__gte=500, model__icontains=model)))
+
+            elif model:
+                print >> sys.stderr, "filter: model"
                 if sortby != '':
-                    context['all_products'] = Product.objects.all().filter(category_id__exact=pk, price__lte=100, model__icontains=model).order_by(sortby)
+                    query.extend(list(Product.objects.filter(model__icontains=model).order_by(sortby)))
                 else:
-                    context['all_products'] = Product.objects.all().filter(category_id__exact=pk, price__lte=100, model__icontains=model)
-            elif priceCategory == '2':
-                if sortby != '':
-                    context['all_products'] = Product.objects.all().filter(category_id__exact=pk, price__gte=100, price__lte=200, model__icontains=model).order_by(sortby)
-                else:
-                    context['all_products'] = Product.objects.all().filter(category_id__exact=pk, price__gte=100, price__lte=200, model__icontains=model)
-            elif priceCategory == '3':
-                if sortby != '':
-                    context['all_products'] = Product.objects.all().filter(category_id__exact=pk, price__gte=200, price__lte=300, model__icontains=model).order_by(sortby)
-                else:
-                    context['all_products'] = Product.objects.all().filter(category_id__exact=pk, price__gte=200, price__lte=300, model__icontains=model)
-            elif priceCategory == '4':
-                if sortby != '':
-                    context['all_products'] = Product.objects.all().filter(category_id__exact=pk, price__gte=300, price__lte=400, model__icontains=model).order_by(sortby)
-                else:
-                    context['all_products'] = Product.objects.all().filter(category_id__exact=pk, price__gte=300, price__lte=400, model__icontains=model)
-            elif priceCategory == '5':
-                if sortby != '':
-                    context['all_products'] = Product.objects.all().filter(category_id__exact=pk, price__gte=400, price__lt=500, model__icontains=model).order_by(sortby)
-                else:
-                    context['all_products'] = Product.objects.all().filter(category_id__exact=pk, price__gte=400, price__lt=500, model__icontains=model)
-            elif priceCategory == '6':
-                if sortby != '':
-                    context['all_products'] = Product.objects.all().filter(category_id__exact=pk, price__gte=500, model__icontains=model).order_by(sortby)
-                else:
-                    context['all_products'] = Product.objects.all().filter(category_id__exact=pk, price__gte=500, model__icontains=model)
+                    query.extend(list(Product.objects.filter(model__icontains=model)))
+
             else:
-                if sortby != '':
-                    context['all_products'] = Product.objects.all().filter(category_id__exact=pk, model__icontains=model).order_by(sortby)
-                else:
-                    context['all_products'] = Product.objects.all().filter(category_id__exact=pk, model__icontains=model)
+                print >> sys.stderr, "filter: none 2"
+                query.extend(list(Product.objects.filter()))
+
+            context['all_products'] = query
             return context
 
         context['all_products'] = Product.objects.all().filter(category_id__exact=pk)
@@ -103,11 +123,12 @@ class ProductsView(generic.ListView):
             model = self.request.GET.get('model', '')
             priceCategory = self.request.GET.get('priceCategory', '')
             sortby = self.request.GET.get('sortby', '')
+            query = []
 
             if priceCategory:
                 print "filter: pricecategory"
                 multiplePriceCategories = priceCategory.split(',')
-                query = []
+
                 for categ in multiplePriceCategories:
                     if categ == '1':
                         if sortby != '':
@@ -180,11 +201,12 @@ class SearchDetailsView(generic.ListView):
             model = self.request.GET.get('model', '')
             priceCategory = self.request.GET.get('priceCategory', '')
             sortby = self.request.GET.get('sortby', '')
+            query = []
 
             if priceCategory:
                 print "filter: pricecategory"
                 multiplePriceCategories = priceCategory.split(',')
-                query = []
+
                 for categ in multiplePriceCategories:
                     if categ == '1':
                         if sortby != '':
@@ -227,13 +249,12 @@ class SearchDetailsView(generic.ListView):
             elif model:
                 print >> sys.stderr, "filter: model"
                 if sortby != '':
-                    return Product.objects.filter(maker__icontains=searchedfor, model__icontains=model).order_by(sortby)
+                    query.extend(list(Product.objects.filter(maker__icontains=searchedfor, model__icontains=model).order_by(sortby)))
                 else:
-                    return Product.objects.filter(maker__icontains=searchedfor, model__icontains=model)
-
+                    query.extend(list(Product.objects.filter(maker__icontains=searchedfor, model__icontains=model)))
             else:
                 print >> sys.stderr, "filter: none"
-                return Product.objects.filter(maker__icontains=searchedfor)
+                query.extend(list(Product.objects.filter(maker__icontains=searchedfor)))
 
         else:
             print >> sys.stderr, "filter: none 2"

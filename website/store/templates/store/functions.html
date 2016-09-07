@@ -14,10 +14,16 @@
           window.clearTimeout(_timer);
       _timer = window.setTimeout(function() {
           window.location = updateQueryStringParameter(window.location.href, 'model', model);
-      }, 200);
+      }, 400);
     }
 
-
+    function DelayedPriceFilter(pricecat) {
+      if (_timer)
+          window.clearTimeout(_timer);
+      _timer = window.setTimeout(function() {
+          window.location = updateQueryStringParameter(window.location.href, 'priceCategory', pricecat);
+      }, 1500);
+    }
 
     function showResult(str) {
       if (str.length==0)
@@ -60,11 +66,11 @@
     }
 
     $(function(){
-      $('#selectPriceCategory').on('change', function () {
+      $('#selectPriceCategory').on('click', function () {
           var pricecat = $(this).val();
           console.log(pricecat)
           if (pricecat) {
-              window.location = updateQueryStringParameter(window.location.href, 'priceCategory', pricecat);
+              DelayedPriceFilter(pricecat);
           }
           return false;
       });
