@@ -31,7 +31,7 @@ class ProductAdmin(admin.ModelAdmin):
 
 
 class PurchasesAdmin(admin.ModelAdmin):
-    list_display = ('user', 'address', 'phonenumber', 'made_at', 'quantity', 'product')
+    list_display = ('user', 'address', 'phonenumber', 'made_at', 'quantity')
     fields = ('address', 'phonenumber', 'quantity', 'product', 'delivered')
     search_fields = ['user', 'product']
     raw_id_fields = ('product', )

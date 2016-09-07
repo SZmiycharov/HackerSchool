@@ -74,16 +74,14 @@ class Product(models.Model):
 class Purchases(models.Model):
     user = models.ForeignKey(User, editable=False)
     made_at = models.DateTimeField(editable=False, default=django.utils.timezone.now)
-    quantity = models.IntegerField(default=1)
+    quantity = models.IntegerField(default=1, null=True)
     product = models.ForeignKey(Product)
     address = models.CharField(max_length=200)
     phonenumber = models.CharField(max_length=15)
     delivered = models.BooleanField(default=False)
 
-
     def __str__(self):
         return str(self.product)
-
 
     class Meta:
         verbose_name_plural = 'Purchases'

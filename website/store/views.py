@@ -412,13 +412,34 @@ class PurchaseView(View):
 
     def get(self, request):
         print >> sys.stderr, "\nget view purchase\n"
-        form = self.form_class(product_id=self.request.GET.get('id', ''))
-        product = Product.objects.all().filter(id=self.request.GET.get('id', ''))
-        return render(request, self.template_name, {'form': form, 'product': product})
+        if self.request.GET.get('fromshoppingcart', ''):
+            print >> sys.stderr, "In purchaseview fromshoppingcart"
+            form = self.form_class(fromshoppingcart=self.request.GET.get('fromshoppingcart', ''))
+            try:
+                products = Product.objects.filter(id__in=list(self.request.session['shoppingcart']))
+                totalcost = 0
+                currency = ''
+
+                for product in products:
+                    totalcost += float(str(product.price).split()[0])
+                    currency = str(product.price).split()[1]
+
+                print >> sys.stderr, "totalcost: {}; currency: {}".format(totalcost, currency)
+                return render(request, self.template_name, {'form': form, 'totalcost': totalcost, 'currency': currency})
+            except KeyError:
+                print >> sys.stderr, "Anonymous user trying to purchase from shopping cart"
+                return redirect('store:login')
+        else:
+            form = self.form_class(product_id=self.request.GET.get('id', ''))
+            product = Product.objects.all().filter(id=self.request.GET.get('id', ''))
+            return render(request, self.template_name, {'form': form, 'product': product})
 
     def post(self, request):
         print >> sys.stderr, "\npost view purchase\n"
-        form = self.form_class(request.POST, product_id=self.request.GET.get('id', ''))
+        if self.request.GET.get('id', ''):
+            form = self.form_class(request.POST, product_id=self.request.GET.get('id', ''))
+        elif self.request.GET.get('fromshoppingcart', ''):
+            form = self.form_class(request.POST, fromshoppingcart=self.request.GET.get('fromshoppingcart', ''))
 
         if form.is_valid():
             address = form.cleaned_data['address']
@@ -427,9 +448,22 @@ class PurchaseView(View):
             print >> sys.stderr, phonenumber
             product_id = self.request.GET.get('id', '')
 
-            purchase = Purchases(user_id=self.request.user.id, product_id=product_id, address=address, phonenumber=phonenumber, quantity=quantity)
-            purchase.save()
-            return redirect(reverse('store:successfulpurchase') + '?productid={}&quantity={}'.format(product_id, quantity))
+            if self.request.user.id:
+                if self.request.GET.get('fromshoppingcart', ''):
+                    products = Product.objects.filter(id__in=list(self.request.session['shoppingcart']))
+                    for product in products:
+                        purchase = Purchases(user_id=self.request.user.id, product_id=product.id,
+                                             address=address, phonenumber=phonenumber, quantity=quantity)
+                        purchase.save()
+                    return redirect(reverse('store:successfulpurchase') + '?fromshoppingcart={}'.format(True))
+                else:
+                    purchase = Purchases(user_id=self.request.user.id, product_id=product_id,
+                                         address=address, phonenumber=phonenumber, quantity=quantity)
+                    purchase.save()
+                    return redirect(reverse('store:successfulpurchase') +
+                                    '?productid={}&quantity={}'.format(product_id, quantity))
+            else:
+                return redirect('store:login')
 
         product = Product.objects.all().filter(id=self.request.GET.get('id', ''))
         return render(request, self.template_name, {'form': form, 'product': product})
@@ -439,14 +473,26 @@ class SuccessfulPurchaseView(View):
     template_name = 'store/successfulpurchase.html'
 
     def get(self, request):
-        product_id = self.request.GET.get('productid', '')
-        quantity = self.request.GET.get('quantity', '')
-        product = Product.objects.all().filter(id=product_id)
-        try:
-            with transaction.atomic():
-                product.update(quantity=F('quantity') - quantity)
-        except:
-            print >> sys.stderr, "Fail with updating product quantity!"
+        if self.request.GET.get('productid', '') and self.request.GET.get('quantity', ''):
+            product_id = self.request.GET.get('productid', '')
+            quantity = self.request.GET.get('quantity', '')
+            product = Product.objects.all().filter(id=product_id)
+            try:
+                with transaction.atomic():
+                    product.update(quantity=F('quantity') - quantity)
+            except:
+                print >> sys.stderr, "Fail with updating product quantity!"
+
+        elif self.request.GET.get('fromshoppingcart', ''):
+            products = Product.objects.filter(id__in=list(self.request.session['shoppingcart']))
+            for product in products:
+                try:
+                    with transaction.atomic():
+                        product.update(quantity=F('quantity') - 1)
+                except:
+                    print >> sys.stderr, "Fail with updating product quantity!"
+
+
 
         return render(request, self.template_name)
 

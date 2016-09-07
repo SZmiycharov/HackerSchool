@@ -2,42 +2,84 @@
 {% block title %}Purchase{% endblock %}
 
 {% block body %}
-<div class="container-fluid">
+    {% if request.GET.fromshoppingcart %}
+            <h1>{{ totalcost }} {{ currency }}</h1>
+            <div class="container-fluid">
 
-    <div class="row">
-        <div class="col-sm-12 col-md-6">
-            <div class="panel panel-default">
-                <div class="panel-body">
-                    <h3 id="purchasedetails">Going to purchase product: {{ product.0.maker }} {{ product.0.model }} - <i style="color:red">{{ product.0.price }}</i></h3>
-                    <input type="image" height="90" width="160" src="{{ product.0.product_logo_thumbnail.url }}">
-                    <h3>Purchase details</h3>
-                    {% if error_message %}
-                        <p><strong>{{ error_message }}</strong></p>
-                    {% endif %}
-                    <form class="form-horizontal" role="form" action="" method="post" enctype="multipart/form-data">
-                        {% csrf_token %}
-                        {% include 'store/form_template.html' %}
-                        <div class="form-group">
-                            <div class="col-sm-offset-2 col-sm-10">
-                                <h4 id="payment"></h4>
-                                <button type="submit" class="btn btn-success">Purchase</button>
-                                <h5>or use paypal:</h5>
-                                <form action="https://www.paypal.com/cgi-bin/webscr" method="post">
-                                    <input type="hidden" name="cmd" value="_xclick">
-                                    <input type="hidden" name="business" value="s.zmiycharov@gmail.com">
-                                    <input type="hidden" name="item_name" value="{{ product.0.maker }} {{ product.0.model }}">
-                                    <input type="hidden" name="currency_code" value="{{ product.0.currency }}">
-                                    <input type="hidden" name="amount" value="{{ product.0.price|floatformat:2 }}">
-                                    <input type="image" height="35" width="85" src="http://www.brysonlagansports.org/images/stories/x-click-but6.gif" name="submit" alt="Make payments with PayPal - it's fast, free and secure!">
+                <div class="row">
+                    <div class="col-sm-12 col-md-6">
+                        <div class="panel panel-default">
+                            <div class="panel-body">
+                                <h3 id="purchasedetails">Total price: <i style="color:red">{{ totalcost }} {{ currency }}</i></h3>
+                                <input type="image" height="90" width="160" src="https://openclipart.org/image/2400px/svg_to_png/60139/cart.png">
+                                <h3>Purchase details</h3>
+                                {% if error_message %}
+                                    <p><strong>{{ error_message }}</strong></p>
+                                {% endif %}
+                                <form class="form-horizontal" role="form" action="" method="post" enctype="multipart/form-data">
+                                    {% csrf_token %}
+                                    {% include 'store/form_template.html' %}
+                                    <div class="form-group">
+                                        <div class="col-sm-offset-2 col-sm-10">
+                                            <h4 id="payment"></h4>
+                                            <button type="submit" class="btn btn-success">Purchase</button>
+                                            <h5>or use paypal:</h5>
+                                            <form action="https://www.paypal.com/cgi-bin/webscr" method="post">
+                                                <input type="hidden" name="cmd" value="_xclick">
+                                                <input type="hidden" name="business" value="s.zmiycharov@gmail.com">
+                                                <input type="hidden" name="item_name" value="From shopping cart">
+                                                <input type="hidden" name="currency_code" value="{{ currency }}">
+                                                <input type="hidden" name="amount" value="{{ totalcost }}">
+                                                <input type="image" height="35" width="85" src="http://www.brysonlagansports.org/images/stories/x-click-but6.gif" name="submit" alt="Make payments with PayPal - it's fast, free and secure!">
+                                            </form>
+                                        </div>
+                                    </div>
                                 </form>
                             </div>
                         </div>
-                    </form>
+                    </div>
                 </div>
-            </div>
-        </div>
-    </div>
 
-</div>
+            </div>
+        {% else %}
+            <div class="container-fluid">
+
+                <div class="row">
+                    <div class="col-sm-12 col-md-6">
+                        <div class="panel panel-default">
+                            <div class="panel-body">
+                                <h3 id="purchasedetails">Going to purchase product: {{ product.0.maker }} {{ product.0.model }} - <i style="color:red">{{ product.0.price }}</i></h3>
+                                <input type="image" height="90" width="160" src="{{ product.0.product_logo_thumbnail.url }}">
+                                <h3>Purchase details</h3>
+                                {% if error_message %}
+                                    <p><strong>{{ error_message }}</strong></p>
+                                {% endif %}
+                                <form class="form-horizontal" role="form" action="" method="post" enctype="multipart/form-data">
+                                    {% csrf_token %}
+                                    {% include 'store/form_template.html' %}
+                                    <div class="form-group">
+                                        <div class="col-sm-offset-2 col-sm-10">
+                                            <h4 id="payment"></h4>
+                                            <button type="submit" class="btn btn-success">Purchase</button>
+                                            <h5>or use paypal:</h5>
+                                            <form action="https://www.paypal.com/cgi-bin/webscr" method="post">
+                                                <input type="hidden" name="cmd" value="_xclick">
+                                                <input type="hidden" name="business" value="s.zmiycharov@gmail.com">
+                                                <input type="hidden" name="item_name" value="{{ product.0.maker }} {{ product.0.model }}">
+                                                <input type="hidden" name="currency_code" value="{{ product.0.currency }}">
+                                                <input type="hidden" name="amount" value="{{ product.0.price|floatformat:2 }}">
+                                                <input type="image" height="35" width="85" src="http://www.brysonlagansports.org/images/stories/x-click-but6.gif" name="submit" alt="Make payments with PayPal - it's fast, free and secure!">
+                                            </form>
+                                        </div>
+                                    </div>
+                                </form>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+            </div>
+    {% endif %}
+
 
 {% endblock %}
