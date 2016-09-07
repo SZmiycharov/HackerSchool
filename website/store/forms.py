@@ -44,15 +44,15 @@ class PurchaseForm(forms.Form):
             product = Product.objects.all().filter(id=product_id)[0]
             maxquantity = getattr(product, 'quantity')
             super(PurchaseForm, self).__init__(*args, **kwargs)
-            self.fields['quantity'] = IntegerField(min_value=0, max_value=maxquantity)
+            self.fields['quantity'] = IntegerField(min_value=0, max_value=maxquantity, required=False)
         elif kwargs.get("fromshoppingcart", ""):
             kwargs.pop("fromshoppingcart")
             print >> sys.stderr, "Buying with shopping cart"
             super(PurchaseForm, self).__init__(*args, **kwargs)
-            self.fields['quantity'] = IntegerField(min_value=0, max_value=1, initial=1)
+            self.fields['quantity'] = IntegerField(disabled=True, required=False)
 
-    address = forms.CharField(label='Address', max_length=100)
-    phonenumber = IntegerField(min_value=0, max_value=999999999999)
+    address = forms.CharField(label='Address', max_length=100, required=False)
+    phonenumber = IntegerField(min_value=0, max_value=999999999999, required=False)
     captcha = ReCaptchaField(label='')
 
 

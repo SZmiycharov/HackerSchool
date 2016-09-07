@@ -394,16 +394,20 @@ class ShoppingCartView(generic.ListView):
         if addid:
             try:
                 session_list = self.request.session['shoppingcart']
-                session_list.append(addid)
+                if addid in self.request.session['shoppingcart'].keys():
+                    session_list[addid] += 1
+                else:
+                    session_list[addid] = 1
                 self.request.session['shoppingcart'] = session_list
             except:
-                print >> sys.stderr, "flushing cart now!!!"
-                self.request.session['shoppingcart'] = [addid]
-                print "session in except: {}".format(self.request.session['shoppingcart'])
+                self.request.session['shoppingcart'] = {addid: 1}
         elif removeid:
             try:
                 session_list = self.request.session['shoppingcart']
-                session_list.remove(removeid)
+                if session_list[removeid] == 1:
+                    del session_list[removeid]
+                else:
+                    session_list[removeid] -= 1
                 self.request.session['shoppingcart'] = session_list
             except:
                 pass
@@ -424,12 +428,12 @@ class PurchaseView(View):
             print >> sys.stderr, "In purchaseview fromshoppingcart"
             form = self.form_class(fromshoppingcart=self.request.GET.get('fromshoppingcart', ''))
             try:
-                products = Product.objects.filter(id__in=list(self.request.session['shoppingcart']))
+                products = Product.objects.filter(id__in=list(self.request.session['shoppingcart'].keys()))
                 totalcost = 0
                 currency = ''
 
                 for product in products:
-                    totalcost += float(str(product.price).split()[0])
+                    totalcost += float(str(product.price).split()[0]) * self.request.session['shoppingcart'][product.id]
                     currency = str(product.price).split()[1]
 
                 print >> sys.stderr, "totalcost: {}; currency: {}".format(totalcost, currency)
@@ -458,10 +462,10 @@ class PurchaseView(View):
 
             if self.request.user.id:
                 if self.request.GET.get('fromshoppingcart', ''):
-                    products = Product.objects.filter(id__in=list(self.request.session['shoppingcart']))
+                    products = Product.objects.filter(id__in=list(self.request.session['shoppingcart'].keys()))
                     for product in products:
                         purchase = Purchases(user_id=self.request.user.id, product_id=product.id,
-                                             address=address, phonenumber=phonenumber, quantity=quantity)
+                                             address=address, phonenumber=phonenumber, quantity=self.request.session['shoppingcart'][product_id])
                         purchase.save()
                     return redirect(reverse('store:successfulpurchase') + '?fromshoppingcart={}'.format(True))
                 else:
@@ -492,11 +496,11 @@ class SuccessfulPurchaseView(View):
                 print >> sys.stderr, "Fail with updating product quantity!"
 
         elif self.request.GET.get('fromshoppingcart', ''):
-            products = Product.objects.filter(id__in=list(self.request.session['shoppingcart']))
+            products = Product.objects.filter(id__in=list(self.request.session['shoppingcart'].keys()))
             for product in products:
                 try:
                     with transaction.atomic():
-                        product.update(quantity=F('quantity') - 1)
+                        product.update(quantity=F('quantity') - self.request.session['shoppingcart'][product.id])
                 except:
                     print >> sys.stderr, "Fail with updating product quantity!"
 
