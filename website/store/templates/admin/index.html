@@ -51,6 +51,29 @@
     }
   } );
 
+  function updateQueryStringParameter(uri, key, value) {
+      var re = new RegExp("([?&])" + key + "=.*?(&|$)", "i");
+      var separator = uri.indexOf('?') !== -1 ? "&" : "?";
+      if (uri.match(re)) {
+        return uri.replace(re, '$1' + key + "=" + value + '$2');
+      }
+      else {
+        return uri + separator + key + "=" + value;
+      }
+    }
+
+    $(function(){
+      $('#showhistory').on('click', function () {
+          var shownum = $(this).val();
+          if (shownum) {
+              window.location = updateQueryStringParameter(window.location.href, 'shownum', shownum);
+          }
+          return false;
+      });
+    });
+
+
+
   </script>
 {% endblock %}
 
@@ -101,9 +124,24 @@
             <div class="module" id="recent-actions-module">
                 <h5>Date from:</h5><input {% if request.GET.datefrom %}value="{{ request.GET.datefrom }}"{% endif %} size="10" type="text" id="from" name="from" onchange="window.location = updateQueryStringParameter(window.location.href, 'datefrom', this.value);">
                 <h5>Date to:</h5><input {% if request.GET.dateto %}value="{{ request.GET.dateto }}"{% endif %} size="10" type="text" id="to" name="to" onchange="window.location = updateQueryStringParameter(window.location.href, 'dateto', this.value);">
+                <select id="showhistory">
+                  <option value="asd" disabled selected>Show:</option>
+                  <option value="10">10</option>
+                  <option value="20">20</option>
+                  <option value="100000">All</option>
+                </select>
                 <h2>{% trans 'Recent Actions' %}</h2>
                     {% load log %}
-                    {% get_admin_log 10000000 as admin_log %}
+                    {% if request.GET.shownum == 10 %}
+                            {% get_admin_log 10 as admin_log %}
+                        {% elif request.GET.shownum == 20 %}
+                            {% get_admin_log 20 as admin_log %}
+                        {% elif request.GET.shownum == 100000 %}
+                            {% get_admin_log 10000000 as admin_log %}
+                        {% else %}
+                            {% get_admin_log 10 as admin_log %}
+                    {% endif %}
+
                     {% if not admin_log %}
                         <p>{% trans 'None available' %}</p>
                     {% else %}

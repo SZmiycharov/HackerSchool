@@ -86,6 +86,12 @@
       });
     });
 
+    $( document ).on( 'keydown', function ( e ) {
+        if ( e.keyCode === 27 ) { // ESC
+            $('#livesearch').hide();
+        }
+    });
+
     $(function(){
       $('#searchformodel').on('keyup', function () {
           var model = $(this).val();

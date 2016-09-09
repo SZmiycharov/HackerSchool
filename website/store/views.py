@@ -37,7 +37,7 @@ class DetailView(generic.DetailView):
             priceCategory = self.request.GET.get('priceCategory', '')
             sortby = self.request.GET.get('sortby', '')
             query = []
-            context['all_products'] = Product.objects.all().filter(category_id__exact=pk)
+            context['all_products'] = Product.objects.filter(category_id__exact=pk)
 
             if priceCategory:
                 multiplePriceCategories = priceCategory.split(',')
@@ -107,7 +107,7 @@ class DetailView(generic.DetailView):
             context['all_products'] = query
             return context
 
-        context['all_products'] = Product.objects.all().filter(category_id__exact=pk)
+        context['all_products'] = Product.objects.filter(category_id__exact=pk)
         return context
 
 
@@ -392,16 +392,18 @@ class ShoppingCartView(generic.ListView):
         increasequantityid = self.request.GET.get('increasequantityid', '')
 
         try:
-            print >> sys.stderr, self.request.META['HTTP_REFERER']
+            #print >> sys.stderr, self.request.META['HTTP_REFERER']
             if addid:
                 try:
+                    print >> sys.stderr, "HERE MANNNNN"
                     session_list = self.request.session['shoppingcart']
                     if addid in self.request.session['shoppingcart'].keys():
                         session_list[addid] += 1
                     else:
                         session_list[addid] = 1
                     self.request.session['shoppingcart'] = session_list
-                except:
+                except Exception, e:
+                    print >> sys.stderr, e
                     self.request.session['shoppingcart'] = {addid: 1}
             elif removeid:
                 try:
@@ -430,7 +432,8 @@ class ShoppingCartView(generic.ListView):
                 except:
                     pass
 
-        except:
+        except Exception, e:
+            print >> sys.stderr, e
             print >> sys.stderr, "No previous url"
 
 
@@ -465,7 +468,7 @@ class PurchaseView(View):
                 return redirect('store:login')
         else:
             form = self.form_class(product_id=self.request.GET.get('id', ''))
-            product = Product.objects.all().filter(id=self.request.GET.get('id', ''))
+            product = Product.objects.filter(id=self.request.GET.get('id', ''))
             return render(request, self.template_name, {'form': form, 'product': product})
 
     def post(self, request):
@@ -501,7 +504,7 @@ class PurchaseView(View):
                 else:
                     return redirect('store:login')
 
-        product = Product.objects.all().filter(id=self.request.GET.get('id', ''))
+        product = Product.objects.filter(id=self.request.GET.get('id', ''))
         return render(request, self.template_name, {'form': form, 'product': product})
 
 
@@ -512,10 +515,9 @@ class SuccessfulPurchaseView(View):
         if self.request.GET.get('productid', '') and self.request.GET.get('quantity', ''):
             product_id = self.request.GET.get('productid', '')
             quantity = self.request.GET.get('quantity', '')
-            product = Product.objects.all().filter(id=product_id)
             try:
                 with transaction.atomic():
-                    product.update(quantity=F('quantity') - quantity)
+                    Product.objects.filter(id=product_id).update(quantity=F('quantity') - quantity)
                     try:
                         session_list = self.request.session['shoppingcart']
                         session_list[product_id] -= 1
@@ -529,11 +531,12 @@ class SuccessfulPurchaseView(View):
                 print >> sys.stderr, "Fail with updating product quantity 1!"
 
         elif self.request.GET.get('fromshoppingcart', ''):
+            currentshoppingcart = copy.deepcopy([1,3,4])
             products = Product.objects.filter(id__in=list(self.request.session['shoppingcart'].keys()))
             for product in products:
                 try:
                     with transaction.atomic():
-                        Product.objects.all().filter(id=product.id).update(quantity=F('quantity') - int(self.request.session['shoppingcart'][product.id]))
+                        Product.objects.filter(id=product.id).update(quantity=F('quantity') - int(self.request.session['shoppingcart'][product.id]))
                         try:
                             session_list = self.request.session['shoppingcart']
                             session_list[product.id] -= 1
