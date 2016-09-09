@@ -9,7 +9,7 @@ from imagekit.processors import ResizeToFill
 from imagekit.models import ProcessedImageField
 import django
 from phonenumber_field.modelfields import PhoneNumberField
-
+from django.db import models
 
 
 def f():
@@ -47,12 +47,12 @@ class Product(models.Model):
     id = models.CharField(max_length=100, primary_key=True, default=f)
     description = models.TextField(blank=True)
     price = MoneyField(max_digits=10, decimal_places=2, default_currency='BGN')
-    category = models.ForeignKey(Category)
+    category = models.ForeignKey(Category, on_delete=models.CASCADE)
     product_logo = ProcessedImageField(upload_to='images', processors=[ResizeToFill(960, 540)], format='JPEG')
     product_logo_thumbnail = ImageSpecField(source='product_logo', format='JPEG', processors=[ResizeToFill(240, 135)])
     created = models.DateTimeField(editable=False, default=django.utils.timezone.now, db_index=True)
     modified = models.DateTimeField(editable=False, default=django.utils.timezone.now)
-    quantity = models.IntegerField(default=1)
+    quantity = models.PositiveIntegerField(default=1)
 
     def currency(self):
         return str(self.price).split(' ')[1]
@@ -72,10 +72,10 @@ class Product(models.Model):
 
 
 class Purchases(models.Model):
-    user = models.ForeignKey(User, editable=False)
+    user = models.ForeignKey(User, editable=False, default=1)
     made_at = models.DateTimeField(editable=False, default=django.utils.timezone.now)
     quantity = models.IntegerField(default=1, null=True)
-    product = models.ForeignKey(Product)
+    product = models.ForeignKey(Product, on_delete=models.CASCADE)
     address = models.CharField(max_length=200)
     phonenumber = models.CharField(max_length=15)
     delivered = models.BooleanField(default=False)

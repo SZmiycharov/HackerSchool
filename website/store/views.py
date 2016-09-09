@@ -40,7 +40,6 @@ class DetailView(generic.DetailView):
             context['all_products'] = Product.objects.all().filter(category_id__exact=pk)
 
             if priceCategory:
-                print "filter: pricecategory"
                 multiplePriceCategories = priceCategory.split(',')
 
                 for categ in multiplePriceCategories:
@@ -126,7 +125,6 @@ class ProductsView(generic.ListView):
             query = []
 
             if priceCategory:
-                print "filter: pricecategory"
                 multiplePriceCategories = priceCategory.split(',')
 
                 for categ in multiplePriceCategories:
@@ -337,7 +335,7 @@ class ProfileView(generic.ListView):
     def get_queryset(self):
         if str(self.request.user) != 'AnonymousUser':
             print >> sys.stderr, self.request.user
-            result = [self.request.user.username, self.request.user.email]
+            result = [self.request.user.username, self.request.user.email, Purchases.objects.filter(user_id=self.request.user.id).order_by('made_at')]
             return result
         else:
             return []
@@ -484,23 +482,24 @@ class PurchaseView(View):
             print >> sys.stderr, phonenumber
             product_id = self.request.GET.get('id', '')
 
-            if self.request.user.id:
-                if self.request.GET.get('fromshoppingcart', ''):
-                    products = Product.objects.filter(id__in=list(self.request.session['shoppingcart'].keys()))
-                    for product in products:
-                        print >> sys.stderr, product.id
-                        purchase = Purchases(user_id=self.request.user.id, product_id=product.id,
-                                             address=address, phonenumber=phonenumber, quantity=self.request.session['shoppingcart'][product.id])
+            if address and phonenumber:
+                if self.request.user.id:
+                    if self.request.GET.get('fromshoppingcart', ''):
+                        products = Product.objects.filter(id__in=list(self.request.session['shoppingcart'].keys()))
+                        for product in products:
+                            print >> sys.stderr, product.id
+                            purchase = Purchases(user_id=self.request.user.id, product_id=product.id,
+                                                 address=address, phonenumber=phonenumber, quantity=self.request.session['shoppingcart'][product.id])
+                            purchase.save()
+                        return redirect(reverse('store:successfulpurchase') + '?fromshoppingcart={}'.format(True))
+                    else:
+                        purchase = Purchases(user_id=self.request.user.id, product_id=product_id,
+                                             address=address, phonenumber=phonenumber, quantity=quantity)
                         purchase.save()
-                    return redirect(reverse('store:successfulpurchase') + '?fromshoppingcart={}'.format(True))
+                        return redirect(reverse('store:successfulpurchase') +
+                                        '?productid={}&quantity={}'.format(product_id, quantity))
                 else:
-                    purchase = Purchases(user_id=self.request.user.id, product_id=product_id,
-                                         address=address, phonenumber=phonenumber, quantity=quantity)
-                    purchase.save()
-                    return redirect(reverse('store:successfulpurchase') +
-                                    '?productid={}&quantity={}'.format(product_id, quantity))
-            else:
-                return redirect('store:login')
+                    return redirect('store:login')
 
         product = Product.objects.all().filter(id=self.request.GET.get('id', ''))
         return render(request, self.template_name, {'form': form, 'product': product})

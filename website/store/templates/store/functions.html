@@ -22,7 +22,7 @@
           window.clearTimeout(_timer);
       _timer = window.setTimeout(function() {
           window.location = updateQueryStringParameter(window.location.href, 'priceCategory', pricecat);
-      }, 1400);
+      }, 1000);
     }
 
     function showResult(str) {
@@ -109,8 +109,6 @@
           return false;
       });
     });
-
-
 
 
 
