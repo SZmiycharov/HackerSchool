@@ -61,12 +61,23 @@ a{
 
 #priceCategory{
     top:0px;
-    left:-23px;
+    left:8px;
 }
 
 #formProducts{
     margin-top: -61px;
 }
+
+button.multiselect {
+    height: 28px;
+    font-size: 12px;
+}
+
+#removefilters{
+    margin-top: 100px;
+    margin-left: -290px;
+}
+
 
 
 

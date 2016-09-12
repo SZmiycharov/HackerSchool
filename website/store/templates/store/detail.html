@@ -30,7 +30,7 @@
             <div class="row" style="min-height:63px;">
                 <div id="priceCategory" class="form-group col-md-1">
                     <label>Цена</label>
-                        <select id="selectPriceCategory" name="priceCategory" class="input-sm form-control select2-trigger" multiple="multiple" value="1">
+                        <select class="input-sm form-control select2-trigger" id="selectPriceCategory" name="priceCategory" multiple="multiple">
                             <option value="1"><100</option>
                             <option value="2">100-200</option>
                             <option value="3">200-300 </option>
@@ -49,6 +49,7 @@
                             <option value="model">Модел</option>
                         </select>
                 </div>
+                <input type="button" id="removefilters" value="Remove filters" onclick="location.href=location.protocol + '//' + location.host + location.pathname;">
             </div>
         </div>
     </form>
