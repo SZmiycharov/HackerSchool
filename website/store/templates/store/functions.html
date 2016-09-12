@@ -1,6 +1,38 @@
 <script>
     var _timer = 0;
 
+    function getParameterByName(name, url) {
+        if (!url) url = window.location.href;
+        name = name.replace(/[\[\]]/g, "\\$&");
+        var regex = new RegExp("[?&]" + name + "(=([^&#]*)|&|#|$)"),
+            results = regex.exec(url);
+        if (!results) return null;
+        if (!results[2]) return '';
+        return decodeURIComponent(results[2].replace(/\+/g, " "));
+    }
+
+    $(document).ready(function() {
+        $('#selectPriceCategory').multiselect({
+            buttonWidth: '125px',
+            nonSelectedText: 'Избери',
+            numberDisplayed: 1,
+            includeSelectAllOption: true
+        });
+        var priceCategory = getParameterByName('priceCategory');
+        var priceCatArr=priceCategory.split(",");
+        $("#selectPriceCategory").val(priceCatArr);
+
+        $("#selectPriceCategory").multiselect("refresh");
+
+        var sortby = getParameterByName('sortby');
+        $('#selectSortBy').val(sortby);
+
+        var model = getParameterByName('model');
+        $('#searchformodel').val(model);
+    });
+
+
+
     function DelayedShowResult(value) {
       if (_timer)
           window.clearTimeout(_timer);
@@ -66,7 +98,7 @@
     }
 
     $(function(){
-      $('#selectPriceCategory').on('click', function () {
+      $('#selectPriceCategory').on('change', function () {
           var pricecat = $(this).val();
           console.log(pricecat)
           if (pricecat) {

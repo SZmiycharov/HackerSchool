@@ -2,6 +2,7 @@ from django.contrib import admin
 from store.models import Category, Product, Purchases
 from django.contrib.admin import DateFieldListFilter
 
+
 class CategoryAdmin(admin.ModelAdmin):
     list_display = ('name', 'created', 'modified')
     search_fields = ['name']
