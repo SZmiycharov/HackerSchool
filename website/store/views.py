@@ -383,7 +383,7 @@ class UpdateProfileView(View):
 
 class ShoppingCartView(generic.ListView):
     template_name = 'store/shoppingcart.html'
-    context_object_name = 'products_in_cart'
+    context_object_name = 'result'
 
     def get_queryset(self):
         addid = self.request.GET.get('addid', '')
@@ -395,10 +395,10 @@ class ShoppingCartView(generic.ListView):
             #print >> sys.stderr, self.request.META['HTTP_REFERER']
             if addid:
                 try:
-                    print >> sys.stderr, "HERE MANNNNN"
                     session_list = self.request.session['shoppingcart']
                     if addid in self.request.session['shoppingcart'].keys():
-                        session_list[addid] += 1
+                        if session_list[addid] < Product.objects.filter(id=addid)[0].quantity:
+                            session_list[addid] += 1
                     else:
                         session_list[addid] = 1
                     self.request.session['shoppingcart'] = session_list
@@ -436,9 +436,15 @@ class ShoppingCartView(generic.ListView):
             print >> sys.stderr, e
             print >> sys.stderr, "No previous url"
 
+        totalsum = 0
+        try:
+            for product in Product.objects.filter(id__in=list(self.request.session['shoppingcart'])):
+                totalsum += product.price*product.quantity
+        except Exception, e:
+            print e
 
         try:
-            return Product.objects.filter(id__in=list(self.request.session['shoppingcart']))
+            return [Product.objects.filter(id__in=list(self.request.session['shoppingcart'])), totalsum]
         except KeyError:
             return []
 

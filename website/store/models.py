@@ -10,6 +10,7 @@ from imagekit.models import ProcessedImageField
 import django
 from phonenumber_field.modelfields import PhoneNumberField
 from django.db import models
+import sys
 
 
 def f():
@@ -56,6 +57,10 @@ class Product(models.Model):
 
     def currency(self):
         return str(self.price).split(' ')[1]
+
+    def moneyamount(self):
+        print >> sys.stderr, float(str(self.price).split(' ')[0])
+        return float(str(self.price).split(' ')[0])
 
     def __str__(self):
         return self.maker + ' ' + self.model

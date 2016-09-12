@@ -3,13 +3,14 @@
 
 {% block body %}
     {% if user.is_authenticated %}
-        {% if products_in_cart %}
-            {% for product in products_in_cart %}
-
-
+        {% if result %}
+            {% for product in result.0 %}
                 {% for key, value in request.session.shoppingcart.items %}
                     {% if key == product.id %}
                         <h4 class="productDescription">{{ product.maker }} {{ product.model }} - <i style="color:red">{{ product.price }}</i> (quantity:{{ value }})</h4>
+                        {% if value > 1 %}
+                            <h5>Price for {{ value }}: {% widthratio value 1 product.moneyamount %}</h5>
+                        {% endif %}
                     {% endif %}
                 {% endfor %}
 
@@ -19,6 +20,7 @@
                 <input type="button" value="quantity++" onclick="location.href='{% url "store:shoppingcart" %}?increasequantityid={{ product.id }}';">
             {% endfor %}
             <input type="button" value="Buy all" onclick="location.href='{% url 'store:purchase' %}?fromshoppingcart=True';">
+            <h3>Total price of cart: {{ result.1 }}</h3>
             {% else %}
         <h1>No products in shopping cart!</h1>
         {% endif %}
