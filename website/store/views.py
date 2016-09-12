@@ -410,8 +410,8 @@ class ShoppingCartView(generic.ListView):
                     session_list = self.request.session['shoppingcart']
                     del session_list[removeid]
                     self.request.session['shoppingcart'] = session_list
-                except:
-                    pass
+                except Exception, e:
+                    print e
 
             elif reducequantityid:
                 try:
@@ -420,8 +420,8 @@ class ShoppingCartView(generic.ListView):
                     if session_list[reducequantityid] == 0:
                         del session_list[reducequantityid]
                     self.request.session['shoppingcart'] = session_list
-                except:
-                    pass
+                except Exception, e:
+                    print e
 
             elif increasequantityid:
                 try:
@@ -429,8 +429,8 @@ class ShoppingCartView(generic.ListView):
                     if session_list[increasequantityid] < Product.objects.filter(id=increasequantityid)[0].quantity:
                         session_list[increasequantityid] += 1
                     self.request.session['shoppingcart'] = session_list
-                except:
-                    pass
+                except Exception, e:
+                    print e
 
         except Exception, e:
             print >> sys.stderr, e
@@ -524,14 +524,13 @@ class SuccessfulPurchaseView(View):
                         if session_list[product_id] == 0:
                             del session_list[product_id]
                         self.request.session['shoppingcart'] = session_list
-                    except:
-                        pass
+                    except Exception, e:
+                        print e
             except Exception, e:
                 print e
                 print >> sys.stderr, "Fail with updating product quantity 1!"
 
         elif self.request.GET.get('fromshoppingcart', ''):
-            currentshoppingcart = copy.deepcopy([1,3,4])
             products = Product.objects.filter(id__in=list(self.request.session['shoppingcart'].keys()))
             for product in products:
                 try:
@@ -543,8 +542,8 @@ class SuccessfulPurchaseView(View):
                             if session_list[product.id] == 0:
                                 del session_list[product.id]
                             self.request.session['shoppingcart'] = session_list
-                        except:
-                            pass
+                        except Exception, e:
+                            print >> sys.stderr, e
                 except Exception, e:
                     print e
                     print >> sys.stderr, self.request.session['shoppingcart'][product.id]

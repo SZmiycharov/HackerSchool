@@ -35,6 +35,65 @@
 {% endblock %}
 {% endif %}
 
+{% block datepicker %}
+    <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>jQuery UI Datepicker - Select a Date Range</title>
+  <link rel="stylesheet" href="//code.jquery.com/ui/1.12.0/themes/base/jquery-ui.css">
+  <link rel="stylesheet" href="/resources/demos/style.css">
+  <script src="https://code.jquery.com/jquery-1.12.4.js"></script>
+  <script src="https://code.jquery.com/ui/1.12.0/jquery-ui.js"></script>
+  {% include 'store/functions.html' %}
+
+  <script>
+  $( function() {
+    var dateFormat = "mm/dd/yy",
+      from = $( "#from" )
+        .datepicker({
+          defaultDate: "+1w",
+          changeMonth: true,
+          numberOfMonths: 1
+        })
+        .on( "change", function() {
+          to.datepicker( "option", "minDate", getDate( this ) );
+        }),
+      to = $( "#to" ).datepicker({
+        defaultDate: "+1w",
+        changeMonth: true,
+        numberOfMonths: 1
+      })
+      .on( "change", function() {
+        from.datepicker( "option", "maxDate", getDate( this ) );
+      });
+
+    function getDate( element ) {
+      var date;
+      try {
+        date = $.datepicker.parseDate( dateFormat, element.value );
+      } catch( error ) {
+        date = null;
+      }
+      return date;
+    }
+  } );
+
+  function updateQueryStringParameter(uri, key, value) {
+      console.log(value.split('/'));
+      listdate = value.split('/');
+      value = listdate[2] + '-' + listdate[0] + '-' + listdate[1]
+      var re = new RegExp("([?&])" + key + "=.*?(&|$)", "i");
+      var separator = uri.indexOf('?') !== -1 ? "&" : "?";
+      if (uri.match(re)) {
+        return uri.replace(re, '$1' + key + "=" + value + '$2');
+      }
+      else {
+        return uri + separator + key + "=" + value;
+      }
+    }
+
+  </script>
+{% endblock %}
+
 {% block coltype %}flex{% endblock %}
 
 {% block content %}
@@ -73,6 +132,13 @@
       {% endblock %}
 
       <form id="changelist-form" method="post"{% if cl.formset.is_multipart %} enctype="multipart/form-data"{% endif %} novalidate>{% csrf_token %}
+      {% if cl.opts.verbose_name == 'purchases' %}
+                <h5>Date from:</h5><input {% if request.GET.datefrom %}value="{{ request.GET.datefrom }}"{% endif %} size="10" type="text" id="from" name="from"
+                                          onchange="window.location = updateQueryStringParameter(window.location.href, 'made_at__gte', this.value);">
+                <h5>Date to:</h5><input {% if request.GET.dateto %}value="{{ request.GET.dateto }}"{% endif %} size="10" type="text" id="to" name="to"
+                                        onchange="window.location = updateQueryStringParameter(window.location.href, 'made_at__lt', this.value);">
+      {% endif %}
+
       {% if cl.formset %}
         <div>{{ cl.formset.management_form }}</div>
       {% endif %}

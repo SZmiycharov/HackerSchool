@@ -1,6 +1,6 @@
 from django.contrib import admin
 from store.models import Category, Product, Purchases
-
+from django.contrib.admin import DateFieldListFilter
 
 class CategoryAdmin(admin.ModelAdmin):
     list_display = ('name', 'created', 'modified')
@@ -36,6 +36,10 @@ class PurchasesAdmin(admin.ModelAdmin):
     search_fields = ['user', 'product']
     raw_id_fields = ('product', )
     list_per_page = 50
+
+    list_filter = (
+        ('made_at', DateFieldListFilter),
+    )
 
     def get_queryset(self, request):
         qs = super(PurchasesAdmin, self).get_queryset(request)
