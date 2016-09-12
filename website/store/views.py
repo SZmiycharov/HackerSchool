@@ -438,12 +438,17 @@ class ShoppingCartView(generic.ListView):
 
         totalsum = 0
         try:
-            for product in Product.objects.filter(id__in=list(self.request.session['shoppingcart'])):
-                totalsum += product.price*product.quantity
+
+            for productid in list(self.request.session['shoppingcart']):
+                totalsum += self.request.session['shoppingcart'][productid] * Product.objects.filter(id=productid)[0].moneyamount()
+
+            print >> sys.stderr, "YEAH ALL RIGH!!!!"
         except Exception, e:
+            print >> sys.stderr, "exception happened shit"
             print e
 
         try:
+            print >> sys.stderr, totalsum
             return [Product.objects.filter(id__in=list(self.request.session['shoppingcart'])), totalsum]
         except KeyError:
             return []
@@ -521,6 +526,9 @@ class SuccessfulPurchaseView(View):
         if self.request.GET.get('productid', '') and self.request.GET.get('quantity', ''):
             product_id = self.request.GET.get('productid', '')
             quantity = self.request.GET.get('quantity', '')
+            print >> sys.stderr, Product.objects.filter(id=product_id)
+            totalprice = int(quantity) * Product.objects.filter(id=product_id)[0].moneyamount()
+
             try:
                 with transaction.atomic():
                     Product.objects.filter(id=product_id).update(quantity=F('quantity') - quantity)
@@ -536,11 +544,15 @@ class SuccessfulPurchaseView(View):
                 print e
                 print >> sys.stderr, "Fail with updating product quantity 1!"
 
+            return render(request, self.template_name, {'totalprice': totalprice, 'product': Product.objects.filter(id__in=product_id)})
+
         elif self.request.GET.get('fromshoppingcart', ''):
             products = Product.objects.filter(id__in=list(self.request.session['shoppingcart'].keys()))
+            totalprice = 0
             for product in products:
                 try:
                     with transaction.atomic():
+                        totalprice += product.moneyamount() * int(self.request.session['shoppingcart'][product.id])
                         Product.objects.filter(id=product.id).update(quantity=F('quantity') - int(self.request.session['shoppingcart'][product.id]))
                         try:
                             session_list = self.request.session['shoppingcart']
@@ -555,7 +567,8 @@ class SuccessfulPurchaseView(View):
                     print >> sys.stderr, self.request.session['shoppingcart'][product.id]
                     print >> sys.stderr, "Fail with updating product quantity 2!"
 
-        return render(request, self.template_name)
+            return render(request, self.template_name, {'productsincart':products, 'totalprice':totalprice})
+
 
 
 

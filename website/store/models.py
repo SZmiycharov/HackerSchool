@@ -59,7 +59,6 @@ class Product(models.Model):
         return str(self.price).split(' ')[1]
 
     def moneyamount(self):
-        print >> sys.stderr, float(str(self.price).split(' ')[0])
         return float(str(self.price).split(' ')[0])
 
     def __str__(self):

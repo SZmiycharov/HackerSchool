@@ -138,8 +138,21 @@
     $(function(){
       $('#id_quantity').on('change', function () {
           var quantity = $(this).val();
-          var price = document.getElementById ("purchasedetails").innerText.split(" ")[7];
-          var currency = document.getElementById ("purchasedetails").innerText.split(" ")[8];
+          try{
+              var price = document.getElementById ("purchasedetails").innerText.split(" ")[7];
+          }
+          catch(err){
+              console.log(err);
+          }
+
+          try{
+              var currency = document.getElementById ("purchasedetails").innerText.split(" ")[8];
+          }
+          catch(err){
+              console.log(err);
+          }
+
+
           if (quantity && price) {
               var summary = quantity * price;
               document.getElementById("payment").innerHTML = "Total cost: " + summary + currency;

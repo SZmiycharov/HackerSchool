@@ -18,7 +18,6 @@ class UpdateProfileForm(RegistrationForm):
     email = forms.EmailField()
     password1 = forms.CharField(widget=forms.PasswordInput(), label="New password")
     password2 = forms.CharField(widget=forms.PasswordInput(), label="Confirm new password")
-    captcha = ReCaptchaField(label='')
 
     class Meta:
         model = User
@@ -44,16 +43,14 @@ class PurchaseForm(forms.Form):
             product = Product.objects.all().filter(id=product_id)[0]
             maxquantity = getattr(product, 'quantity')
             super(PurchaseForm, self).__init__(*args, **kwargs)
-            self.fields['quantity'] = IntegerField(min_value=0, max_value=maxquantity, required=False)
+            self.fields['quantity'] = IntegerField(initial=1, min_value=1, max_value=maxquantity, required=False)
         elif kwargs.get("fromshoppingcart", ""):
             kwargs.pop("fromshoppingcart")
             print >> sys.stderr, "Buying with shopping cart"
             super(PurchaseForm, self).__init__(*args, **kwargs)
-            self.fields['quantity'] = IntegerField(disabled=True, required=False)
 
     address = forms.CharField(label='Address', max_length=100, required=False)
-    phonenumber = IntegerField(min_value=0, max_value=999999999999, required=False)
-    captcha = ReCaptchaField(label='')
+    phonenumber = IntegerField(min_value=999, max_value=999999999999, required=False)
 
 
 
