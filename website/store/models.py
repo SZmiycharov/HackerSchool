@@ -83,11 +83,10 @@ class Purchases(models.Model):
     address = models.CharField(max_length=200)
     phonenumber = models.CharField(max_length=15)
     delivered = models.BooleanField(default=False)
-    totalprice = MoneyField(max_digits=10, decimal_places=2, default_currency='BGN')
+    totalprice = MoneyField(max_digits=10, decimal_places=2, default_currency='BGN', editable=False)
 
     def subject_totalprice(self):
-        print >> sys.stderr, self.product.id
-        print >> sys.stderr, Product.objects.filter(id=self.product.id)
+        print >> sys.stderr, "quantity: {}".format(self.quantity)
         return self.quantity * Product.objects.filter(id=self.product.id)[0].moneyamount()
 
     def __str__(self):

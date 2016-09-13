@@ -489,7 +489,7 @@ class PurchaseView(View):
         if form.is_valid():
             address = form.cleaned_data['address']
             phonenumber = form.cleaned_data['phonenumber']
-            quantity = 1
+            quantity = form.cleaned_data['quantity']
             product_id = self.request.GET.get('id', '')
 
             if address and phonenumber:
@@ -499,6 +499,7 @@ class PurchaseView(View):
                         for product in products:
                             purchase = Purchases(user_id=self.request.user.id, product_id=product.id,
                                                  address=address, phonenumber=phonenumber, quantity=self.request.session['shoppingcart'][product.id])
+                            print >> sys.stderr, "quantity: {}".format(self.request.session['shoppingcart'][product.id])
                             purchase.save()
                         return redirect(reverse('store:successfulpurchase') + '?fromshoppingcart={}'.format(True))
                     else:

@@ -2,7 +2,7 @@ from django.contrib import admin
 from store.models import Category, Product, Purchases
 from django.contrib.admin.views.main import ChangeList
 from django.db.models import Count, Sum
-
+from daterange_filter.filter import DateRangeFilter
 
 class MyChangeList(ChangeList):
 
@@ -42,12 +42,13 @@ class ProductAdmin(admin.ModelAdmin):
 
 class PurchasesAdmin(admin.ModelAdmin):
     list_display = ('user', 'address', 'phonenumber', 'made_at', 'quantity', 'totalprice')
-    fields = ('address', 'phonenumber', 'quantity', 'product', 'totalprice', 'delivered')
+    fields = ('address', 'phonenumber', 'quantity', 'product', 'delivered')
     search_fields = ['user', 'product']
     raw_id_fields = ('product', )
     list_per_page = 50
 
-    list_filter = ('delivered',)
+    list_filter = ('delivered',
+                   ('made_at',DateRangeFilter),)
 
     def get_changelist(self, request):
         return MyChangeList

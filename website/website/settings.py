@@ -19,6 +19,7 @@ ALLOWED_HOSTS = []
 # Application definition
 
 INSTALLED_APPS = [
+    'daterange_filter',
     'imagekit',
     'captcha',
     'autofixture',

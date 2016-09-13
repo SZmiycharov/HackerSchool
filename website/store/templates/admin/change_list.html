@@ -132,10 +132,10 @@
 
       <form id="changelist-form" method="post"{% if cl.formset.is_multipart %} enctype="multipart/form-data"{% endif %} novalidate>{% csrf_token %}
       {% if cl.opts.verbose_name == 'purchases' %}
-                <h5>Date from:</h5><input {% if request.GET.made_at__gte %}value="{{ request.GET.made_at__gte }}"{% endif %} size="10" type="text" id="from" name="from"
-                                          onchange="window.location = updateQueryStringParameter(window.location.href, 'made_at__gte', this.value);">
-                <h5>Date to:</h5><input {% if request.GET.made_at__lt %}value="{{ request.GET.made_at__lt }}"{% endif %} size="10" type="text" id="to" name="to"
-                                        onchange="window.location = updateQueryStringParameter(window.location.href, 'made_at__lt', this.value);">
+                <h5>Date from:</h5><input {% if request.GET.drf__made_at__gte %}value="{{ request.GET.drf__made_at__gte }}"{% endif %} size="10" type="text" id="from" name="from"
+                                          onchange="window.location = updateQueryStringParameter(window.location.href, 'drf__made_at__gte', this.value);">
+                <h5>Date to:</h5><input {% if request.GET.drf__made_at__lte %}value="{{ request.GET.drf__made_at__lte }}"{% endif %} size="10" type="text" id="to" name="to"
+                                        onchange="window.location = updateQueryStringParameter(window.location.href, 'drf__made_at__lte', this.value);">
       {% endif %}
 
       {% if cl.formset %}
