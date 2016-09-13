@@ -38,9 +38,7 @@ class PurchasesAdmin(admin.ModelAdmin):
     raw_id_fields = ('product', )
     list_per_page = 50
 
-    list_filter = (
-        ('made_at', DateFieldListFilter),
-    )
+    list_filter = ('delivered',)
 
     def get_queryset(self, request):
         qs = super(PurchasesAdmin, self).get_queryset(request)

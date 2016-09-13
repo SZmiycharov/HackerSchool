@@ -132,9 +132,9 @@
 
       <form id="changelist-form" method="post"{% if cl.formset.is_multipart %} enctype="multipart/form-data"{% endif %} novalidate>{% csrf_token %}
       {% if cl.opts.verbose_name == 'purchases' %}
-                <h5>Date from:</h5><input {% if request.GET.datefrom %}value="{{ request.GET.datefrom }}"{% endif %} size="10" type="text" id="from" name="from"
+                <h5>Date from:</h5><input {% if request.GET.made_at__gte %}value="{{ request.GET.made_at__gte }}"{% endif %} size="10" type="text" id="from" name="from"
                                           onchange="window.location = updateQueryStringParameter(window.location.href, 'made_at__gte', this.value);">
-                <h5>Date to:</h5><input {% if request.GET.dateto %}value="{{ request.GET.dateto }}"{% endif %} size="10" type="text" id="to" name="to"
+                <h5>Date to:</h5><input {% if request.GET.made_at__lt %}value="{{ request.GET.made_at__lt }}"{% endif %} size="10" type="text" id="to" name="to"
                                         onchange="window.location = updateQueryStringParameter(window.location.href, 'made_at__lt', this.value);">
       {% endif %}
 
