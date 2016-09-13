@@ -25,14 +25,13 @@ $host = '';
 $strCnx = "port=$port dbname=$db user=$user password=$passwd";
 $cn = pg_connect($strCnx);
 
-$query = "SELECT DISTINCT maker, ordering FROM (
+$query = "SELECT DISTINCT on (maker) maker, ordering FROM (
             SELECT maker, 1 as ordering FROM store_product WHERE LOWER(maker) LIKE LOWER($1) 
             UNION 
-            SELECT maker, 2 as ordering FROM store_product WHERE LOWER(maker) LIKE LOWER($2)) as a 
-          ORDER BY ordering 
+            SELECT maker, 2 as ordering FROM store_product WHERE LOWER(maker) LIKE LOWER($2) ORDER BY ordering) as a
           LIMIT 5";
 
-$result = pg_query_params($cn, $query, array("%".$q, "%".$q."%"));
+$result = pg_query_params($cn, $query, array($q."%", "%".$q."%"));
 
 $hint = '';
 
