@@ -438,11 +438,8 @@ class ShoppingCartView(generic.ListView):
 
         totalsum = 0
         try:
-
             for productid in list(self.request.session['shoppingcart']):
                 totalsum += self.request.session['shoppingcart'][productid] * Product.objects.filter(id=productid)[0].moneyamount()
-
-            print >> sys.stderr, "YEAH ALL RIGH!!!!"
         except Exception, e:
             print >> sys.stderr, "exception happened shit"
             print e
@@ -493,7 +490,6 @@ class PurchaseView(View):
             address = form.cleaned_data['address']
             phonenumber = form.cleaned_data['phonenumber']
             quantity = 1
-            print >> sys.stderr, phonenumber
             product_id = self.request.GET.get('id', '')
 
             if address and phonenumber:
@@ -501,7 +497,6 @@ class PurchaseView(View):
                     if self.request.GET.get('fromshoppingcart', ''):
                         products = Product.objects.filter(id__in=list(self.request.session['shoppingcart'].keys()))
                         for product in products:
-                            print >> sys.stderr, product.id
                             purchase = Purchases(user_id=self.request.user.id, product_id=product.id,
                                                  address=address, phonenumber=phonenumber, quantity=self.request.session['shoppingcart'][product.id])
                             purchase.save()
@@ -564,7 +559,6 @@ class SuccessfulPurchaseView(View):
                             print >> sys.stderr, e
                 except Exception, e:
                     print e
-                    print >> sys.stderr, self.request.session['shoppingcart'][product.id]
                     print >> sys.stderr, "Fail with updating product quantity 2!"
 
             return render(request, self.template_name, {'productsincart':products, 'totalprice':totalprice})
