@@ -51,8 +51,8 @@ class Product(models.Model):
     category = models.ForeignKey(Category, on_delete=models.CASCADE)
     product_logo = ProcessedImageField(upload_to='images', processors=[ResizeToFill(960, 540)], format='JPEG')
     product_logo_thumbnail = ImageSpecField(source='product_logo', format='JPEG', processors=[ResizeToFill(240, 135)])
-    created = models.DateTimeField(editable=False, default=django.utils.timezone.now, db_index=True)
-    modified = models.DateTimeField(editable=False, default=django.utils.timezone.now)
+    created = models.DateTimeField(editable=False, db_index=True)
+    modified = models.DateTimeField(editable=False)
     quantity = models.PositiveIntegerField(default=1)
 
     def currency(self):
@@ -83,12 +83,24 @@ class Purchases(models.Model):
     address = models.CharField(max_length=200)
     phonenumber = models.CharField(max_length=15)
     delivered = models.BooleanField(default=False)
+    totalprice = MoneyField(max_digits=10, decimal_places=2, default_currency='BGN')
+
+    def subject_totalprice(self):
+        print >> sys.stderr, self.product.id
+        print >> sys.stderr, Product.objects.filter(id=self.product.id)
+        return self.quantity * Product.objects.filter(id=self.product.id)[0].moneyamount()
 
     def __str__(self):
         return str(self.product)
 
     class Meta:
         verbose_name_plural = 'Purchases'
+
+    def save(self, *args, **kwargs):
+        # On save, update timestamps
+        if not self.id:
+            self.totalprice = self.subject_totalprice()
+        return super(Purchases, self).save(*args, **kwargs)
 
 
 

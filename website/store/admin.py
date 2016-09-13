@@ -1,6 +1,15 @@
 from django.contrib import admin
 from store.models import Category, Product, Purchases
-from django.contrib.admin import DateFieldListFilter
+from django.contrib.admin.views.main import ChangeList
+from django.db.models import Count, Sum
+
+
+class MyChangeList(ChangeList):
+
+    def get_results(self, *args, **kwargs):
+        super(MyChangeList, self).get_results(*args, **kwargs)
+        q = self.result_list.aggregate(price_sum=Sum('totalprice'))
+        self.price_sum = q['price_sum']
 
 
 class CategoryAdmin(admin.ModelAdmin):
@@ -32,19 +41,24 @@ class ProductAdmin(admin.ModelAdmin):
 
 
 class PurchasesAdmin(admin.ModelAdmin):
-    list_display = ('user', 'address', 'phonenumber', 'made_at', 'quantity')
-    fields = ('address', 'phonenumber', 'quantity', 'product', 'delivered')
+    list_display = ('user', 'address', 'phonenumber', 'made_at', 'quantity', 'totalprice')
+    fields = ('address', 'phonenumber', 'quantity', 'product', 'totalprice', 'delivered')
     search_fields = ['user', 'product']
     raw_id_fields = ('product', )
     list_per_page = 50
 
     list_filter = ('delivered',)
 
+    def get_changelist(self, request):
+        return MyChangeList
+
     def get_queryset(self, request):
         qs = super(PurchasesAdmin, self).get_queryset(request)
         if request.user.username == 'admin':
-            return qs.filter(delivered=False)
-        return qs.filter(allowed_user=request.user, delivered=False)
+            return qs.filter()
+        return qs.filter(allowed_user=request.user)
+
+
 
 
 admin.site.register(Category, CategoryAdmin)
