@@ -1,16 +1,15 @@
 from django.views import generic
-from .models import Category, Product, Purchases
+from .models import Category, Product, Purchases, UserProducts
 from django.shortcuts import render, redirect
 from django.contrib.auth import authenticate, login, logout
-from django.views.generic import View, TemplateView
+from django.views.generic import View
 from .forms import RegisterForm, LoginForm, UpdateProfileForm, PurchaseForm
 from django.contrib.auth.models import User
-from django.http import HttpResponse
 from django.urls import reverse
 from django.db.models import F
 import sys
 from django.db import transaction
-from django.db.models import Q
+from django.db.models import Sum
 
 searchedfor = ''
 
@@ -394,59 +393,43 @@ class ShoppingCartView(generic.ListView):
         try:
             #print >> sys.stderr, self.request.META['HTTP_REFERER']
             if addid:
-                try:
-                    session_list = self.request.session['shoppingcart']
-                    if addid in self.request.session['shoppingcart'].keys():
-                        if session_list[addid] < Product.objects.filter(id=addid)[0].quantity:
-                            session_list[addid] += 1
-                    else:
-                        session_list[addid] = 1
-                    self.request.session['shoppingcart'] = session_list
-                except Exception, e:
-                    print >> sys.stderr, e
-                    self.request.session['shoppingcart'] = {addid: 1}
+                print list(UserProducts.objects.filter(user=self.request.user).values_list('product', flat=True))
+                print addid
+                if addid in list(UserProducts.objects.filter(user=self.request.user).values_list('product', flat=True)):
+                    if UserProducts.objects.filter(user=self.request.user, product=Product.objects.filter(id=addid))[0].quantity < Product.objects.filter(id=addid)[0].quantity:
+                        UserProducts.objects.filter(product=Product.objects.filter(id=addid)).update(quantity=F('quantity') + 1)
+                else:
+                    UserProducts(product=Product.objects.filter(id=addid)[0], user=self.request.user, totalprice=Product.objects.filter(id=addid)[0].price).save()
+
             elif removeid:
-                try:
-                    session_list = self.request.session['shoppingcart']
-                    del session_list[removeid]
-                    self.request.session['shoppingcart'] = session_list
-                except Exception, e:
-                    print e
+                UserProducts.objects.filter(product=Product.objects.filter(id=removeid)[0], user=self.request.user)[0].delete()
 
             elif reducequantityid:
-                try:
-                    session_list = self.request.session['shoppingcart']
-                    session_list[reducequantityid] -= 1
-                    if session_list[reducequantityid] == 0:
-                        del session_list[reducequantityid]
-                    self.request.session['shoppingcart'] = session_list
-                except Exception, e:
-                    print e
+                UserProducts.objects.filter(product=Product.objects.filter(id=reducequantityid)[0], user=self.request.user).update(quantity=F('quantity') - 1)
+
+                if UserProducts.objects.filter(product=Product.objects.filter(id=reducequantityid)[0], user=self.request.user)[0].quantity == 0:
+                    UserProducts.objects.filter(product=Product.objects.filter(id=reducequantityid)[0], user=self.request.user)[0].delete()
 
             elif increasequantityid:
-                try:
-                    session_list = self.request.session['shoppingcart']
-                    if session_list[increasequantityid] < Product.objects.filter(id=increasequantityid)[0].quantity:
-                        session_list[increasequantityid] += 1
-                    self.request.session['shoppingcart'] = session_list
-                except Exception, e:
-                    print e
+                if UserProducts.objects.filter(product=Product.objects.filter(id=increasequantityid)[0], user=self.request.user)[0].quantity < Product.objects.filter(id=increasequantityid)[0].quantity:
+                    print "HEREE"
+                    print UserProducts.objects.filter(product=Product.objects.filter(id=increasequantityid)[0], user=self.request.user)[0]
+                    UserProducts.objects.filter(product=Product.objects.filter(id=increasequantityid)[0], user=self.request.user).update(quantity=F('quantity') + 1)
 
         except Exception, e:
             print >> sys.stderr, e
             print >> sys.stderr, "No previous url"
 
         totalsum = 0
-        try:
-            for productid in list(self.request.session['shoppingcart']):
-                totalsum += self.request.session['shoppingcart'][productid] * Product.objects.filter(id=productid)[0].moneyamount()
-        except Exception, e:
-            print >> sys.stderr, "exception happened shit"
-            print e
+        for product in list(UserProducts.objects.filter()):
+            try:
+                totalsum += UserProducts.objects.filter(product=Product.objects.filter(id=product.id))[0].totalprice * Product.objects.filter(id=product.id)[0].moneyamount()
+            except Exception, e:
+                print >> sys.stderr, "FAIL: {}".format(e)
 
         try:
-            print >> sys.stderr, totalsum
-            return [Product.objects.filter(id__in=list(self.request.session['shoppingcart'])), totalsum]
+            print UserProducts.objects.filter(user=self.request.user).values_list('product', flat=True)
+            return [Product.objects.filter(id__in=Product.objects.filter(id__in=UserProducts.objects.filter().values_list('product', flat=True))), totalsum]
         except KeyError:
             return []
 

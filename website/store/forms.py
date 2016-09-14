@@ -11,7 +11,7 @@ import sys
 
 class RegisterForm(RegistrationFormUniqueEmail):
     email = forms.EmailField()
-    captcha = ReCaptchaField(label='')
+    #captcha = ReCaptchaField(label='')
 
 
 class UpdateProfileForm(RegistrationForm):
@@ -27,7 +27,7 @@ class UpdateProfileForm(RegistrationForm):
 
 class LoginForm(AuthenticationForm):
     password = forms.CharField(widget=forms.PasswordInput)
-    captcha = ReCaptchaField(label='')
+    #captcha = ReCaptchaField(label='')
 
     class Meta:
         model = User

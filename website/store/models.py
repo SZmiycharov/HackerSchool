@@ -123,9 +123,8 @@ class Purchases(models.Model):
 class UserProducts(models.Model):
     user = models.ForeignKey(User, editable=False, default=1)
     added_at = models.DateTimeField(editable=False, default=django.utils.timezone.now)
-    product = models.ForeignKey(Product)
+    product = models.ForeignKey(Product, unique=True)
     quantity = models.IntegerField(default=1, null=True)
-    in_shop_cart = models.BooleanField(default=False)
     totalprice = MoneyField(max_digits=10, decimal_places=2, default_currency='BGN', editable=False)
 
     def subject_totalprice(self):
@@ -137,6 +136,7 @@ class UserProducts(models.Model):
 
     class Meta:
         verbose_name_plural = 'User'
+        unique_together = ('user', 'product',)
 
     def save(self, *args, **kwargs):
         if not self.id:
