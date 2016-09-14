@@ -412,24 +412,24 @@ class ShoppingCartView(generic.ListView):
 
             elif increasequantityid:
                 if UserProducts.objects.filter(product=Product.objects.filter(id=increasequantityid)[0], user=self.request.user)[0].quantity < Product.objects.filter(id=increasequantityid)[0].quantity:
-                    print "HEREE"
-                    print UserProducts.objects.filter(product=Product.objects.filter(id=increasequantityid)[0], user=self.request.user)[0]
                     UserProducts.objects.filter(product=Product.objects.filter(id=increasequantityid)[0], user=self.request.user).update(quantity=F('quantity') + 1)
 
         except Exception, e:
             print >> sys.stderr, e
-            print >> sys.stderr, "No previous url"
 
         totalsum = 0
-        for product in list(UserProducts.objects.filter()):
+        for product in UserProducts.objects.filter():
             try:
-                totalsum += UserProducts.objects.filter(product=Product.objects.filter(id=product.id))[0].totalprice * Product.objects.filter(id=product.id)[0].moneyamount()
+                totalsum += product.totalprice * product.quantity
             except Exception, e:
                 print >> sys.stderr, "FAIL: {}".format(e)
 
         try:
-            print UserProducts.objects.filter(user=self.request.user).values_list('product', flat=True)
-            return [Product.objects.filter(id__in=Product.objects.filter(id__in=UserProducts.objects.filter().values_list('product', flat=True))), totalsum]
+            if str(self.request.user) != 'AnonymousUser':
+                return [Product.objects.filter(id__in=Product.objects.filter(id__in=UserProducts.objects.filter(user=self.request.user).values_list('product', flat=True))), totalsum,
+                        UserProducts.objects.filter(user=self.request.user)]
+            else:
+                return []
         except KeyError:
             return []
 

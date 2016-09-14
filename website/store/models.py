@@ -131,6 +131,9 @@ class UserProducts(models.Model):
         print >> sys.stderr, "quantity: {}".format(self.quantity)
         return self.quantity * Product.objects.filter(id=self.product.id)[0].moneyamount()
 
+    def moneyamount(self):
+        return float(str(self.totalprice).split(' ')[0])
+
     def __str__(self):
         return str(self.product)
 
