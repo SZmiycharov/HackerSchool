@@ -123,7 +123,7 @@ class Purchases(models.Model):
 class UserProducts(models.Model):
     user = models.ForeignKey(User, editable=False, default=1)
     added_at = models.DateTimeField(editable=False, default=django.utils.timezone.now)
-    product = models.ForeignKey(Product, unique=True)
+    product = models.ForeignKey(Product)
     quantity = models.IntegerField(default=1, null=True)
     totalprice = MoneyField(max_digits=10, decimal_places=2, default_currency='BGN', editable=False)
 

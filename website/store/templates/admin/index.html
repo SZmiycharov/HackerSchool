@@ -146,7 +146,7 @@
                   <option disabled selected>Show:</option>
                   <option value="10">10</option>
                   <option value="20">20</option>
-                  <option value="100000">All</option>
+                  <option value="50">50</option>
                 </select>
                 <h2>{% trans 'Recent Actions' %}</h2>
                     {% load log %}
@@ -154,8 +154,8 @@
                             {% get_admin_log 10 as admin_log %}
                         {% elif request.GET.shownum == '20' %}
                             {% get_admin_log 20 as admin_log %}
-                        {% elif request.GET.shownum == '100000' %}
-                            {% get_admin_log 10000000 as admin_log %}
+                        {% elif request.GET.shownum == '50' %}
+                            {% get_admin_log 50 as admin_log %}
                         {% else %}
                             {% get_admin_log 10 as admin_log %}
                     {% endif %}
