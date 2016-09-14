@@ -444,16 +444,18 @@ class PurchaseView(View):
             print >> sys.stderr, "In purchaseview fromshoppingcart"
             form = self.form_class(fromshoppingcart=self.request.GET.get('fromshoppingcart', ''))
             try:
-                products = Product.objects.filter(id__in=list(self.request.session['shoppingcart'].keys()))
-                totalcost = 0
-                currency = ''
+                if str(self.request.user) != 'AnonymousUser':
+                    products = Product.objects.filter(id__in=UserProducts.objects.filter(user=self.request.user).values_list('product', flat=True))
+                    totalcost = 0
+                    currency = ''
 
-                for product in products:
-                    totalcost += float(str(product.price).split()[0]) * self.request.session['shoppingcart'][product.id]
-                    currency = str(product.price).split()[1]
+                    for product in products:
+                        totalcost += float(str(product.price).split()[0]) * UserProducts.objects.filter(user=self.request.user, product=Product.objects.filter(id=product.id)[0])[0].quantity
+                        currency = str(product.price).split()[1]
 
-                print >> sys.stderr, "totalcost: {}; currency: {}".format(totalcost, currency)
-                return render(request, self.template_name, {'form': form, 'totalcost': totalcost, 'currency': currency})
+                    return render(request, self.template_name, {'form': form, 'totalcost': totalcost, 'currency': currency})
+                else:
+                    return redirect('store:login')
             except KeyError:
                 print >> sys.stderr, "Anonymous user trying to purchase from shopping cart"
                 return redirect('store:login')
@@ -481,21 +483,21 @@ class PurchaseView(View):
             if address and phonenumber:
                 if self.request.user.id:
                     if self.request.GET.get('fromshoppingcart', ''):
-                        products = Product.objects.filter(id__in=list(self.request.session['shoppingcart'].keys()))
+                        products = Product.objects.filter(id__in=UserProducts.objects.filter(user=self.request.user).values_list('product', flat=True))
                         for product in products:
                             try:
                                 if self.request.user.provider:
                                     purchase = Purchases(user_id=self.request.user.user_id, product_id=product.id,
                                                          address=address, phonenumber=phonenumber,
-                                                         quantity=self.request.session['shoppingcart'][product.id])
+                                                         quantity=UserProducts.objects.filter(user=self.request.user, product=Product.objects.filter(id=product.id))[0].quantity)
                                     purchase.save()
                             except Exception, e:
                                 print >> sys.stderr, self.request.user
                                 print e
 
                             purchase = Purchases(user_id=self.request.user.id, product_id=product.id,
-                                                 address=address, phonenumber=phonenumber, quantity=self.request.session['shoppingcart'][product.id])
-                            print >> sys.stderr, "quantity: {}".format(self.request.session['shoppingcart'][product.id])
+                                                 address=address, phonenumber=phonenumber,
+                                                 quantity=UserProducts.objects.filter(user=self.request.user, product=Product.objects.filter(id=product.id))[0].quantity)
                             purchase.save()
                         return redirect(reverse('store:successfulpurchase') + '?fromshoppingcart={}'.format(True))
                     else:
@@ -525,11 +527,8 @@ class SuccessfulPurchaseView(View):
                 with transaction.atomic():
                     Product.objects.filter(id=product_id).update(quantity=F('quantity') - quantity)
                     try:
-                        session_list = self.request.session['shoppingcart']
-                        session_list[product_id] -= 1
-                        if session_list[product_id] == 0:
-                            del session_list[product_id]
-                        self.request.session['shoppingcart'] = session_list
+                        UserProducts.objects.filter(user=self.request.user,
+                                                    product=Product.objects.filter(id=product_id))[0].delete()
                     except Exception, e:
                         print e
             except Exception, e:
@@ -539,24 +538,26 @@ class SuccessfulPurchaseView(View):
             return render(request, self.template_name, {'totalprice': totalprice, 'product': Product.objects.filter(id__in=product_id)})
 
         elif self.request.GET.get('fromshoppingcart', ''):
-            products = Product.objects.filter(id__in=list(self.request.session['shoppingcart'].keys()))
+            products = Product.objects.filter(id__in=UserProducts.objects.filter(user=self.request.user).values_list('product', flat=True))
             totalprice = 0
-            for product in products:
-                try:
-                    with transaction.atomic():
-                        totalprice += product.moneyamount() * int(self.request.session['shoppingcart'][product.id])
-                        Product.objects.filter(id=product.id).update(quantity=F('quantity') - int(self.request.session['shoppingcart'][product.id]))
+            with transaction.atomic():
+                for product in products:
+                    try:
+                        print >> sys.stderr, "product.moneyamount(): {}; quantity: {}".format(product.moneyamount(), UserProducts.objects.filter(user=self.request.user, product=Product.objects.filter(id=product.id))[0].quantity)
+                        totalprice += product.moneyamount() * UserProducts.objects.filter(user=self.request.user, product=Product.objects.filter(id=product.id))[0].quantity
+                        print "totalrpice current iteration: {}".format(totalprice)
+
+                        print UserProducts.objects.filter(user=self.request.user, product=Product.objects.filter(id=product.id))[0].quantity
+
+                        Product.objects.filter(id=product.id).update(quantity=F('quantity') - UserProducts.objects.filter(user=self.request.user, product=Product.objects.filter(id=product.id))[0].quantity)
                         try:
-                            session_list = self.request.session['shoppingcart']
-                            session_list[product.id] -= 1
-                            if session_list[product.id] == 0:
-                                del session_list[product.id]
-                            self.request.session['shoppingcart'] = session_list
+                            UserProducts.objects.filter(user=self.request.user,
+                                                        product=Product.objects.filter(id=product.id))[0].delete()
                         except Exception, e:
                             print >> sys.stderr, e
-                except Exception, e:
-                    print e
-                    print >> sys.stderr, "Fail with updating product quantity 2!"
+                    except Exception, e:
+                        print e
+                        print >> sys.stderr, "Fail with updating product quantity 2!"
 
             return render(request, self.template_name, {'productsincart':products, 'totalprice':totalprice})
 

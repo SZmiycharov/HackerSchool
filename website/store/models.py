@@ -101,7 +101,7 @@ class Purchases(models.Model):
         return self.quantity * Product.objects.filter(id=self.product.id)[0].moneyamount()
 
     def subject_priceamount(self):
-        return str(self.totalprice).split(' ')[0]
+        return Product.objects.filter(id=self.product.id)[0].moneyamount()
 
     def subject_pricecurrency(self):
         return str(self.totalprice).split(' ')[1]
