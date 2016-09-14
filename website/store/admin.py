@@ -6,6 +6,7 @@ from daterange_filter.filter import DateRangeFilter
 import django_filters
 from rangevaluesfilterspec import *
 
+
 class MyChangeList(ChangeList):
 
     def get_results(self, *args, **kwargs):

@@ -20,8 +20,9 @@
                     {% endif %}
                 {% endfor %}
             {% endfor %}
-            <input type="button" value="Buy all" onclick="location.href='{% url 'store:purchase' %}?fromshoppingcart=True';">
+
             <h3>Total price of cart: <i style="color:red">{{ result.1 }}</i></h3>
+            <input type="button" value="Buy all" onclick="location.href='{% url 'store:purchase' %}?fromshoppingcart=True';">
             {% else %}
         <h1>No products in shopping cart!</h1>
         {% endif %}

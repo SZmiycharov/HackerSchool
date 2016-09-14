@@ -40,7 +40,7 @@
             font-size: 25px;
             font-weight: 200;
             line-height: 32px;
-            margin: 300px 0 20px;
+            margin: 280px 0 20px;
             text-align: center;
         }
 
@@ -69,8 +69,8 @@
           <button id="submBtn" type="submit">Change field?</button><br>
         </form>
 
-        <h4>Purchase history:</h4>
-        {% for purchase in profilefields.2 %}
+        <h4>Purchase history (last 10):</h4>
+        {% for purchase in profilefields.2|slice:":10" %}
             <h5>- {{ purchase }}, quantity: {{ purchase.quantity }}, at {{ purchase.made_at }}</h5>
         {% endfor %}
     {% else %}
