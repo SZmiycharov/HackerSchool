@@ -489,7 +489,10 @@ class PurchaseView(View):
         if form.is_valid():
             address = form.cleaned_data['address']
             phonenumber = form.cleaned_data['phonenumber']
-            quantity = form.cleaned_data['quantity']
+            try:
+                quantity = form.cleaned_data['quantity']
+            except Exception, e:
+                print >> sys.stderr, e
             product_id = self.request.GET.get('id', '')
 
             if address and phonenumber:
@@ -497,6 +500,16 @@ class PurchaseView(View):
                     if self.request.GET.get('fromshoppingcart', ''):
                         products = Product.objects.filter(id__in=list(self.request.session['shoppingcart'].keys()))
                         for product in products:
+                            try:
+                                if self.request.user.provider:
+                                    purchase = Purchases(user_id=self.request.user.user_id, product_id=product.id,
+                                                         address=address, phonenumber=phonenumber,
+                                                         quantity=self.request.session['shoppingcart'][product.id])
+                                    purchase.save()
+                            except Exception, e:
+                                print >> sys.stderr, self.request.user
+                                print e
+
                             purchase = Purchases(user_id=self.request.user.id, product_id=product.id,
                                                  address=address, phonenumber=phonenumber, quantity=self.request.session['shoppingcart'][product.id])
                             print >> sys.stderr, "quantity: {}".format(self.request.session['shoppingcart'][product.id])

@@ -3,12 +3,14 @@ from store.models import Category, Product, Purchases
 from django.contrib.admin.views.main import ChangeList
 from django.db.models import Count, Sum
 from daterange_filter.filter import DateRangeFilter
+import django_filters
+from rangevaluesfilterspec import *
 
 class MyChangeList(ChangeList):
 
     def get_results(self, *args, **kwargs):
         super(MyChangeList, self).get_results(*args, **kwargs)
-        q = self.result_list.aggregate(price_sum=Sum('totalprice'))
+        q = self.result_list.aggregate(price_sum=Sum('priceamount'))
         self.price_sum = q['price_sum']
 
 
@@ -41,14 +43,16 @@ class ProductAdmin(admin.ModelAdmin):
 
 
 class PurchasesAdmin(admin.ModelAdmin):
-    list_display = ('user', 'address', 'phonenumber', 'made_at', 'quantity', 'totalprice')
+    list_display = ('user', 'address', 'phonenumber', 'made_at', 'quantity', 'priceamount', 'pricecurrency')
     fields = ('address', 'phonenumber', 'quantity', 'product', 'delivered')
     search_fields = ['user', 'product']
     raw_id_fields = ('product', )
     list_per_page = 50
 
     list_filter = ('delivered',
-                   ('made_at',DateRangeFilter),)
+                   ('made_at',DateRangeFilter),
+                   ('user', admin.RelatedOnlyFieldListFilter),
+                   ('priceamount', ValueRangeFilter),)
 
     def get_changelist(self, request):
         return MyChangeList

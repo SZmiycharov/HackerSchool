@@ -79,10 +79,53 @@ class Purchases(models.Model):
     user = models.ForeignKey(User, editable=False, default=1)
     made_at = models.DateTimeField(editable=False, default=django.utils.timezone.now)
     quantity = models.IntegerField(default=1, null=True)
-    product = models.ForeignKey(Product, on_delete=models.CASCADE)
+    product = models.ForeignKey(Product)
     address = models.CharField(max_length=200)
     phonenumber = models.CharField(max_length=15)
     delivered = models.BooleanField(default=False)
+    totalprice = MoneyField(max_digits=10, decimal_places=2, default_currency='BGN', editable=False)
+    priceamount = models.DecimalField(max_digits=10, decimal_places=2, editable=False, null=True)
+    pricecurrency = models.CharField(max_length=5, default='BGN', editable=False, null=True)
+
+    priceamount.lookup_range = (
+        (None, ('All')),
+        ([0, 100], '0-100'),
+        ([100, 200], '100-200'),
+        ([200, 300], '200-300'),
+        ([300, 500], '300-500'),
+        ([500, None], '500+'),
+    )
+
+    def subject_totalprice(self):
+        print >> sys.stderr, "quantity: {}".format(self.quantity)
+        return self.quantity * Product.objects.filter(id=self.product.id)[0].moneyamount()
+
+    def subject_priceamount(self):
+        return str(self.totalprice).split(' ')[0]
+
+    def subject_pricecurrency(self):
+        return str(self.totalprice).split(' ')[1]
+
+    def __str__(self):
+        return str(self.product)
+
+    class Meta:
+        verbose_name_plural = 'Purchases'
+
+    def save(self, *args, **kwargs):
+        if not self.id:
+            self.totalprice = self.subject_totalprice()
+            self.priceamount = self.subject_priceamount()
+            self.pricecurrency = self.subject_pricecurrency()
+        return super(Purchases, self).save(*args, **kwargs)
+
+
+class UserProducts(models.Model):
+    user = models.ForeignKey(User, editable=False, default=1)
+    added_at = models.DateTimeField(editable=False, default=django.utils.timezone.now)
+    product = models.ForeignKey(Product)
+    quantity = models.IntegerField(default=1, null=True)
+    in_shop_cart = models.BooleanField(default=False)
     totalprice = MoneyField(max_digits=10, decimal_places=2, default_currency='BGN', editable=False)
 
     def subject_totalprice(self):
@@ -93,14 +136,12 @@ class Purchases(models.Model):
         return str(self.product)
 
     class Meta:
-        verbose_name_plural = 'Purchases'
+        verbose_name_plural = 'User'
 
     def save(self, *args, **kwargs):
-        # On save, update timestamps
         if not self.id:
             self.totalprice = self.subject_totalprice()
-        return super(Purchases, self).save(*args, **kwargs)
-
+        return super(UserProducts, self).save(*args, **kwargs)
 
 
 
