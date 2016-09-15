@@ -56,11 +56,21 @@ class ProductAdmin(admin.ModelAdmin):
 
 
 class PurchasesAdmin(admin.ModelAdmin):
-    list_display = ('user', 'address', 'phonenumber', 'created', 'quantity', 'priceamount', 'pricecurrency', 'totalprice')
+    list_display = ('user', 'address', 'phonenumber', 'created', 'get_maker', 'get_model', 'quantity', 'priceamount', 'pricecurrency', 'totalprice')
     fields = ('address', 'phonenumber', 'quantity', 'product', 'delivered')
-    search_fields = ['user', 'product']
+    search_fields = ['user__username', 'product__makerid__name']
     raw_id_fields = ('product', )
     list_per_page = 50
+
+    def get_maker(self, obj):
+        return obj.product.makerid.name
+    get_maker.short_description = 'Maker'
+    get_maker.admin_order_field = 'product.makerid__name'
+
+    def get_model(self, obj):
+        return obj.product.model
+    get_model.short_description = 'Model'
+    get_model.admin_order_field = 'product.model'
 
     list_filter = ('delivered',
                    ('created',DateRangeFilter),
