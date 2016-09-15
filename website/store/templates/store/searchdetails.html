@@ -47,7 +47,7 @@
                                     <option value="" disabled selected>Избери</option>
                                     <option value="price">Цена (възходящо)</option>
                                     <option value="-price">Цена (низходящо)</option>
-                                    <option value="maker">Производител</option>
+                                    <option value="makerid__name">Производител</option>
                                     <option value="model">Модел</option>
                                 </select>
                         </div>
@@ -59,8 +59,8 @@
 
             {% for product in searchresults %}
                 <form method="get" action="">
-                    <h4>{{ product.maker }} {{ product.model }} - <i style="color:red">{{ product.price }}</i></h4>
-                    <input type="image" src="{{ product.product_logo_thumbnail.url }}" title="{{ product.maker }} {{ product.model }}" width="160" height="100">
+                    <h4>{{ product.makerid.name }} {{ product.model }} - <i style="color:red">{{ product.price }}</i></h4>
+                    <input type="image" src="{{ product.product_logo_thumbnail.url }}" title="{{ product.makerid.name }} {{ product.model }}" width="160" height="100">
                 </form>
 
                 <form action="{% url 'store:purchase' %}" method="get">
@@ -89,13 +89,13 @@
             <div class="pagination">
                 <span class="page-links">
                     {% if page_obj.has_previous %}
-                        <a href="{% url 'store:searchdetails' %}?page={{ page_obj.previous_page_number }}?model={{ request.GET.model }}&priceCategory={{ request.GET.priceCategory }}"><- previous</a>
+                        <a href="{% url 'store:searchdetails' %}?page={{ page_obj.previous_page_number }}?model={{ request.GET.model }}&priceCategory={{ request.GET.priceCategory }}&sortby={{ request.GET.sortby }}"><- previous</a>
                     {% endif %}
                     <span class="page-current">
                         Page {{ page_obj.number }} of {{ page_obj.paginator.num_pages }}.
                     </span>
                     {% if page_obj.has_next %}
-                        <a href="{% url 'store:searchdetails' %}?page={{ page_obj.next_page_number }}?model={{ request.GET.model }}&priceCategory={{ request.GET.priceCategory }}">next -></a>
+                        <a href="{% url 'store:searchdetails' %}?page={{ page_obj.next_page_number }}?model={{ request.GET.model }}&priceCategory={{ request.GET.priceCategory }}&sortby={{ request.GET.sortby }}">next -></a>
                     {% endif %}
                 </span>
             </div>

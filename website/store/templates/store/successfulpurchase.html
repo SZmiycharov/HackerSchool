@@ -5,12 +5,12 @@
     <h2>Bought products:</h2>
     {% if request.GET.fromshoppingcart %}
         {% for product in productsincart %}
-            <h3>- {{ product.maker }} {{ product.model }}</h3>
+            <h3>- {{ product.makerid.name }} {{ product.model }}</h3>
         {% endfor %}
         <h2>Total price: <i style="color:red">{{ totalprice }}</i></h2>
 
         {% else %}
-            <h3>{{ product.maker }} {{ product.model }}</h3>
+            <h3>{{ product.makerid.name }} {{ product.model }}</h3>
             <h2>Total price: <i style="color:red">{{ totalprice }}</i></h2>
     {% endif %}
 

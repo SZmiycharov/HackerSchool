@@ -7,13 +7,13 @@
             {% for product in result.0 %}
                 {% for productFromCart in result.2 %}
                     {% if productFromCart.product_id == product.id %}
-                        <h4 class="productDescription">{{ product.maker }} {{ product.model }} - <i style="color:red">{{ product.price }}</i> (quantity:{{ productFromCart.quantity }})</h4>
+                        <h4 class="productDescription">{{ product.makerid.name }} {{ product.model }} - <i style="color:red">{{ product.price }}</i> (quantity:{{ productFromCart.quantity }})</h4>
 
                         {% if productFromCart.quantity > 1 %}
                             <h5>Price for {{ productFromCart.quantity }}: <i style="color:red">{% widthratio productFromCart.quantity 1 productFromCart.moneyamount %}</i></h5>
                         {% endif %}
 
-                        <input type="image" src="{{ product.product_logo_thumbnail.url }}" title="{{ product.maker }} {{ product.model }}" width="160" height="90">
+                        <input type="image" src="{{ product.product_logo_thumbnail.url }}" title="{{ product.makerid.name }} {{ product.model }}" width="160" height="90">
                         <input type="button" value="Remove from cart" onclick="location.href='{% url "store:shoppingcart" %}?removeid={{ product.id }}';">
                         <input type="button" value="quantity--" onclick="location.href='{% url "store:shoppingcart" %}?reducequantityid={{ product.id }}';">
                         <input type="button" value="quantity++" onclick="location.href='{% url "store:shoppingcart" %}?increasequantityid={{ product.id }}';">

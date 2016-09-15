@@ -1,5 +1,5 @@
 from django.contrib import admin
-from store.models import Category, Product, Purchases
+from store.models import Category, Product, Purchases, Maker
 from django.contrib.admin.views.main import ChangeList
 from django.db.models import Count, Sum
 from daterange_filter.filter import DateRangeFilter
@@ -13,6 +13,13 @@ class MyChangeList(ChangeList):
         super(MyChangeList, self).get_results(*args, **kwargs)
         q = self.result_list.aggregate(price_sum=Sum('priceamount'))
         self.price_sum = q['price_sum']
+
+
+class MakerAdmin(admin.ModelAdmin):
+    list_display = ['id', 'name']
+    fields = ['name']
+    search_fields = ['name']
+    list_per_page = 50
 
 
 class CategoryAdmin(admin.ModelAdmin):
@@ -29,11 +36,16 @@ class CategoryAdmin(admin.ModelAdmin):
 
 
 class ProductAdmin(admin.ModelAdmin):
-    list_display = ('maker', 'model', 'price', 'created', 'modified', 'quantity')
-    fields = ('maker', 'model', 'description', 'price', 'category', 'product_logo', 'quantity')
-    search_fields = ['maker', 'model']
-    raw_id_fields = ('category',)
+    list_display = ('get_maker', 'model', 'price', 'created', 'modified', 'quantity')
+    fields = ('model', 'description', 'price', 'category', 'makerid', 'product_logo', 'quantity')
+    search_fields = ['makerid_id__name', 'model']
+    raw_id_fields = ('category', 'makerid')
     list_per_page = 50
+
+    def get_maker(self, obj):
+        return obj.makerid.name
+    get_maker.short_description = 'Maker'
+    get_maker.admin_order_field = 'makerid__name'
 
     def get_queryset(self, request):
         qs = super(ProductAdmin, self).get_queryset(request)
@@ -44,14 +56,14 @@ class ProductAdmin(admin.ModelAdmin):
 
 
 class PurchasesAdmin(admin.ModelAdmin):
-    list_display = ('user', 'address', 'phonenumber', 'made_at', 'quantity', 'priceamount', 'pricecurrency', 'totalprice')
+    list_display = ('user', 'address', 'phonenumber', 'created', 'quantity', 'priceamount', 'pricecurrency', 'totalprice')
     fields = ('address', 'phonenumber', 'quantity', 'product', 'delivered')
     search_fields = ['user', 'product']
     raw_id_fields = ('product', )
     list_per_page = 50
 
     list_filter = ('delivered',
-                   ('made_at',DateRangeFilter),
+                   ('created',DateRangeFilter),
                    ('user', admin.RelatedOnlyFieldListFilter),
                    ('priceamount', ValueRangeFilter),)
 
@@ -65,8 +77,7 @@ class PurchasesAdmin(admin.ModelAdmin):
         return qs.filter(allowed_user=request.user)
 
 
-
-
+admin.site.register(Maker, MakerAdmin)
 admin.site.register(Category, CategoryAdmin)
 admin.site.register(Product, ProductAdmin)
 admin.site.register(Purchases, PurchasesAdmin)

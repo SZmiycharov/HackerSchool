@@ -19,14 +19,21 @@ def f():
     return str[0:16]
 
 
+class Maker(models.Model):
+    name = models.CharField(max_length=32)
+
+    def __str__(self):
+        return self.name
+
+
 class Category(models.Model):
     allowed_user = models.ManyToManyField(User)
     name = models.CharField(max_length=16, blank=True, db_index=True, unique=True)
     id = models.CharField(max_length=100, primary_key=True, default=f)
     category_logo = ProcessedImageField(upload_to='images', processors=[ResizeToFill(960, 540)], format='JPEG')
     category_logo_thumbnail = ImageSpecField(source='category_logo', format='JPEG', processors=[ResizeToFill(240, 135)])
-    created = models.DateTimeField(editable=False, default=django.utils.timezone.now, db_index=True)
-    modified = models.DateTimeField(editable=False, default=django.utils.timezone.now)
+    created = models.DateTimeField(editable=False, db_index=True)
+    modified = models.DateTimeField(editable=False, null=True)
 
     def __str__(self):
         return self.name
@@ -34,17 +41,11 @@ class Category(models.Model):
     class Meta:
         verbose_name_plural = 'categories'
 
-    def save(self, *args, **kwargs):
-        # On save, update timestamps
-        if not self.id:
-            self.created = timezone.now()
-        self.modified = timezone.now()
-        return super(Category, self).save(*args, **kwargs)
-
 
 class Product(models.Model):
     maker = models.CharField(max_length=32, blank=True, db_index=True)
     model = models.CharField(max_length=32, blank=True, db_index=True)
+    makerid = models.ForeignKey(Maker, null=True)
     id = models.CharField(max_length=100, primary_key=True, default=f)
     description = models.TextField(blank=True)
     price = MoneyField(max_digits=10, decimal_places=2, default_currency='BGN')
@@ -64,20 +65,13 @@ class Product(models.Model):
     def __str__(self):
         return self.maker + ' ' + self.model
 
-    def save(self, *args, **kwargs):
-        # On save, update timestamps
-        if not self.id:
-            self.created = timezone.now()
-        self.modified = timezone.now()
-        return super(Product, self).save(*args, **kwargs)
-
     class Meta:
         unique_together = ('maker', 'model',)
 
 
 class Purchases(models.Model):
     user = models.ForeignKey(User, editable=False, default=1)
-    made_at = models.DateTimeField(editable=False, default=django.utils.timezone.now)
+    created = models.DateTimeField(editable=False, default=django.utils.timezone.now)
     quantity = models.IntegerField(default=1, null=True)
     product = models.ForeignKey(Product)
     address = models.CharField(max_length=200)
@@ -88,7 +82,7 @@ class Purchases(models.Model):
     pricecurrency = models.CharField(max_length=5, default='BGN', editable=False, null=True)
 
     priceamount.lookup_range = (
-        (None, ('All')),
+        (None, 'All'),
         ([0, 100], '0-100'),
         ([100, 200], '100-200'),
         ([200, 300], '200-300'),
@@ -122,10 +116,12 @@ class Purchases(models.Model):
 
 class UserProducts(models.Model):
     user = models.ForeignKey(User, editable=False, default=1)
-    added_at = models.DateTimeField(editable=False, default=django.utils.timezone.now)
+    created = models.DateTimeField(editable=False, default=django.utils.timezone.now)
     product = models.ForeignKey(Product)
     quantity = models.IntegerField(default=1, null=True)
     totalprice = MoneyField(max_digits=10, decimal_places=2, default_currency='BGN', editable=False)
+    product_maker = models.CharField(max_length=32, null=True)
+    product_model = models.CharField(max_length=32, null=True)
 
     def subject_totalprice(self):
         print >> sys.stderr, "quantity: {}".format(self.quantity)
@@ -145,6 +141,9 @@ class UserProducts(models.Model):
         if not self.id:
             self.totalprice = self.subject_totalprice()
         return super(UserProducts, self).save(*args, **kwargs)
+
+
+
 
 
 

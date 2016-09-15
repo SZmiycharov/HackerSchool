@@ -19,10 +19,12 @@
             includeSelectAllOption: true
         });
         var priceCategory = getParameterByName('priceCategory');
-        var priceCatArr=priceCategory.split(",");
-        $("#selectPriceCategory").val(priceCatArr);
+        if (priceCategory){
+            var priceCatArr=priceCategory.split(",");
+            $("#selectPriceCategory").val(priceCatArr);
+            $("#selectPriceCategory").multiselect("refresh");
+        }
 
-        $("#selectPriceCategory").multiselect("refresh");
 
         var sortby = getParameterByName('sortby');
         $('#selectSortBy').val(sortby);

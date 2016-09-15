@@ -95,13 +95,17 @@ class DetailView(generic.DetailView):
             elif model:
                 print >> sys.stderr, "filter: model"
                 if sortby != '':
-                    query.extend(list(Product.objects.filter(model__icontains=model).order_by(sortby)))
+                    query.extend(list(Product.objects.filter(category_id__exact=pk, model__icontains=model).order_by(sortby)))
                 else:
-                    query.extend(list(Product.objects.filter(model__icontains=model)))
+                    query.extend(list(Product.objects.filter(category_id__exact=pk, model__icontains=model)))
+
+            elif sortby:
+                print >> sys.stderr, "filter: sortby"
+                query.extend(list(Product.objects.filter(category_id__exact=pk).order_by(sortby)))
 
             else:
                 print >> sys.stderr, "filter: none 2"
-                query.extend(list(Product.objects.filter()))
+                query.extend(list(Product.objects.filter(category_id__exact=pk)))
 
             context['all_products'] = query
             return context
@@ -172,8 +176,11 @@ class ProductsView(generic.ListView):
                 else:
                     return Product.objects.filter(model__icontains=model)
 
+            elif sortby:
+                print >> sys.stderr, "filter: sortby"
+                return Product.objects.all().order_by(sortby)
+
             else:
-                print >> sys.stderr, "filter: none"
                 return Product.objects.all()
 
         else:
@@ -249,6 +256,10 @@ class SearchDetailsView(generic.ListView):
                     query.extend(list(Product.objects.filter(maker__icontains=searchedfor, model__icontains=model).order_by(sortby)))
                 else:
                     query.extend(list(Product.objects.filter(maker__icontains=searchedfor, model__icontains=model)))
+
+            elif sortby:
+                query.extend(list(Product.objects.all().order_by(sortby)))
+
             else:
                 print >> sys.stderr, "filter: none"
                 query.extend(list(Product.objects.filter(maker__icontains=searchedfor)))
