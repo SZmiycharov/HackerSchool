@@ -90,13 +90,13 @@
             <div class="pagination">
                 <span class="page-links">
                     {% if page_obj.has_previous %}
-                        <a href="{% url 'store:detail' %}?page={{ page_obj.previous_page_number }}&model={{ request.GET.model }}&priceCategory={{ request.GET.priceCategory }}&sortby={{ request.GET.sortby }}"><- previous</a>
+                        <a href="{% url 'store:detail' %}?page={{ page_obj.previous_page_number }}&model={{ request.GET.model }}&priceCategory={{ request.GET.priceCategory }}"><- previous</a>
                     {% endif %}
                     <span class="page-current">
                         Page {{ page_obj.number }} of {{ page_obj.paginator.num_pages }}.
                     </span>
                     {% if page_obj.has_next %}
-                        <a href="{% url 'store:detail' %}?page={{ page_obj.next_page_number }}&model={{ request.GET.model }}&priceCategory={{ request.GET.priceCategory }}&sortby={{ request.GET.sortby }}">next -></a>
+                        <a href="{% url 'store:detail' %}?page={{ page_obj.next_page_number }}&model={{ request.GET.model }}&priceCategory={{ request.GET.priceCategory }}">next -></a>
                     {% endif %}
                 </span>
             </div>

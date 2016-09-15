@@ -31,6 +31,7 @@ class DetailView(generic.DetailView):
     def get_context_data(self, **kwargs):
         pk = self.kwargs['pk']
         context = super(DetailView, self).get_context_data(**kwargs)
+        q_objects = Q()
 
         if self.request.GET.get('model', '') or self.request.GET.get('priceCategory', '') or self.request.GET.get('sortby', ''):
             model = self.request.GET.get('model', '')
@@ -38,9 +39,8 @@ class DetailView(generic.DetailView):
             sortby = self.request.GET.get('sortby', '')
             context['all_products'] = Product.objects.filter(category_id__exact=pk)
 
-            q_objects = Q()
-
             if priceCategory:
+                print >> sys.stderr, "pricecategory YEAH"
                 multiplePriceCategories = priceCategory.split(',')
 
                 for categ in multiplePriceCategories:
@@ -70,10 +70,11 @@ class DetailView(generic.DetailView):
 
             if sortby:
                 context['all_products'] = Product.objects.filter(q_objects).order_by(sortby)
-            else:
-                context['all_products'] = Product.objects.filter(q_objects).order_by('model')
-
-            return context
+        
+        else:
+            print >> sys.stderr, "yeah we are here bitch"
+            context['all_products'] = Product.objects.filter(category_id__exact=pk).order_by('model')
+        return context
 
 
 class ProductsView(generic.ListView):
@@ -506,7 +507,6 @@ class SuccessfulPurchaseView(View):
 
             else:
                 return redirect('store:login')
-
 
 
 
