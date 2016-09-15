@@ -11,7 +11,7 @@ class MyChangeList(ChangeList):
 
     def get_results(self, *args, **kwargs):
         super(MyChangeList, self).get_results(*args, **kwargs)
-        q = self.result_list.aggregate(price_sum=Sum('priceamount'))
+        q = self.result_list.aggregate(price_sum=Sum('totalprice'))
         self.price_sum = q['price_sum']
 
 

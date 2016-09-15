@@ -40,12 +40,11 @@ class DetailView(generic.DetailView):
             context['all_products'] = Product.objects.filter(category_id__exact=pk)
 
             if priceCategory:
-                print >> sys.stderr, "pricecategory YEAH"
                 multiplePriceCategories = priceCategory.split(',')
 
                 for categ in multiplePriceCategories:
                     if categ == '1':
-                            q_objects.add(Q(price__lte=100), Q.OR)
+                        q_objects.add(Q(price__lte=100), Q.OR)
 
                     elif categ == '2':
                         q_objects.add(Q(price__gte=100, price__lte=200), Q.OR)
@@ -66,13 +65,11 @@ class DetailView(generic.DetailView):
                 q_objects.add(Q(model__icontains=model), Q.AND)
 
             q_objects.add(Q(category_id__exact=pk), Q.AND)
-            print >> sys.stderr, "Q OBJECTS: {}".format(q_objects)
 
             if sortby:
                 context['all_products'] = Product.objects.filter(q_objects).order_by(sortby)
         
         else:
-            print >> sys.stderr, "yeah we are here bitch"
             context['all_products'] = Product.objects.filter(category_id__exact=pk).order_by('model')
         return context
 
