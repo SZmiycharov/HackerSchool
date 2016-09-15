@@ -38,7 +38,6 @@ class DetailView(generic.DetailView):
             sortby = self.request.GET.get('sortby', '')
             context['all_products'] = Product.objects.filter(category_id__exact=pk)
 
-            categories = []
             q_objects = Q()
 
             if priceCategory:
@@ -72,7 +71,7 @@ class DetailView(generic.DetailView):
             if sortby:
                 context['all_products'] = Product.objects.filter(q_objects).order_by(sortby)
             else:
-                context['all_products'] = Product.objects.filter(q_objects)
+                context['all_products'] = Product.objects.filter(q_objects).order_by('model')
 
             return context
 
@@ -88,67 +87,45 @@ class ProductsView(generic.ListView):
             model = self.request.GET.get('model', '')
             priceCategory = self.request.GET.get('priceCategory', '')
             sortby = self.request.GET.get('sortby', '')
-            query = []
+            q_objects = Q()
 
             if priceCategory:
                 multiplePriceCategories = priceCategory.split(',')
 
                 for categ in multiplePriceCategories:
                     if categ == '1':
-                        if sortby != '':
-                            query.extend(list(Product.objects.filter(price__lte=100, model__icontains=model).order_by(sortby)))
-                        else:
-                            query.extend(list(Product.objects.filter(price__lte=100, model__icontains=model)))
+                            q_objects.add(Q(price__lte=100), Q.OR)
 
                     elif categ == '2':
-                        if sortby != '':
-                            query.extend(list(Product.objects.filter(price__gte=100, price__lte=200, model__icontains=model).order_by(sortby)))
-                        else:
-                            query.extend(list(Product.objects.filter(price__gte=100, price__lte=200, model__icontains=model)))
+                        q_objects.add(Q(price__gte=100, price__lte=200), Q.OR)
 
                     elif categ == '3':
-                        if sortby != '':
-                            query.extend(list(Product.objects.filter(price__gte=200, price__lte=300, model__icontains=model).order_by(sortby)))
-                        else:
-                            query.extend(list(Product.objects.filter(price__gte=200, price__lte=300, model__icontains=model)))
+                        q_objects.add(Q(price__gte=200, price__lte=300), Q.OR)
 
                     elif categ == '4':
-                        if sortby != '':
-                            query.extend(list(Product.objects.filter(price__gte=300, price__lte=400, model__icontains=model).order_by(sortby)))
-                        else:
-                            query.extend(list(Product.objects.filter(price__gte=300, price__lte=400, model__icontains=model)))
+                        q_objects.add(Q(price__gte=300, price__lte=400), Q.OR)
 
                     elif categ == '5':
-                        if sortby != '':
-                            query.extend(list(Product.objects.filter(price__gte=400, price__lt=500, model__icontains=model).order_by(sortby)))
-                        else:
-                            query.extend(list(Product.objects.filter(price__gte=400, price__lt=500, model__icontains=model)))
+                        q_objects.add(Q(price__gte=400, price__lt=500), Q.OR)
 
                     elif categ == '6':
-                        if sortby != '':
-                            query.extend(list(Product.objects.filter(price__gte=500, model__icontains=model).order_by(sortby)))
-                        else:
-                            query.extend(list(Product.objects.filter(price__gte=500, model__icontains=model)))
+                        q_objects.add(Q(price__gte=500), Q.OR)
 
-                return query
+            if model:
+                q_objects.add(Q(model__icontains=model), Q.AND)
 
-            elif model:
-                print >> sys.stderr, "filter: model"
-                if sortby != '':
-                    return Product.objects.filter(model__icontains=model).order_by(sortby)
+            if sortby:
+                if q_objects:
+                    return Product.objects.filter(q_objects).order_by(sortby)
                 else:
-                    return Product.objects.filter(model__icontains=model)
-
-            elif sortby:
-                print >> sys.stderr, "filter: sortby"
-                return Product.objects.all().order_by(sortby)
-
+                    return Product.objects.all().order_by(sortby)
             else:
-                return Product.objects.all()
-
+                if q_objects:
+                    return Product.objects.filter(q_objects).order_by('model')
+                else:
+                    return Product.objects.all().order_by('model')
         else:
-            print >> sys.stderr, "filter: none 2"
-            return Product.objects.all()
+            return Product.objects.all().order_by('model')
 
 
 class SearchDetailsView(generic.ListView):
@@ -160,6 +137,8 @@ class SearchDetailsView(generic.ListView):
     def get_queryset(self):
         print >> sys.stderr, "\nin SearchDetailsView queryset\n"
 
+        q_objects = Q()
+
         if len(self.request.GET.urlencode().split('q='))>1:
             global searchedfor
             searchedfor = self.request.GET.urlencode().split('q=')[1].split('&')[0]
@@ -168,68 +147,46 @@ class SearchDetailsView(generic.ListView):
             model = self.request.GET.get('model', '')
             priceCategory = self.request.GET.get('priceCategory', '')
             sortby = self.request.GET.get('sortby', '')
-            query = []
 
             if priceCategory:
-                print "filter: pricecategory"
                 multiplePriceCategories = priceCategory.split(',')
 
                 for categ in multiplePriceCategories:
                     if categ == '1':
-                        if sortby != '':
-                            query.extend(list(Product.objects.filter(maker__icontains=searchedfor, price__lte=100, model__icontains=model).order_by(sortby)))
-                        else:
-                            query.extend(list(Product.objects.filter(maker__icontains=searchedfor, price__lte=100, model__icontains=model)))
+                        q_objects.add(Q(price__lte=100), Q.OR)
 
                     elif categ == '2':
-                        if sortby != '':
-                            query.extend(list(Product.objects.filter(maker__icontains=searchedfor, price__gte=100, price__lte=200, model__icontains=model).order_by(sortby)))
-                        else:
-                            query.extend(list(Product.objects.filter(maker__icontains=searchedfor, price__gte=100, price__lte=200, model__icontains=model)))
+                        q_objects.add(Q(price__gte=100, price__lte=200), Q.OR)
 
                     elif categ == '3':
-                        if sortby != '':
-                            query.extend(list(Product.objects.filter(maker__icontains=searchedfor, price__gte=200, price__lte=300, model__icontains=model).order_by(sortby)))
-                        else:
-                            query.extend(list(Product.objects.filter(maker__icontains=searchedfor, price__gte=200, price__lte=300, model__icontains=model)))
+                        q_objects.add(Q(price__gte=200, price__lte=300), Q.OR)
 
                     elif categ == '4':
-                        if sortby != '':
-                            query.extend(list(Product.objects.filter(maker__icontains=searchedfor, price__gte=300, price__lte=400, model__icontains=model).order_by(sortby)))
-                        else:
-                            query.extend(list(Product.objects.filter(maker__icontains=searchedfor, price__gte=300, price__lte=400, model__icontains=model)))
+                        q_objects.add(Q(price__gte=300, price__lte=400), Q.OR)
 
                     elif categ == '5':
-                        if sortby != '':
-                            query.extend(list(Product.objects.filter(maker__icontains=searchedfor, price__gte=400, price__lt=500, model__icontains=model).order_by(sortby)))
-                        else:
-                            query.extend(list(Product.objects.filter(maker__icontains=searchedfor, price__gte=400, price__lt=500, model__icontains=model)))
+                        q_objects.add(Q(price__gte=400, price__lt=500), Q.OR)
 
                     elif categ == '6':
-                        if sortby != '':
-                            query.extend(list(Product.objects.filter(maker__icontains=searchedfor, price__gte=500, model__icontains=model).order_by(sortby)))
-                        else:
-                            query.extend(list(Product.objects.filter(maker__icontains=searchedfor, price__gte=500, model__icontains=model)))
+                        q_objects.add(Q(price__gte=500), Q.OR)
 
-                return query
+            if model:
+                q_objects.add(Q(model__icontains=model), Q.AND)
 
-            elif model:
-                print >> sys.stderr, "filter: model"
-                if sortby != '':
-                    query.extend(list(Product.objects.filter(maker__icontains=searchedfor, model__icontains=model).order_by(sortby)))
+            q_objects.add(Q(maker__icontains=searchedfor), Q.AND)
+
+            if sortby:
+                if q_objects:
+                    return Product.objects.filter(q_objects).order_by(sortby)
                 else:
-                    query.extend(list(Product.objects.filter(maker__icontains=searchedfor, model__icontains=model)))
-
-            elif sortby:
-                query.extend(list(Product.objects.all().order_by(sortby)))
-
+                    return Product.objects.all().order_by(sortby)
             else:
-                print >> sys.stderr, "filter: none"
-                query.extend(list(Product.objects.filter(maker__icontains=searchedfor)))
-
+                if q_objects:
+                    return Product.objects.filter(q_objects).order_by('model')
+                else:
+                    return Product.objects.all().order_by('model')
         else:
-            print >> sys.stderr, "filter: none 2"
-            return Product.objects.filter(maker__icontains=searchedfor)
+            return Product.objects.filter(maker__icontains=searchedfor).order_by('model')
 
 
 class RegisterView(View):
