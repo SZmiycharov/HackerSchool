@@ -2,85 +2,109 @@
 <html>
 <head>
     <link rel="stylesheet" type="text/css" href="/css/main.css">
+    
 </head>
 <body>
-   <form action="main.html">
-    <input placeholder="Title" type="text" name="title" required><br><br>
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/2.1.1/jquery.min.js"></script>
+    <script src="/js/main.js"></script>
+    
+        <table width=100% height=100%>
+            <tr>
+                <td width=50%>
+                <form action="main.html">
+                    <input placeholder="Title" type="text" name="title" required><br><br>
 
-    <select name="type">
-        <option selected="selected" disabled>Select type</option>
-        <option label="text" value="string:text">text</option>
-        <option label="textarea" value="string:textarea">textarea</option>
-        <option label="number" value="string:number">number</option>
-        <option label="email" value="string:email">email</option><option label="password" value="string:password">password</option>
-        <option label="dropdown" value="string:dropdown">dropdown</option>
-        <option label="radios" value="string:radios">radios</option>
-        <option label="radios-inline" value="string:radios-inline">radios-inline</option>
-        <option label="radiobuttons" value="string:radiobuttons">radiobuttons</option>
-        <option label="checkbox" value="string:checkbox">checkbox</option>
-        <option label="checkboxes" value="string:checkboxes">checkboxes</option>
-        <option label="boolean" value="string:boolean">boolean</option>
-        <option label="date" value="string:date">date</option>
-        <option label="time" value="string:time">time</option>
-        <option label="date-time" value="string:date-time">date-time</option>
-        <option label="button" value="string:button">button</option>
-        <option label="submit" value="string:submit">submit</option>
-        <option label="reset" value="string:reset">reset</option>
-        <option label="help" value="string:help">help</option>
-        <option label="template" value="string:template">template</option>
-    </select><br><br>
+                    <select name="type">
+                        <option selected="selected" disabled>Select type</option>
+                        <option label="text" value="string:text">text</option>
+                        <option label="textarea" value="string:textarea">textarea</option>
+                        <option label="number" value="string:number">number</option>
+                        <option label="email" value="string:email">email</option><option label="password" value="string:password">password</option>
+                        <option label="dropdown" value="string:dropdown">dropdown</option>
+                        <option label="radios" value="string:radios">radios</option>
+                        <option label="radios-inline" value="string:radios-inline">radios-inline</option>
+                        <option label="radiobuttons" value="string:radiobuttons">radiobuttons</option>
+                        <option label="checkbox" value="string:checkbox">checkbox</option>
+                        <option label="checkboxes" value="string:checkboxes">checkboxes</option>
+                        <option label="boolean" value="string:boolean">boolean</option>
+                        <option label="date" value="string:date">date</option>
+                        <option label="time" value="string:time">time</option>
+                        <option label="date-time" value="string:date-time">date-time</option>
+                        <option label="button" value="string:button">button</option>
+                        <option label="submit" value="string:submit">submit</option>
+                        <option label="reset" value="string:reset">reset</option>
+                        <option label="help" value="string:help">help</option>
+                        <option label="template" value="string:template">template</option>
+                    </select><br><br>
 
-    <input placeholder="Key (Unique identifier)" type="text" name="title" required><br><br>
+                    <input placeholder="Key (Unique identifier)" type="text" name="title" required><br><br>
 
-    <input class="longtext" id="description" placeholder="Description" type="text" name="title"><br><br>
+                    <input class="longtext" id="description" placeholder="Description" type="text" name="title"><br><br>
 
-    <label><input type="checkbox" name="hidetitle">Don't show title</label><br><br>
-    <label><input type="checkbox" name="showadvanceoptions">Show advanced options</label><br><br>
-    <label><input type="checkbox" name="disablesuccess">Disable success state</label><br><br>
-    <label><input type="checkbox" name="disableerror">Disable error state</label><br><br>
-    <label><input type="checkbox" name="readonly">Readonly</label><br><br>
+                    <label><input type="checkbox" name="hidetitle">Don't show title</label><br><br>
+                    <label><input id="showadvancedoptions" type="checkbox" name="showadvancedoptions" onclick="showAdvancedOptions();">Show advanced options</label><br><br>
+                    
+                    
+                    <!-- When showadvancedoptions is checked show below content -->
 
-    <input class="longtext" id="validationmessage" placeholder="Validation message" type="text" name="validationmessage"><br><br>
-    <h5>A custom validation error message. It can be a string, an object with error codes as key and<br> messages as values or a custom message function</h5>
+                    
+                    <div id="advancedoptions" hidden="True">
+                        <label><input type="checkbox" name="disablesuccess">Disable success state</label><br><br>
+                        <label><input type="checkbox" name="disableerror">Disable error state</label><br><br>
+                        <label><input type="checkbox" name="readonly">Readonly</label><br><br>
 
-    <input class="longtext" id="onchange" placeholder="onChange" type="text" name="onchange"><br><br>
-    <h5>onChange event handler, expression or function. For expression, modelValue and form are <br>both available. For a function, they will be passed as parameters in that order</h5>
+                        <input class="longtext" id="validationmessage" placeholder="Validation message" type="text" name="validationmessage"><br><br>
+                        <h5>A custom validation error message. It can be a string, an object with error codes as key and<br> messages as values or a custom message function</h5>
 
-    <input class="shorttext" id="feedbackicon" placeholder="Feedback Icon" type="text" name="feedbackicon"><br><br>
-    <h5>Inline feedback icons. To turn off just set feedback to false. If set to a string that string<br> is evaluated by a ngClass in the decorators scope. If not set att all the default value<br> is { "glyphicon": true, "glyphicon-ok": hasSuccess(), "glyphicon-remove": hasError() }</h5>
+                        <input class="longtext" id="onchange" placeholder="onChange" type="text" name="onchange"><br><br>
+                        <h5>onChange event handler, expression or function. For expression, modelValue and form are <br>both available. For a function, they will be passed as parameters in that order</h5>
 
-    <input class="shorttext" id="placeholder" placeholder="Placeholder" type="text" name="placeholder"><br><br>
-    <h5>Placeholder on inputs and textarea</h5>
+                        <input class="shorttext" id="feedbackicon" placeholder="Feedback Icon" type="text" name="feedbackicon"><br><br>
+                        <h5>Inline feedback icons. To turn off just set feedback to false. If set to a string that string<br> is evaluated by a ngClass in the decorators scope. If not set att all the default value<br> is { "glyphicon": true, "glyphicon-ok": hasSuccess(), "glyphicon-remove": hasError() }</h5>
 
-    <input class="longtext" id="ngmodeloptions" placeholder="ng-Model Options" type="text" name="ngmodeloptions"><br><br>
-    <h5>Passed along to ng-model-options</h5>
+                        <input class="shorttext" id="placeholder" placeholder="Placeholder" type="text" name="placeholder"><br><br>
+                        <h5>Placeholder on inputs and textarea</h5>
 
-    <input class="shorttext" id="class" placeholder="Class" type="text" name="class"><br><br>
-    <h5>CSS Class(es) to be added to the container div e.g. : 'street foobar'</h5>
+                        <input class="longtext" id="ngmodeloptions" placeholder="ng-Model Options" type="text" name="ngmodeloptions"><br><br>
+                        <h5>Passed along to ng-model-options</h5>
 
-    <input class="shorttext" id="destroystrategy" placeholder="Destroy strategy" type="text" name="destroystrategy"><br><br>
-    <h5>One of <code>null</code>, <code>empty</code> , <code>remove</code>, or <code>retain</code>. <br>Changes model on $destroy event. default is <code>remove</code></h5>
+                        <input class="shorttext" id="class" placeholder="Class" type="text" name="class"><br><br>
+                        <h5>CSS Class(es) to be added to the container div e.g. : 'street foobar'</h5>
 
-    <input class="shorttext" id="copyvalueto" placeholder="Copy Value To" type="text" name="copyvalueto"><br><br>
-    <h5>Copy values to these schema keys e.g ['address.street']. The receiving fields can be shown, <br>but the intent for them is to be hidden.</h5>
+                        <input class="shorttext" id="destroystrategy" placeholder="Destroy strategy" type="text" name="destroystrategy"><br><br>
+                        <h5>One of <code>null</code>, <code>empty</code> , <code>remove</code>, or <code>retain</code>. <br>Changes model on $destroy event. default is <code>remove</code></h5>
 
-    <input class="shorttext" id="fieldclass" placeholder="Field Class" type="text" name="fieldclass"><br><br>
-    <h5>CSS Class(es) to be added to field input (or similar)</h5>
+                        <input class="shorttext" id="copyvalueto" placeholder="Copy Value To" type="text" name="copyvalueto"><br><br>
+                        <h5>Copy values to these schema keys e.g ['address.street']. The receiving fields can be shown, <br>but the intent for them is to be hidden.</h5>
 
-    <input class="shorttext" id="labelclass" placeholder="Label Class" type="text" name="labelclass"><br><br>
-    <h5>CSS Class(es) to be added to the label of the field (or similar)</h5>
+                        <input class="shorttext" id="fieldclass" placeholder="Field Class" type="text" name="fieldclass"><br><br>
+                        <h5>CSS Class(es) to be added to field input (or similar)</h5>
 
-    <input class="shorttext" id="condition" placeholder="Condition" type="text" name="condition"><br><br>
-    <h5>Show or hide field depending on an angular expression e.g 'model.age &lt; 18'. <br>The expression has access to <code>model</code>, <code>modelValue</code>, <code> arrayIndex</code>.  The condition need not<br> reference a model value it could be anything on scope.</h5>
+                        <input class="shorttext" id="labelclass" placeholder="Label Class" type="text" name="labelclass"><br><br>
+                        <h5>CSS Class(es) to be added to the label of the field (or similar)</h5>
 
-    <input class="shorttext" id="fieldaddonleft" placeholder="Field Addon - Left" type="text" name="fieldaddonleft"><br><br>
-    <h5>Add html code to left of input field. For reference check <a target="_blank" href="http://getbootstrap.com/components/#input-groups">bootstrap input groups</a></h5>
+                        <input class="shorttext" id="condition" placeholder="Condition" type="text" name="condition"><br><br>
+                        <h5>Show or hide field depending on an angular expression e.g 'model.age &lt; 18'. <br>The expression has access to <code>model</code>, <code>modelValue</code>, <code> arrayIndex</code>.  The condition need not<br> reference a model value it could be anything on scope.</h5>
 
-    <input class="shorttext" id="fieldaddonright" placeholder="Field Addon - Right" type="text" name="fieldaddonright"><br><br>
-    <h5>Add html code to right of input field. For reference check <a target="_blank" href="http://getbootstrap.com/components/#input-groups">bootstrap input groups</a></h5>
+                        <input class="shorttext" id="fieldaddonleft" placeholder="Field Addon - Left" type="text" name="fieldaddonleft"><br><br>
+                        <h5>Add html code to left of input field. For reference check <a target="_blank" href="http://getbootstrap.com/components/#input-groups">bootstrap input groups</a></h5>
 
-  <input type="submit">
-</form>   
+                        <input class="shorttext" id="fieldaddonright" placeholder="Field Addon - Right" type="text" name="fieldaddonright"><br><br>
+                        <h5>Add html code to right of input field. For reference check <a target="_blank" href="http://getbootstrap.com/components/#input-groups">bootstrap input groups</a></h5>
+                    </div>
+
+
+                  <input type="submit">
+                </form>   
+            </td>
+
+            <td width=50%>
+                <h1>Preview:</h1>
+            </td>
+        </tr>
+    </table>
+    
+   
 
 </body>
 </html>
