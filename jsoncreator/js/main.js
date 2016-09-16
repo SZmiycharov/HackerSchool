@@ -40,84 +40,125 @@ function showAdvancedOptions(){
 };
 
 function handleTextType(){
-    console.log(handleTextType);
+    console.log('1');
+    var element = document.getElementById("p1");
+    element.innerHTML = "New text!";
 }
 
 function handleTextAreaType(){
-    console.log(handleTextType);
+    console.log('2');
+    var element = document.getElementById("p1");
+    element.innerHTML = "New text!";
 }
 
 function handleNumberType(){
-    console.log(handleTextType);
+    console.log('3');
+    var element = document.getElementById("p1");
+    element.innerHTML = "New text!";
 }
 
 function handleEmailType(){
-    console.log(handleTextType);
+    console.log('4');
+    var element = document.getElementById("p1");
+    element.innerHTML = "New text!";
 }
 
 function handlePasswordType(){
-    console.log(handleTextType);
+    console.log('5');
+    var element = document.getElementById("p1");
+    element.innerHTML = "New text!";
 }
 
 function handleDropdownType(){
-    console.log(handleTextType);
+    console.log('6');
+    var element = document.getElementById("p1");
+    element.innerHTML = "New text!";
 }
 
 function handleRadiosType(){
-    console.log(handleTextType);
+    console.log('7');
+    var element = document.getElementById("p1");
+    element.innerHTML = "New text!";
 }
 
 function handleRadiosInlineType(){
-    console.log(handleTextType);
+    console.log('8');
+    var element = document.getElementById("p1");
+    element.innerHTML = "New text!";
 }
 
 function handleRadioButtonsType(){
-    console.log(handleTextType);
+    console.log('9');
+    var element = document.getElementById("p1");
+    element.innerHTML = "New text!";
 }
 
 function handleCheckboxType(){
-    console.log(handleTextType);
+    console.log('10');
+    var element = document.getElementById("p1");
+    element.innerHTML = "New text!";
 }
 
 function handleCheckboxesType(){
-    console.log(handleTextType);
+    console.log('11');
+    var element = document.getElementById("p1");
+    element.innerHTML = "New text!";
 }
 
 function handleBooleanType(){
-    console.log(handleTextType);
+    console.log('12');
+    var element = document.getElementById("p1");
+    element.innerHTML = "New text!";
 }
 
 function handleDateType(){
-    console.log(handleTextType);
+    console.log('13');
+    var element = document.getElementById("p1");
+    element.innerHTML = "New text!";
 }
 
 function handleTimeType(){
-    console.log(handleTextType);
+    console.log('14');
+    var element = document.getElementById("p1");
+    element.innerHTML = "New text!";
 }
 
 function handleDateTimeType(){
-    console.log(handleTextType);
+    console.log('15');
+    var element = document.getElementById("p1");
+    element.innerHTML = "New text!";
 }
 
 function handleButtonType(){
-    console.log(handleTextType);
+    console.log('16');
+    var element = document.getElementById("p1");
+    element.innerHTML = "New text!";
 }
 
 function handleSubmitType(){
-    console.log(handleTextType);
+    console.log('17');
+    var element = document.getElementById("p1");
+    element.innerHTML = "New text!";
 }
 
 function handleResetType(){
-    console.log(handleTextType);
+    console.log('18');
+    var element = document.getElementById("p1");
+    element.innerHTML = "New text!";
 }
 
 function handleHelpType(){
-    console.log(handleTextType);
+    console.log('19');
+    var element = document.getElementById("p1");
+    element.innerHTML = "New text!";
 }
 
 function handleTemplateType(){
-    console.log(handleTextType);
+    console.log('20');
+    var element = document.getElementById("p1");
+    element.innerHTML = "New text!";
 }
+
 switch(type){
     case 'text':
         handleTextType(); break;
