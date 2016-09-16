@@ -1,0 +1,3 @@
+workflow:
+Форма - да се избере типа;
+избира се примерно text -> скрива се досегашната форма и се открива нова с GenerateTextForm() функцията; onsubmit на generatetextboxform формата -> извикай handleTextAreaType и направи json файл по зададените параметри
