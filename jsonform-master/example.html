@@ -6,14 +6,13 @@
     <link rel="stylesheet" style="text/css" href="deps/opt/bootstrap.css" />
   </head>
   <body>
-    <table width=100% height=100%>
-            <tr>
-                <td width=50%>
-                <form id="form1" onsubmit="GenerateSecondForm();" action="">
+          <div style="float:left; width:45%;">
+                <div class="widget-content">
+                <form id="form1" action="javascript:void(0);" onsubmit="GenerateTextForm();">
                     <input placeholder="Title" type="text" name="title"><br><br>
 
-                    <select name="type">
-                        <option selected="selected" disabled>Select type</option>
+                    <select id="type" name="type" required>
+                        <option selected="selected" value="">Choose type</option>
                         <option label="text" value="text">text</option>
                         <option label="textarea" value="textarea">textarea</option>
                         <option label="number" value="number">number</option>
@@ -46,7 +45,6 @@
                     
                     <!-- When showadvancedoptions is checked show below content -->
 
-                    <!--
                     <div id="advancedoptions" hidden="True">
                         <label><input type="checkbox" name="disablesuccess">Disable success state</label><br><br>
                         <label><input type="checkbox" name="disableerror">Disable error state</label><br><br>
@@ -90,20 +88,24 @@
 
                         <input class="shorttext" id="fieldaddonright" placeholder="Field Addon - Right" type="text" name="fieldaddonright"><br><br>
                         <h5>Add html code to right of input field. For reference check <a target="_blank" href="http://getbootstrap.com/components/#input-groups">bootstrap input groups</a></h5>
-                    </div>//-->
+                    </div>
 
 
                   <input type="submit">
-                </form>   
+                </form>
 
-                <form id="form2"></form>
-            </td>
+                </div>
+                <button id="changeform1button" class="btn-minimize" style="display: none;">⇕</button>
+                <form id="form2"></form> 
 
-            <td width=50%>
-                <h1>Preview:</h1>
-            </td>
-        </tr>
-    </table>
+              </div>
+                  
+
+                
+            <div style="float:right; width:45%;">
+              <h3>Preview appears here:</h3>
+              <p id="p1">When you choose options json will appear here! :)</p>
+            </div>
 
     <script type="text/javascript" src="deps/jquery.min.js"></script>
     <script type="text/javascript" src="deps/underscore.js"></script>
@@ -111,7 +113,6 @@
     <script type="text/javascript" src="lib/jsonform.js"></script>
     <script type="text/javascript">
 
-      window.onload = GenerateTextForm;
 
       function getParameterByName(name, url) {
         if (!url) url = window.location.href;
@@ -123,27 +124,11 @@
         return decodeURIComponent(results[2].replace(/\+/g, " "));
       }    
 
-      var title = getParameterByName('title');
-      var type = getParameterByName('type');
-      var key = getParameterByName('key');
-      var description = getParameterByName('description');
-      var hidetitle = getParameterByName('hidetitle');
-      var disablesuccess = getParameterByName('disablesuccess');
-      var disableerror = getParameterByName('disableerror');
-      var readonly = getParameterByName('readonly');
-      var validationmessage = getParameterByName('validationmessage');
-      var onchange = getParameterByName('onchange');
-      var feedbackicon = getParameterByName('feedbackicon');
-      var placeholder = getParameterByName('placeholder');
-      var ngmodeloptions = getParameterByName('ngmodeloptions');
-      var classoffield = getParameterByName('classoffield');
-      var destroystrategy = getParameterByName('destroystrategy');
-      var copyvalueto = getParameterByName('copyvalueto');
-      var fieldclass = getParameterByName('fieldclass');
-      var labelclass = getParameterByName('labelclass');
-      var condition = getParameterByName('condition');
-      var fieldaddonleft = getParameterByName('fieldaddonleft');
-      var fieldaddonright = getParameterByName('fieldaddonright');
+
+      $(".btn-minimize").click(function(){
+        $(this).toggleClass('btn-plus');
+        $(".widget-content").slideToggle();
+      });
 
 
       function showAdvancedOptions(){
@@ -154,187 +139,26 @@
               }
       };
 
-      function handleTextType(){
-          console.log('1');
-          var element = document.getElementById("p1");
-          element.innerHTML = "New text!";
-      }
-
-      function handleTextAreaType(){
-          console.log('2');
-          var element = document.getElementById("p1");
-          element.innerHTML = "New text!";
-      }
-
-      function handleNumberType(){
-          console.log('3');
-          var element = document.getElementById("p1");
-          element.innerHTML = "New text!";
-      }
-
-      function handleEmailType(){
-          console.log('4');
-          var element = document.getElementById("p1");
-          element.innerHTML = "New text!";
-      }
-
-      function handlePasswordType(){
-          console.log('5');
-          var element = document.getElementById("p1");
-          element.innerHTML = "New text!";
-      }
-
-      function handleDropdownType(){
-          console.log('6');
-          var element = document.getElementById("p1");
-          element.innerHTML = "New text!";
-      }
-
-      function handleRadiosType(){
-          console.log('7');
-          var element = document.getElementById("p1");
-          element.innerHTML = "New text!";
-      }
-
-      function handleRadiosInlineType(){
-          console.log('8');
-          var element = document.getElementById("p1");
-          element.innerHTML = "New text!";
-      }
-
-      function handleRadioButtonsType(){
-          console.log('9');
-          var element = document.getElementById("p1");
-          element.innerHTML = "New text!";
-      }
-
-      function handleCheckboxType(){
-          console.log('10');
-          var element = document.getElementById("p1");
-          element.innerHTML = "New text!";
-      }
-
-      function handleCheckboxesType(){
-          console.log('11');
-          var element = document.getElementById("p1");
-          element.innerHTML = "New text!";
-      }
-
-      function handleBooleanType(){
-          console.log('12');
-          var element = document.getElementById("p1");
-          element.innerHTML = "New text!";
-      }
-
-      function handleDateType(){
-          console.log('13');
-          var element = document.getElementById("p1");
-          element.innerHTML = "New text!";
-      }
-
-      function handleTimeType(){
-          console.log('14');
-          var element = document.getElementById("p1");
-          element.innerHTML = "New text!";
-      }
-
-      function handleDateTimeType(){
-          console.log('15');
-          var element = document.getElementById("p1");
-          element.innerHTML = "New text!";
-      }
-
-      function handleButtonType(){
-          console.log('16');
-          var element = document.getElementById("p1");
-          element.innerHTML = "New text!";
-      }
-
-      function handleSubmitType(){
-          console.log('17');
-          var element = document.getElementById("p1");
-          element.innerHTML = "New text!";
-      }
-
-      function handleResetType(){
-          console.log('18');
-          var element = document.getElementById("p1");
-          element.innerHTML = "New text!";
-      }
-
-      function handleHelpType(){
-          console.log('19');
-          var element = document.getElementById("p1");
-          element.innerHTML = "New text!";
-      }
-
-      function handleTemplateType(){
-          console.log('20');
-          var element = document.getElementById("p1");
-          element.innerHTML = "New text!";
-      }
-
       
-      
-      
-
-      function GenerateSecondForm(){
-        var type = getParameterByName('type');
-        switch(type){
-          case 'text':
-              console.log('type is text; calling GenerateTextForm');
-              GenerateTextForm(); break;
-          case 'textarea':
-              handleTextAreaType(); break;
-          case 'number':
-              handleNumberType(); break;
-          case 'email':
-              handleEmailType(); break;
-          case 'password':
-              handlePasswordType(); break;
-          case 'dropdown':
-              handleDropdownType(); break;
-          case 'radios':
-              handleRadiosType(); break;
-          case 'radios-inline':
-              handleRadiosInlineType(); break;
-          case 'radiobuttons':
-              handleRadioButtonsType(); break;
-          case 'checkbox':
-              handleCheckboxType(); break;
-          case 'checkboxes':
-              handleCheckboxesType(); break;
-          case 'boolean':
-              handleBooleanType(); break;
-          case 'date':
-              handleDateType(); break;
-          case 'time':
-              handleTimeType(); break;
-          case 'date-time':
-              handleDateTimeType(); break;
-          case 'button':
-              handleButtonType(); break;
-          case 'submit':
-              handleSubmitType(); break;
-          case 'reset':
-              handleResetType(); break;
-          case 'help':
-              handleHelpType(); break;
-          case 'template':
-            handleTemplateType(); break;       
-        }
-    }
-
     function GenerateTextForm(){
         console.log('in GenerateTextForm; making form now');
 
-        type = getParameterByName('type')
+        var e = document.getElementById("type");
+        var type = e.value;
+
         if (type){
-          $('#form1').hide();
+          document.getElementById("changeform1button").click();
+          $("#changeform1button").show();
+          
+          var form2 = document.getElementById("form2");
+          while (form2.firstChild) {
+              form2.removeChild(form2.firstChild);
+          }
+
           $('#form2').jsonForm({
             schema: {
               name: {
-                id: 'string',
+                type: 'string',
                 title: 'Name',
                 required: true
               },
@@ -348,7 +172,8 @@
                 $('#res').html('<p>I beg your pardon?</p>');
               }
               else {
-                console.log(values.name + ' ' + values.age);
+                var element = document.getElementById("p1");
+                element.innerHTML = values.name + ' ' + values.age;
               }
             }
           });
@@ -357,8 +182,6 @@
           $('#form2').hide();
         }
       }
-
-
 
     </script>
   </body>
