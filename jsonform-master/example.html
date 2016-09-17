@@ -96,13 +96,12 @@
 
                 </div>
                 <button id="changeform1button" class="btn-minimize" style="display: none;">⇕</button>
-                <form id="form2"></form> 
-
+                <form id="form2"></form>
               </div>
                   
 
                 
-            <div style="float:right; width:45%;">
+            <div id="jsonpreview" style="float:right; width:45%;">
               <h3>Preview appears here:</h3>
               <p id="p1">When you choose options json will appear here! :)</p>
             </div>
@@ -149,31 +148,53 @@
         if (type){
           document.getElementById("changeform1button").click();
           $("#changeform1button").show();
-          
+
           var form2 = document.getElementById("form2");
           while (form2.firstChild) {
               form2.removeChild(form2.firstChild);
           }
 
+          form1data = $('#form1').serialize().replace(/\+/g,' ');;
+          console.log(form1data);
+          title = form1data.split('title=')[1].split('&')[0];
+          descr = form1data.split('description=')[1].split('&')[0];
+          type = form1data.split('type=')[1].split('&')[0];
+
+
           $('#form2').jsonForm({
             schema: {
-              name: {
+              title: {
                 type: 'string',
-                title: 'Name',
-                required: true
+                title: 'Title'
               },
-              age: {
-                type: 'number',
-                title: 'Age'
+              description: {
+                type: 'string',
+                title: 'Description'
+              },
+              type: {
+                type: 'string',
+                title: 'Type',
+                required: true
               }
+
             },
             onSubmit: function (errors, values) {
+              console.log(title);
               if (errors) {
                 $('#res').html('<p>I beg your pardon?</p>');
               }
               else {
-                var element = document.getElementById("p1");
-                element.innerHTML = values.name + ' ' + values.age;
+                jsonpreview = JSON.stringify({
+                  "schema": {
+                    "name": {
+                      "title": title,
+                      "description": descr,
+                      "type": type
+                    }
+                  }
+                }, null, 4)
+
+                document.getElementById("jsonpreview").appendChild(document.createElement('pre')).innerHTML = jsonpreview;
               }
             }
           });
