@@ -6,45 +6,35 @@
     <link rel="stylesheet" style="text/css" href="deps/opt/bootstrap.css" />
   </head>
   <body>
-          <div style="float:left; width:45%;">
+          <div style="float:left; width:45%; margin-left: 30px; margin-top: 20px;">
                 <div class="widget-content">
+                <h2>For schema:</h2>
                 <form id="form1" action="javascript:void(0);" onsubmit="GenerateTextForm();">
-                    <input placeholder="Title" type="text" name="title"><br><br>
 
                     <select id="type" name="type" required>
                         <option selected="selected" value="">Choose type</option>
-                        <option label="text" value="text">text</option>
-                        <option label="textarea" value="textarea">textarea</option>
-                        <option label="number" value="number">number</option>
-                        <option label="email" value="email">email</option>
-                        <option label="password" value="password">password</option>
-                        <option label="dropdown" value="dropdown">dropdown</option>
-                        <option label="radios" value="radios">radios</option>
-                        <option label="radios-inline" value="radios-inline">radios-inline</option>
-                        <option label="radiobuttons" value="radiobuttons">radiobuttons</option>
-                        <option label="checkbox" value="checkbox">checkbox</option>
-                        <option label="checkboxes" value="checkboxes">checkboxes</option>
-                        <option label="boolean" value="boolean">boolean</option>
-                        <option label="date" value="date">date</option>
-                        <option label="time" value="time">time</option>
-                        <option label="date-time" value="date-time">date-time</option>
-                        <option label="button" value="button">button</option>
-                        <option label="submit" value="submit">submit</option>
-                        <option label="reset" value="reset">reset</option>
-                        <option label="help" value="help">help</option>
-                        <option label="template" value="template">template</option>
+                        <option label="object" value="object">object</option>
+                        <option label="array" value="array">array</option>
+                        <option label="number" value="number">number</option> <!-- the normal schema -->
+                        <option label="integer" value="integer">integer</option> <!-- the normal schema -->
+                        <option label="string" value="string">string</option> <!-- the normal schema -->  
+                        <option label="boolean" value="boolean">boolean</option> <!-- the normal schema -->
                     </select><br><br>
 
-                    <input placeholder="Key (Unique identifier)" type="text" name="key"><br><br>
+                    <input placeholder="Title" type="text" name="title"><br><br>
+
+                    <input placeholder="Key (Unique identifier)" type="text" name="key" required><br><br>
 
                     <input class="longtext" id="description" placeholder="Description" type="text" name="description"><br><br>
 
-                    <label><input type="checkbox" name="hidetitle">Don't show title</label><br><br>
-                    <label><input id="showadvancedoptions" type="checkbox" name="showadvancedoptions" onclick="showAdvancedOptions();">Show advanced options</label><br><br>
+                    <label><input id="hidetitle" type="checkbox" name="hidetitle">Don't show title</label><br><br>
+                    <label><input id="required" type="checkbox" name="required">Required (check for true)</label><br><br>
+                    <!-- <label><input id="showadvancedoptions" type="checkbox" name="showadvancedoptions" onclick="showAdvancedOptions();">Show advanced options</label><br><br>
                     
                     
-                    <!-- When showadvancedoptions is checked show below content -->
+                    When showadvancedoptions is checked show below content -->
 
+                    <!--
                     <div id="advancedoptions" hidden="True">
                         <label><input type="checkbox" name="disablesuccess">Disable success state</label><br><br>
                         <label><input type="checkbox" name="disableerror">Disable error state</label><br><br>
@@ -88,20 +78,21 @@
 
                         <input class="shorttext" id="fieldaddonright" placeholder="Field Addon - Right" type="text" name="fieldaddonright"><br><br>
                         <h5>Add html code to right of input field. For reference check <a target="_blank" href="http://getbootstrap.com/components/#input-groups">bootstrap input groups</a></h5>
-                    </div>
+                    </div> -->
 
 
                   <input type="submit">
                 </form>
 
                 </div>
-                <button id="changeform1button" class="btn-minimize" style="display: none;">⇕</button>
+                <button id="minimizeform1button" class="btn-minimize" style="display: none;">⇕</button>
+                <h2 id="forform" hidden>For form:</h2>
                 <form id="form2"></form>
               </div>
                   
 
                 
-            <div id="jsonpreview" style="float:right; width:45%;">
+            <div id="jsonpreview" style="float:right; width:45%; margin-right: 30px; margin-top: 20px;">
               <h3>Preview appears here:</h3>
               <p id="p1">When you choose options json will appear here! :)</p>
             </div>
@@ -111,15 +102,23 @@
     <script type="text/javascript" src="deps/opt/jsv.js"></script>
     <script type="text/javascript" src="lib/jsonform.js"></script>
     <script type="text/javascript">
-
-
-      function getParameterByName(name, url) {
+(function function_name ($) {
+  'use strict';
+    $( document ).ready(function() {
+    window.getParameterByName = function(name, url) {
         if (!url) url = window.location.href;
         name = name.replace(/[\[\]]/g, "\\$&");
-        var regex = new RegExp("[?&]" + name + "(=([^&#]*)|&|#|$)"),
-            results = regex.exec(url);
-        if (!results) return null;
-        if (!results[2]) return '';
+        var regex = new RegExp("[?&]" + name + "(=([^&#]*)|&|#|$)");
+        var results = regex.exec(url);
+        
+        if (!results) {
+          return null;
+        }
+
+        if (!results[2]) {
+          return '';
+        }
+
         return decodeURIComponent(results[2].replace(/\+/g, " "));
       }    
 
@@ -130,36 +129,70 @@
       });
 
 
-      function showAdvancedOptions(){
-              if(document.getElementById('showadvancedoptions').checked) {
-                  $("#advancedoptions").show();
-              } else {
-                  $("#advancedoptions").hide();
-              }
+      window.showAdvancedOptions = function(){
+          $('#showadvancedoptions').click(function() {
+              $("#advancedoptions").toggle(this.checked);
+          });
       };
 
       
-    function GenerateTextForm(){
+      window.GenerateTextForm = function(){
         console.log('in GenerateTextForm; making form now');
 
-        var e = document.getElementById("type");
-        var type = e.value;
+        var $typeInput = $("#type");
+        var type = $typeInput.val();
 
         if (type){
-          document.getElementById("changeform1button").click();
-          $("#changeform1button").show();
+          $("#minimizeform1button").click();
+          $("#minimizeform1button").show();
+          $('#forform').show();
 
-          var form2 = document.getElementById("form2");
+          var form2 = $("#form2");
           while (form2.firstChild) {
               form2.removeChild(form2.firstChild);
           }
 
-          form1data = $('#form1').serialize().replace(/\+/g,' ');;
-          console.log(form1data);
-          title = form1data.split('title=')[1].split('&')[0];
-          descr = form1data.split('description=')[1].split('&')[0];
-          type = form1data.split('type=')[1].split('&')[0];
+          var form1data = $('#form1').serialize().replace(/\+/g,' ');
 
+          try {
+              var title = form1data.split('title=')[1].split('&')[0];
+          }
+          catch(err) {
+              console.log(err.message);
+          }
+
+          try {
+              var description = form1data.split('description=')[1].split('&')[0];
+          }
+          catch(err) {
+              console.log(err.message);
+          }
+
+          try {
+              var type = form1data.split('type=')[1].split('&')[0];
+          } catch(err) {
+              console.log(err.message);
+          }
+
+          try {
+              var key = form1data.split('key=')[1].split('&')[0];
+          }
+          catch(err) {
+              console.log(err.message);
+          }
+
+          try {
+              var required = form1data.split('required=')[1].split('&')[0];
+          }
+          catch(err) {
+              var required = 'off';
+          }
+
+          if (required == 'on'){
+            required = true;
+          } else{
+            required = false;
+          }
 
           $('#form2').jsonForm({
             schema: {
@@ -173,37 +206,77 @@
               },
               type: {
                 type: 'string',
-                title: 'Type',
-                required: true
+                title: 'Type'
               }
 
             },
             onSubmit: function (errors, values) {
               console.log(title);
               if (errors) {
-                $('#res').html('<p>I beg your pardon?</p>');
+                console.log(errors);
+                $('#res').html('<p>Fix your mistakes!</p>');
               }
+
               else {
-                jsonpreview = JSON.stringify({
-                  "schema": {
-                    "name": {
-                      "title": title,
-                      "description": descr,
-                      "type": type
+                //if type is object
+                if(type == 'object'){
+
+                }
+
+                //if type is array
+                else if(type == 'array'){
+                  var jsonpreview = {};
+                }
+
+                //if type is not object or array
+                else{
+                  //don't show title
+                  if($('#hidetitle').checked){
+                    var jsonpreview = {
+                      "schema": {
+                        '"' + key + '"': {
+                            "description": '"' + description + '"',
+                            "type": '"' + type + '"',
+                            "required": ${required} ,
+                        }
+                      }
                     }
                   }
-                }, null, 4)
+                  //show title
+                  else{
+                    var jsonpreview = {
+                      "schema": {
+                        type: 'object',
+                        properties: {
+                          '"' + key + '"': {
+                              "title": "${title}",
+                              "description": "'+description+'",
+                              "type": '"' + type + '"',
+                              "required": required,
+                          }
+                        }
+                      }
+                    }
+                  }
+                }
+                $('#p1').hide();
 
-                document.getElementById("jsonpreview").appendChild(document.createElement('pre')).innerHTML = jsonpreview;
+                $('#jsonpreview').html('');
+                $('#jsonpreview').append(JSON.stringify(jsonpreview, null, 2));
               }
             }
           });
         }
         else{
           $('#form2').hide();
+          $('#minimizeform1button').click();
         }
-      }
+      } 
+  });
+  
+})(jQuery);
 
+      
     </script>
   </body>
 </html>
