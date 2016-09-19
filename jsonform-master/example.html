@@ -95,6 +95,7 @@
             <div id="jsonpreview" style="float:right; width:45%; margin-right: 30px; margin-top: 20px;">
               <h3>Preview appears here:</h3>
               <p id="p1">When you choose options json will appear here! :)</p>
+              <pre id="jsontext"></pre>
             </div>
 
     <script type="text/javascript" src="deps/jquery.min.js"></script>
@@ -138,7 +139,6 @@
       
       window.GenerateTextForm = function(){
         console.log('in GenerateTextForm; making form now');
-
         var $typeInput = $("#type");
         var type = $typeInput.val();
 
@@ -147,10 +147,7 @@
           $("#minimizeform1button").show();
           $('#forform').show();
 
-          var form2 = $("#form2");
-          while (form2.firstChild) {
-              form2.removeChild(form2.firstChild);
-          }
+          $('#form2').empty();
 
           var form1data = $('#form1').serialize().replace(/\+/g,' ');
 
@@ -234,10 +231,10 @@
                   if($('#hidetitle').checked){
                     var jsonpreview = {
                       "schema": {
-                        '"' + key + '"': {
-                            "description": '"' + description + '"',
-                            "type": '"' + type + '"',
-                            "required": ${required} ,
+                            key: {
+                            "description": description,
+                            "type": type,
+                            "required": required ,
                         }
                       }
                     }
@@ -248,10 +245,10 @@
                       "schema": {
                         type: 'object',
                         properties: {
-                          '"' + key + '"': {
-                              "title": "${title}",
-                              "description": "'+description+'",
-                              "type": '"' + type + '"',
+                              key: {
+                              "title": title,
+                              "description": description,
+                              "type": type,
                               "required": required,
                           }
                         }
@@ -261,8 +258,8 @@
                 }
                 $('#p1').hide();
 
-                $('#jsonpreview').html('');
-                $('#jsonpreview').append(JSON.stringify(jsonpreview, null, 2));
+                //$('#jsonpreview').html('');
+                $('#jsontext').html(JSON.stringify(jsonpreview, undefined, 2));
               }
             }
           });
