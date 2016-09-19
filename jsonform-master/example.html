@@ -112,12 +112,9 @@
           $('#svz-for-form-form').empty();
 
           var forschemaformdata = $('#forschemaform').serialize().replace(/\+/g,' ');
-
-
           var testforschemaform = $('#forschemaform').serializeArray();
-
           var currentProperties = {};
-          
+          var toDeleteRequired = true;
 
           jQuery.each( testforschemaform, function( i, field ) {
             if (field.name == 'title' && field.value != ''){
@@ -129,19 +126,16 @@
               currentProperties['type'] = typesArray;
             } else if (field.name == 'key' && field.value != ''){
               currentProperties['key'] = field.value;
-            } else if (field.name == 'currentrequired' && field.value != ''){
-              currentProperties['currentrequired'] = field.value;
+            } else if (field.name == 'required'){
+              toDeleteRequired = false;
+                if (field.value && required.indexOf(currentProperties['key']) == -1){
+                    required.push(currentProperties['key']);
+                }
             }
           });
-
-          if (currentProperties['currentrequired'] == 'on'){
-            currentProperties['currentrequired'] = true;
-            required.push(currentProperties['key']);
-          } else{
-            currentProperties['currentrequired'] = false;
+          if (toDeleteRequired){
+            required.splice(required.indexOf(currentProperties['key']), 1);
           }
-
-          properties[currentProperties['key']] = currentProperties;
 
           $('#svz-for-form-form').jsonForm({
             schema: {
@@ -163,39 +157,34 @@
               if (errors) {
                 console.log(errors);
                 $('#res').html('<p>Fix your mistakes!</p>');
-              }
+              } else {
+                  if(type == 'object'){
 
-              else {
-                //if type is object
-                if(type == 'object'){
-
-                }
-
-                //if type is array
-                else if(type == 'array'){
-                  var jsonPreview = {};
-                }
-
-                //if type is not object or array
-                else{
-                    var jsonPreview = {
-                      'schema': {
-                        'type': 'object',
-                        'properties': properties,
-                        'required': required
+                  } else if(type == 'array'){
+                    var jsonPreview = {};
+                    } else{
+                      var jsonPreview = {
+                        'schema': {
+                          'type': 'object',
+                          'properties': currentProperties
+                        }
+                      }
+                      if (required != ''){
+                        jsonPreview['required'] = required;
+                      }
+                      else{
+                        delete jsonPreview['required'];
                       }
                     }
-                }
                 $('#svz-json-text-header').hide();
 
                 $('#jsontext').html(JSON.stringify(jsonPreview, undefined, 2));
               }
             }
           });
-        }
-        else{
-          $('#svz-for-form-form').hide();
-          $('#svz-minimize-schema-button').click();
+        } else{
+            $('#svz-for-form-form').hide();
+            $('#svz-minimize-schema-button').click();
         }
       } 
     });
