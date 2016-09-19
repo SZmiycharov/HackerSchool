@@ -18,3 +18,6 @@ primerno: {
 	type:number ..... ne6to takova :D
 	}
 }
+
+- block and inline elements;
+- id da e: svz-max-value, a ne maxValue

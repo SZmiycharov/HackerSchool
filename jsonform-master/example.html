@@ -6,8 +6,8 @@
     <link rel='stylesheet' style='text/css' href='deps/opt/bootstrap.css' />
   </head>
   <body>
-          <div style='float:left; width:45%; margin-left: 30px; margin-top: 20px;'>
-                <div class='widget-content'>
+          <div class="form-group"  style='float:left; width:45%; margin-left: 30px; margin-top: 20px;'>
+                <div class='widget-content' class="form-group">
                 <h2>For schema:</h2>
                 <form id='forschemaform' action='javascript:void(0);' onsubmit='GenerateTextForm();'>
 
@@ -28,7 +28,6 @@
 
                     <input class='longtext' id='description' placeholder='Description' type='text' name='description'><br><br>
 
-                    <label><input id='hidetitle' type='checkbox' name='hidetitle'>Don't show title</label><br><br>
                     <label><input id='required' type='checkbox' name='required'>Required (check for true)</label><br><br>
                     <!-- <label><input id='showadvancedoptions' type='checkbox' name='showadvancedoptions' onclick='showAdvancedOptions();'>Show advanced options</label><br><br>
                     
@@ -36,7 +35,7 @@
                     When showadvancedoptions is checked show below content -->
 
                     <!--
-                    <div id='advancedoptions' hidden='True'>
+                    <div class="form-group"  id='advancedoptions' hidden='True'>
                         <label><input type='checkbox' name='disablesuccess'>Disable success state</label><br><br>
                         <label><input type='checkbox' name='disableerror'>Disable error state</label><br><br>
                         <label><input type='checkbox' name='readonly'>Readonly</label><br><br>
@@ -86,16 +85,16 @@
                 </form>
 
                 </div>
-                <button id='minimizeforschemaformbutton' class='btn-minimize' style='display: none;'>⇕</button>
-                <h2 id='forform' hidden>For form:</h2>
-                <form id='forformform'></form>
+                <button id='svz-minimize-schema-button' class='btn-minimize' style='display: none;'>⇕</button>
+                <h2 id='svz-for-form' hidden>For form:</h2>
+                <form id='svz-for-form-form'></form>
               </div>
                   
 
                 
-            <div id='jsonpreview' style='float:right; width:45%; margin-right: 30px; margin-top: 20px;'>
+            <div class="form-group"  id='jsonpreview' style='float:right; width:45%; margin-right: 30px; margin-top: 20px;'>
               <h3>Preview appears here:</h3>
-              <p id='jsontextheader'>When you choose options json will appear here! :)</p>
+              <p id='svz-json-text-header'>When you choose options json will appear here! :)</p>
               <pre id='jsontext'></pre>
             </div>
 
@@ -141,30 +140,31 @@
           });
       };
 
-      $("#type").click(function() {
+      $('#type').click(function() {
         var duration = 500;
-        var thistype = this.value;
+        var thistype = $(this).val();
 
         setTimeout(function() {
+          console.log("gonna remove all now!");
+          $('.additionaloption').remove();
+
           if (thistype == 'string'){
-            $('#type').after('<br><br><input id="maxLength" type="number" placeholder="maxLength">');
-            $('#type').after('<br><br><label><input id="readOnly" type="checkbox">readOnly (check for true)</label>');
+            $('#type').after('<br><br><input id="svz-max-length" type="number" placeholder="svz-max-length">');
+            $('#type').after('<br><br><label><input id="svz-read-only" type="checkbox">svz-read-only (check for true)</label>');
           }
 
           else if (thistype == 'number' || thistype == 'integer'){
             console.log('it is number bruh');
-            $('#type').after('<br><br><input class="additionaloption" id="maxLength" type="number" placeholder="maxLength">');
-            $('#type').after('<br><br><input class="additionaloption" id="minLength" type="number" placeholder="minLength">');
-            $('#type').after('<br><br><input class="additionaloption" id="minItems" type="number" placeholder="minItems">');
-            $('#type').after('<br><br><input class="additionaloption" id="maxItems" type="number" placeholder="maxItems">');
-            $('#type').after('<br><br><input class="additionaloption" id="minimum" type="number" placeholder="minimum">');
-            $('#type').after('<br><br><label><input class="additionaloption" id="exclusiveMinimum" type="checkbox" 
-              placeholder="exclusiveMinimum">Check - num will be > than minimum</label>');
-            $('#type').after('<br><br><input class="additionaloption" id="maximum" type="number" placeholder="maximum">');
-            $('#type').after('<br><br><label><input class="additionaloption" id="exclusiveMaximum" type="checkbox" 
-              placeholder="exclusiveMaximum">Check - num will be < than minimum</label>');
-            $('#type').after('<br><br><input class="additionaloption" id="readOnly" type="number" placeholder="readOnly">');
-            $('#type').after('<br><br><input class="additionaloption" id="default" type="number" placeholder="default">');
+            $('#description').after('<div class="form-group" class="additionaloption"><input id="svz-max-length" type="number" placeholder="svz-max-length"></div>');
+            $('#description').after('<div class="form-group" class="additionaloption"><input id="minLength" type="number" placeholder="minLength"></div>');
+            $('#description').after('<div class="form-group" class="additionaloption"><input id="minItems" type="number" placeholder="minItems"></div>');
+            $('#description').after('<div class="form-group" class="additionaloption"><input id="maxItems" type="number" placeholder="maxItems"></div>');
+            $('#description').after('<div class="form-group" class="additionaloption"><input id="minimum" type="number" placeholder="minimum"></div>');
+            $('#description').after('<div class="form-group" class="additionaloption"><label><input id="exclusiveMinimum" type="checkbox" placeholder="exclusiveMinimum">Check - num will be more than minimum</label></div>');
+            $('#description').after('<div class="form-group" class="additionaloption"><input id="maximum" type="number" placeholder="maximum"></div>');
+            $('#description').after('<div class="form-group" class="additionaloption"><label><input id="exclusiveMaximum" type="checkbox" placeholder="exclusiveMaximum">Check - num will be less than minimum</label></div>');
+            $('#description').after('<div class="form-group" class="additionaloption"><input id="svz-read-only" type="number" placeholder="svz-read-only"></div>');
+            $('#description').after('<div class="form-group" class="additionaloption"><input id="default" type="number" placeholder="default"></div>');
           }
 
           else if(thistype == 'boolean'){
@@ -180,11 +180,11 @@
         var type = $typeInput.val();
 
         if (type){
-          $('#minimizeforschemaformbutton').click();
-          $('#minimizeforschemaformbutton').show();
-          $('#forform').show();
+          $('#svz-minimize-schema-button').click();
+          $('#svz-minimize-schema-button').show();
+          $('#svz-for-form').show();
 
-          $('#forformform').empty();
+          $('#svz-for-form-form').empty();
 
           var forschemaformdata = $('#forschemaform').serialize().replace(/\+/g,' ');
 
@@ -266,7 +266,7 @@
 
           console.log(properties);
 
-          $('#forformform').jsonForm({
+          $('#svz-for-form-form').jsonForm({
             schema: {
               title: {
                 type: 'string',
@@ -296,43 +296,29 @@
 
                 //if type is array
                 else if(type == 'array'){
-                  var jsonpreview = {};
+                  var jsonPreview = {};
                 }
 
                 //if type is not object or array
                 else{
-                  //don't show title
-                  if($('#hidetitle').checked){
-                    var jsonpreview = {
-                      'schema': {
-                        'type': 'object',
-                        'properties': properties,  
-                        'required': required
-                      }
-                    }
-                  }
-                  //show title
-                  else{
-                    console.log('showing this!');
-                    var jsonpreview = {
+                    var jsonPreview = {
                       'schema': {
                         'type': 'object',
                         'properties': properties,
                         'required': required
                       }
                     }
-                  }
                 }
-                $('#jsontextheader').hide();
+                $('#svz-json-text-header').hide();
 
-                $('#jsontext').html(JSON.stringify(jsonpreview, undefined, 2));
+                $('#jsontext').html(JSON.stringify(jsonPreview, undefined, 2));
               }
             }
           });
         }
         else{
-          $('#forformform').hide();
-          $('#minimizeforschemaformbutton').click();
+          $('#svz-for-form-form').hide();
+          $('#svz-minimize-schema-button').click();
         }
       } 
     });
