@@ -1,115 +1,119 @@
 <!DOCTYPE html>
 <html>
   <head>
-    <meta charset="utf-8" />
+    <meta charset='utf-8' />
     <title>Generated form</title>
-    <link rel="stylesheet" style="text/css" href="deps/opt/bootstrap.css" />
+    <link rel='stylesheet' style='text/css' href='deps/opt/bootstrap.css' />
   </head>
   <body>
-          <div style="float:left; width:45%; margin-left: 30px; margin-top: 20px;">
-                <div class="widget-content">
+          <div style='float:left; width:45%; margin-left: 30px; margin-top: 20px;'>
+                <div class='widget-content'>
                 <h2>For schema:</h2>
-                <form id="form1" action="javascript:void(0);" onsubmit="GenerateTextForm();">
+                <form id='forschemaform' action='javascript:void(0);' onsubmit='GenerateTextForm();'>
 
-                    <select id="type" name="type" required>
-                        <option selected="selected" value="">Choose type</option>
-                        <option label="object" value="object">object</option>
-                        <option label="array" value="array">array</option>
-                        <option label="number" value="number">number</option> <!-- the normal schema -->
-                        <option label="integer" value="integer">integer</option> <!-- the normal schema -->
-                        <option label="string" value="string">string</option> <!-- the normal schema -->  
-                        <option label="boolean" value="boolean">boolean</option> <!-- the normal schema -->
+                    <select id='type' name='type' required multiple>
+                        <option selected='selected' value=''>Choose type</option>
+                        <option label='object' value='object'>object</option>
+                        <option label='array' value='array'>array</option>
+                        <option label='number' value='number'>number</option> <!-- the normal schema -->
+                        <option label='integer' value='integer'>integer</option> <!-- the normal schema -->
+                        <option label='string' value='string'>string</option> <!-- the normal schema -->  
+                        <option label='boolean' value='boolean'>boolean</option> <!-- the normal schema -->
                     </select><br><br>
 
-                    <input placeholder="Title" type="text" name="title"><br><br>
+                    <input placeholder='Title' type='text' name='title'><br><br>
 
-                    <input placeholder="Key (Unique identifier)" type="text" name="key" required><br><br>
+                    <input placeholder='Key (Unique identifier)' type='text' name='key' required><br><br>
 
-                    <input class="longtext" id="description" placeholder="Description" type="text" name="description"><br><br>
+                    <input class='longtext' id='description' placeholder='Description' type='text' name='description'><br><br>
 
-                    <label><input id="hidetitle" type="checkbox" name="hidetitle">Don't show title</label><br><br>
-                    <label><input id="required" type="checkbox" name="required">Required (check for true)</label><br><br>
-                    <!-- <label><input id="showadvancedoptions" type="checkbox" name="showadvancedoptions" onclick="showAdvancedOptions();">Show advanced options</label><br><br>
+                    <label><input id='hidetitle' type='checkbox' name='hidetitle'>Don't show title</label><br><br>
+                    <label><input id='required' type='checkbox' name='required'>Required (check for true)</label><br><br>
+                    <!-- <label><input id='showadvancedoptions' type='checkbox' name='showadvancedoptions' onclick='showAdvancedOptions();'>Show advanced options</label><br><br>
                     
                     
                     When showadvancedoptions is checked show below content -->
 
                     <!--
-                    <div id="advancedoptions" hidden="True">
-                        <label><input type="checkbox" name="disablesuccess">Disable success state</label><br><br>
-                        <label><input type="checkbox" name="disableerror">Disable error state</label><br><br>
-                        <label><input type="checkbox" name="readonly">Readonly</label><br><br>
+                    <div id='advancedoptions' hidden='True'>
+                        <label><input type='checkbox' name='disablesuccess'>Disable success state</label><br><br>
+                        <label><input type='checkbox' name='disableerror'>Disable error state</label><br><br>
+                        <label><input type='checkbox' name='readonly'>Readonly</label><br><br>
 
-                        <input class="longtext" id="validationmessage" placeholder="Validation message" type="text" name="validationmessage"><br><br>
+                        <input class='longtext' id='validationmessage' placeholder='Validation message' type='text' name='validationmessage'><br><br>
                         <h5>A custom validation error message. It can be a string, an object with error codes as key and<br> messages as values or a custom message function</h5>
 
-                        <input class="longtext" id="onchange" placeholder="onChange" type="text" name="onchange"><br><br>
+                        <input class='longtext' id='onchange' placeholder='onChange' type='text' name='onchange'><br><br>
                         <h5>onChange event handler, expression or function. For expression, modelValue and form are <br>both available. For a function, they will be passed as parameters in that order</h5>
 
-                        <input class="shorttext" id="feedbackicon" placeholder="Feedback Icon" type="text" name="feedbackicon"><br><br>
-                        <h5>Inline feedback icons. To turn off just set feedback to false. If set to a string that string<br> is evaluated by a ngClass in the decorators scope. If not set att all the default value<br> is { "glyphicon": true, "glyphicon-ok": hasSuccess(), "glyphicon-remove": hasError() }</h5>
+                        <input class='shorttext' id='feedbackicon' placeholder='Feedback Icon' type='text' name='feedbackicon'><br><br>
+                        <h5>Inline feedback icons. To turn off just set feedback to false. If set to a string that string<br> is evaluated by a ngClass in the decorators scope. If not set att all the default value<br> is { 'glyphicon': true, 'glyphicon-ok': hasSuccess(), 'glyphicon-remove': hasError() }</h5>
 
-                        <input class="shorttext" id="placeholder" placeholder="Placeholder" type="text" name="placeholder"><br><br>
+                        <input class='shorttext' id='placeholder' placeholder='Placeholder' type='text' name='placeholder'><br><br>
                         <h5>Placeholder on inputs and textarea</h5>
 
-                        <input class="longtext" id="ngmodeloptions" placeholder="ng-Model Options" type="text" name="ngmodeloptions"><br><br>
+                        <input class='longtext' id='ngmodeloptions' placeholder='ng-Model Options' type='text' name='ngmodeloptions'><br><br>
                         <h5>Passed along to ng-model-options</h5>
 
-                        <input class="shorttext" id="classoffield" placeholder="Class" type="text" name="classoffield"><br><br>
+                        <input class='shorttext' id='classoffield' placeholder='Class' type='text' name='classoffield'><br><br>
                         <h5>CSS Class(es) to be added to the container div e.g. : 'street foobar'</h5>
 
-                        <input class="shorttext" id="destroystrategy" placeholder="Destroy strategy" type="text" name="destroystrategy"><br><br>
+                        <input class='shorttext' id='destroystrategy' placeholder='Destroy strategy' type='text' name='destroystrategy'><br><br>
                         <h5>One of <code>null</code>, <code>empty</code> , <code>remove</code>, or <code>retain</code>. <br>Changes model on $destroy event. default is <code>remove</code></h5>
 
-                        <input class="shorttext" id="copyvalueto" placeholder="Copy Value To" type="text" name="copyvalueto"><br><br>
+                        <input class='shorttext' id='copyvalueto' placeholder='Copy Value To' type='text' name='copyvalueto'><br><br>
                         <h5>Copy values to these schema keys e.g ['address.street']. The receiving fields can be shown, <br>but the intent for them is to be hidden.</h5>
 
-                        <input class="shorttext" id="fieldclass" placeholder="Field Class" type="text" name="fieldclass"><br><br>
+                        <input class='shorttext' id='fieldclass' placeholder='Field Class' type='text' name='fieldclass'><br><br>
                         <h5>CSS Class(es) to be added to field input (or similar)</h5>
 
-                        <input class="shorttext" id="labelclass" placeholder="Label Class" type="text" name="labelclass"><br><br>
+                        <input class='shorttext' id='labelclass' placeholder='Label Class' type='text' name='labelclass'><br><br>
                         <h5>CSS Class(es) to be added to the label of the field (or similar)</h5>
 
-                        <input class="shorttext" id="condition" placeholder="Condition" type="text" name="condition"><br><br>
+                        <input class='shorttext' id='condition' placeholder='Condition' type='text' name='condition'><br><br>
                         <h5>Show or hide field depending on an angular expression e.g 'model.age &lt; 18'. <br>The expression has access to <code>model</code>, <code>modelValue</code>, <code> arrayIndex</code>.  The condition need not<br> reference a model value it could be anything on scope.</h5>
 
-                        <input class="shorttext" id="fieldaddonleft" placeholder="Field Addon - Left" type="text" name="fieldaddonleft"><br><br>
-                        <h5>Add html code to left of input field. For reference check <a target="_blank" href="http://getbootstrap.com/components/#input-groups">bootstrap input groups</a></h5>
+                        <input class='shorttext' id='fieldaddonleft' placeholder='Field Addon - Left' type='text' name='fieldaddonleft'><br><br>
+                        <h5>Add html code to left of input field. For reference check <a target='_blank' href='http://getbootstrap.com/components/#input-groups'>bootstrap input groups</a></h5>
 
-                        <input class="shorttext" id="fieldaddonright" placeholder="Field Addon - Right" type="text" name="fieldaddonright"><br><br>
-                        <h5>Add html code to right of input field. For reference check <a target="_blank" href="http://getbootstrap.com/components/#input-groups">bootstrap input groups</a></h5>
+                        <input class='shorttext' id='fieldaddonright' placeholder='Field Addon - Right' type='text' name='fieldaddonright'><br><br>
+                        <h5>Add html code to right of input field. For reference check <a target='_blank' href='http://getbootstrap.com/components/#input-groups'>bootstrap input groups</a></h5>
                     </div> -->
 
 
-                  <input type="submit">
+                  <input type='submit'>
                 </form>
 
                 </div>
-                <button id="minimizeform1button" class="btn-minimize" style="display: none;">⇕</button>
-                <h2 id="forform" hidden>For form:</h2>
-                <form id="form2"></form>
+                <button id='minimizeforschemaformbutton' class='btn-minimize' style='display: none;'>⇕</button>
+                <h2 id='forform' hidden>For form:</h2>
+                <form id='forformform'></form>
               </div>
                   
 
                 
-            <div id="jsonpreview" style="float:right; width:45%; margin-right: 30px; margin-top: 20px;">
+            <div id='jsonpreview' style='float:right; width:45%; margin-right: 30px; margin-top: 20px;'>
               <h3>Preview appears here:</h3>
-              <p id="p1">When you choose options json will appear here! :)</p>
-              <pre id="jsontext"></pre>
+              <p id='jsontextheader'>When you choose options json will appear here! :)</p>
+              <pre id='jsontext'></pre>
             </div>
 
-    <script type="text/javascript" src="deps/jquery.min.js"></script>
-    <script type="text/javascript" src="deps/underscore.js"></script>
-    <script type="text/javascript" src="deps/opt/jsv.js"></script>
-    <script type="text/javascript" src="lib/jsonform.js"></script>
-    <script type="text/javascript">
+    <script type='text/javascript' src='deps/jquery.min.js'></script>
+    <script type='text/javascript' src='deps/underscore.js'></script>
+    <script type='text/javascript' src='deps/opt/jsv.js'></script>
+    <script type='text/javascript' src='lib/jsonform.js'></script>
+    <script type='text/javascript'>
 (function function_name ($) {
   'use strict';
     $( document ).ready(function() {
-    window.getParameterByName = function(name, url) {
+
+      var required = [];
+      var properties = {};
+
+      window.getParameterByName = function(name, url) {
         if (!url) url = window.location.href;
-        name = name.replace(/[\[\]]/g, "\\$&");
-        var regex = new RegExp("[?&]" + name + "(=([^&#]*)|&|#|$)");
+        name = name.replace(/[\[\]]/g, '\\$&');
+        var regex = new RegExp('[?&]' + name + '(=([^&#]*)|&|#|$)');
         var results = regex.exec(url);
         
         if (!results) {
@@ -120,78 +124,95 @@
           return '';
         }
 
-        return decodeURIComponent(results[2].replace(/\+/g, " "));
+        return decodeURIComponent(results[2].replace(/\+/g, ' '));
       }    
 
 
-      $(".btn-minimize").click(function(){
+      $('.btn-minimize').click(function(){
         $(this).toggleClass('btn-plus');
-        $(".widget-content").slideToggle();
+        $('.widget-content').slideToggle();
       });
 
 
       window.showAdvancedOptions = function(){
           $('#showadvancedoptions').click(function() {
-              $("#advancedoptions").toggle(this.checked);
+              $('#advancedoptions').toggle(this.checked);
           });
       };
 
       
       window.GenerateTextForm = function(){
-        console.log('in GenerateTextForm; making form now');
-        var $typeInput = $("#type");
+        var $typeInput = $('#type');
         var type = $typeInput.val();
 
         if (type){
-          $("#minimizeform1button").click();
-          $("#minimizeform1button").show();
+          $('#minimizeforschemaformbutton').click();
+          $('#minimizeforschemaformbutton').show();
           $('#forform').show();
 
-          $('#form2').empty();
+          $('#forformform').empty();
 
-          var form1data = $('#form1').serialize().replace(/\+/g,' ');
+          var forschemaformdata = $('#forschemaform').serialize().replace(/\+/g,' ');
 
           try {
-              var title = form1data.split('title=')[1].split('&')[0];
+              var title = forschemaformdata.split('title=')[1].split('&')[0];
           }
           catch(err) {
               console.log(err.message);
           }
 
           try {
-              var description = form1data.split('description=')[1].split('&')[0];
+              var description = forschemaformdata.split('description=')[1].split('&')[0];
           }
           catch(err) {
               console.log(err.message);
           }
 
           try {
-              var type = form1data.split('type=')[1].split('&')[0];
+              var type = [];
+              var types = forschemaformdata.split('type=');
+              for(var i=0; i<types.length; i++){
+                if (types[i]){
+                  console.log(types[i].split('&')[0]);
+                  type.push(types[i].split('&')[0]);
+                  console.log(type);
+                }
+              }
+              console.log(type);
           } catch(err) {
               console.log(err.message);
           }
 
           try {
-              var key = form1data.split('key=')[1].split('&')[0];
+              var key = forschemaformdata.split('key=')[1].split('&')[0];
           }
           catch(err) {
               console.log(err.message);
           }
 
           try {
-              var required = form1data.split('required=')[1].split('&')[0];
+              var currentrequired = forschemaformdata.split('required=')[1].split('&')[0];
+              console.log(currentrequired);
           }
           catch(err) {
-              var required = 'off';
+              var currentrequired = 'off';
           }
 
-          if (required == 'on'){
-            required = true;
+
+
+          if (currentrequired == 'on'){
+            currentrequired = true;
+            required.push(key);
+            console.log(required);
           } else{
-            required = false;
+            currentrequired = false;
           }
 
-          $('#form2').jsonForm({
+          properties[key] = {'title': title, 'description': description, 'type': type,};
+
+          console.log(properties);
+
+          $('#forformform').jsonForm({
             schema: {
               title: {
                 type: 'string',
@@ -208,7 +229,6 @@
 
             },
             onSubmit: function (errors, values) {
-              console.log(title);
               if (errors) {
                 console.log(errors);
                 $('#res').html('<p>Fix your mistakes!</p>');
@@ -230,43 +250,35 @@
                   //don't show title
                   if($('#hidetitle').checked){
                     var jsonpreview = {
-                      "schema": {
-                            key: {
-                            "description": description,
-                            "type": type,
-                            "required": required ,
-                        }
+                      'schema': {
+                        'type': 'object',
+                        'properties': properties,  
+                        'required': required
                       }
                     }
                   }
                   //show title
                   else{
+                    console.log('showing this!');
                     var jsonpreview = {
-                      "schema": {
-                        type: 'object',
-                        properties: {
-                              key: {
-                              "title": title,
-                              "description": description,
-                              "type": type,
-                              "required": required,
-                          }
-                        }
+                      'schema': {
+                        'type': 'object',
+                        'properties': properties,
+                        'required': required
                       }
                     }
                   }
                 }
-                $('#p1').hide();
+                $('#jsontextheader').hide();
 
-                //$('#jsonpreview').html('');
                 $('#jsontext').html(JSON.stringify(jsonpreview, undefined, 2));
               }
             }
           });
         }
         else{
-          $('#form2').hide();
-          $('#minimizeform1button').click();
+          $('#forformform').hide();
+          $('#minimizeforschemaformbutton').click();
         }
       } 
   });
