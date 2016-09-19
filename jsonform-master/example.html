@@ -15,10 +15,11 @@
                         <option selected='selected' value=''>Choose type</option>
                         <option label='object' value='object'>object</option>
                         <option label='array' value='array'>array</option>
-                        <option label='number' value='number'>number</option> <!-- the normal schema -->
-                        <option label='integer' value='integer'>integer</option> <!-- the normal schema -->
-                        <option label='string' value='string'>string</option> <!-- the normal schema -->  
-                        <option label='boolean' value='boolean'>boolean</option> <!-- the normal schema -->
+                        <option label='number' value='number'>number</option> 
+                        <option label='integer' value='integer'>integer</option>
+                        <option label='string' value='string'>string</option>  
+                        <option label='boolean' value='boolean'>boolean</option> 
+                        <option label='null' value='null'>null</option>
                     </select><br><br>
 
                     <input placeholder='Title' type='text' name='title'><br><br>
@@ -140,6 +141,39 @@
           });
       };
 
+      $("#type").click(function() {
+        var duration = 500;
+        var thistype = this.value;
+
+        setTimeout(function() {
+          if (thistype == 'string'){
+            $('#type').after('<br><br><input id="maxLength" type="number" placeholder="maxLength">');
+            $('#type').after('<br><br><label><input id="readOnly" type="checkbox">readOnly (check for true)</label>');
+          }
+
+          else if (thistype == 'number' || thistype == 'integer'){
+            console.log('it is number bruh');
+            $('#type').after('<br><br><input class="additionaloption" id="maxLength" type="number" placeholder="maxLength">');
+            $('#type').after('<br><br><input class="additionaloption" id="minLength" type="number" placeholder="minLength">');
+            $('#type').after('<br><br><input class="additionaloption" id="minItems" type="number" placeholder="minItems">');
+            $('#type').after('<br><br><input class="additionaloption" id="maxItems" type="number" placeholder="maxItems">');
+            $('#type').after('<br><br><input class="additionaloption" id="minimum" type="number" placeholder="minimum">');
+            $('#type').after('<br><br><label><input class="additionaloption" id="exclusiveMinimum" type="checkbox" 
+              placeholder="exclusiveMinimum">Check - num will be > than minimum</label>');
+            $('#type').after('<br><br><input class="additionaloption" id="maximum" type="number" placeholder="maximum">');
+            $('#type').after('<br><br><label><input class="additionaloption" id="exclusiveMaximum" type="checkbox" 
+              placeholder="exclusiveMaximum">Check - num will be < than minimum</label>');
+            $('#type').after('<br><br><input class="additionaloption" id="readOnly" type="number" placeholder="readOnly">');
+            $('#type').after('<br><br><input class="additionaloption" id="default" type="number" placeholder="default">');
+          }
+
+          else if(thistype == 'boolean'){
+            console.log('it is boolean maafak');
+          }
+        }, duration);
+          
+      });
+
       
       window.GenerateTextForm = function(){
         var $typeInput = $('#type');
@@ -170,15 +204,35 @@
 
           try {
               var type = [];
-              var types = forschemaformdata.split('type=');
-              for(var i=0; i<types.length; i++){
-                if (types[i]){
-                  console.log(types[i].split('&')[0]);
-                  type.push(types[i].split('&')[0]);
-                  console.log(type);
+              var typestring = forschemaformdata.split('type=');
+              for(var i=0; i<typestring.length; i++){
+                if (typestring[i]){
+                  type.push(typestring[i].split('&')[0]);
                 }
               }
-              console.log(type);
+
+              if (type.length == 1){
+                if(type[0] == 'number'){
+
+
+                  console.log('number bruh');
+                }
+
+                if(type[0] == 'integer'){
+                  console.log('YEEAHH');
+                }
+
+                if(type[0] == 'string'){
+                  console.log("hahha");
+                }
+
+                if(type[0] == 'boolean'){
+                  console.log('YEEAHH');
+                }
+
+
+              }
+
           } catch(err) {
               console.log(err.message);
           }
@@ -281,9 +335,9 @@
           $('#minimizeforschemaformbutton').click();
         }
       } 
-  });
-  
-})(jQuery);
+    });
+    
+  })(jQuery);
 
       
     </script>
