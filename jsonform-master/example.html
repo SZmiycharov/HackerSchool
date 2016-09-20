@@ -2,12 +2,20 @@
 <html>
   <head>
     <meta charset='utf-8' />
-    <title>Generated form</title>
+    <title>JSONCreator</title>
     <link rel='stylesheet' style='text/css' href='deps/opt/bootstrap.css' />
   </head>
   <body>
     <div class="form-group" style='float:left; width:45%; margin-left: 30px; margin-top: 20px;'>
-        <div class='widget-content' class="form-group">
+
+      <ul class="nav nav-tabs" id="svz-schema-form-tabs">
+        <li class="active"><a data-target="#svz-schema-tab" data-toggle="tab">Schema</a></li>
+        <li><a data-target="#svz-form-tab" data-toggle="tab">Form</a></li>
+      </ul>
+
+      <div class="tab-content">
+
+        <div class="tab-pane active" id="svz-schema-tab">
           <h2>For schema:</h2>
           <form id='svz-schema-form' action='javascript:void(0);' onsubmit='GenerateTextForm();'>
               <div><select id='svz-selected-type' name='type' required multiple>
@@ -27,11 +35,14 @@
           </form>
         </div>
 
-        <button id='svz-minimize-schema-button' class='btn-minimize' style='display: none;'>⇕</button>
-        <h2 id='svz-for-form' hidden>For form:</h2>
+        <div class="tab-pane" id="svz-form-tab">
+          <h2 id='svz-for-form'>For form:</h2>
+          <form id='svz-for-form-form'></form>
+        </div>
 
-        <form id='svz-for-form-form'></form>
-        <button id='svz-minimize-element' class='btn-minimize' style='display: none;'>⇕</button>
+      </div> 
+
+
     </div>
           
     <div class="form-group"  id='svz-json-preview' style='float:right; width:45%; margin-right: 30px; margin-top: 20px;'>
@@ -54,13 +65,14 @@
 (function function_name ($) {
   'use strict';
     $( document ).ready(function() {
+
+      $('#svz-schema-form-tabs a:first').tab('show');
+
       $('#svz-selected-type').multiselect({
           buttonWidth: '125px',
           nonSelectedText: 'Choose type',
-          numberDisplayed: 1,
-          includeSelectAllOption: true
+          numberDisplayed: 1
       });
-
 
       var required = [];
       var properties = {};    
@@ -123,9 +135,9 @@
         var typesFromSelectArray = [];
 
         if (typeFromSelect){
-          $('#svz-minimize-schema-button').click();
-          $('#svz-minimize-schema-button').show();
-          $('#svz-for-form').show();
+          console.log('here 2');
+          $('#svz-schema-form-tabs a:last').tab('show');
+
           $('#svz-for-form-form').empty();
 
           var schemaFormDataArray = $('#svz-schema-form').serializeArray();
@@ -176,6 +188,27 @@
 
           properties[currentProperties['key']] = currentProperties;
 
+          if(typeFromSelect == 'object'){
+            console.log('will do this later!');
+          } else if(typeFromSelect == 'array'){
+            var jsonPreview = {};
+          } else{
+            var jsonPreview = {
+              'schema': {
+                'type': 'object',
+                'properties': properties
+              }
+            }
+            if (required != ''){
+            jsonPreview['required'] = required;
+            } else{
+              delete jsonPreview['required'];
+            }
+          }
+          $('#svz-json-text-header').hide();
+          $('#svz-json-text').html(JSON.stringify(jsonPreview, undefined, 2));
+
+          console.log('here 333');
           $('#svz-for-form-form').jsonForm({
             schema: {
               title: {
@@ -192,34 +225,15 @@
               }
             },
             onSubmit: function (errors, values) {
-              $('#svz-minimize-element').click();
-              $('#svz-minimize-element').show();
               if (errors) {
                 console.log(errors);
                 $('#res').html('<p>Fix your mistakes!</p>');
               } else {
-                  if(typeFromSelect == 'object'){
-
-                  } else if(typeFromSelect == 'array'){
-                    var jsonPreview = {};
-                  } else{
-                      var jsonPreview = {
-                        'schema': {
-                          'type': 'object',
-                          'properties': properties
-                        }
-                      }
-                      if (required != ''){
-                      jsonPreview['required'] = required;
-                      } else{
-                        delete jsonPreview['required'];
-                      }
-                  }
-                  $('#svz-json-text-header').hide();
-                  $('#svz-json-text').html(JSON.stringify(jsonPreview, undefined, 2));
+                console.log("print form, will do it later!");
               }
             }
-          });
+          }); 
+
         } else{
             $('#svz-for-form-form').hide();
             $('#svz-minimize-schema-button').click();
