@@ -6,10 +6,10 @@
     <link rel='stylesheet' style='text/css' href='deps/opt/bootstrap.css' />
   </head>
   <body>
-          <div class="form-group"  style='float:left; width:45%; margin-left: 30px; margin-top: 20px;'>
+          <div class="form-group" style='float:left; width:45%; margin-left: 30px; margin-top: 20px;'>
                 <div class='widget-content' class="form-group">
                   <h2>For schema:</h2>
-                  <form id='svz-for-schema-form' action='javascript:void(0);' onsubmit='GenerateTextForm();'>
+                  <form id='svz-schema-form' action='javascript:void(0);' onsubmit='GenerateTextForm();'>
                       <div><select id='svz-selected-type' name='type' required multiple>
                           <option selected='selected' value=''>Choose type</option>
                           <option label='object' value='object'>object</option>
@@ -24,7 +24,7 @@
                       <div><input placeholder='Key (Unique identifier)' type='text' name='key' required></div>
                       <div><input class='longtext' id='svz-description' placeholder='Description' type='text' name='description'></div>
                       <div><label><input id='svz-required' type='checkbox' name='required'>Required (check for true)</label></div>
-                      <input id='svz-for-schema-form-submit' type='submit'>
+                      <input class="btn btn-primary" id='svz-schema-form-submit' type='submit'>
                   </form>
                 </div>
 
@@ -34,8 +34,6 @@
                 <form id='svz-for-form-form'></form>
               </div>
                   
-
-                
             <div class="form-group"  id='svz-json-preview' style='float:right; width:45%; margin-right: 30px; margin-top: 20px;'>
               <h3>Preview appears here:</h3>
               <p id='svz-json-text-header'>When you choose options json will appear here! :)</p>
@@ -46,11 +44,11 @@
     <script type='text/javascript' src='deps/underscore.js'></script>
     <script type='text/javascript' src='deps/opt/jsv.js'></script>
     <script type='text/javascript' src='lib/jsonform.js'></script>
+    <script src="http://benalman.com/code/projects/jquery-throttle-debounce/jquery.ba-throttle-debounce.js"></script>
     <script type='text/javascript'>
 (function function_name ($) {
   'use strict';
     $( document ).ready(function() {
-
       var required = [];
       var properties = {};    
 
@@ -59,100 +57,83 @@
         $('.widget-content').slideToggle();
       });
 
-      
-
-      $('#svz-selected-type').click(function() {
-        var duration = 300;
-        var thistype = $(this).val();
-
-        setTimeout(function() {
+      $('#svz-selected-type').change($.debounce(500, function() {
+          var selectedType = $(this).val();
           $('.additionaloption').remove();
 
-          if (thistype == 'string'){
-            console.log('should do this later :D');
-          } else if (thistype == 'number' || thistype == 'integer'){
-            $('#svz-for-schema-form-submit').remove();
-            $('#svz-for-schema-form').append('<div class="additionaloption" class="form-group"><input id="maxLength" type="number" name="maxLength" placeholder="Max length"></div>');
-            $('#svz-for-schema-form').append('<div class="additionaloption" class="form-group"><input id="minLength" type="number" name="minLength" placeholder="Min length"></div>');
-            $('#svz-for-schema-form').append('<div class="additionaloption" class="form-group"><input id="minItems" type="number" name="minItems" placeholder="Min items"></div>');
-            $('#svz-for-schema-form').append('<div class="additionaloption" class="form-group"><input id="maxItems" type="number" name="maxItems" placeholder="Max items"></div>');
-            $('#svz-for-schema-form').append('<div class="additionaloption" class="form-group"><input id="minimum" type="number" name="minimum" placeholder="Minimum"></div>');
-            $('#svz-for-schema-form').append('<div hidden class="additionaloption" class="form-group"  id="exclusive-min-div"><label><input id="exclusiveMinimum" name="exclusiveMinimum" type="checkbox" placeholder="Exclusive minimum">Check - num will be more than minimum</label></div>');
-            $('#svz-for-schema-form').append('<div class="additionaloption" class="form-group"><input id="maximum" type="number" name="maximum" placeholder="maximum"></div>');
-            $('#svz-for-schema-form').append('<div hidden class="additionaloption" class="form-group" id="exclusive-max-div"><label><input id="exclusiveMaximum" name="exclusiveMaximum" type="checkbox" placeholder="Exclusive maximum">Check - num will be less than minimum</label></div>');
-            $('#svz-for-schema-form').append('<div class="additionaloption" class="form-group"><input name="default" id="default" type="number" placeholder="Default"></div>');
-            $('#svz-for-schema-form').append('<div><label><input id="readonly" name="readonly" type="checkbox">Readonly (check for true)</label></div>');
-            $('#svz-for-schema-form').append('<input id="svz-for-schema-form-submit" type="submit">');
-          } else if(thistype == 'boolean'){
-            console.log('it is boolean maafak');
+          if (selectedType == 'string'){
+            $('#svz-schema-form-submit').remove();
+            $('#svz-schema-form').append('<div class="additionaloption" class="form-group"><input id="svz-max-length" type="number" name="maxLength" placeholder="Maximum length"></div>');
+            $('#svz-schema-form').append('<div class="additionaloption" class="form-group"><input id="svz-min-lengthgth" type="number" name="minLength" placeholder="Minimum length"></div>'); 
+            $('#svz-schema-form').append('<div class="additionaloption" class="form-group"><input id="svz-min-items" type="number" name="minItems" placeholder="Minimum items"></div>');
+            $('#svz-schema-form').append('<div class="additionaloption" class="form-group"><input id="svz-max-items" type="number" name="maxItems" placeholder="Maximum items"></div>');
+            $('#svz-schema-form').append('<div class="additionaloption" class="form-group"><input name="default" id="svz-default" type="text" placeholder="Default"></div>');
+            $('#svz-schema-form').append('<div class="additionaloption"><label><input id="svz-readonly" name="readonly" type="checkbox">Readonly (check for true)</label></div>');
+            $('#svz-schema-form').append('<input class="btn btn-primary" id="svz-schema-form-submit" type="submit">');
+          } else if (selectedType == 'number' || selectedType == 'integer'){
+            $('#svz-schema-form-submit').remove();
+            $('#svz-schema-form').append('<div class="additionaloption" class="form-group"><input id="svz-max-length" type="number" name="maxLength" placeholder="Maximum length"></div>');
+            $('#svz-schema-form').append('<div class="additionaloption" class="form-group"><input id="svz-min-lengthgth" type="number" name="minLength" placeholder="Minimum length"></div>');
+            $('#svz-schema-form').append('<div class="additionaloption" class="form-group"><input id="minimum" type="number" name="minimum" placeholder="Minimum"></div>');
+            $('#svz-schema-form').append('<div hidden class="additionaloption" class="form-group"  id="exclusive-min-div"><label><input id="exclusiveMinimum" name="exclusiveMinimum" type="checkbox" placeholder="Exclusive minimum">Check - num will be more than minimum</label></div>');
+            $('#svz-schema-form').append('<div class="additionaloption" class="form-group"><input id="maximum" type="number" name="maximum" placeholder="Maximum"></div>');
+            $('#svz-schema-form').append('<div hidden class="additionaloption" class="form-group" id="exclusive-max-div"><label><input id="exclusiveMaximum" name="exclusiveMaximum" type="checkbox" placeholder="Exclusive maximum">Check - num will be less than minimum</label></div>');
+            $('#svz-schema-form').append('<div class="additionaloption" class="form-group"><input name="default" id="svz-default" type="number" placeholder="Default"></div>');
+            $('#svz-schema-form').append('<div class="additionaloption"><label><input id="svz-readonly" name="readonly" type="checkbox">Readonly (check for true)</label></div>');
+            $('#svz-schema-form').append('<input class="btn btn-primary" id="svz-schema-form-submit" type="submit">');
           }
-        }, duration);
-          
-      });
+      }));
     
-      $(document).on('keyup','#minimum',function(){
-          if ($(this).val()){
-            $('#exclusive-min-div').show();
-          }
-          else{
-            $('#exclusive-min-div').hide();
-          }
+      $(document).on('change','#minimum',function(){
+        $('#exclusive-min-div').toggle(!!$(this).val());
       }); 
 
-      $(document).on('keyup','#maximum',function(){
-          if ($(this).val()){
-            $('#exclusive-max-div').show();
-          }
-          else{
-            $('#exclusive-max-div').hide();
-          }
+      $(document).on('change','#maximum',function(){
+        if ($(this).val()){
+          $('#exclusive-max-div').show();
+        } else{
+          $('#exclusive-max-div').hide();
+        }
       }); 
 
       window.GenerateTextForm = function(){
-        var $typeInput = $('#svz-selected-type');
-        var type = $typeInput.val();
-        var typesArray = [];
+        var typeFromSelect = $('#svz-selected-type').val();
+        var typesFromSelectArray = [];
 
-        if (type){
+        if (typeFromSelect){
           $('#svz-minimize-schema-button').click();
           $('#svz-minimize-schema-button').show();
           $('#svz-for-form').show();
           $('#svz-for-form-form').empty();
 
-          var schemaFormDataArray = $('#svz-for-schema-form').serializeArray();
-          console.log(schemaFormDataArray);
+          var schemaFormDataArray = $('#svz-schema-form').serializeArray();
           var currentProperties = {};
           var toDeleteRequired = true;
 
           jQuery.each( schemaFormDataArray, function( i, field ) {
-            if (field.name == 'title' && field.value != ''){
+            if (field.name == 'title' && field.value != '') {
               currentProperties['title'] = field.value;
-            } else if (field.name == 'description' && field.value != ''){
+            } else if (field.name == 'description' && field.value != '') {
               currentProperties['description'] = field.value;
-            } else if (field.name == 'type' && field.value != ''){
-              typesArray.push(field.value);
-              currentProperties['type'] = typesArray;
-            } else if (field.name == 'key' && field.value != ''){
+            } else if (field.name == 'type' && field.value != '') {
+              typesFromSelectArray.push(field.value);
+              currentProperties['type'] = typesFromSelectArray;
+            } else if (field.name == 'key' && field.value != '') {
               currentProperties['key'] = field.value;
-            } else if (field.name == 'required'){
+            } else if (field.name == 'required') {
               toDeleteRequired = false;
-                if (field.value && required.indexOf(currentProperties['key']) == -1){
-                    required.push(currentProperties['key']);
-                }
+              if (field.value && required.indexOf(currentProperties['key']) == -1) {
+                  required.push(currentProperties['key']);
+              }
             } else if (field.name == 'default'){
-              console.log('have default');
               currentProperties['default'] = field.value;
             } else if (field.name == 'maxLength'){
-              console.log('have maxLength');
               currentProperties['maxLength'] = field.value;
             } else if (field.name == 'minLength'){
-              console.log('have minLength');
               currentProperties['minLength'] = field.value;
             } else if (field.name == 'minimum'){
-              console.log('have minimum');
               currentProperties['minimum'] = field.value;
             } else if (field.name == 'maximum'){
-              console.log('have maximum');
               currentProperties['maximum'] = field.value;
             } else if (field.name == 'exclusiveMaximum'){
               currentProperties['exclusiveMaximum'] = true;
@@ -164,12 +145,6 @@
               currentProperties['maxItems'] = field.value;
             } else if (field.name == 'readonly'){
               currentProperties['readonly'] = true;
-            } else if (field.name == 'enum'){
-              currentProperties['enum'] = field.value;
-            } else if (field.name == 'enumNames'){
-              currentProperties['enumNames'] = field.value;
-            } else if (field.name == 'format'){
-              currentProperties['format'] = field.value;
             }
           });
 
@@ -193,18 +168,17 @@
                 type: 'string',
                 title: 'Type'
               }
-
             },
             onSubmit: function (errors, values) {
               if (errors) {
                 console.log(errors);
                 $('#res').html('<p>Fix your mistakes!</p>');
               } else {
-                  if(type == 'object'){
+                  if(typeFromSelect == 'object'){
 
-                  } else if(type == 'array'){
+                  } else if(typeFromSelect == 'array'){
                     var jsonPreview = {};
-                    } else{
+                  } else{
                       var jsonPreview = {
                         'schema': {
                           'type': 'object',
@@ -212,15 +186,13 @@
                         }
                       }
                       if (required != ''){
-                        jsonPreview['required'] = required;
-                      }
-                      else{
+                      jsonPreview['required'] = required;
+                      } else{
                         delete jsonPreview['required'];
                       }
-                    }
-                $('#svz-json-text-header').hide();
-
-                $('#svz-json-text').html(JSON.stringify(jsonPreview, undefined, 2));
+                  }
+                  $('#svz-json-text-header').hide();
+                  $('#svz-json-text').html(JSON.stringify(jsonPreview, undefined, 2));
               }
             }
           });

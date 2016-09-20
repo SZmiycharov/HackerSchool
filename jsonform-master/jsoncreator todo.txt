@@ -21,3 +21,9 @@ primerno: {
 
 - block and inline elements;
 - id da e: svz-max-value, a ne maxValue
+
+- ne placeholder a title nad nego!
+- da se iztrivat naprimer readonly checkboxa kato se ibere nov tip!!
+- schema form and form form da sa na tabove a ne sa se slaidva
+- jquery debounce vmesto settimeout
+- javascript lodash grep da se mahant praznite elementi na arrayq
