@@ -6,54 +6,66 @@
     <link rel='stylesheet' style='text/css' href='deps/opt/bootstrap.css' />
   </head>
   <body>
-          <div class="form-group" style='float:left; width:45%; margin-left: 30px; margin-top: 20px;'>
-                <div class='widget-content' class="form-group">
-                  <h2>For schema:</h2>
-                  <form id='svz-schema-form' action='javascript:void(0);' onsubmit='GenerateTextForm();'>
-                      <div><select id='svz-selected-type' name='type' required multiple>
-                          <option selected='selected' value=''>Choose type</option>
-                          <option label='object' value='object'>object</option>
-                          <option label='array' value='array'>array</option>
-                          <option label='number' value='number'>number</option> 
-                          <option label='integer' value='integer'>integer</option>
-                          <option label='string' value='string'>string</option>  
-                          <option label='boolean' value='boolean'>boolean</option> 
-                          <option label='null' value='null'>null</option>
-                      </select></div>
-                      <div><input placeholder='Title' type='text' name='title'></div>
-                      <div><input placeholder='Key (Unique identifier)' type='text' name='key' required></div>
-                      <div><input class='longtext' id='svz-description' placeholder='Description' type='text' name='description'></div>
-                      <div><label><input id='svz-required' type='checkbox' name='required'>Required (check for true)</label></div>
-                      <input class="btn btn-primary" id='svz-schema-form-submit' type='submit'>
-                  </form>
-                </div>
+    <div class="form-group" style='float:left; width:45%; margin-left: 30px; margin-top: 20px;'>
+        <div class='widget-content' class="form-group">
+          <h2>For schema:</h2>
+          <form id='svz-schema-form' action='javascript:void(0);' onsubmit='GenerateTextForm();'>
+              <div><select id='svz-selected-type' name='type' required multiple>
+                  <option label='object' value='object'>object</option>
+                  <option label='array' value='array'>array</option>
+                  <option label='number' value='number'>number</option> 
+                  <option label='integer' value='integer'>integer</option>
+                  <option label='string' value='string'>string</option>  
+                  <option label='boolean' value='boolean'>boolean</option> 
+                  <option label='null' value='null'>null</option>
+              </select></div>
+              <div><input placeholder='Title' type='text' name='title'></div>
+              <div><input placeholder='Key (Unique identifier)' type='text' name='key' required></div>
+              <div><input class='longtext' id='svz-description' placeholder='Description' type='text' name='description'></div>
+              <div><label><input id='svz-required' type='checkbox' name='required'>Required (check for true)</label></div>
+              <input class="btn btn-primary" id='svz-schema-form-submit' type='submit'>
+          </form>
+        </div>
 
-                <button id='svz-minimize-schema-button' class='btn-minimize' style='display: none;'>⇕</button>
-                <h2 id='svz-for-form' hidden>For form:</h2>
+        <button id='svz-minimize-schema-button' class='btn-minimize' style='display: none;'>⇕</button>
+        <h2 id='svz-for-form' hidden>For form:</h2>
 
-                <form id='svz-for-form-form'></form>
-              </div>
-                  
-            <div class="form-group"  id='svz-json-preview' style='float:right; width:45%; margin-right: 30px; margin-top: 20px;'>
-              <h3>Preview appears here:</h3>
-              <p id='svz-json-text-header'>When you choose options json will appear here! :)</p>
-              <pre id='svz-json-text'></pre>
-            </div>
-
-    <script type='text/javascript' src='deps/jquery.min.js'></script>
+        <form id='svz-for-form-form'></form>
+        <button id='svz-minimize-element' class='btn-minimize' style='display: none;'>⇕</button>
+    </div>
+          
+    <div class="form-group"  id='svz-json-preview' style='float:right; width:45%; margin-right: 30px; margin-top: 20px;'>
+      <h3>Preview appears here:</h3>
+      <p id='svz-json-text-header'>When you choose options json will appear here! :)</p>
+      <pre id='svz-json-text'></pre>
+    </div>
+    
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.10.2/jquery.min.js"></script>
+    <script type='text/javascript' src='deps/bootstrap.min.js'></script>
+    <script type='text/javascript' src='deps/bootstrap-multiselect.js'></script>
+    <link rel="stylesheet" href="deps/bootstrap-multiselect.css" type="text/css"/>
     <script type='text/javascript' src='deps/underscore.js'></script>
     <script type='text/javascript' src='deps/opt/jsv.js'></script>
     <script type='text/javascript' src='lib/jsonform.js'></script>
     <script src="http://benalman.com/code/projects/jquery-throttle-debounce/jquery.ba-throttle-debounce.js"></script>
+
+
     <script type='text/javascript'>
 (function function_name ($) {
   'use strict';
     $( document ).ready(function() {
+      $('#svz-selected-type').multiselect({
+          buttonWidth: '125px',
+          nonSelectedText: 'Choose type',
+          numberDisplayed: 1,
+          includeSelectAllOption: true
+      });
+
+
       var required = [];
       var properties = {};    
 
       $('.btn-minimize').click(function(){
-        $(this).toggleClass('btn-plus');
         $('.widget-content').slideToggle();
       });
 
@@ -61,19 +73,13 @@
           var selectedType = $(this).val();
           $('.additionaloption').remove();
 
-          if (selectedType == 'string'){
+          if (selectedType){
+            if ((selectedType.indexOf('number') != -1 || selectedType.indexOf('integer') != -1) && selectedType.indexOf('string') != -1) {
             $('#svz-schema-form-submit').remove();
             $('#svz-schema-form').append('<div class="additionaloption" class="form-group"><input id="svz-max-length" type="number" name="maxLength" placeholder="Maximum length"></div>');
-            $('#svz-schema-form').append('<div class="additionaloption" class="form-group"><input id="svz-min-lengthgth" type="number" name="minLength" placeholder="Minimum length"></div>'); 
+            $('#svz-schema-form').append('<div class="additionaloption" class="form-group"><input id="svz-min-length" type="number" name="minLength" placeholder="Minimum length"></div>');
             $('#svz-schema-form').append('<div class="additionaloption" class="form-group"><input id="svz-min-items" type="number" name="minItems" placeholder="Minimum items"></div>');
             $('#svz-schema-form').append('<div class="additionaloption" class="form-group"><input id="svz-max-items" type="number" name="maxItems" placeholder="Maximum items"></div>');
-            $('#svz-schema-form').append('<div class="additionaloption" class="form-group"><input name="default" id="svz-default" type="text" placeholder="Default"></div>');
-            $('#svz-schema-form').append('<div class="additionaloption"><label><input id="svz-readonly" name="readonly" type="checkbox">Readonly (check for true)</label></div>');
-            $('#svz-schema-form').append('<input class="btn btn-primary" id="svz-schema-form-submit" type="submit">');
-          } else if (selectedType == 'number' || selectedType == 'integer'){
-            $('#svz-schema-form-submit').remove();
-            $('#svz-schema-form').append('<div class="additionaloption" class="form-group"><input id="svz-max-length" type="number" name="maxLength" placeholder="Maximum length"></div>');
-            $('#svz-schema-form').append('<div class="additionaloption" class="form-group"><input id="svz-min-lengthgth" type="number" name="minLength" placeholder="Minimum length"></div>');
             $('#svz-schema-form').append('<div class="additionaloption" class="form-group"><input id="minimum" type="number" name="minimum" placeholder="Minimum"></div>');
             $('#svz-schema-form').append('<div hidden class="additionaloption" class="form-group"  id="exclusive-min-div"><label><input id="exclusiveMinimum" name="exclusiveMinimum" type="checkbox" placeholder="Exclusive minimum">Check - num will be more than minimum</label></div>');
             $('#svz-schema-form').append('<div class="additionaloption" class="form-group"><input id="maximum" type="number" name="maximum" placeholder="Maximum"></div>');
@@ -81,19 +87,35 @@
             $('#svz-schema-form').append('<div class="additionaloption" class="form-group"><input name="default" id="svz-default" type="number" placeholder="Default"></div>');
             $('#svz-schema-form').append('<div class="additionaloption"><label><input id="svz-readonly" name="readonly" type="checkbox">Readonly (check for true)</label></div>');
             $('#svz-schema-form').append('<input class="btn btn-primary" id="svz-schema-form-submit" type="submit">');
+            } else if (selectedType.indexOf('string') != -1){
+              $('#svz-schema-form-submit').remove();
+              $('#svz-schema-form').append('<div class="additionaloption" class="form-group"><input id="svz-max-length" type="number" name="maxLength" placeholder="Maximum length"></div>');
+              $('#svz-schema-form').append('<div class="additionaloption" class="form-group"><input id="svz-min-length" type="number" name="minLength" placeholder="Minimum length"></div>'); 
+              $('#svz-schema-form').append('<div class="additionaloption" class="form-group"><input id="svz-min-items" type="number" name="minItems" placeholder="Minimum items"></div>');
+              $('#svz-schema-form').append('<div class="additionaloption" class="form-group"><input id="svz-max-items" type="number" name="maxItems" placeholder="Maximum items"></div>');
+              $('#svz-schema-form').append('<div class="additionaloption" class="form-group"><input name="default" id="svz-default" type="text" placeholder="Default"></div>');
+              $('#svz-schema-form').append('<div class="additionaloption"><label><input id="svz-readonly" name="readonly" type="checkbox">Readonly (check for true)</label></div>');
+              $('#svz-schema-form').append('<input class="btn btn-primary" id="svz-schema-form-submit" type="submit">');
+            } else if (selectedType.indexOf('number') != -1 || selectedType.indexOf('integer') != -1){
+              $('#svz-schema-form-submit').remove();
+              $('#svz-schema-form').append('<div class="additionaloption" class="form-group"><input id="svz-max-length" type="number" name="maxLength" placeholder="Maximum length"></div>');
+              $('#svz-schema-form').append('<div class="additionaloption" class="form-group"><input id="svz-min-length" type="number" name="minLength" placeholder="Minimum length"></div>');
+              $('#svz-schema-form').append('<div class="additionaloption" class="form-group"><input id="minimum" type="number" name="minimum" placeholder="Minimum"></div>');
+              $('#svz-schema-form').append('<div hidden class="additionaloption" class="form-group"  id="exclusive-min-div"><label><input id="exclusiveMinimum" name="exclusiveMinimum" type="checkbox" placeholder="Exclusive minimum">Check - num will be more than minimum</label></div>');
+              $('#svz-schema-form').append('<div class="additionaloption" class="form-group"><input id="maximum" type="number" name="maximum" placeholder="Maximum"></div>');
+              $('#svz-schema-form').append('<div hidden class="additionaloption" class="form-group" id="exclusive-max-div"><label><input id="exclusiveMaximum" name="exclusiveMaximum" type="checkbox" placeholder="Exclusive maximum">Check - num will be less than minimum</label></div>');
+              $('#svz-schema-form').append('<div class="additionaloption" class="form-group"><input name="default" id="svz-default" type="number" placeholder="Default"></div>');
+              $('#svz-schema-form').append('<div class="additionaloption"><label><input id="svz-readonly" name="readonly" type="checkbox">Readonly (check for true)</label></div>');
+              $('#svz-schema-form').append('<input class="btn btn-primary" id="svz-schema-form-submit" type="submit">');
+            }
           }
       }));
     
       $(document).on('change','#minimum',function(){
         $('#exclusive-min-div').toggle(!!$(this).val());
       }); 
-
       $(document).on('change','#maximum',function(){
-        if ($(this).val()){
-          $('#exclusive-max-div').show();
-        } else{
-          $('#exclusive-max-div').hide();
-        }
+        $('#exclusive-max-div').toggle(!!$(this).val());
       }); 
 
       window.GenerateTextForm = function(){
@@ -125,25 +147,25 @@
               if (field.value && required.indexOf(currentProperties['key']) == -1) {
                   required.push(currentProperties['key']);
               }
-            } else if (field.name == 'default'){
+            } else if (field.name == 'default' && field.value != ''){
               currentProperties['default'] = field.value;
-            } else if (field.name == 'maxLength'){
+            } else if (field.name == 'maxLength' && field.value != ''){
               currentProperties['maxLength'] = field.value;
-            } else if (field.name == 'minLength'){
+            } else if (field.name == 'minLength' && field.value != ''){
               currentProperties['minLength'] = field.value;
-            } else if (field.name == 'minimum'){
+            } else if (field.name == 'minimum' && field.value != ''){
               currentProperties['minimum'] = field.value;
-            } else if (field.name == 'maximum'){
+            } else if (field.name == 'maximum' && field.value != ''){
               currentProperties['maximum'] = field.value;
-            } else if (field.name == 'exclusiveMaximum'){
-              currentProperties['exclusiveMaximum'] = true;
-            } else if (field.name == 'exclusiveMinimum'){
-              currentProperties['exclusiveMinimum'] = true;
-            } else if (field.name == 'minItems'){
+            } else if (field.name == 'exclusiveMaximum' && field.value != ''){
+              currentProperties['exclusiveMaximum' && field.value != ''] = true;
+            } else if (field.name == 'exclusiveMinimum' && field.value != ''){
+              currentProperties['exclusiveMinimum' && field.value != ''] = true;
+            } else if (field.name == 'minItems' && field.value != ''){
               currentProperties['minItems'] = field.value;
-            } else if (field.name == 'maxItems'){
+            } else if (field.name == 'maxItems' && field.value != ''){
               currentProperties['maxItems'] = field.value;
-            } else if (field.name == 'readonly'){
+            } else if (field.name == 'readonly' && field.value != ''){
               currentProperties['readonly'] = true;
             }
           });
@@ -170,6 +192,8 @@
               }
             },
             onSubmit: function (errors, values) {
+              $('#svz-minimize-element').click();
+              $('#svz-minimize-element').show();
               if (errors) {
                 console.log(errors);
                 $('#res').html('<p>Fix your mistakes!</p>');
