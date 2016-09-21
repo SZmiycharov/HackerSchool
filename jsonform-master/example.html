@@ -6,87 +6,195 @@
     <link rel='stylesheet' style='text/css' href='deps/opt/bootstrap.css' />
   </head>
   <body>
-    <div class="form-group" style='float:left; width:45%; margin-left: 30px; margin-top: 20px;'>
-
-      <ul class="nav nav-tabs" id="svz-schema-form-tabs">
-        <li class="active"><a data-target="#svz-schema-tab" data-toggle="tab">Schema</a></li>
-        <li><a data-target="#svz-form-tab" data-toggle="tab">Form</a></li>
-      </ul>
-
-      <div class="tab-content">
-
-        <div class="tab-pane active" id="svz-schema-tab">
-          <h2>For schema:</h2>
-          <form id='svz-schema-form' action='javascript:void(0);' onsubmit='GenerateTextForm();'>
-              <div><select id='svz-selected-type' name='type' required multiple>
-                  <option label='object' value='object'>object</option>
-                  <option label='array' value='array'>array</option>
-                  <option label='number' value='number'>number</option> 
-                  <option label='integer' value='integer'>integer</option>
-                  <option label='string' value='string'>string</option>  
-                  <option label='boolean' value='boolean'>boolean</option> 
-                  <option label='null' value='null'>null</option>
-              </select></div>
-              <div><input placeholder='Title' type='text' name='title'></div>
-              <div><input placeholder='Key (Unique identifier)' type='text' name='key' required></div>
-              <div><input class='longtext' id='svz-description' placeholder='Description' type='text' name='description'></div>
-              <div><label><input id='svz-required' type='checkbox' name='required'>Required (check for true)</label></div>
-              <input class="btn btn-primary" id='svz-schema-form-submit' type='submit'>
-          </form>
-        </div>
-
-        <div class="tab-pane" id="svz-form-tab">
-          <h2 id='svz-for-form'>For form:</h2>
-          <form id='svz-for-form-form'></form>
-        </div>
-
-      </div> 
-
-
-    </div>
-          
-    <div class="form-group"  id='svz-json-preview' style='float:right; width:45%; margin-right: 30px; margin-top: 20px;'>
-      <h3>Preview appears here:</h3>
-      <p id='svz-json-text-header'>When you choose options json will appear here! :)</p>
-      <pre id='svz-json-text'></pre>
-    </div>
     
+    
+    <ul class="nav nav-tabs" id="svz-main-tabs">
+        <li><a data-target="#svz-schema-form-1" data-toggle="tab">Schema1</a></li>
+        <button type="button" class="btn btn-primary" id="add-new-schema-form">
+          <span class="glyphicon glyphicon-plus"></span>
+        </button>
+    </ul>
+    
+    <div class="tab-content">
+  
+<!-- Schema form and preview 1 -->
+      <div id="svz-schema-form-1" class="tab-pane active">
+          <div  style='float:left; width:45%; margin-left: 50px; margin-top: 20px;'> 
+            <ul class="nav nav-tabs" id="svz-schema-form-tabs">
+              <li class="active"><a data-target="#svz-schema-tab" data-toggle="tab">Schema</a></li>
+              <li><a data-target="#svz-form-tab" data-toggle="tab">Form</a></li>
+            </ul>
+            <div class="tab-content">
+              <div class="tab-pane active" id="svz-schema-tab">
+                <h2>For schema:</h2>
+                <form id='svz-schema-form' action='javascript:void(0);' onsubmit='GenerateTextForm();'>
+                    <div><select id='svz-selected-type' name='type' required multiple>
+                        <option label='object' value='object'>object</option>
+                        <option label='array' value='array'>array</option>
+                        <option label='number' value='number'>number</option> 
+                        <option label='integer' value='integer'>integer</option>
+                        <option label='string' value='string'>string</option>  
+                        <option label='boolean' value='boolean'>boolean</option> 
+                        <option label='null' value='null'>null</option>
+                    </select></div>
+                    <div><input id="svz-key" placeholder='Key (Unique identifier)' type='text' name='key' required></div>
+                    <div><input placeholder='Title' type='text' name='title'></div>
+                    <div><input placeholder='Ordering' type='number' name='ordering'></div>
+                    <div><input class='longtext' id='svz-description' placeholder='Description' type='text' name='description'></div>
+                    <div><label><input id='svz-required' type='checkbox' name='required'>Required (check for true)</label></div>
+                    <input class="btn btn-primary" id='svz-schema-form-submit' type='submit'>
+                </form>
+              </div>
+              <div class="tab-pane" id="svz-form-tab">
+                <h2 id='svz-for-form'>For form:</h2>
+                <form id='svz-for-form-form'></form>
+              </div>
+            </div> 
+          </div>
+          <div  id='svz-json-preview' style='float:right; width:45%; margin-right: 30px; margin-top: 20px;'>
+            <h3>Preview appears here:</h3>
+            <p id='svz-json-text-header'>When you choose options json will appear here! :)</p>
+            <pre id='svz-json-text'></pre>
+          </div>
+    </div>
+<!-- Schema form and preview 1 and here!!! -->
+
+<!-- Schema form and preview 2 -->
+      <div id="svz-schema-form-2" class="tab-pane">
+          <div  style='float:left; width:45%; margin-left: 50px; margin-top: 20px;'> 
+            <ul class="nav nav-tabs" id="svz-schema-form-tabs-2">
+              <li class="active"><a data-target="#svz-schema-tab" data-toggle="tab">Schema</a></li>
+              <li><a data-target="#svz-form-tab" data-toggle="tab">Form</a></li>
+            </ul>
+            <div class="tab-content">
+              <div class="tab-pane active" id="svz-schema-tab-2">
+                <h2>For schema:</h2>
+                <form id='svz-schema-form-2' action='javascript:void(0);' onsubmit='GenerateTextForm();'>
+                    <div><select id='svz-selected-type-2' name='type' required multiple>
+                        <option label='object' value='object'>object</option>
+                        <option label='array' value='array'>array</option>
+                        <option label='number' value='number'>number</option> 
+                        <option label='integer' value='integer'>integer</option>
+                        <option label='string' value='string'>string</option>  
+                        <option label='boolean' value='boolean'>boolean</option> 
+                        <option label='null' value='null'>null</option>
+                    </select></div>
+                    <div><input id="svz-key-2" placeholder='Key (Unique identifier)' type='text' name='key' required></div>
+                    <div><input placeholder='Title' type='text' name='title'></div>
+                    <div><input class='longtext' id='svz-description-2' placeholder='Description' type='text' name='description'></div>
+                    <div><label><input id='svz-required-2' type='checkbox' name='required'>Required (check for true)</label></div>
+                    <input class="btn btn-primary" id='svz-schema-form-submit-2' type='submit'>
+                </form>
+              </div>
+              <div class="tab-pane" id="svz-form-tab-2">
+                <h2 id='svz-for-form-2'>For form:</h2>
+                <form id='svz-for-form-form-2'></form>
+              </div>
+            </div> 
+          </div>
+          <div  id='svz-json-preview' style='float:right; width:45%; margin-right: 30px; margin-top: 20px;'>
+            <h3>Preview appears here:</h3>
+            <p id='svz-json-text-header'>When you choose options json will appear here! :)</p>
+            <pre id='svz-json-text'></pre>
+          </div>
+    </div>
+<!-- Schema form and preview 2 and here!!! -->
+
+<!-- Schema form and preview 3 -->
+      <div id="svz-schema-form-3" class="tab-pane">
+          <div  style='float:left; width:45%; margin-left: 50px; margin-top: 20px;'> 
+            <ul class="nav nav-tabs" id="svz-schema-form-tabs-3">
+              <li class="active"><a data-target="#svz-schema-tab" data-toggle="tab">Schema</a></li>
+              <li><a data-target="#svz-form-tab" data-toggle="tab">Form</a></li>
+            </ul>
+            <div class="tab-content">
+              <div class="tab-pane active" id="svz-schema-tab-3">
+                <h2>For schema:</h2>
+                <form id='svz-schema-form-3' action='javascript:void(0);' onsubmit='GenerateTextForm();'>
+                    <div><select id='svz-selected-type-3' name='type' required multiple>
+                        <option label='object' value='object'>object</option>
+                        <option label='array' value='array'>array</option>
+                        <option label='number' value='number'>number</option> 
+                        <option label='integer' value='integer'>integer</option>
+                        <option label='string' value='string'>string</option>  
+                        <option label='boolean' value='boolean'>boolean</option> 
+                        <option label='null' value='null'>null</option>
+                    </select></div>
+                    <div><input id="svz-key-3" placeholder='Key (Unique identifier)' type='text' name='key' required></div>
+                    <div><input placeholder='Title' type='text' name='title'></div>
+                    <div><input class='longtext' id='svz-description-3' placeholder='Description' type='text' name='description'></div>
+                    <div><label><input id='svz-required-3' type='checkbox' name='required'>Required (check for true)</label></div>
+                    <input class="btn btn-primary" id='svz-schema-form-submit-3' type='submit'>
+                </form>
+              </div>
+              <div class="tab-pane" id="svz-form-tab">
+                <h2 id='svz-for-form'>For form:</h2>
+                <form id='svz-for-form-form'></form>
+              </div>
+            </div> 
+          </div>
+          <div  id='svz-json-preview' style='float:right; width:45%; margin-right: 30px; margin-top: 20px;'>
+            <h3>Preview appears here:</h3>
+            <p id='svz-json-text-header'>When you choose options json will appear here! :)</p>
+            <pre id='svz-json-text'></pre>
+          </div>
+      </div>
+    </div>
+<!-- Schema form and preview 3 and here!!! -->
+
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.10.2/jquery.min.js"></script>
     <script type='text/javascript' src='deps/bootstrap.min.js'></script>
     <script type='text/javascript' src='deps/bootstrap-multiselect.js'></script>
     <link rel="stylesheet" href="deps/bootstrap-multiselect.css" type="text/css"/>
+    <link rel="stylesheet" href="http://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css">
     <script type='text/javascript' src='deps/underscore.js'></script>
     <script type='text/javascript' src='deps/opt/jsv.js'></script>
     <script type='text/javascript' src='lib/jsonform.js'></script>
     <script src="http://benalman.com/code/projects/jquery-throttle-debounce/jquery.ba-throttle-debounce.js"></script>
-
-
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/lodash.js/2.4.1/lodash.min.js"></script>
+    <script type='text/javascript' src='deps/jquery-ui.min.js'></script>
     <script type='text/javascript'>
-(function function_name ($) {
+
+(function svzMainFunction ($) {
   'use strict';
     $( document ).ready(function() {
-
-      $('#svz-schema-form-tabs a:first').tab('show');
+      $("#svz-main-tabs").tabs();
+      var TIMEOUT_DEBOUNCE = 500;
+      var CURRENT_SCHEMA_FORM_ID = 1;
 
       $('#svz-selected-type').multiselect({
-          buttonWidth: '125px',
+          buttonWidth: '220px',
           nonSelectedText: 'Choose type',
-          numberDisplayed: 1
+          numberDisplayed: 3
       });
 
+
+      $('#add-new-schema-form').click(function(){
+        CURRENT_SCHEMA_FORM_ID += 1;
+        $('<li><a data-target="#svz-schema-form-' + CURRENT_SCHEMA_FORM_ID + '" data-toggle="tab">Schema' + CURRENT_SCHEMA_FORM_ID + '</a></li>').insertBefore('#add-new-schema-form');
+
+        newSchemaForm = "<div id='svz-schema-form-1' class='tab-pane active'> <div style='float:left; width:45%; margin-left: 50px; margin-top: 20px;'> <ul class='nav nav-tabs' id='svz-schema-form-tabs'> <li class='active'><a data-target='#svz-schema-tab' data-toggle='tab'>Schema</a></li> <li><a data-target='#svz-form-tab' data-toggle='tab'>Form</a></li> </ul> <div class='tab-content'> <div class='tab-pane active' id='svz-schema-tab'> <h2>For schema:</h2> <form id='svz-schema-form' action='javascript:void(0);' onsubmit='GenerateTextForm();'> <div><select id='svz-selected-type' name='type' required multiple> <option label='object' value='object'>object</option> <option label='array' value='array'>array</option> <option label='number' value='number'>number</option> <option label='integer' value='integer'>integer</option> <option label='string' value='string'>string</option> <option label='boolean' value='boolean'>boolean</option> <option label='null' value='null'>null</option> </select></div> <div><input id='svz-key' placeholder='Key (Unique identifier)' type='text' name='key' required></div> <div><input placeholder='Title' type='text' name='title'></div> <div><input placeholder='Ordering' type='number' name='ordering'></div> <div><input class='longtext' id='svz-description' placeholder='Description' type='text' name='description'></div> <div><label><input id='svz-required' type='checkbox' name='required'>Required (check for true)</label></div> <input class='btn btn-primary' id='svz-schema-form-submit' type='submit'> </form> </div> <div class='tab-pane' id='svz-form-tab'> <h2 id='svz-for-form'>For form:</h2> <form id='svz-for-form-form'></form> </div> </div> </div> <div id='svz-json-preview' style='float:right; width:45%; margin-right: 30px; margin-top: 20px;'> <h3>Preview appears here:</h3> <p id='svz-json-text-header'>When you choose options json will appear here! :)</p> <pre id='svz-json-text'></pre> </div> </div>"
+
+
+
+
+        $('#svz-main-tabs a:last').tab('show');
+
+      });
+
+ 
       var required = [];
-      var properties = {};    
+      var properties = {};
 
-      $('.btn-minimize').click(function(){
-        $('.widget-content').slideToggle();
-      });
 
-      $('#svz-selected-type').change($.debounce(500, function() {
+
+
+      $('#svz-selected-type').change($.debounce(TIMEOUT_DEBOUNCE, function() {
           var selectedType = $(this).val();
           $('.additionaloption').remove();
 
           if (selectedType){
-            if ((selectedType.indexOf('number') != -1 || selectedType.indexOf('integer') != -1) && selectedType.indexOf('string') != -1) {
+            if (_.include(selectedType, 'number') || _.include(selectedType, 'integer') && _.include(selectedType, 'string')) {
             $('#svz-schema-form-submit').remove();
             $('#svz-schema-form').append('<div class="additionaloption" class="form-group"><input id="svz-max-length" type="number" name="maxLength" placeholder="Maximum length"></div>');
             $('#svz-schema-form').append('<div class="additionaloption" class="form-group"><input id="svz-min-length" type="number" name="minLength" placeholder="Minimum length"></div>');
@@ -99,7 +207,7 @@
             $('#svz-schema-form').append('<div class="additionaloption" class="form-group"><input name="default" id="svz-default" type="number" placeholder="Default"></div>');
             $('#svz-schema-form').append('<div class="additionaloption"><label><input id="svz-readonly" name="readonly" type="checkbox">Readonly (check for true)</label></div>');
             $('#svz-schema-form').append('<input class="btn btn-primary" id="svz-schema-form-submit" type="submit">');
-            } else if (selectedType.indexOf('string') != -1){
+            } else if (_.include(selectedType, 'string')){
               $('#svz-schema-form-submit').remove();
               $('#svz-schema-form').append('<div class="additionaloption" class="form-group"><input id="svz-max-length" type="number" name="maxLength" placeholder="Maximum length"></div>');
               $('#svz-schema-form').append('<div class="additionaloption" class="form-group"><input id="svz-min-length" type="number" name="minLength" placeholder="Minimum length"></div>'); 
@@ -108,7 +216,7 @@
               $('#svz-schema-form').append('<div class="additionaloption" class="form-group"><input name="default" id="svz-default" type="text" placeholder="Default"></div>');
               $('#svz-schema-form').append('<div class="additionaloption"><label><input id="svz-readonly" name="readonly" type="checkbox">Readonly (check for true)</label></div>');
               $('#svz-schema-form').append('<input class="btn btn-primary" id="svz-schema-form-submit" type="submit">');
-            } else if (selectedType.indexOf('number') != -1 || selectedType.indexOf('integer') != -1){
+            } else if (_.include(selectedType, 'number') || _.include(selectedType, 'integer')){
               $('#svz-schema-form-submit').remove();
               $('#svz-schema-form').append('<div class="additionaloption" class="form-group"><input id="svz-max-length" type="number" name="maxLength" placeholder="Maximum length"></div>');
               $('#svz-schema-form').append('<div class="additionaloption" class="form-group"><input id="svz-min-length" type="number" name="minLength" placeholder="Minimum length"></div>');
@@ -130,13 +238,12 @@
         $('#exclusive-max-div').toggle(!!$(this).val());
       }); 
 
+
       window.GenerateTextForm = function(){
         var typeFromSelect = $('#svz-selected-type').val();
         var typesFromSelectArray = [];
 
         if (typeFromSelect){
-          console.log('here 2');
-          $('#svz-schema-form-tabs a:last').tab('show');
 
           $('#svz-for-form-form').empty();
 
@@ -156,7 +263,7 @@
               currentProperties['key'] = field.value;
             } else if (field.name == 'required') {
               toDeleteRequired = false;
-              if (field.value && required.indexOf(currentProperties['key']) == -1) {
+              if (field.value && !(_.include(required, currentProperties['key']))) {
                   required.push(currentProperties['key']);
               }
             } else if (field.name == 'default' && field.value != ''){
@@ -179,11 +286,17 @@
               currentProperties['maxItems'] = field.value;
             } else if (field.name == 'readonly' && field.value != ''){
               currentProperties['readonly'] = true;
+            } else if (field.name == 'ordering' && field.value != ''){
+              currentProperties['ordering'] = field.value;
             }
           });
 
+          // _.grep(arr, function(item) {
+          //   return item.value !== '';
+          // });
+
           if (toDeleteRequired){
-            required.splice(required.indexOf(currentProperties['key']), 1);
+            required.splice(_.indexOf(required, currentProperties['key'], 1));
           }
 
           properties[currentProperties['key']] = currentProperties;
@@ -198,9 +311,10 @@
                 'type': 'object',
                 'properties': properties
               }
-            }
+            };
+
             if (required != ''){
-            jsonPreview['required'] = required;
+              jsonPreview['required'] = required;
             } else{
               delete jsonPreview['required'];
             }
@@ -208,7 +322,6 @@
           $('#svz-json-text-header').hide();
           $('#svz-json-text').html(JSON.stringify(jsonPreview, undefined, 2));
 
-          console.log('here 333');
           $('#svz-for-form-form').jsonForm({
             schema: {
               title: {
