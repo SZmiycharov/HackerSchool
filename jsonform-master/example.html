@@ -16,7 +16,7 @@
         </button>
     </ul>
     
-    <div class="tab-content">
+    <div class="tab-content" id="tab-content">
 <!-- Schema form and preview 1 -->
       <div id="svz-schema-form-tabs-container" class="tab-pane active">
           <div  style='float:left; width:45%; margin-left: 50px; margin-top: 20px;'> 
@@ -91,12 +91,12 @@
 
       $('#add-new-schema-form').click(function(){
         CURRENT_SCHEMA_FORM_ID += 1;
-        $('<li><a data-target="#svz-schema-form' + CURRENT_SCHEMA_FORM_ID + '" data-toggle="tab">Schema' + CURRENT_SCHEMA_FORM_ID + '</a></li>').insertBefore('#add-new-schema-form');
-        // da se napravi s array
-        var newSchemaForm = "<div id='svz-schema-form-asd" + CURRENT_SCHEMA_FORM_ID + "' class='tab-pane active'> <div style='float:left; width:45%; margin-left: 50px; margin-top: 20px;'> <ul class='nav nav-tabs' id='svz-schema-form-tabs" + CURRENT_SCHEMA_FORM_ID + "'> <li class='active'><a data-target='#svz-schema-tab' data-toggle='tab'>Schema</a></li> <li><a data-target='#svz-form-tab' data-toggle='tab'>Form</a></li> </ul> <div class='tab-content'> <div class='tab-pane active' id='svz-schema-tab" + CURRENT_SCHEMA_FORM_ID + "'> <h2>For schema:</h2> <form id='svz-schema-form" + CURRENT_SCHEMA_FORM_ID + "' action='javascript:void(0);' onsubmit='GenerateTextForm();'> <div> <select class='svz-selected-type' name='type' required multiple> <option label='object' value='object'>object</option> <option label='array' value='array'>array</option> <option label='number' value='number'>number</option> <option label='integer' value='integer'>integer</option> <option label='string' value='string'>string</option> <option label='boolean' value='boolean'>boolean</option> <option label='null' value='null'>null</option> </select> </div> <div><input id='svz-key" + CURRENT_SCHEMA_FORM_ID + "' placeholder='Key (Unique identifier)' type='text' name='key' required></div> <div><input placeholder='Title' type='text' name='title'></div> <div><input placeholder='Ordering' type='number' name='ordering'></div> <div><input class='longtext' id='svz-description" + CURRENT_SCHEMA_FORM_ID + "' placeholder='Description' type='text' name='description'></div> <div><label><input id='svz-required" + CURRENT_SCHEMA_FORM_ID + "' type='checkbox' name='required'>Required (check for true)</label></div> <input class='btn btn-primary' id='svz-schema-form-submit" + CURRENT_SCHEMA_FORM_ID + "' type='submit'> </form> </div> <div class='tab-pane' id='svz-form-tab" + CURRENT_SCHEMA_FORM_ID + "'> <h2 id='svz-for-form" + CURRENT_SCHEMA_FORM_ID + "'>For form:</h2> <form id='svz-for-form-form" + CURRENT_SCHEMA_FORM_ID + "'></form> </div> </div> </div> <div id='svz-json-preview' style='float:right; width:45%; margin-right: 30px; margin-top: 20px;'> <h3>Preview appears here:</h3> <p id='svz-json-text-header'>When you choose options json will appear here! :)</p> <pre id='svz-json-text'></pre> </div> </div>";
+        $('<li><a data-target="#svz-schema-form-tabs-container' + CURRENT_SCHEMA_FORM_ID + '" data-toggle="tab">Schema' + CURRENT_SCHEMA_FORM_ID + '</a></li>').insertBefore('#add-new-schema-form');
+
+        var newSchemaForm = "<div id='svz-schema-form-tabs-container" + CURRENT_SCHEMA_FORM_ID + "' class='tab-pane active'> <div style='float:left; width:45%; margin-left: 50px; margin-top: 20px;'> <ul class='nav nav-tabs' id='svz-schema-form-tabs" + CURRENT_SCHEMA_FORM_ID + "'> <li class='active'><a data-target='#svz-schema-tab' data-toggle='tab'>Schema</a></li> <li><a data-target='#svz-form-tab' data-toggle='tab'>Form</a></li> </ul> <div class='tab-content'> <div class='tab-pane active' id='svz-schema-tab" + CURRENT_SCHEMA_FORM_ID + "'> <h2>For schema:</h2> <form id='svz-schema-form" + CURRENT_SCHEMA_FORM_ID + "' action='javascript:void(0);' onsubmit='GenerateTextForm();'> <div> <select class='svz-selected-type' name='type" + CURRENT_SCHEMA_FORM_ID + "' required multiple> <option label='object' value='object'>object</option> <option label='array' value='array'>array</option> <option label='number' value='number'>number</option> <option label='integer' value='integer'>integer</option> <option label='string' value='string'>string</option> <option label='boolean' value='boolean'>boolean</option> <option label='null' value='null'>null</option> </select> </div> <div><input id='svz-key" + CURRENT_SCHEMA_FORM_ID + "' placeholder='Key (Unique identifier)' type='text' name='key" + CURRENT_SCHEMA_FORM_ID + "' required></div> <div><input placeholder='Title' type='text' name='title" + CURRENT_SCHEMA_FORM_ID + "'></div> <div><input placeholder='Ordering' type='number' name='ordering" + CURRENT_SCHEMA_FORM_ID + "'></div> <div><input class='longtext' id='svz-description" + CURRENT_SCHEMA_FORM_ID + "' placeholder='Description' type='text' name='description" + CURRENT_SCHEMA_FORM_ID + "'></div> <div><label><input id='svz-required" + CURRENT_SCHEMA_FORM_ID + "' type='checkbox' name='required" + CURRENT_SCHEMA_FORM_ID + "'>Required (check for true)</label></div> <input class='btn btn-primary' id='svz-schema-form-submit" + CURRENT_SCHEMA_FORM_ID + "' type='submit'> </form> </div> <div class='tab-pane' id='svz-form-tab" + CURRENT_SCHEMA_FORM_ID + "'> <h2 id='svz-for-form" + CURRENT_SCHEMA_FORM_ID + "'>For form:</h2> <form id='svz-for-form-form" + CURRENT_SCHEMA_FORM_ID + "'></form> </div> </div> </div> <div id='svz-json-preview' style='float:right; width:45%; margin-right: 30px; margin-top: 20px;'> <h3>Preview appears here:</h3> <p id='svz-json-text-header'>When you choose options json will appear here! :)</p> <pre id='svz-json-text'></pre> </div> </div>";
         
-        
-        $('#tab-content').after(newSchemaForm);
+        $('#tab-content').append(newSchemaForm);
+
         $('.svz-selected-type').multiselect({
             buttonWidth: '206px',
             nonSelectedText: 'Choose type',
@@ -111,42 +111,47 @@
 
       $(document).on('change', '.svz-selected-type', $.debounce(TIMEOUT_DEBOUNCE, function() {
           var selectedType = $(this).val();
+          var currentTabNum = $(this).attr('name').replace( /^\D+/g, '');
           $('.additionaloption').remove();
 
           if (selectedType){
-            if (_.include(selectedType, 'number') || _.include(selectedType, 'integer') && _.include(selectedType, 'string')) {
-            $('#svz-schema-form-submit').remove();
-            $('#svz-schema-form2').append('<div class="additionaloption" class="form-group"><input id="svz-max-length" type="number" name="maxLength" placeholder="Maximum length"></div>');
-            $('#svz-schema-form2').append('<div class="additionaloption" class="form-group"><input id="svz-min-length" type="number" name="minLength" placeholder="Minimum length"></div>');
-            $('#svz-schema-form2').append('<div class="additionaloption" class="form-group"><input id="svz-min-items" type="number" name="minItems" placeholder="Minimum items"></div>');
-            $('#svz-schema-form2').append('<div class="additionaloption" class="form-group"><input id="svz-max-items" type="number" name="maxItems" placeholder="Maximum items"></div>');
-            $('#svz-schema-form').append('<div class="additionaloption" class="form-group"><input id="minimum" type="number" name="minimum" placeholder="Minimum"></div>');
-            $('#svz-schema-form').append('<div hidden class="additionaloption" class="form-group"  id="exclusive-min-div"><label><input id="exclusiveMinimum" name="exclusiveMinimum" type="checkbox" placeholder="Exclusive minimum">Check - num will be more than minimum</label></div>');
-            $('#svz-schema-form').append('<div class="additionaloption" class="form-group"><input id="maximum" type="number" name="maximum" placeholder="Maximum"></div>');
-            $('#svz-schema-form').append('<div hidden class="additionaloption" class="form-group" id="exclusive-max-div"><label><input id="exclusiveMaximum" name="exclusiveMaximum" type="checkbox" placeholder="Exclusive maximum">Check - num will be less than minimum</label></div>');
-            $('#svz-schema-form').append('<div class="additionaloption" class="form-group"><input name="default" id="svz-default" type="number" placeholder="Default"></div>');
-            $('#svz-schema-form').append('<div class="additionaloption"><label><input id="svz-readonly" name="readonly" type="checkbox">Readonly (check for true)</label></div>');
-            $('#svz-schema-form').append('<input class="btn btn-primary" id="svz-schema-form-submit" type="submit">');
+            if ((_.include(selectedType, 'number') || _.include(selectedType, 'integer')) && _.include(selectedType, 'string')) {
+              console.log('gonna remove it!');
+            $('#svz-schema-form-submit' + currentTabNum).remove();
+            $('#svz-schema-form' + currentTabNum).append('<div class="additionaloption" class="form-group"><input id="svz-max-length' + currentTabNum + '" type="number" name="maxLength' + currentTabNum + '" placeholder="Maximum length"></div>');
+            $('#svz-schema-form' + currentTabNum).append('<div class="additionaloption" class="form-group"><input id="svz-min-length' + currentTabNum + '" type="number" name="minLength' + currentTabNum + '" placeholder="Minimum length"></div>');
+            $('#svz-schema-form' + currentTabNum).append('<div class="additionaloption" class="form-group"><input id="svz-min-items' + currentTabNum + '" type="number" name="minItems" placeholder="Minimum items"></div>');
+            $('#svz-schema-form' + currentTabNum).append('<div class="additionaloption" class="form-group"><input id="svz-max-items' + currentTabNum + '" type="number" name="maxItems" placeholder="Maximum items"></div>');
+            $('#svz-schema-form' + currentTabNum).append('<div class="additionaloption" class="form-group"><input id="minimum' + currentTabNum + '" type="number" name="minimum' + currentTabNum + '" placeholder="Minimum"></div>');
+            $('#svz-schema-form' + currentTabNum).append('<div hidden class="additionaloption" class="form-group"  id="exclusive-min-div' + currentTabNum + '"><label><input id="exclusiveMinimum' + currentTabNum + '" name="exclusiveMinimum' + currentTabNum + '" type="checkbox" placeholder="Exclusive minimum">Check - num will be more than minimum</label></div>');
+            $('#svz-schema-form' + currentTabNum).append('<div class="additionaloption" class="form-group"><input id="maximum' + currentTabNum + '" type="number" name="maximum' + currentTabNum + '" placeholder="Maximum"></div>');
+            $('#svz-schema-form' + currentTabNum).append('<div hidden class="additionaloption" class="form-group" id="exclusive-max-div' + currentTabNum + '"><label><input id="exclusiveMaximum' + currentTabNum + '" name="exclusiveMaximum' + currentTabNum + '" type="checkbox" placeholder="Exclusive maximum">Check - num will be less than minimum</label></div>');
+            $('#svz-schema-form' + currentTabNum).append('<div class="additionaloption" class="form-group"><input name="default' + currentTabNum + '" id="svz-default' + currentTabNum + '" type="number" placeholder="Default"></div>');
+            $('#svz-schema-form' + currentTabNum).append('<div class="additionaloption"><label><input id="svz-readonly' + currentTabNum + '" name="readonly' + currentTabNum + '" type="checkbox">Readonly (check for true)</label></div>');
+            console.log('<input class="btn btn-primary" id="svz-schema-form-submit' + currentTabNum + '" type="submit">');
+            $('#svz-schema-form' + currentTabNum).append('<input class="btn btn-primary" id="svz-schema-form-submit' + currentTabNum + '" type="submit">');
             } else if (_.include(selectedType, 'string')){
-              $('#svz-schema-form-submit').remove();
-              $('#svz-schema-form').append('<div class="additionaloption" class="form-group"><input id="svz-max-length" type="number" name="maxLength" placeholder="Maximum length"></div>');
-              $('#svz-schema-form').append('<div class="additionaloption" class="form-group"><input id="svz-min-length" type="number" name="minLength" placeholder="Minimum length"></div>'); 
-              $('#svz-schema-form').append('<div class="additionaloption" class="form-group"><input id="svz-min-items" type="number" name="minItems" placeholder="Minimum items"></div>');
-              $('#svz-schema-form').append('<div class="additionaloption" class="form-group"><input id="svz-max-items" type="number" name="maxItems" placeholder="Maximum items"></div>');
-              $('#svz-schema-form').append('<div class="additionaloption" class="form-group"><input name="default" id="svz-default" type="text" placeholder="Default"></div>');
-              $('#svz-schema-form').append('<div class="additionaloption"><label><input id="svz-readonly" name="readonly" type="checkbox">Readonly (check for true)</label></div>');
-              $('#svz-schema-form').append('<input class="btn btn-primary" id="svz-schema-form-submit" type="submit">');
+              console.log('gonna remove it 2!');
+              $('#svz-schema-form-submit' + currentTabNum).remove();
+              $('#svz-schema-form' + currentTabNum).append('<div class="additionaloption" class="form-group"><input id="svz-max-length' + currentTabNum + '" type="number" name="maxLength' + currentTabNum + '" placeholder="Maximum length"></div>');
+              $('#svz-schema-form' + currentTabNum).append('<div class="additionaloption" class="form-group"><input id="svz-min-length' + currentTabNum + '" type="number" name="minLength' + currentTabNum + '" placeholder="Minimum length"></div>'); 
+              $('#svz-schema-form' + currentTabNum).append('<div class="additionaloption" class="form-group"><input id="svz-min-items' + currentTabNum + '" type="number" name="minItems' + currentTabNum + '" placeholder="Minimum items"></div>');
+              $('#svz-schema-form' + currentTabNum).append('<div class="additionaloption" class="form-group"><input id="svz-max-items' + currentTabNum + '" type="number" name="maxItems' + currentTabNum + '" placeholder="Maximum items"></div>');
+              $('#svz-schema-form' + currentTabNum).append('<div class="additionaloption" class="form-group"><input name="default' + currentTabNum + '" id="svz-default' + currentTabNum + '" type="text" placeholder="Default"></div>');
+              $('#svz-schema-form' + currentTabNum).append('<div class="additionaloption"><label><input id="svz-readonly' + currentTabNum + '" name="readonly' + currentTabNum + '" type="checkbox">Readonly (check for true)</label></div>');
+              $('#svz-schema-form' + currentTabNum).append('<input class="btn btn-primary" id="svz-schema-form-submit' + currentTabNum + '" type="submit">');
             } else if (_.include(selectedType, 'number') || _.include(selectedType, 'integer')){
-              $('#svz-schema-form-submit').remove();
-              $('#svz-schema-form').append('<div class="additionaloption" class="form-group"><input id="svz-max-length" type="number" name="maxLength" placeholder="Maximum length"></div>');
-              $('#svz-schema-form').append('<div class="additionaloption" class="form-group"><input id="svz-min-length" type="number" name="minLength" placeholder="Minimum length"></div>');
-              $('#svz-schema-form').append('<div class="additionaloption" class="form-group"><input id="minimum" type="number" name="minimum" placeholder="Minimum"></div>');
-              $('#svz-schema-form').append('<div hidden class="additionaloption" class="form-group"  id="exclusive-min-div"><label><input id="exclusiveMinimum" name="exclusiveMinimum" type="checkbox" placeholder="Exclusive minimum">Check - num will be more than minimum</label></div>');
-              $('#svz-schema-form').append('<div class="additionaloption" class="form-group"><input id="maximum" type="number" name="maximum" placeholder="Maximum"></div>');
-              $('#svz-schema-form').append('<div hidden class="additionaloption" class="form-group" id="exclusive-max-div"><label><input id="exclusiveMaximum" name="exclusiveMaximum" type="checkbox" placeholder="Exclusive maximum">Check - num will be less than minimum</label></div>');
-              $('#svz-schema-form').append('<div class="additionaloption" class="form-group"><input name="default" id="svz-default" type="number" placeholder="Default"></div>');
-              $('#svz-schema-form').append('<div class="additionaloption"><label><input id="svz-readonly" name="readonly" type="checkbox">Readonly (check for true)</label></div>');
-              $('#svz-schema-form').append('<input class="btn btn-primary" id="svz-schema-form-submit" type="submit">');
+              console.log('gonna remove it 3!');
+              $('#svz-schema-form-submit' + currentTabNum).remove();
+              $('#svz-schema-form' + currentTabNum).append('<div class="additionaloption" class="form-group"><input id="svz-max-length' + currentTabNum + '" type="number" name="maxLength" placeholder="Maximum length"></div>');
+              $('#svz-schema-form' + currentTabNum).append('<div class="additionaloption" class="form-group"><input id="svz-min-length' + currentTabNum + '" type="number" name="minLength" placeholder="Minimum length"></div>');
+              $('#svz-schema-form' + currentTabNum).append('<div class="additionaloption" class="form-group"><input id="minimum' + currentTabNum + '" type="number" name="minimum" placeholder="Minimum"></div>');
+              $('#svz-schema-form' + currentTabNum).append('<div hidden class="additionaloption" class="form-group"  id="exclusive-min-div' + currentTabNum + '"><label><input id="exclusiveMinimum' + currentTabNum + '" name="exclusiveMinimum' + currentTabNum + '" type="checkbox" placeholder="Exclusive minimum">Check - num will be more than minimum</label></div>');
+              $('#svz-schema-form' + currentTabNum).append('<div class="additionaloption" class="form-group"><input id="maximum' + currentTabNum + '" type="number" name="maximum' + currentTabNum + '" placeholder="Maximum"></div>');
+              $('#svz-schema-form' + currentTabNum).append('<div hidden class="additionaloption" class="form-group" id="exclusive-max-div' + currentTabNum + '"><label><input id="exclusiveMaximum" name="exclusiveMaximum" type="checkbox" placeholder="Exclusive maximum">Check - num will be less than minimum</label></div>');
+              $('#svz-schema-form' + currentTabNum).append('<div class="additionaloption" class="form-group"><input name="default' + currentTabNum + '" id="svz-default' + currentTabNum + '" type="number" placeholder="Default"></div>');
+              $('#svz-schema-form' + currentTabNum).append('<div class="additionaloption"><label><input id="svz-readonly' + currentTabNum + '" name="readonly' + currentTabNum + '" type="checkbox">Readonly (check for true)</label></div>');
+              $('#svz-schema-form' + currentTabNum).append('<input class="btn btn-primary" id="svz-schema-form-submit' + currentTabNum + '" type="submit">');
             }
           }
       }));
