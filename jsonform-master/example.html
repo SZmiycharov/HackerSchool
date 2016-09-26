@@ -28,7 +28,7 @@
           <div  style='float:left; width:45%; margin-left: 50px; margin-top: 20px;'> 
             <ul class="nav nav-tabs" id="svz-schema-form-tabs">
               <li class="active"><a data-target="#svz-schema-tab" data-toggle="collapse">Schema</a></li>
-              <li><a data-target="#svz-form-tab" data-toggle="collapse">Form</a></li>
+              <li><a data-target="#svz-form-tab" data-toggle="tab">Form</a></li>
             </ul>
             <div class="tab-content">
               <div class="tab-pane active" id="svz-schema-tab">
@@ -116,9 +116,9 @@
         CURRENT_SCHEMA_FORM_ID += 1;
         if (CURRENT_SCHEMA_FORM_ID > 3) {
           if ($('#svz-tabs-dropdown-menu').attr('id') == undefined) {
-            $('<li id="svz-tabs-dropdown-menu" class="dropdown" > <a class="dropdown-toggle" data-toggle="dropdown">More<span class="caret"></span></a> <ul id="svz-dropdown-menu-items" class="dropdown-menu"> <li id="svz-last-dropdown-option" style="display:none"></li> </ul> </li>').insertBefore('#add-new-schema-form');
+            $('<li id="svz-tabs-dropdown-menu" class="dropdown"> <a class="dropdown-toggle" data-toggle="dropdown">More<span class="caret"></span></a> <ul id="svz-dropdown-menu-items" class="dropdown-menu"> <li id="svz-last-dropdown-option" style="display:none"></li> </ul> </li>').insertBefore('#add-new-schema-form');
           }
-          $('#svz-dropdown-menu-items').append('<li><a data-target="#svz-schema-form-tabs-container' + CURRENT_SCHEMA_FORM_ID + '" id="svz-tab' + CURRENT_SCHEMA_FORM_ID + '" data-toggle="dropdown">Schema' + CURRENT_SCHEMA_FORM_ID + '</a></li>');
+          $('#svz-dropdown-menu-items').append('<li><a data-target="#svz-schema-form-tabs-container' + CURRENT_SCHEMA_FORM_ID + '" id="svz-tab' + CURRENT_SCHEMA_FORM_ID + '" data-toggle="tab">Schema' + CURRENT_SCHEMA_FORM_ID + '</a></li>');
         } else{
           $('<li><a data-target="#svz-schema-form-tabs-container' + CURRENT_SCHEMA_FORM_ID + '" id="svz-tab' + CURRENT_SCHEMA_FORM_ID + '" data-toggle="tab">Schema' + CURRENT_SCHEMA_FORM_ID + '</a></li>').insertBefore('#add-new-schema-form');
         }
@@ -139,7 +139,8 @@
         });
 
         $('#svz-main-tabs a:last').tab('show');
-        $('#svz-main-tabs').tabs('refresh'); 
+        $('#svz-main-tabs').tabs('refresh');
+
       });
 
       var required = [];
