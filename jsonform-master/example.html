@@ -98,6 +98,26 @@
         $('#svz-main-tabs a:last').tab('show');
         $('#svz-tabs-search').val($('#svz-main-tabs a:last').text().substring(1));
         $('#svz-main-tabs').tabs('refresh');
+
+        //if main tabs (3 + 1(the dropdown)) are too few - get from the dropdown and append to main tabs
+        if($('#svz-main-tabs li').length - $('#svz-dropdown-menu-items li').length < 4 ){
+          //$('#svz-dropdown-menu-items li').length is 1 when there is no tab in dropdown
+          if($('#svz-dropdown-menu-items li').length > 1){
+
+            $('#svz-dropdown-menu-items li').each(function(idx, li) {
+                $(li).clone().appendTo('#svz-main-tabs');
+                $(li).remove();
+                if ($('#svz-main-tabs li').length - $('#svz-dropdown-menu-items li').length >= 4 || $('#svz-dropdown-menu-items li').length < 2){
+                  console.log('yeah');
+                  if($('#svz-dropdown-menu-items li').length < 2){
+                    console.log('removing the search');
+                    $('#svz-tabs-dropdown-menu').remove();
+                  }
+                  return false;
+                }
+            });
+          }
+        }
       }
 
       window.HandleSearchEvent = function() {
@@ -140,7 +160,7 @@
           if ($('#svz-tabs-dropdown-menu').attr('id') == undefined) {
             $('<li id="svz-tabs-dropdown-menu" class="dropdown"><input class="dropdown-toggle" data-toggle="dropdown" id="svz-tabs-search" placeholder="search" type="text" onkeyup="HandleSearchEvent();">  <ul id="svz-dropdown-menu-items" class="dropdown-menu"> <li id="svz-last-dropdown-option" style="display:none"></li> </ul> </li>').insertBefore('#add-new-schema-form');
           }
-          $('#svz-dropdown-menu-items').append('<li  id="svz-li' + CURRENT_SCHEMA_FORM_ID + '" class="svz-dropdown-tabs"><a data-target="#svz-schema-form-tabs-container' + CURRENT_SCHEMA_FORM_ID + '" id="svz-tab' + CURRENT_SCHEMA_FORM_ID + '" data-toggle="tab"><button onclick="RemoveTab(this.id);" class="close closeTab" type="button" id="svz-close-tab' + CURRENT_SCHEMA_FORM_ID + '">×</button> Schema' + CURRENT_SCHEMA_FORM_ID + '</a></li>');
+          $('#svz-dropdown-menu-items').append('<li id="svz-li' + CURRENT_SCHEMA_FORM_ID + '" class="svz-dropdown-tabs"><a data-target="#svz-schema-form-tabs-container' + CURRENT_SCHEMA_FORM_ID + '" id="svz-tab' + CURRENT_SCHEMA_FORM_ID + '" data-toggle="tab"><button onclick="RemoveTab(this.id);" class="close closeTab" type="button" id="svz-close-tab' + CURRENT_SCHEMA_FORM_ID + '">×</button> Schema' + CURRENT_SCHEMA_FORM_ID + '</a></li>');
         } else{
           $('<li  id="svz-li' + CURRENT_SCHEMA_FORM_ID + '"><a data-target="#svz-schema-form-tabs-container' + CURRENT_SCHEMA_FORM_ID + '" id="svz-tab' + CURRENT_SCHEMA_FORM_ID + '" data-toggle="tab"><button onclick="RemoveTab(this.id);" class="close closeTab" type="button" id="svz-close-tab' + CURRENT_SCHEMA_FORM_ID + '">×</button> Schema' + CURRENT_SCHEMA_FORM_ID + '</a></li>').insertBefore('#add-new-schema-form');
         }
