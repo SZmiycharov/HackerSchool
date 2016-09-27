@@ -42,8 +42,8 @@
                         <option label='null' value='null'>null</option>
                       </select>
                     </div>
-                    <label>Key</label>
-                    <div class="form-group"><input id="svz-key" placeholder='Key (Unique identifier)' type='text' name='key' required></div>
+                    <label>Key <font id="svz-key-warning" color="red" hidden>(KEY ALREADY EXISTS)</font></label>
+                    <div><input id="svz-key" class="svz-key" placeholder='Key (Unique identifier)' type='text' name='key' required></div>
                     <label>Title</label>
                     <div><input placeholder='Title' type='text' name='title'></div>
                     <label>Ordering</label>
@@ -53,7 +53,7 @@
                     <div><label><input id='svz-required' type='checkbox' name='required'>Required (check for true)</label></div>
                     <label>Enum</label>
                     <ul id="svz-enum" name="enum" class="svz-enum"></ul>
-                    <input class="btn btn-primary" id='svz-schema-form-submit' type='submit'>
+                    <input class="btn btn-primary" id='svz-schema-form-submit' type='submit' disabled>
                 </form>
               </div>
               <div class="tab-pane" id="svz-form-tab">
@@ -95,14 +95,35 @@
       var CURRENT_SCHEMA_FORM_ID = 1;
       var MAX_NUM_TABS_NAVBAR = 3;
 
+      window.ValidateForm = function() {
+        $('#svz-schema-form-submit').click(function(){
+          console.log('hehe');
+        });
+      }
+ 
 
       window.RemoveTab = function(currentID) {
-        currentID = currentID.replace( /^\D+/g, '');
+        var currentID = currentID.replace( /^\D+/g, '');
+        try{
+          var currentKey = $('#svz-tab' + currentID).html().split('</button> ')[1].split();
+        } catch(err){
+          console.log(err);
+        }
+
+        if (currentKey){
+          delete properties[currentKey];
+          
+        }
+        
+        $('#svz-json-preview').text();
+        
         $('#svz-schema-form-tabs-container' + currentID).remove();
         $('#svz-li' + currentID).remove(); 
         $('#svz-main-tabs a:last').tab('show');
-        $('#svz-tabs-search').val($('#svz-main-tabs a:last').text().substring(1));
+        $('#svz-tabs-search').val($('#svz-dropdown-menu-items a:last').text().substring(1));
         $('#svz-main-tabs').tabs('refresh');
+
+        //delete properties[];
 
         //if main tabs (3 + 1(the dropdown)) are too few - get from the dropdown and append to main tabs
         if($('#svz-main-tabs li').length - $('#svz-dropdown-menu-items li').length < MAX_NUM_TABS_NAVBAR + 1){
@@ -167,7 +188,7 @@
         }
         
       
-        var newSchemaForm = '<div id="svz-schema-form-tabs-container' + CURRENT_SCHEMA_FORM_ID + '" class="tab-pane active"> <div style="float:left; width:45%; margin-left: 50px; margin-top: 20px;"> <ul class="nav nav-tabs" id="svz-schema-form-tabs' + CURRENT_SCHEMA_FORM_ID + '"> <li class="active"><a data-target="#svz-schema-tab" data-toggle="tab">Schema</a></li> <li><a data-target="#svz-form-tab" data-toggle="tab">Form</a></li> </ul> <div class="tab-content"> <div class="tab-pane active" id="svz-schema-tab' + CURRENT_SCHEMA_FORM_ID + '"> <h2>For schema:</h2> <form id="svz-schema-form' + CURRENT_SCHEMA_FORM_ID + '" action="javascript:void(0);" onsubmit="GenerateTextForm(this.id);"> <label>Type</label> <div> <select class="svz-selected-type" id="svz-selected-type' + CURRENT_SCHEMA_FORM_ID + '" name="type' + CURRENT_SCHEMA_FORM_ID + '" required multiple> <option label="object" value="object">object</option> <option label="array" value="array">array</option> <option label="number" value="number">number</option> <option label="integer" value="integer">integer</option> <option label="string" value="string">string</option> <option label="boolean" value="boolean">boolean</option> <option label="null" value="null">null</option> </select> </div><label>Key</label> <div><input id="svz-key' + CURRENT_SCHEMA_FORM_ID + '" placeholder="Key (Unique identifier)" type="text" name="key' + CURRENT_SCHEMA_FORM_ID + '" required></div><label>Title</label> <div><input placeholder="Title" type="text" name="title' + CURRENT_SCHEMA_FORM_ID + '"></div><label>Ordering</label> <div><input placeholder="Ordering" type="number" name="ordering' + CURRENT_SCHEMA_FORM_ID + '"></div> <label>Description</label> <div><input class="longtext" id="svz-description' + CURRENT_SCHEMA_FORM_ID + '" placeholder="Description" type="text" name="description' + CURRENT_SCHEMA_FORM_ID + '"></div> <div><label><input id="svz-required' + CURRENT_SCHEMA_FORM_ID + '" type="checkbox" name="required' + CURRENT_SCHEMA_FORM_ID + '">Required (check for true)</label></div><label>Enum</label><ul id="svz-enum' + CURRENT_SCHEMA_FORM_ID + '" name="enum' + CURRENT_SCHEMA_FORM_ID + '" class="svz-enum"></ul><input class="btn btn-primary" id="svz-schema-form-submit' + CURRENT_SCHEMA_FORM_ID + '" type="submit"> </form> </div> <div class="tab-pane" id="svz-form-tab' + CURRENT_SCHEMA_FORM_ID + '"> <h2 id="svz-for-form' + CURRENT_SCHEMA_FORM_ID + '">For form:</h2> <form id="svz-for-form-form' + CURRENT_SCHEMA_FORM_ID + '"></form> </div> </div> </div>';
+        var newSchemaForm = '<div id="svz-schema-form-tabs-container' + CURRENT_SCHEMA_FORM_ID + '" class="tab-pane active"> <div style="float:left; width:45%; margin-left: 50px; margin-top: 20px;"> <ul class="nav nav-tabs" id="svz-schema-form-tabs' + CURRENT_SCHEMA_FORM_ID + '"> <li class="active"><a data-target="#svz-schema-tab" data-toggle="tab">Schema</a></li> <li><a data-target="#svz-form-tab" data-toggle="tab">Form</a></li> </ul> <div class="tab-content"> <div class="tab-pane active" id="svz-schema-tab' + CURRENT_SCHEMA_FORM_ID + '"> <h2>For schema:</h2> <form id="svz-schema-form' + CURRENT_SCHEMA_FORM_ID + '" action="javascript:void(0);" onsubmit="GenerateTextForm(this.id);"> <label>Type</label> <div> <select class="svz-selected-type" id="svz-selected-type' + CURRENT_SCHEMA_FORM_ID + '" name="type' + CURRENT_SCHEMA_FORM_ID + '" required multiple> <option label="object" value="object">object</option> <option label="array" value="array">array</option> <option label="number" value="number">number</option> <option label="integer" value="integer">integer</option> <option label="string" value="string">string</option> <option label="boolean" value="boolean">boolean</option> <option label="null" value="null">null</option> </select> </div><label>Key</label> <div><input class="svz-key' + CURRENT_SCHEMA_FORM_ID + '" placeholder="Key (Unique identifier)" type="text" name="key' + CURRENT_SCHEMA_FORM_ID + '" required></div><label>Title</label> <div><input placeholder="Title" type="text" name="title' + CURRENT_SCHEMA_FORM_ID + '"></div><label>Ordering</label> <div><input placeholder="Ordering" type="number" name="ordering' + CURRENT_SCHEMA_FORM_ID + '"></div> <label>Description</label> <div><input class="longtext" id="svz-description' + CURRENT_SCHEMA_FORM_ID + '" placeholder="Description" type="text" name="description' + CURRENT_SCHEMA_FORM_ID + '"></div> <div><label><input id="svz-required' + CURRENT_SCHEMA_FORM_ID + '" type="checkbox" name="required' + CURRENT_SCHEMA_FORM_ID + '">Required (check for true)</label></div><label>Enum</label><ul id="svz-enum' + CURRENT_SCHEMA_FORM_ID + '" name="enum' + CURRENT_SCHEMA_FORM_ID + '" class="svz-enum"></ul><input class="btn btn-primary" id="svz-schema-form-submit' + CURRENT_SCHEMA_FORM_ID + '" type="submit"> </form> </div> <div class="tab-pane" id="svz-form-tab' + CURRENT_SCHEMA_FORM_ID + '"> <h2 id="svz-for-form' + CURRENT_SCHEMA_FORM_ID + '">For form:</h2> <form id="svz-for-form-form' + CURRENT_SCHEMA_FORM_ID + '"></form> </div> </div> </div>';
         
         $('#tab-content').append(newSchemaForm);
          
@@ -189,6 +210,19 @@
 
       var required = [];
       var properties = {};
+
+      $(document).on('keyup', '.svz-key', $.debounce(TIMEOUT_DEBOUNCE, function() {
+        if (_.include(Object.keys(properties), $(this).val())){
+          console.log('key exists!');
+          $('#svz-schema-form-submit').prop('disabled', true);
+          $('#svz-key-warning').show();
+          $('#svz-key').css('border-color', '#ff0000');
+        } else{
+          $('#svz-schema-form-submit').prop('disabled', false);
+          $('#svz-key-warning').hide();
+          $('#svz-key').css('border-color', '#cccccc');
+        }
+      }));
 
       $(document).on('change', '.svz-selected-type', $.debounce(TIMEOUT_DEBOUNCE, function() {
           var selectedType = $(this).val();
@@ -237,6 +271,9 @@
       }); 
 
       window.GenerateTextForm = function(currentID){
+        if($('#svz-key-warning').is(':visible')){
+          return false;
+        }
         currentID = currentID.replace( /^\D+/g, '');
 
         var typeFromSelect = $('#svz-selected-type' + currentID).val();
@@ -258,7 +295,7 @@
               typesFromSelectArray.push(field.value);
               currentProperties['type'] = typesFromSelectArray;
             } else if (field.name == 'key' + currentID && field.value != '') {
-              $('#svz-tab' + currentID).html('<button onclick="RemoveTab(this.id);" class="close closeTab" type="button" id="svz-close-tab">×</button> ' + field.value);
+              $('#svz-tab' + currentID).html('<button onclick="RemoveTab(this.id);" class="close closeTab" type="button" id="svz-close-tab' + currentID + '">×</button> ' + field.value);
               currentProperties['key'] = field.value;
             } else if (field.name == 'required' + currentID) {
               toDeleteRequired = false;
