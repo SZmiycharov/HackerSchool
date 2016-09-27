@@ -101,20 +101,24 @@
 
         //if main tabs (3 + 1(the dropdown)) are too few - get from the dropdown and append to main tabs
         if($('#svz-main-tabs li').length - $('#svz-dropdown-menu-items li').length < 4 ){
+          console.log('should clone and change order!');
           //$('#svz-dropdown-menu-items li').length is 1 when there is no tab in dropdown
           if($('#svz-dropdown-menu-items li').length > 1){
-
             $('#svz-dropdown-menu-items li').each(function(idx, li) {
-                $(li).clone().appendTo('#svz-main-tabs');
-                $(li).remove();
-                if ($('#svz-main-tabs li').length - $('#svz-dropdown-menu-items li').length >= 4 || $('#svz-dropdown-menu-items li').length < 2){
-                  console.log('yeah');
-                  if($('#svz-dropdown-menu-items li').length < 2){
-                    console.log('removing the search');
-                    $('#svz-tabs-dropdown-menu').remove();
+                console.log($(li).attr('id'));
+                if ($(li).attr('id') != 'svz-last-dropdown-option'){
+                  $(li).clone().appendTo('#svz-main-tabs');
+                  $(li).remove();
+                  if ($('#svz-main-tabs li').length - $('#svz-dropdown-menu-items li').length >= 4 || $('#svz-dropdown-menu-items li').length < 2){
+                    console.log('yeah');
+                    if($('#svz-dropdown-menu-items li').length < 2){
+                      console.log('removing the search');
+                      $('#svz-tabs-dropdown-menu').remove();
+                    }
+                    return false;
                   }
-                  return false;
                 }
+                
             });
           }
         }
@@ -156,7 +160,7 @@
       
       $('#add-new-schema-form').click(function(){
         CURRENT_SCHEMA_FORM_ID += 1;
-        if (CURRENT_SCHEMA_FORM_ID > 3) {
+        if ($('#svz-main-tabs li').length - $('#svz-dropdown-menu-items li').length >= 3) {
           if ($('#svz-tabs-dropdown-menu').attr('id') == undefined) {
             $('<li id="svz-tabs-dropdown-menu" class="dropdown"><input class="dropdown-toggle" data-toggle="dropdown" id="svz-tabs-search" placeholder="search" type="text" onkeyup="HandleSearchEvent();">  <ul id="svz-dropdown-menu-items" class="dropdown-menu"> <li id="svz-last-dropdown-option" style="display:none"></li> </ul> </li>').insertBefore('#add-new-schema-form');
           }
