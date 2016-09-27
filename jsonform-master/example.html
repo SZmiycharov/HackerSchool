@@ -18,7 +18,7 @@
       <div id="svz-schema-form-tabs-container" class="tab-pane active">
           <div  style="float:left; width:45%; margin-left: 50px; margin-top: 20px;"> 
             <ul class="nav nav-tabs" id="svz-schema-form-tabs">
-              <li class="active"><a data-target="#svz-schema-tab" data-toggle="collapse">Schema</a></li>
+              <li class="active"><a data-target="#svz-schema-tab" data-toggle="tab">Schema</a></li>
               <li><a data-target="#svz-form-tab" data-toggle="tab">Form</a></li>
             </ul>
             <div class="tab-content">
@@ -99,19 +99,30 @@
           window.RemoveTab = function(currentID) {
             var currentID = currentID.replace( /^\D+/g, '');
             try{
-              var currentKey = $('#svz-tab' + currentID).html().split('</button> ')[1].split();
+              var currentKey = $('#svz-tab' + currentID).html().split('</button> ')[1];
             } catch(err){
               console.log(err);
             }
-
+            console.log(currentKey);
             if (currentKey){
               delete properties[currentKey];
+              console.log(required);
+              required.splice(_.indexOf(required, currentKey), 1);
+              console.log(required);
+
               var jsonPreview = {
                   'schema': {
                     'type': 'object',
                     'properties': properties
                   }
-                };
+              };
+
+              if (required != ''){
+                  jsonPreview['required'] = required;
+              } else{
+                  delete jsonPreview['required'];
+              }
+
               if (Object.keys(properties) != 0) {
                 $('#svz-json-text').html(JSON.stringify(jsonPreview, undefined, 2));
               } else{
@@ -288,6 +299,7 @@
 
             var typeFromSelect = $('#svz-selected-type' + currentID).val();
             var typesFromSelectArray = [];
+            var chosenKey = '';
 
             if (typeFromSelect){
               $('#svz-for-form-form' + currentID).empty();
@@ -296,62 +308,38 @@
               var currentProperties = {};
               var toDeleteRequired = true;
 
+              schemaFormDataArray = schemaFormDataArray.filter(function(n){return n.value !== ''});
+
               jQuery.each( schemaFormDataArray, function( i, field ) {
-                if (field.name == 'title' + currentID && field.value != '') {
-                  currentProperties['title'] = field.value;
-                } else if (field.name == 'description' + currentID && field.value != '') {
-                  currentProperties['description'] = field.value;
-                } else if (field.name == 'type' + currentID && field.value != '') {
+                if(field.name == 'type' + currentID){
                   typesFromSelectArray.push(field.value);
                   currentProperties['type'] = typesFromSelectArray;
-                } else if (field.name == 'key' + currentID && field.value != '') {
+                } else if(field.name == 'key' + currentID){
                   $('#svz-tab' + currentID).html('<button onclick="RemoveTab(this.id);" class="close closeTab" type="button" id="svz-close-tab' + currentID + '">×</button> ' + field.value);
-                  currentProperties['key'] = field.value;
-                } else if (field.name == 'required' + currentID) {
+                  chosenKey = field.value;
+                } else if(field.name == 'required' + currentID){
                   toDeleteRequired = false;
-                  if (field.value && !(_.include(required, currentProperties['key']))) {
-                      required.push(currentProperties['key']);
+                  if (field.value && !(_.include(required, chosenKey))) {
+                      required.push(chosenKey);
                   }
-                } else if (field.name == 'default' + currentID && field.value != ''){
-                  currentProperties['default'] = field.value;
-                } else if (field.name == 'maxLength' + currentID && field.value != ''){
-                  currentProperties['maxLength'] = field.value;
-                } else if (field.name == 'pattern' + currentID && field.value != ''){
-                  currentProperties['pattern'] = field.value;
-                } else if (field.name == 'minLength' + currentID && field.value != ''){
-                  currentProperties['minLength'] = field.value;
-                } else if (field.name == 'minimum' + currentID && field.value != ''){
-                  currentProperties['minimum'] = field.value;
-                } else if (field.name == 'maximum' + currentID && field.value != ''){
-                  currentProperties['maximum'] = field.value;
-                } else if (field.name == 'exclusiveMaximum' + currentID && field.value != ''){
-                  currentProperties['exclusiveMaximum' && field.value != ''] = true;
-                } else if (field.name == 'exclusiveMinimum' + currentID && field.value != ''){
-                  currentProperties['exclusiveMinimum' && field.value != ''] = true;
-                } else if (field.name == 'minItems' + currentID && field.value != ''){
-                  currentProperties['minItems'] = field.value;
-                } else if (field.name == 'maxItems' + currentID && field.value != ''){
-                  currentProperties['maxItems'] = field.value;
-                } else if (field.name == 'readonly' + currentID && field.value != ''){
-                  currentProperties['readonly'] = true;
-                } else if (field.name == 'ordering' + currentID && field.value != ''){
-                  currentProperties['ordering'] = field.value;
+                } else{
+                  if (field.name.replace(/[0-9]/g, '') != 'tags'){
+                    currentProperties[field.name.replace(/[0-9]/g, '')] = field.value;
+                  }
+                  
                 }
               });
-
+                
               var assignedEnum = $('#svz-enum' + currentID).tagit('assignedTags');
               if (assignedEnum != '') {
                 currentProperties['enum'] = assignedEnum;
               }
               
-              // _.grep(arr, function(item) {
-              //   return item.value !== '';
-              // });
-
+              
               if (toDeleteRequired){
-                required.splice(_.indexOf(required, currentProperties['key'], 1));
+                required.splice(_.indexOf(required, chosenKey), 1);
               }
-              properties[currentProperties['key']] = currentProperties;
+              properties[chosenKey] = currentProperties;
 
               if(typeFromSelect == 'object'){
                 console.log('type is object will do this later!');
