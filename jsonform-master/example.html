@@ -1,27 +1,22 @@
 <!DOCTYPE html>
 <html>
   <head>
-    <meta charset='utf-8' />
+    <meta charset="utf-8" />
     <title>JSONCreator</title>
-    <link rel='stylesheet' style='text/css' href='deps/opt/bootstrap.css' />
+    <link rel="stylesheet" style="text/css" href="deps/opt/bootstrap.css" />
   </head>
+  
   <body>
-
-    
-    <div id='tabs'>
-    <ul class="nav nav-tabs" id="svz-main-tabs">
-        <li id="svz-li"><a data-target="#svz-schema-form-tabs-container" id="svz-tab" data-toggle="tab"><button onclick="RemoveTab(this.id);" class="close closeTab" type="button" id="svz-close-tab">×</button> Schema1</a></li>
-
-        <button type="button" class="btn btn-primary" id="add-new-schema-form">
-          <span class="glyphicon glyphicon-plus"></span>
-        </button>
-    </ul>
-  </div>
+    <div id="tabs">
+      <ul class="nav nav-tabs" id="svz-main-tabs">
+          <li id="svz-li"><a data-target="#svz-schema-form-tabs-container" id="svz-tab" data-toggle="tab"><button onclick="RemoveTab(this.id);" class="close closeTab" type="button" id="svz-close-tab">×</button> Schema1</a></li>
+          <button type="button" class="btn btn-primary" id="add-new-schema-form"><span class="glyphicon glyphicon-plus"></span></button>
+      </ul>
+    </div>
     
     <div class="tab-content" id="tab-content">
-<!-- Schema form and preview 1 -->
       <div id="svz-schema-form-tabs-container" class="tab-pane active">
-          <div  style='float:left; width:45%; margin-left: 50px; margin-top: 20px;'> 
+          <div  style="float:left; width:45%; margin-left: 50px; margin-top: 20px;"> 
             <ul class="nav nav-tabs" id="svz-schema-form-tabs">
               <li class="active"><a data-target="#svz-schema-tab" data-toggle="collapse">Schema</a></li>
               <li><a data-target="#svz-form-tab" data-toggle="tab">Form</a></li>
@@ -29,401 +24,389 @@
             <div class="tab-content">
               <div class="tab-pane active" id="svz-schema-tab">
                 <h2>For schema:</h2>
-                <form id='svz-schema-form' action='javascript:void(0);' onsubmit='GenerateTextForm(this.id);'>
+                <form id="svz-schema-form" action="javascript:void(0);" onsubmit="GenerateTextForm(this.id);">
                     <label>Type</label>
                     <div>
-                      <select class='svz-selected-type' id='svz-selected-type' name='type' required multiple>
-                        <option label='object' value='object'>object</option>
-                        <option label='array' value='array'>array</option>
-                        <option label='number' value='number'>number</option> 
-                        <option label='integer' value='integer'>integer</option>
-                        <option label='string' value='string'>string</option>  
-                        <option label='boolean' value='boolean'>boolean</option> 
-                        <option label='null' value='null'>null</option>
+                      <select class="svz-selected-type" id="svz-selected-type" name="type" required multiple>
+                        <option label="object" value="object">object</option>
+                        <option label="array" value="array">array</option>
+                        <option label="number" value="number">number</option> 
+                        <option label="integer" value="integer">integer</option>
+                        <option label="string" value="string">string</option>  
+                        <option label="boolean" value="boolean">boolean</option> 
+                        <option label="null" value="null">null</option>
                       </select>
                     </div>
                     <label>Key <font id="svz-key-warning" color="red" hidden>(KEY ALREADY EXISTS)</font></label>
-                    <div><input id="svz-key" class="svz-key" placeholder='Key (Unique identifier)' type='text' name='key' required></div>
+                    <div><input id="svz-key" class="svz-key" placeholder="Key (Unique identifier)" type="text" name="key" required></div>
                     <label>Title</label>
-                    <div><input placeholder='Title' type='text' name='title'></div>
+                    <div><input placeholder="Title" type="text" name="title"></div>
                     <label>Ordering</label>
-                    <div><input placeholder='Ordering' type='number' name='ordering'></div>
+                    <div><input placeholder="Ordering" type="number" name="ordering"></div>
                     <label>Description</label>
-                    <div><input class='longtext' id='svz-description' placeholder='Description' type='text' name='description'></div>
-                    <div><label><input id='svz-required' type='checkbox' name='required'>Required (check for true)</label></div>
+                    <div><input class="longtext" id="svz-description" placeholder="Description" type="text" name="description"></div>
+                    <div><label><input id="svz-required" type="checkbox" name="required">Required (check for true)</label></div>
                     <label>Enum</label>
                     <ul id="svz-enum" name="enum" class="svz-enum"></ul>
-                    <input class="btn btn-primary" id='svz-schema-form-submit' type='submit' disabled>
+                    <input class="btn btn-primary" id="svz-schema-form-submit" type="submit" disabled>
                 </form>
               </div>
               <div class="tab-pane" id="svz-form-tab">
-                <h2 id='svz-for-form'>For form:</h2>
-                <form id='svz-for-form-form'></form>
+                <h2 id="svz-for-form">For form:</h2>
+                <form id="svz-for-form-form"></form>
               </div>
             </div> 
-          </div>
-          
+          </div>   
       </div>
-      <div id='svz-json-preview' style='float:right; width:45%; margin-right: 30px; margin-top: 20px;'>
-          <h3>Preview appears here:</h3>
-          <p id='svz-json-text-header'>When you choose options json will appear here! :)</p>
-          <pre id='svz-json-text'></pre>
-      </div>
-  </div>
 
-    <script src='deps/jquery.min.js'></script>
-    <script type='text/javascript' src='deps/bootstrap.min.js'></script>
-    <script type='text/javascript' src='deps/bootstrap-multiselect.js'></script>
+      <div id="svz-json-preview" style="float:right; width:45%; margin-right: 30px; margin-top: 20px;">
+          <h3>Preview appears here:</h3>
+          <p id="svz-json-text-header">When you choose options json will appear here! :)</p>
+          <pre id="svz-json-text"></pre>
+      </div>
+    </div>
+
+    <script src="deps/jquery.min.js"></script>
+    <script type="text/javascript" src="deps/bootstrap.min.js"></script>
+    <script type="text/javascript" src="deps/bootstrap-multiselect.js"></script>
     <link rel="stylesheet" href="deps/bootstrap-multiselect.css" type="text/css"/>
     <link rel="stylesheet" href="http://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css">
     <link rel="stylesheet" type="text/css" href="http://ajax.googleapis.com/ajax/libs/jqueryui/1/themes/flick/jquery-ui.css">
     <link href="deps/jquery.tagit.css" rel="stylesheet" type="text/css">
-    <script type='text/javascript' src='deps/underscore.js'></script>
-    <script type='text/javascript' src='deps/opt/jsv.js'></script>
-    <script type='text/javascript' src='lib/jsonform.js'></script>
+    <script type="text/javascript" src="deps/underscore.js"></script>
+    <script type="text/javascript" src="deps/opt/jsv.js"></script>
+    <script type="text/javascript" src="lib/jsonform.js"></script>
     <script src="deps/jquery.ba-throttle-debounce.js"></script>
     <script src="deps/lodash.min.js"></script>
-    <script type='text/javascript' src='deps/jquery-ui.min.js'></script>
+    <script type="text/javascript" src="deps/jquery-ui.min.js"></script>
     <script src="deps/tag-it.js" type="text/javascript" charset="utf-8"></script>
-    <script type='text/javascript'>
+    <script type="text/javascript">
 
-(function svzMainFunction ($) {
-  'use strict';
-    $( document ).ready(function() {
-      $('#svz-main-tabs').tabs();
-      var TIMEOUT_DEBOUNCE = 500;
-      var CURRENT_SCHEMA_FORM_ID = 1;
-      var MAX_NUM_TABS_NAVBAR = 3;
+    (function svzMainFunction ($) {
+      'use strict';
+        $( document ).ready(function() {
+          $('#svz-main-tabs').tabs();
+          var TIMEOUT_DEBOUNCE = 500;
+          var CURRENT_SCHEMA_FORM_ID = 1;
+          var MAX_NUM_TABS_NAVBAR = 3;
 
-      window.ValidateForm = function() {
-        $('#svz-schema-form-submit').click(function(){
-          console.log('hehe');
-        });
-      }
- 
-      window.RemoveTab = function(currentID) {
-        var currentID = currentID.replace( /^\D+/g, '');
-        console.log(currentID);
-        try{
-          var currentKey = $('#svz-tab' + currentID).html().split('</button> ')[1].split();
-        } catch(err){
-          console.log(err);
-        }
-
-        if (currentKey){
-          delete properties[currentKey];
-          var jsonPreview = {
-              'schema': {
-                'type': 'object',
-                'properties': properties
-              }
-            };
-          if (Object.keys(properties) != 0) {
-            $('#svz-json-text').html(JSON.stringify(jsonPreview, undefined, 2));
-          } else{
-            $('#svz-json-text').html('');
-          }
-        }
-        
-        $('#svz-json-preview').text();
-        
-        $('#svz-schema-form-tabs-container' + currentID).remove();
-        $('#svz-li' + currentID).remove(); 
-        $('#svz-main-tabs a:last').tab('show');
-        $('#svz-tabs-search').val($('#svz-dropdown-menu-items a:last').text().substring(1));
-        $('#svz-main-tabs').tabs('refresh');
-
-        if($('#svz-dropdown-menu-items li').length < 2){
-          $('#svz-tabs-dropdown-menu').remove();
-        }
-
-
-        //if main tabs (3 + 1(the dropdown)) are too few - get from the dropdown and append to main tabs
-        if($('#svz-main-tabs li').length - $('#svz-dropdown-menu-items li').length < MAX_NUM_TABS_NAVBAR + 1){
-          //$('#svz-dropdown-menu-items li').length is 1 when there is no tab in dropdown
-          if($('#svz-dropdown-menu-items li').length >= 1){
-            console.log('here');
-            $('#svz-dropdown-menu-items li').each(function(idx, li) {
-              console.log($(li).attr('id'));
-                if ($(li).attr('id') != 'svz-last-dropdown-option'){
-                  $(li).clone().removeClass().insertBefore('#svz-tabs-dropdown-menu');
-                  $(li).remove();
-
-                  if ($('#svz-main-tabs li').length - $('#svz-dropdown-menu-items li').length >= MAX_NUM_TABS_NAVBAR + 1 || $('#svz-dropdown-menu-items li').length < 2){
-                    console.log('yeash');
-                    if($('#svz-dropdown-menu-items li').length < 2){
-                      $('#svz-tabs-dropdown-menu').remove();
-                    }
-                    return false;
-                  }
-                }         
+          window.ValidateForm = function() {
+            $('#svz-schema-form-submit').click(function(){
+              console.log('hehe');
             });
           }
-        }
-      }
-
-      window.HandleSearchEvent = function() {
-        var filter = $('#svz-tabs-search').val().toUpperCase();
-        var listItems = $('.svz-dropdown-tabs');
-        
-        listItems.each(function(idx, li) {
-            if (_.include($(li).text().toUpperCase(), filter.toUpperCase())){
-              $(li).css('display', 'list-item');
-            } else{
-              $(li).css('display', 'none');
+     
+          window.RemoveTab = function(currentID) {
+            var currentID = currentID.replace( /^\D+/g, '');
+            try{
+              var currentKey = $('#svz-tab' + currentID).html().split('</button> ')[1].split();
+            } catch(err){
+              console.log(err);
             }
-        });
-      }
 
-      $('.svz-selected-type').multiselect({
-          buttonWidth: '206px',
-          nonSelectedText: 'Choose type',
-          numberDisplayed: 3
-      });
-
-      $('.svz-enum').tagit({
-            allowSpaces: true,
-            placeholderText: 'Enum'
-      });
-
-      $(document).on('click', '#svz-dropdown-menu-items li', function() {
-        var selectedItem = $(this).find('a').html().split('</button> ')[1];
-        $('#svz-tabs-search').val(selectedItem);
-      });
-      
-      $('#add-new-schema-form').click(function(){
-        CURRENT_SCHEMA_FORM_ID += 1;
-        if ($('#svz-main-tabs li').length - $('#svz-dropdown-menu-items li').length >= MAX_NUM_TABS_NAVBAR) {
-          if ($('#svz-tabs-dropdown-menu').attr('id') == undefined) {
-            $('<li id="svz-tabs-dropdown-menu" class="dropdown"><input class="dropdown-toggle" data-toggle="dropdown" id="svz-tabs-search" placeholder="search" type="text" onkeyup="HandleSearchEvent();">  <ul id="svz-dropdown-menu-items" class="dropdown-menu"> <li id="svz-last-dropdown-option" style="display:none"></li> </ul> </li>').insertBefore('#add-new-schema-form');
-          }
-          $('#svz-dropdown-menu-items').append('<li id="svz-li' + CURRENT_SCHEMA_FORM_ID + '" class="svz-dropdown-tabs"><a data-target="#svz-schema-form-tabs-container' + CURRENT_SCHEMA_FORM_ID + '" id="svz-tab' + CURRENT_SCHEMA_FORM_ID + '" data-toggle="tab"><button onclick="RemoveTab(this.id);" class="close closeTab" type="button" id="svz-close-tab' + CURRENT_SCHEMA_FORM_ID + '">×</button> Schema' + CURRENT_SCHEMA_FORM_ID + '</a></li>');
-        } else{
-          $('<li  id="svz-li' + CURRENT_SCHEMA_FORM_ID + '"><a data-target="#svz-schema-form-tabs-container' + CURRENT_SCHEMA_FORM_ID + '" id="svz-tab' + CURRENT_SCHEMA_FORM_ID + '" data-toggle="tab"><button onclick="RemoveTab(this.id);" class="close closeTab" type="button" id="svz-close-tab' + CURRENT_SCHEMA_FORM_ID + '">×</button> Schema' + CURRENT_SCHEMA_FORM_ID + '</a></li>').insertBefore('#add-new-schema-form');
-        }
-        
-        var newSchemaForm = '<div id="svz-schema-form-tabs-container' + CURRENT_SCHEMA_FORM_ID + '" class="tab-pane active"> <div style="float:left; width:45%; margin-left: 50px; margin-top: 20px;"> <ul class="nav nav-tabs" id="svz-schema-form-tabs' + CURRENT_SCHEMA_FORM_ID + '"> <li class="active"><a data-target="#svz-schema-tab" data-toggle="tab">Schema</a></li> <li><a data-target="#svz-form-tab" data-toggle="tab">Form</a></li> </ul> <div class="tab-content"> <div class="tab-pane active" id="svz-schema-tab' + CURRENT_SCHEMA_FORM_ID + '"> <h2>For schema:</h2> <form id="svz-schema-form' + CURRENT_SCHEMA_FORM_ID + '" action="javascript:void(0);" onsubmit="GenerateTextForm(this.id);"> <label>Type</label> <div> <select class="svz-selected-type" id="svz-selected-type' + CURRENT_SCHEMA_FORM_ID + '" name="type' + CURRENT_SCHEMA_FORM_ID + '" required multiple> <option label="object" value="object">object</option> <option label="array" value="array">array</option> <option label="number" value="number">number</option> <option label="integer" value="integer">integer</option> <option label="string" value="string">string</option> <option label="boolean" value="boolean">boolean</option> <option label="null" value="null">null</option> </select> </div><label>Key <font id="svz-key-warning' + CURRENT_SCHEMA_FORM_ID + '" color="red" hidden>(KEY ALREADY EXISTS)</font></label> <div><input id="svz-key' + CURRENT_SCHEMA_FORM_ID + '" class="svz-key" placeholder="Key (Unique identifier)" type="text" name="key' + CURRENT_SCHEMA_FORM_ID + '" required></div><label>Title</label> <div><input placeholder="Title" type="text" name="title' + CURRENT_SCHEMA_FORM_ID + '"></div><label>Ordering</label> <div><input placeholder="Ordering" type="number" name="ordering' + CURRENT_SCHEMA_FORM_ID + '"></div> <label>Description</label> <div><input class="longtext" id="svz-description' + CURRENT_SCHEMA_FORM_ID + '" placeholder="Description" type="text" name="description' + CURRENT_SCHEMA_FORM_ID + '"></div> <div><label><input id="svz-required' + CURRENT_SCHEMA_FORM_ID + '" type="checkbox" name="required' + CURRENT_SCHEMA_FORM_ID + '">Required (check for true)</label></div><label>Enum</label><ul id="svz-enum' + CURRENT_SCHEMA_FORM_ID + '" name="enum' + CURRENT_SCHEMA_FORM_ID + '" class="svz-enum"></ul><input class="btn btn-primary" id="svz-schema-form-submit' + CURRENT_SCHEMA_FORM_ID + '" type="submit"> </form> </div> <div class="tab-pane" id="svz-form-tab' + CURRENT_SCHEMA_FORM_ID + '"> <h2 id="svz-for-form' + CURRENT_SCHEMA_FORM_ID + '">For form:</h2> <form id="svz-for-form-form' + CURRENT_SCHEMA_FORM_ID + '"></form> </div> </div> </div>';
-        
-        $('#tab-content').append(newSchemaForm);
-         
-        $('.svz-selected-type').multiselect({
-            buttonWidth: '206px',
-            nonSelectedText: 'Choose type',
-            numberDisplayed: 3
-        });
-        $('.svz-enum').tagit({
-            allowSpaces: true,
-            placeholderText: 'Enum'
-        });
-
-        $('#svz-main-tabs a:last').tab('show');
-        $('#svz-tabs-search').val($('#svz-main-tabs a:last').text().substring(1));
-        $('#svz-main-tabs').tabs('refresh');
-
-      });
-
-      var required = [];
-      var properties = {};
-
-      $(document).on('keyup', '.svz-key', $.debounce(TIMEOUT_DEBOUNCE, function() {
-        var currentID = $(this).attr('id').replace( /^\D+/g, '');
-
-        if (_.include(Object.keys(properties), $(this).val())){
-          $('#svz-schema-form-submit' + currentID).prop('disabled', true);
-          $('#svz-key-warning' + currentID).show();
-          $('#svz-key' + currentID).css('border-color', '#ff0000');
-        } else{
-          $('#svz-schema-form-submit' + currentID).prop('disabled', false);
-          $('#svz-key-warning' + currentID).hide();
-          $('#svz-key' + currentID).css('border-color', '#cccccc');
-        }
-      }));
-
-      $(document).on('change', '.svz-selected-type', $.debounce(TIMEOUT_DEBOUNCE, function() {
-          var selectedType = $(this).val();
-          var currentTabNum = $(this).attr('name').replace( /^\D+/g, '');
-          $('.additionaloption' + currentTabNum).remove();
-
-          if (selectedType){
-            if ((_.include(selectedType, 'number') || _.include(selectedType, 'integer')) && _.include(selectedType, 'string')) {
-            $('#svz-schema-form-submit' + currentTabNum).remove();
-            $('#svz-schema-form' + currentTabNum).append('<label class="additionaloption' + currentTabNum + '">Maximum length</label><div class="additionaloption' + currentTabNum + '" class="form-group"><input id="svz-max-length' + currentTabNum + '" type="number" name="maxLength' + currentTabNum + '" placeholder="Maximum length"></div>');
-            $('#svz-schema-form' + currentTabNum).append('<label class="additionaloption' + currentTabNum + '">Minimum length</label><div class="additionaloption' + currentTabNum + '" class="form-group"><input id="svz-min-length' + currentTabNum + '" type="number" name="minLength' + currentTabNum + '" placeholder="Minimum length"></div>');
-            $('#svz-schema-form' + currentTabNum).append('<label class="additionaloption' + currentTabNum + '">Minimum</label><div class="additionaloption' + currentTabNum + '" class="form-group"><input id="minimum' + currentTabNum + '" type="number" name="minimum' + currentTabNum + '" placeholder="Minimum"></div>');
-            $('#svz-schema-form' + currentTabNum).append('<div hidden class="additionaloption' + currentTabNum + '" class="form-group"  id="exclusive-min-div' + currentTabNum + '"><label><input id="exclusiveMinimum' + currentTabNum + '" name="exclusiveMinimum' + currentTabNum + '" type="checkbox" placeholder="Exclusive minimum">Check - num will be more than minimum</label></div>');
-            $('#svz-schema-form' + currentTabNum).append('<label class="additionaloption' + currentTabNum + '">Maximum</label><div class="additionaloption' + currentTabNum + '" class="form-group"><input id="maximum' + currentTabNum + '" type="number" name="maximum' + currentTabNum + '" placeholder="Maximum"></div>');
-            $('#svz-schema-form' + currentTabNum).append('<div hidden class="additionaloption' + currentTabNum + '" class="form-group" id="exclusive-max-div' + currentTabNum + '"><label><input id="exclusiveMaximum' + currentTabNum + '" name="exclusiveMaximum' + currentTabNum + '" type="checkbox" placeholder="Exclusive maximum">Check - num will be less than minimum</label></div>');
-            $('#svz-schema-form' + currentTabNum).append('<label class="additionaloption' + currentTabNum + '">Default</label><div class="additionaloption' + currentTabNum + '" class="form-group"><input name="default' + currentTabNum + '" id="svz-default' + currentTabNum + '" type="number" placeholder="Default"></div>');
-            $('#svz-schema-form' + currentTabNum).append('<div class="additionaloption' + currentTabNum + '"><label><input id="svz-readonly' + currentTabNum + '" name="readonly' + currentTabNum + '" type="checkbox">Readonly (check for true)</label></div>');
-            $('#svz-schema-form' + currentTabNum).append('<div class="additionaloption' + currentTabNum + '" class="form-group"><input id="svz-pattern' + currentTabNum + '"  name="pattern' + currentTabNum + '" placeholder="Pattern (Regex)"></div>');
-            $('#svz-schema-form' + currentTabNum).append('<input class="btn btn-primary" id="svz-schema-form-submit' + currentTabNum + '" type="submit">');
-            } else if (_.include(selectedType, 'string')){
-              $('#svz-schema-form-submit' + currentTabNum).remove();
-              $('#svz-schema-form' + currentTabNum).append('<label class="additionaloption' + currentTabNum + '">Maximum length</label><div class="additionaloption' + currentTabNum + '" class="form-group"><input id="svz-max-length' + currentTabNum + '" type="number" name="maxLength' + currentTabNum + '" placeholder="Maximum length"></div>');
-              $('#svz-schema-form' + currentTabNum).append('<label class="additionaloption' + currentTabNum + '">Minimum length</label><div class="additionaloption' + currentTabNum + '" class="form-group"><input id="svz-min-length' + currentTabNum + '" type="number" name="minLength' + currentTabNum + '" placeholder="Minimum length"></div>'); 
-              $('#svz-schema-form' + currentTabNum).append('<label class="additionaloption' + currentTabNum + '">Default</label><div class="additionaloption' + currentTabNum + '" class="form-group"><input name="default' + currentTabNum + '" id="svz-default' + currentTabNum + '" type="text" placeholder="Default"></div>');
-              $('#svz-schema-form' + currentTabNum).append('<div class="additionaloption' + currentTabNum + '"><label><input id="svz-readonly' + currentTabNum + '" name="readonly' + currentTabNum + '" type="checkbox">Readonly (check for true)</label></div>');
-              $('#svz-schema-form' + currentTabNum).append('<div class="additionaloption' + currentTabNum + '" class="form-group"><input id="svz-pattern' + currentTabNum + '"  name="pattern' + currentTabNum + '" placeholder="Pattern (Regex)"></div>');
-              $('#svz-schema-form' + currentTabNum).append('<input class="btn btn-primary" id="svz-schema-form-submit' + currentTabNum + '" type="submit">');
-            } else if (_.include(selectedType, 'number') || _.include(selectedType, 'integer')){
-              $('#svz-schema-form-submit' + currentTabNum).remove();
-              $('#svz-schema-form' + currentTabNum).append('<label class="additionaloption' + currentTabNum + '">Minimum</label><div class="additionaloption' + currentTabNum + '" class="form-group"><input id="minimum' + currentTabNum + '" type="number" name="minimum" placeholder="Minimum"></div>');
-              $('#svz-schema-form' + currentTabNum).append('<div hidden class="additionaloption' + currentTabNum + '" class="form-group"  id="exclusive-min-div' + currentTabNum + '"><label><input id="exclusiveMinimum' + currentTabNum + '" name="exclusiveMinimum' + currentTabNum + '" type="checkbox" placeholder="Exclusive minimum">Check - num will be more than minimum</label></div>');
-              $('#svz-schema-form' + currentTabNum).append('<label class="additionaloption' + currentTabNum + '">Maximum</label><div class="additionaloption' + currentTabNum + '" class="form-group"><input id="maximum' + currentTabNum + '" type="number" name="maximum' + currentTabNum + '" placeholder="Maximum"></div>');
-              $('#svz-schema-form' + currentTabNum).append('<div hidden class="additionaloption' + currentTabNum + '" class="form-group" id="exclusive-max-div' + currentTabNum + '"><label><input id="exclusiveMaximum" name="exclusiveMaximum" type="checkbox" placeholder="Exclusive maximum">Check - num will be less than minimum</label></div>');
-              $('#svz-schema-form' + currentTabNum).append('<label class="additionaloption' + currentTabNum + '">Default</label><div class="additionaloption' + currentTabNum + '" class="form-group"><input name="default' + currentTabNum + '" id="svz-default' + currentTabNum + '" type="number" placeholder="Default"></div>');
-              $('#svz-schema-form' + currentTabNum).append('<div class="additionaloption' + currentTabNum + '"><label><input id="svz-readonly' + currentTabNum + '" name="readonly' + currentTabNum + '" type="checkbox">Readonly (check for true)</label></div>');
-              $('#svz-schema-form' + currentTabNum).append('<input class="btn btn-primary" id="svz-schema-form-submit' + currentTabNum + '" type="submit">');
-            }
-          }
-      }));
-    
-      $(document).on('change', '#minimum', function(){
-        $('#exclusive-min-div').toggle(!!$(this).val());
-      }); 
-      $(document).on('change', '#maximum', function(){
-        $('#exclusive-max-div').toggle(!!$(this).val());
-      }); 
-
-      window.GenerateTextForm = function(currentID){
-        if($('#svz-key-warning').is(':visible')){
-          return false;
-        }
-
-        currentID = currentID.replace( /^\D+/g, '');
-        var currentKey = $('#svz-tab' + currentID).html().split('</button> ')[1];
-        console.log(Object.keys(properties));
-        console.log(currentKey);
-
-        if ((Object.keys(properties) != 0) && (currentKey != $('#svz-key' + currentID).val()) && _.include(Object.keys(properties), currentKey)){
-          
-          Object.defineProperty(properties, $('#svz-key' + currentID).val(), Object.getOwnPropertyDescriptor(properties, currentKey));
-          delete properties[currentKey];
-        }
-
-        var typeFromSelect = $('#svz-selected-type' + currentID).val();
-        var typesFromSelectArray = [];
-
-        if (typeFromSelect){
-          $('#svz-for-form-form' + currentID).empty();
-
-          var schemaFormDataArray = $('#svz-schema-form' + currentID).serializeArray();
-          var currentProperties = {};
-          var toDeleteRequired = true;
-
-          jQuery.each( schemaFormDataArray, function( i, field ) {
-            if (field.name == 'title' + currentID && field.value != '') {
-              currentProperties['title'] = field.value;
-            } else if (field.name == 'description' + currentID && field.value != '') {
-              currentProperties['description'] = field.value;
-            } else if (field.name == 'type' + currentID && field.value != '') {
-              typesFromSelectArray.push(field.value);
-              currentProperties['type'] = typesFromSelectArray;
-            } else if (field.name == 'key' + currentID && field.value != '') {
-              $('#svz-tab' + currentID).html('<button onclick="RemoveTab(this.id);" class="close closeTab" type="button" id="svz-close-tab' + currentID + '">×</button> ' + field.value);
-              currentProperties['key'] = field.value;
-            } else if (field.name == 'required' + currentID) {
-              toDeleteRequired = false;
-              if (field.value && !(_.include(required, currentProperties['key']))) {
-                  required.push(currentProperties['key']);
+            if (currentKey){
+              delete properties[currentKey];
+              var jsonPreview = {
+                  'schema': {
+                    'type': 'object',
+                    'properties': properties
+                  }
+                };
+              if (Object.keys(properties) != 0) {
+                $('#svz-json-text').html(JSON.stringify(jsonPreview, undefined, 2));
+              } else{
+                $('#svz-json-text').html('');
               }
-            } else if (field.name == 'default' + currentID && field.value != ''){
-              currentProperties['default'] = field.value;
-            } else if (field.name == 'maxLength' + currentID && field.value != ''){
-              currentProperties['maxLength'] = field.value;
-            } else if (field.name == 'pattern' + currentID && field.value != ''){
-              currentProperties['pattern'] = field.value;
-            } else if (field.name == 'minLength' + currentID && field.value != ''){
-              currentProperties['minLength'] = field.value;
-            } else if (field.name == 'minimum' + currentID && field.value != ''){
-              currentProperties['minimum'] = field.value;
-            } else if (field.name == 'maximum' + currentID && field.value != ''){
-              currentProperties['maximum'] = field.value;
-            } else if (field.name == 'exclusiveMaximum' + currentID && field.value != ''){
-              currentProperties['exclusiveMaximum' && field.value != ''] = true;
-            } else if (field.name == 'exclusiveMinimum' + currentID && field.value != ''){
-              currentProperties['exclusiveMinimum' && field.value != ''] = true;
-            } else if (field.name == 'minItems' + currentID && field.value != ''){
-              currentProperties['minItems'] = field.value;
-            } else if (field.name == 'maxItems' + currentID && field.value != ''){
-              currentProperties['maxItems'] = field.value;
-            } else if (field.name == 'readonly' + currentID && field.value != ''){
-              currentProperties['readonly'] = true;
-            } else if (field.name == 'ordering' + currentID && field.value != ''){
-              currentProperties['ordering'] = field.value;
             }
+            
+            $('#svz-json-preview').text();
+            $('#svz-schema-form-tabs-container' + currentID).remove();
+            $('#svz-li' + currentID).remove(); 
+            $('#svz-main-tabs a:last').tab('show');
+            $('#svz-tabs-search').val($('#svz-dropdown-menu-items a:last').text().substring(1));
+            $('#svz-main-tabs').tabs('refresh');
+
+            if($('#svz-dropdown-menu-items li').length < 2){
+              $('#svz-tabs-dropdown-menu').remove();
+            }
+
+            //if main tabs (3 + 1(the dropdown)) are too few - get from the dropdown and append to main tabs
+            if($('#svz-main-tabs li').length - $('#svz-dropdown-menu-items li').length <= MAX_NUM_TABS_NAVBAR){
+              //$('#svz-dropdown-menu-items li').length is 1 when there is no tab in dropdown
+              if($('#svz-dropdown-menu-items li').length >= 1){
+                $('#svz-dropdown-menu-items li').each(function(idx, li) {
+                    if ($(li).attr('id') != 'svz-last-dropdown-option'){
+                      $(li).clone().removeClass().insertBefore('#svz-tabs-dropdown-menu');
+                      $(li).remove();
+
+                      if ($('#svz-main-tabs li').length - $('#svz-dropdown-menu-items li').length > MAX_NUM_TABS_NAVBAR || $('#svz-dropdown-menu-items li').length < 2){
+                        if($('#svz-dropdown-menu-items li').length < 2){
+                          $('#svz-tabs-dropdown-menu').remove();
+                        }
+                        return false;
+                      }
+                    }         
+                });
+              }
+            }
+          }
+
+          window.HandleSearchEvent = function() {
+            var filter = $('#svz-tabs-search').val().toUpperCase();
+            var listItems = $('.svz-dropdown-tabs');
+            
+            listItems.each(function(idx, li) {
+              if (_.include($(li).text().toUpperCase(), filter.toUpperCase())){
+                $(li).css('display', 'list-item');
+              } else{
+                $(li).css('display', 'none');
+              }
+            });
+          }
+
+          $('.svz-selected-type').multiselect({
+              buttonWidth: '206px',
+              nonSelectedText: 'Choose type',
+              numberDisplayed: 3
           });
 
-          var assignedEnum = $('#svz-enum' + currentID).tagit('assignedTags');
-          if (assignedEnum != '') {
-            currentProperties['enum'] = assignedEnum;
-          }
+          $('.svz-enum').tagit({
+              allowSpaces: true,
+              placeholderText: 'Enum'
+          });
+
+          $(document).on('click', '#svz-dropdown-menu-items li', function() {
+            var selectedItem = $(this).find('a').html().split('</button> ')[1];
+            $('#svz-tabs-search').val(selectedItem);
+          });
           
-          // _.grep(arr, function(item) {
-          //   return item.value !== '';
-          // });
-
-          if (toDeleteRequired){
-            required.splice(_.indexOf(required, currentProperties['key'], 1));
-          }
-          properties[currentProperties['key']] = currentProperties;
-
-          if(typeFromSelect == 'object'){
-            console.log('type is object will do this later!');
-          } else if(typeFromSelect == 'array'){
-            console.log('type is array gonna do this later!');
-          } else{
-            var jsonPreview = {
-              'schema': {
-                'type': 'object',
-                'properties': properties
+          $('#add-new-schema-form').click(function(){
+            CURRENT_SCHEMA_FORM_ID += 1;
+            if ($('#svz-main-tabs li').length - $('#svz-dropdown-menu-items li').length >= MAX_NUM_TABS_NAVBAR) {
+              if ($('#svz-tabs-dropdown-menu').attr('id') == undefined) {
+                $('<li id="svz-tabs-dropdown-menu" class="dropdown"><input class="dropdown-toggle" data-toggle="dropdown" id="svz-tabs-search" placeholder="search" type="text" onkeyup="HandleSearchEvent();">  <ul id="svz-dropdown-menu-items" class="dropdown-menu"> <li id="svz-last-dropdown-option" style="display:none"></li> </ul> </li>').insertBefore('#add-new-schema-form');
               }
-            };
-
-            if (required != ''){
-              jsonPreview['required'] = required;
+              $('#svz-dropdown-menu-items').append('<li id="svz-li' + CURRENT_SCHEMA_FORM_ID + '" class="svz-dropdown-tabs"><a data-target="#svz-schema-form-tabs-container' + CURRENT_SCHEMA_FORM_ID + '" id="svz-tab' + CURRENT_SCHEMA_FORM_ID + '" data-toggle="tab"><button onclick="RemoveTab(this.id);" class="close closeTab" type="button" id="svz-close-tab' + CURRENT_SCHEMA_FORM_ID + '">×</button> Schema' + CURRENT_SCHEMA_FORM_ID + '</a></li>');
             } else{
-              delete jsonPreview['required'];
+              $('<li  id="svz-li' + CURRENT_SCHEMA_FORM_ID + '"><a data-target="#svz-schema-form-tabs-container' + CURRENT_SCHEMA_FORM_ID + '" id="svz-tab' + CURRENT_SCHEMA_FORM_ID + '" data-toggle="tab"><button onclick="RemoveTab(this.id);" class="close closeTab" type="button" id="svz-close-tab' + CURRENT_SCHEMA_FORM_ID + '">×</button> Schema' + CURRENT_SCHEMA_FORM_ID + '</a></li>').insertBefore('#add-new-schema-form');
             }
-          }
-          $('#svz-json-text-header').hide();
-          $('#svz-json-text').html(JSON.stringify(jsonPreview, undefined, 2));
+            
+            var newSchemaForm = '<div id="svz-schema-form-tabs-container' + CURRENT_SCHEMA_FORM_ID + '" class="tab-pane active"> <div style="float:left; width:45%; margin-left: 50px; margin-top: 20px;"> <ul class="nav nav-tabs" id="svz-schema-form-tabs' + CURRENT_SCHEMA_FORM_ID + '"> <li class="active"><a data-target="#svz-schema-tab" data-toggle="tab">Schema</a></li> <li><a data-target="#svz-form-tab" data-toggle="tab">Form</a></li> </ul> <div class="tab-content"> <div class="tab-pane active" id="svz-schema-tab' + CURRENT_SCHEMA_FORM_ID + '"> <h2>For schema:</h2> <form id="svz-schema-form' + CURRENT_SCHEMA_FORM_ID + '" action="javascript:void(0);" onsubmit="GenerateTextForm(this.id);"> <label>Type</label> <div> <select class="svz-selected-type" id="svz-selected-type' + CURRENT_SCHEMA_FORM_ID + '" name="type' + CURRENT_SCHEMA_FORM_ID + '" required multiple> <option label="object" value="object">object</option> <option label="array" value="array">array</option> <option label="number" value="number">number</option> <option label="integer" value="integer">integer</option> <option label="string" value="string">string</option> <option label="boolean" value="boolean">boolean</option> <option label="null" value="null">null</option> </select> </div><label>Key <font id="svz-key-warning' + CURRENT_SCHEMA_FORM_ID + '" color="red" hidden>(KEY ALREADY EXISTS)</font></label> <div><input id="svz-key' + CURRENT_SCHEMA_FORM_ID + '" class="svz-key" placeholder="Key (Unique identifier)" type="text" name="key' + CURRENT_SCHEMA_FORM_ID + '" required></div><label>Title</label> <div><input placeholder="Title" type="text" name="title' + CURRENT_SCHEMA_FORM_ID + '"></div><label>Ordering</label> <div><input placeholder="Ordering" type="number" name="ordering' + CURRENT_SCHEMA_FORM_ID + '"></div> <label>Description</label> <div><input class="longtext" id="svz-description' + CURRENT_SCHEMA_FORM_ID + '" placeholder="Description" type="text" name="description' + CURRENT_SCHEMA_FORM_ID + '"></div> <div><label><input id="svz-required' + CURRENT_SCHEMA_FORM_ID + '" type="checkbox" name="required' + CURRENT_SCHEMA_FORM_ID + '">Required (check for true)</label></div><label>Enum</label><ul id="svz-enum' + CURRENT_SCHEMA_FORM_ID + '" name="enum' + CURRENT_SCHEMA_FORM_ID + '" class="svz-enum"></ul><input class="btn btn-primary" id="svz-schema-form-submit' + CURRENT_SCHEMA_FORM_ID + '" type="submit"> </form> </div> <div class="tab-pane" id="svz-form-tab' + CURRENT_SCHEMA_FORM_ID + '"> <h2 id="svz-for-form' + CURRENT_SCHEMA_FORM_ID + '">For form:</h2> <form id="svz-for-form-form' + CURRENT_SCHEMA_FORM_ID + '"></form> </div> </div> </div>';
+            
+            $('#tab-content').append(newSchemaForm);
+             
+            $('.svz-selected-type').multiselect({
+                buttonWidth: '206px',
+                nonSelectedText: 'Choose type',
+                numberDisplayed: 3
+            });
+            $('.svz-enum').tagit({
+                allowSpaces: true,
+                placeholderText: 'Enum'
+            });
 
-          $('#svz-for-form-form').jsonForm({
-            schema: {
-              title: {
-                type: 'string',
-                title: 'Title'
-              },
-              description: {
-                type: 'string',
-                title: 'Description'
-              },
-              type: {
-                type: 'string',
-                title: 'Type'
-              }
-            },
-            onSubmit: function (errors, values) {
-              if (errors) {
-                console.log(errors);
-                $('#res').html('<p>Fix your mistakes!</p>');
-              } else {
-                console.log('print form, will do it later!');
-              }
+            $('#svz-main-tabs a:last').tab('show');
+            $('#svz-tabs-search').val($('#svz-main-tabs a:last').text().substring(1));
+            $('#svz-main-tabs').tabs('refresh');
+          });
+
+          var required = [];
+          var properties = {};
+
+          $(document).on('keyup', '.svz-key', $.debounce(TIMEOUT_DEBOUNCE, function() {
+            var currentID = $(this).attr('id').replace( /^\D+/g, '');
+
+            if (_.include(Object.keys(properties), $(this).val()) && $(this).val() != $('#svz-tab' + currentID).html().split('</button> ')[1]){
+              $('#svz-schema-form-submit' + currentID).prop('disabled', true);
+              $('#svz-key-warning' + currentID).show();
+              $('#svz-key' + currentID).css('border-color', '#ff0000');
+            } else{
+              $('#svz-schema-form-submit' + currentID).prop('disabled', false);
+              $('#svz-key-warning' + currentID).hide();
+              $('#svz-key' + currentID).css('border-color', '#cccccc');
             }
+          }));
+
+          $(document).on('change', '.svz-selected-type', $.debounce(TIMEOUT_DEBOUNCE, function() {
+              var selectedType = $(this).val();
+              var currentTabNum = $(this).attr('name').replace( /^\D+/g, '');
+              $('.additionaloption' + currentTabNum).remove();
+
+              if (selectedType){
+                if ((_.include(selectedType, 'number') || _.include(selectedType, 'integer')) && _.include(selectedType, 'string')) {
+                $('#svz-schema-form-submit' + currentTabNum).remove();
+                $('#svz-schema-form' + currentTabNum).append('<label class="additionaloption' + currentTabNum + '">Maximum length</label><div class="additionaloption' + currentTabNum + '" class="form-group"><input id="svz-max-length' + currentTabNum + '" type="number" name="maxLength' + currentTabNum + '" placeholder="Maximum length"></div>');
+                $('#svz-schema-form' + currentTabNum).append('<label class="additionaloption' + currentTabNum + '">Minimum length</label><div class="additionaloption' + currentTabNum + '" class="form-group"><input id="svz-min-length' + currentTabNum + '" type="number" name="minLength' + currentTabNum + '" placeholder="Minimum length"></div>');
+                $('#svz-schema-form' + currentTabNum).append('<label class="additionaloption' + currentTabNum + '">Minimum</label><div class="additionaloption' + currentTabNum + '" class="form-group"><input id="minimum' + currentTabNum + '" type="number" name="minimum' + currentTabNum + '" placeholder="Minimum"></div>');
+                $('#svz-schema-form' + currentTabNum).append('<div hidden class="additionaloption' + currentTabNum + '" class="form-group"  id="exclusive-min-div' + currentTabNum + '"><label><input id="exclusiveMinimum' + currentTabNum + '" name="exclusiveMinimum' + currentTabNum + '" type="checkbox" placeholder="Exclusive minimum">Check - num will be more than minimum</label></div>');
+                $('#svz-schema-form' + currentTabNum).append('<label class="additionaloption' + currentTabNum + '">Maximum</label><div class="additionaloption' + currentTabNum + '" class="form-group"><input id="maximum' + currentTabNum + '" type="number" name="maximum' + currentTabNum + '" placeholder="Maximum"></div>');
+                $('#svz-schema-form' + currentTabNum).append('<div hidden class="additionaloption' + currentTabNum + '" class="form-group" id="exclusive-max-div' + currentTabNum + '"><label><input id="exclusiveMaximum' + currentTabNum + '" name="exclusiveMaximum' + currentTabNum + '" type="checkbox" placeholder="Exclusive maximum">Check - num will be less than minimum</label></div>');
+                $('#svz-schema-form' + currentTabNum).append('<label class="additionaloption' + currentTabNum + '">Default</label><div class="additionaloption' + currentTabNum + '" class="form-group"><input name="default' + currentTabNum + '" id="svz-default' + currentTabNum + '" type="number" placeholder="Default"></div>');
+                $('#svz-schema-form' + currentTabNum).append('<div class="additionaloption' + currentTabNum + '"><label><input id="svz-readonly' + currentTabNum + '" name="readonly' + currentTabNum + '" type="checkbox">Readonly (check for true)</label></div>');
+                $('#svz-schema-form' + currentTabNum).append('<div class="additionaloption' + currentTabNum + '" class="form-group"><input id="svz-pattern' + currentTabNum + '"  name="pattern' + currentTabNum + '" placeholder="Pattern (Regex)"></div>');
+                $('#svz-schema-form' + currentTabNum).append('<input class="btn btn-primary" id="svz-schema-form-submit' + currentTabNum + '" type="submit">');
+                } else if (_.include(selectedType, 'string')){
+                  $('#svz-schema-form-submit' + currentTabNum).remove();
+                  $('#svz-schema-form' + currentTabNum).append('<label class="additionaloption' + currentTabNum + '">Maximum length</label><div class="additionaloption' + currentTabNum + '" class="form-group"><input id="svz-max-length' + currentTabNum + '" type="number" name="maxLength' + currentTabNum + '" placeholder="Maximum length"></div>');
+                  $('#svz-schema-form' + currentTabNum).append('<label class="additionaloption' + currentTabNum + '">Minimum length</label><div class="additionaloption' + currentTabNum + '" class="form-group"><input id="svz-min-length' + currentTabNum + '" type="number" name="minLength' + currentTabNum + '" placeholder="Minimum length"></div>'); 
+                  $('#svz-schema-form' + currentTabNum).append('<label class="additionaloption' + currentTabNum + '">Default</label><div class="additionaloption' + currentTabNum + '" class="form-group"><input name="default' + currentTabNum + '" id="svz-default' + currentTabNum + '" type="text" placeholder="Default"></div>');
+                  $('#svz-schema-form' + currentTabNum).append('<div class="additionaloption' + currentTabNum + '"><label><input id="svz-readonly' + currentTabNum + '" name="readonly' + currentTabNum + '" type="checkbox">Readonly (check for true)</label></div>');
+                  $('#svz-schema-form' + currentTabNum).append('<div class="additionaloption' + currentTabNum + '" class="form-group"><input id="svz-pattern' + currentTabNum + '"  name="pattern' + currentTabNum + '" placeholder="Pattern (Regex)"></div>');
+                  $('#svz-schema-form' + currentTabNum).append('<input class="btn btn-primary" id="svz-schema-form-submit' + currentTabNum + '" type="submit">');
+                } else if (_.include(selectedType, 'number') || _.include(selectedType, 'integer')){
+                  $('#svz-schema-form-submit' + currentTabNum).remove();
+                  $('#svz-schema-form' + currentTabNum).append('<label class="additionaloption' + currentTabNum + '">Minimum</label><div class="additionaloption' + currentTabNum + '" class="form-group"><input id="minimum' + currentTabNum + '" type="number" name="minimum" placeholder="Minimum"></div>');
+                  $('#svz-schema-form' + currentTabNum).append('<div hidden class="additionaloption' + currentTabNum + '" class="form-group"  id="exclusive-min-div' + currentTabNum + '"><label><input id="exclusiveMinimum' + currentTabNum + '" name="exclusiveMinimum' + currentTabNum + '" type="checkbox" placeholder="Exclusive minimum">Check - num will be more than minimum</label></div>');
+                  $('#svz-schema-form' + currentTabNum).append('<label class="additionaloption' + currentTabNum + '">Maximum</label><div class="additionaloption' + currentTabNum + '" class="form-group"><input id="maximum' + currentTabNum + '" type="number" name="maximum' + currentTabNum + '" placeholder="Maximum"></div>');
+                  $('#svz-schema-form' + currentTabNum).append('<div hidden class="additionaloption' + currentTabNum + '" class="form-group" id="exclusive-max-div' + currentTabNum + '"><label><input id="exclusiveMaximum" name="exclusiveMaximum" type="checkbox" placeholder="Exclusive maximum">Check - num will be less than minimum</label></div>');
+                  $('#svz-schema-form' + currentTabNum).append('<label class="additionaloption' + currentTabNum + '">Default</label><div class="additionaloption' + currentTabNum + '" class="form-group"><input name="default' + currentTabNum + '" id="svz-default' + currentTabNum + '" type="number" placeholder="Default"></div>');
+                  $('#svz-schema-form' + currentTabNum).append('<div class="additionaloption' + currentTabNum + '"><label><input id="svz-readonly' + currentTabNum + '" name="readonly' + currentTabNum + '" type="checkbox">Readonly (check for true)</label></div>');
+                  $('#svz-schema-form' + currentTabNum).append('<input class="btn btn-primary" id="svz-schema-form-submit' + currentTabNum + '" type="submit">');
+                }
+              }
+          }));
+        
+          $(document).on('change', '#minimum', function(){
+            $('#exclusive-min-div').toggle(!!$(this).val());
+          }); 
+          $(document).on('change', '#maximum', function(){
+            $('#exclusive-max-div').toggle(!!$(this).val());
           }); 
 
-        } else{
-            $('#svz-for-form-form').hide();
-            $('#svz-minimize-schema-button').click();
-        }
-      } 
-    });
-    
-  })(jQuery);
+          window.GenerateTextForm = function(currentID){
+            if($('#svz-key-warning').is(':visible')){
+              return false;
+            }
 
-      
+            currentID = currentID.replace( /^\D+/g, '');
+            var currentKey = $('#svz-tab' + currentID).html().split('</button> ')[1];
+
+            if ((Object.keys(properties) != 0) && (currentKey != $('#svz-key' + currentID).val()) && _.include(Object.keys(properties), currentKey)){     
+              Object.defineProperty(properties, $('#svz-key' + currentID).val(), Object.getOwnPropertyDescriptor(properties, currentKey));
+              delete properties[currentKey];
+            }
+
+            var typeFromSelect = $('#svz-selected-type' + currentID).val();
+            var typesFromSelectArray = [];
+
+            if (typeFromSelect){
+              $('#svz-for-form-form' + currentID).empty();
+
+              var schemaFormDataArray = $('#svz-schema-form' + currentID).serializeArray();
+              var currentProperties = {};
+              var toDeleteRequired = true;
+
+              jQuery.each( schemaFormDataArray, function( i, field ) {
+                if (field.name == 'title' + currentID && field.value != '') {
+                  currentProperties['title'] = field.value;
+                } else if (field.name == 'description' + currentID && field.value != '') {
+                  currentProperties['description'] = field.value;
+                } else if (field.name == 'type' + currentID && field.value != '') {
+                  typesFromSelectArray.push(field.value);
+                  currentProperties['type'] = typesFromSelectArray;
+                } else if (field.name == 'key' + currentID && field.value != '') {
+                  $('#svz-tab' + currentID).html('<button onclick="RemoveTab(this.id);" class="close closeTab" type="button" id="svz-close-tab' + currentID + '">×</button> ' + field.value);
+                  currentProperties['key'] = field.value;
+                } else if (field.name == 'required' + currentID) {
+                  toDeleteRequired = false;
+                  if (field.value && !(_.include(required, currentProperties['key']))) {
+                      required.push(currentProperties['key']);
+                  }
+                } else if (field.name == 'default' + currentID && field.value != ''){
+                  currentProperties['default'] = field.value;
+                } else if (field.name == 'maxLength' + currentID && field.value != ''){
+                  currentProperties['maxLength'] = field.value;
+                } else if (field.name == 'pattern' + currentID && field.value != ''){
+                  currentProperties['pattern'] = field.value;
+                } else if (field.name == 'minLength' + currentID && field.value != ''){
+                  currentProperties['minLength'] = field.value;
+                } else if (field.name == 'minimum' + currentID && field.value != ''){
+                  currentProperties['minimum'] = field.value;
+                } else if (field.name == 'maximum' + currentID && field.value != ''){
+                  currentProperties['maximum'] = field.value;
+                } else if (field.name == 'exclusiveMaximum' + currentID && field.value != ''){
+                  currentProperties['exclusiveMaximum' && field.value != ''] = true;
+                } else if (field.name == 'exclusiveMinimum' + currentID && field.value != ''){
+                  currentProperties['exclusiveMinimum' && field.value != ''] = true;
+                } else if (field.name == 'minItems' + currentID && field.value != ''){
+                  currentProperties['minItems'] = field.value;
+                } else if (field.name == 'maxItems' + currentID && field.value != ''){
+                  currentProperties['maxItems'] = field.value;
+                } else if (field.name == 'readonly' + currentID && field.value != ''){
+                  currentProperties['readonly'] = true;
+                } else if (field.name == 'ordering' + currentID && field.value != ''){
+                  currentProperties['ordering'] = field.value;
+                }
+              });
+
+              var assignedEnum = $('#svz-enum' + currentID).tagit('assignedTags');
+              if (assignedEnum != '') {
+                currentProperties['enum'] = assignedEnum;
+              }
+              
+              // _.grep(arr, function(item) {
+              //   return item.value !== '';
+              // });
+
+              if (toDeleteRequired){
+                required.splice(_.indexOf(required, currentProperties['key'], 1));
+              }
+              properties[currentProperties['key']] = currentProperties;
+
+              if(typeFromSelect == 'object'){
+                console.log('type is object will do this later!');
+              } else if(typeFromSelect == 'array'){
+                console.log('type is array gonna do this later!');
+              } else{
+                var jsonPreview = {
+                  'schema': {
+                    'type': 'object',
+                    'properties': properties
+                  }
+                };
+
+                if (required != ''){
+                  jsonPreview['required'] = required;
+                } else{
+                  delete jsonPreview['required'];
+                }
+              }
+              $('#svz-json-text-header').hide();
+              $('#svz-json-text').html(JSON.stringify(jsonPreview, undefined, 2));
+
+              $('#svz-for-form-form').jsonForm({
+                schema: {
+                  title: {
+                    type: 'string',
+                    title: 'Title'
+                  },
+                  description: {
+                    type: 'string',
+                    title: 'Description'
+                  },
+                  type: {
+                    type: 'string',
+                    title: 'Type'
+                  }
+                },
+                onSubmit: function (errors, values) {
+                  if (errors) {
+                    console.log(errors);
+                    $('#res').html('<p>Fix your mistakes!</p>');
+                  } else {
+                    console.log('print form, will do it later!');
+                  }
+                }
+              }); 
+
+            } else{
+                $('#svz-for-form-form').hide();
+                $('#svz-minimize-schema-button').click();
+            }
+          } 
+        });
+    })(jQuery);
+   
     </script>
   </body>
 </html>
