@@ -101,18 +101,14 @@
 
         //if main tabs (3 + 1(the dropdown)) are too few - get from the dropdown and append to main tabs
         if($('#svz-main-tabs li').length - $('#svz-dropdown-menu-items li').length < 4 ){
-          console.log('should clone and change order!');
           //$('#svz-dropdown-menu-items li').length is 1 when there is no tab in dropdown
           if($('#svz-dropdown-menu-items li').length > 1){
             $('#svz-dropdown-menu-items li').each(function(idx, li) {
-                console.log($(li).attr('id'));
                 if ($(li).attr('id') != 'svz-last-dropdown-option'){
-                  $(li).clone().appendTo('#svz-main-tabs');
+                  $(li).clone().removeClass().insertBefore('#svz-tabs-dropdown-menu');
                   $(li).remove();
                   if ($('#svz-main-tabs li').length - $('#svz-dropdown-menu-items li').length >= 4 || $('#svz-dropdown-menu-items li').length < 2){
-                    console.log('yeah');
                     if($('#svz-dropdown-menu-items li').length < 2){
-                      console.log('removing the search');
                       $('#svz-tabs-dropdown-menu').remove();
                     }
                     return false;
