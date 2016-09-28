@@ -21,9 +21,12 @@
         height:33px;
         width: 130px;
       }
+      #svz-tabs-dropdown-menu{
+        margin-right: 5px;
+      }
       #svz-main-tabs li.dropdown.active{
-        border: 1px solid #ddd;
-        border-bottom-color: transparent;
+        border-left: 1px solid #ddd;
+        border-right: 1px solid #ddd;
       }
     </style>
 
@@ -162,16 +165,13 @@
             $('#svz-main-tabs').tabs('refresh');
 
             if($('#svz-dropdown-menu-items li').length < 2){
-              console.log('1');
               $('#svz-tabs-dropdown-menu').remove();
             }
 
             //if main tabs (3 + 1(the dropdown)) are too few - get from the dropdown and append to main tabs
             if($('#svz-main-tabs li').length - $('#svz-dropdown-menu-items li').length <= MAX_NUM_TABS_NAVBAR){
-              console.log('2');
               //$('#svz-dropdown-menu-items li').length is 1 when there is no tab in dropdown
               if($('#svz-dropdown-menu-items li').length >= 1){
-                console.log('3');
                 $('#svz-dropdown-menu-items li').each(function(idx, li) {
                     if ($(li).attr('id') != 'svz-last-dropdown-option'){
                       $(li).clone().removeClass().insertBefore('#svz-tabs-dropdown-menu');
@@ -381,13 +381,10 @@
                   if (field.value && !(_.include(required, chosenKey))) {
                       required.push(chosenKey);
                   }
-                } else if(field.name.replace(/[0-9]/g, '') == 'tags') {
-                  console.log(field.value);
                 } else{
                   if (field.name.replace(/[0-9]/g, '') != 'tags'){
                     currentProperties[field.name.replace(/[0-9]/g, '')] = field.value;
                   }
-                  
                 }
               });
                 
@@ -405,7 +402,7 @@
               if(typeFromSelect == 'object'){
                 console.log('type is object will do this later!');
               } else if(typeFromSelect == 'array'){
-                properties[chosenKey]['items'] = {'test':'asd'};
+                properties[chosenKey]['items'] = {};
                 var jsonPreview = {
                   'schema': {
                     'type': 'object',
