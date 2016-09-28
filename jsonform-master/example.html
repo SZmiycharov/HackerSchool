@@ -21,6 +21,10 @@
         height:33px;
         width: 130px;
       }
+      #svz-main-tabs li.dropdown.active{
+        border: 1px solid #ddd;
+        border-bottom-color: transparent;
+      }
     </style>
 
 
@@ -126,12 +130,9 @@
             } catch(err){
               console.log(err);
             }
-            console.log(currentKey);
             if (currentKey){
               delete properties[currentKey];
-              console.log(required);
               required.splice(_.indexOf(required, currentKey), 1);
-              console.log(required);
 
               var jsonPreview = {
                   'schema': {
@@ -273,6 +274,7 @@
                 if ((_.include(selectedType, 'number') || _.include(selectedType, 'integer')) && _.include(selectedType, 'string')) {
                 $('#svz-schema-form-submit' + currentTabNum).remove();
                 $('#svz-enum' + currentTabNum).show();
+                $('#svz-enum').prop('disabled', false);
                 $('#svz-label-for-enum' + currentTabNum).show();
                 $('#svz-schema-form' + currentTabNum).append('<label class="additionaloption' + currentTabNum + '">Maximum length</label><div class="additionaloption' + currentTabNum + '" class="form-group"><input id="svz-max-length' + currentTabNum + '" type="number" name="maxLength' + currentTabNum + '" placeholder="Maximum length"></div>');
                 $('#svz-schema-form' + currentTabNum).append('<label class="additionaloption' + currentTabNum + '">Minimum length</label><div class="additionaloption' + currentTabNum + '" class="form-group"><input id="svz-min-length' + currentTabNum + '" type="number" name="minLength' + currentTabNum + '" placeholder="Minimum length"></div>');
@@ -287,6 +289,7 @@
                 } else if (_.include(selectedType, 'string')){
                   $('#svz-schema-form-submit' + currentTabNum).remove();
                   $('#svz-enum' + currentTabNum).show();
+                  $('#svz-enum').prop('disabled', false);
                   $('#svz-label-for-enum' + currentTabNum).show();
                   $('#svz-schema-form' + currentTabNum).append('<label class="additionaloption' + currentTabNum + '">Maximum length</label><div class="additionaloption' + currentTabNum + '" class="form-group"><input id="svz-max-length' + currentTabNum + '" type="number" name="maxLength' + currentTabNum + '" placeholder="Maximum length"></div>');
                   $('#svz-schema-form' + currentTabNum).append('<label class="additionaloption' + currentTabNum + '">Minimum length</label><div class="additionaloption' + currentTabNum + '" class="form-group"><input id="svz-min-length' + currentTabNum + '" type="number" name="minLength' + currentTabNum + '" placeholder="Minimum length"></div>'); 
@@ -297,6 +300,7 @@
                 } else if (_.include(selectedType, 'number') || _.include(selectedType, 'integer')){
                   $('#svz-schema-form-submit' + currentTabNum).remove();
                   $('#svz-enum' + currentTabNum).show();
+                  $('#svz-enum').prop('disabled', false);
                   $('#svz-label-for-enum' + currentTabNum).show();
                   $('#svz-schema-form' + currentTabNum).append('<label class="additionaloption' + currentTabNum + '">Minimum</label><div class="additionaloption' + currentTabNum + '" class="form-group"><input id="minimum' + currentTabNum + '" type="number" name="minimum" placeholder="Minimum"></div>');
                   $('#svz-schema-form' + currentTabNum).append('<div hidden class="additionaloption' + currentTabNum + '" class="form-group"  id="exclusive-min-div' + currentTabNum + '"><label style="display: flex;"><input id="exclusiveMinimum' + currentTabNum + '" name="exclusiveMinimum' + currentTabNum + '" type="checkbox" placeholder="Exclusive minimum">Check - num will be more than minimum</label></div>');
@@ -306,21 +310,14 @@
                   $('#svz-schema-form' + currentTabNum).append('<div class="additionaloption' + currentTabNum + '"><label style="display: flex;"><input id="svz-readonly' + currentTabNum + '" name="readonly' + currentTabNum + '" type="checkbox">Readonly (check for true)</label></div>');
                   $('#svz-schema-form' + currentTabNum).append('<input class="btn btn-primary" id="svz-schema-form-submit' + currentTabNum + '" type="submit">');
                 } else if (_.include(selectedType, 'array')){
-
-
-
-
                   $('#svz-enum' + currentTabNum).hide();
+                  $('.tagit-choice').remove();
                   $('#svz-label-for-enum' + currentTabNum).hide();
                   $('#svz-schema-form-submit' + currentTabNum).remove();
                   $('#svz-schema-form' + currentTabNum).append('<label class="additionaloption' + currentTabNum + '">Minimum items</label><div class="additionaloption' + currentTabNum + '" class="form-group"><input id="svz-min-items' + currentTabNum + '" type="number" name="minItems' + currentTabNum + '" placeholder="Minimum items"></div>');
                   $('#svz-schema-form' + currentTabNum).append('<label class="additionaloption' + currentTabNum + '">Maximum items</label><div class="additionaloption' + currentTabNum + '" class="form-group"><input id="svz-max-items' + currentTabNum + '" type="number" name="maxItems' + currentTabNum + '" placeholder="Maximum items"></div>');
                   $('#svz-schema-form' + currentTabNum).append('<div class="additionaloption' + currentTabNum + '"><label style="display: flex;"><input id="svz-unique-items' + currentTabNum + '" name="uniqueItems' + currentTabNum + '" type="checkbox">Unique items (check for true)</label></div>');
                   $('#svz-schema-form' + currentTabNum).append('<input class="btn btn-primary" id="svz-schema-form-submit' + currentTabNum + '" type="submit">');
-                
-
-
-
                 }
               }
           }));
@@ -339,7 +336,7 @@
 
             currentID = currentID.replace( /^\D+/g, '');
 
-            if (_.include(Object.keys(properties), $('#svz-key' + currentID).val())){
+            if (_.include(Object.keys(properties), $('#svz-key' + currentID).val()) && $('#svz-key' + currentID).val() != $('#svz-tab' + currentID).html().split('</button> ')[1]){
               $('#svz-key-warning' + currentID).show();
               $('#svz-key' + currentID).css('border-color', '#ff0000');
               return false;
@@ -384,6 +381,8 @@
                   if (field.value && !(_.include(required, chosenKey))) {
                       required.push(chosenKey);
                   }
+                } else if(field.name.replace(/[0-9]/g, '') == 'tags') {
+                  console.log(field.value);
                 } else{
                   if (field.name.replace(/[0-9]/g, '') != 'tags'){
                     currentProperties[field.name.replace(/[0-9]/g, '')] = field.value;
