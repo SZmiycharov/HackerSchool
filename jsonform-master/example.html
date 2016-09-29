@@ -3,101 +3,74 @@
   <head>
     <meta charset="utf-8" />
     <title>JSONCreator</title>
-    <link rel="stylesheet" style="text/css" href="deps/opt/bootstrap.css" />
 
     <style>
-      .svzRequiredLabel {
-        font-weight: 900;
+      .container {
+          min-height: 1000px;
+          min-width: 700px;
+          background-color: #7DA5A6;
+          border: 1px solid #718D8E;
+          border-radius: 4px;
+          display: inline-block;
+          padding: 10px;
       }
-      .svzRequiredLabel:after {
-        color: #e32;
-        content: '*';
-        display:inline;
+      .container:hover{
+          background-color: #4d6869;
       }
-      .svzKeyWarning {
-        font-style: oblique;
-      } 
-      #svz-tabs-search{
-        height:33px;
-        width: 130px;
+
+      .container .container {
+          min-height: 900px;
+          min-width: 600px;
+
+          background-color: #97a8a9;
+          border: 3px solid #BED5D6;
+          display: block;
+          margin-bottom: 5px;
       }
-      #svz-tabs-dropdown-menu{
-        margin-right: 5px;
+      .container .container:hover {
+        background-color: #616a6b;
       }
-      #svz-main-tabs li.dropdown.active{
-        border-left: 1px solid #ddd;
-        border-right: 1px solid #ddd;
+
+      .item {
+          background-color: #6065C9;
+          border: 2px solid #353871;
+          margin-bottom: 5px;
+          border-radius: 2px;
+          padding: 15px 50px;
+      }
+      .item:hover{
+        background-color: #4249d6;
       }
     </style>
-
 
   </head>
 
   <body>
-    <div id="tabs">
-      <ul class="nav nav-tabs" id="svz-main-tabs">
-          <li id="svz-li"><a data-target="#svz-schema-form-tabs-container" id="svz-tab" data-toggle="tab"><button onclick="RemoveTab(this.id);" class="close closeTab" type="button" id="svz-close-tab">×</button> Schema1</a></li>
-          <button type="button" class="btn btn-primary" id="add-new-schema-form"><span class="glyphicon glyphicon-plus"></span></button>
-      </ul>
-    </div>
-    
-    <div class="tab-content" id="tab-content">
-      <div id="svz-schema-form-tabs-container" class="tab-pane active">
-          <div id="svz-left-container" style="float:left; width:45%; margin-left: 50px; margin-top: 20px;"> 
-            <ul class="nav nav-tabs" id="svz-schema-form-tabs">
-              <li class="active"><a data-target="#svz-schema-tab" data-toggle="tab">Schema</a></li>
-              <li><a data-target="#svz-form-tab" data-toggle="tab">Form</a></li>
-            </ul>
-            <div class="tab-content">
-              <div class="tab-pane active" id="svz-schema-tab">
-                <h2>For schema:</h2>
-                <form id="svz-schema-form" action="javascript:void(0);" onsubmit="GenerateTextForm(this.id);">
-                    <label class="svzRequiredLabel">Type</label>
-                    <div>
-                      <select class="svz-selected-type" id="svz-selected-type" name="type" required multiple>
-                        <option label="object" value="object">object</option>
-                        <option label="array" value="array">array</option>
-                        <option label="number" value="number">number</option> 
-                        <option label="integer" value="integer">integer</option>
-                        <option label="string" value="string">string</option>  
-                        <option label="boolean" value="boolean">boolean</option> 
-                        <option label="null" value="null">null</option>
-                      </select>
-                    </div>
-                    <label class="svzRequiredLabel">Key<font class="svzKeyWarning" id="svz-key-warning" color="red" hidden> (key already exists)</font></label>
-                    <div><input id="svz-key" class="svz-key" placeholder="Key (Unique identifier)" type="text" name="key" required></div>
-                    <label>Title</label>
-                    <div><input placeholder="Title" type="text" name="title"></div>
-                    <label>Ordering</label>
-                    <div><input placeholder="Ordering" type="number" name="ordering"></div>
-                    <label>Description</label>
-                    <div><input class="longtext" id="svz-description" placeholder="Description" type="text" name="description"></div>
-                    <div><label style="display: flex;"><input id="svz-required" type="checkbox" name="required">Required (check for true)</label></div>
-                    <label id="svz-label-for-enum">Enum</label>
-                    <ul id="svz-enum" name="enum" class="svz-enum"></ul>
-                    <input class="btn btn-primary" id="svz-schema-form-submit" type="submit">
-                </form>
+    <div style="float:left; width:45%; margin-left: 50px; margin-top: 20px;">
+      <div class="container">
+          <div class="item"></div>
+          <div class="container-wrapper">
+              <div class="container">
+                  <div class="item"></div>
+                  <div class="item"></div>
+                  <div class="item"></div>
               </div>
-              <div class="tab-pane" id="svz-form-tab">
-                <h2 id="svz-for-form">For form:</h2>
-                <form id="svz-for-form-form"></form>
-              </div>
-            </div> 
-          </div>   
+          </div>
+          <div class="item"></div>
       </div>
+    </div>
 
-      <div id="svz-json-preview" style="float:right; width:45%; margin-right: 30px; margin-top: 20px;">
-          <h3>Preview appears here:</h3>
-          <p id="svz-json-text-header">When you choose options json will appear here! :)</p>
-          <pre id="svz-json-text"></pre>
-      </div>
+    <div id="svz-json-preview" style="float:right; width:45%; margin-right: 30px; margin-top: 20px;">
+        <h3>Preview appears here:</h3>
+        <p id="svz-json-text-header">When you choose options json will appear here! :)</p>
+        <pre id="svz-json-text">{this is json surely :D}</pre>
     </div>
+
 
     <script src="deps/jquery.min.js"></script>
     <script type="text/javascript" src="deps/bootstrap.min.js"></script>
     <script type="text/javascript" src="deps/bootstrap-multiselect.js"></script>
     <link rel="stylesheet" href="deps/bootstrap-multiselect.css" type="text/css"/>
-    <link rel="stylesheet" href="http://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css">
     <link rel="stylesheet" type="text/css" href="http://ajax.googleapis.com/ajax/libs/jqueryui/1/themes/flick/jquery-ui.css">
     <link href="deps/jquery.tagit.css" rel="stylesheet" type="text/css">
     <script type="text/javascript" src="deps/underscore.js"></script>
@@ -106,13 +79,17 @@
     <script src="deps/jquery.ba-throttle-debounce.js"></script>
     <script src="deps/lodash.min.js"></script>
     <script type="text/javascript" src="deps/jquery-ui.min.js"></script>
+    <script type="text/javascript" src="deps/jquery-ui.js"></script>
     <script src="deps/tag-it.js" type="text/javascript" charset="utf-8"></script>
     <script type="text/javascript">
 
     (function svzMainFunction ($) {
       'use strict';
         $( document ).ready(function() {
-
+          $('.container').sortable({
+              connectWith: '.container'
+          });
+          
           var TIMEOUT_DEBOUNCE = 500;
           var CURRENT_SCHEMA_FORM_ID = 1;
           var MAX_NUM_TABS_NAVBAR = 3;
