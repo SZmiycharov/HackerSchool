@@ -251,19 +251,20 @@
           var required = [];
           var properties = {};
 
-          $(document).on('keyup', '.svz-key', $.debounce(TIMEOUT_DEBOUNCE, function() {
-            var currentID = $(this).attr('id').replace( /^\D+/g, '');
+           $(document).on('keyup', '.svz-key', $.debounce(TIMEOUT_DEBOUNCE, function() {
+             console.log('keyup on key');
+             var currentID = $(this).attr('id').replace( /^\D+/g, '');
 
-            if (_.include(Object.keys(properties), $(this).val()) && $(this).val() != $('#svz-tab' + currentID).html().split('</button> ')[1]){
-              $('#svz-schema-form-submit' + currentID).prop('disabled', true);
-              $('#svz-key-warning' + currentID).show();
-              $('#svz-key' + currentID).css('border-color', '#ff0000');
-            } else{
-              $('#svz-schema-form-submit' + currentID).prop('disabled', false);
-              $('#svz-key-warning' + currentID).hide();
-              $('#svz-key' + currentID).css('border-color', '#cccccc');
-            }
-          }));
+             if (_.include(Object.keys(properties), $(this).val()) && $(this).val() != $('#svz-tab' + currentID).html().split('</button> ')[1]){
+               $('#svz-schema-form-submit' + currentID).prop('disabled', true);
+                $('#svz-key-warning' + currentID).show();
+                $('#svz-key' + currentID).css('border-color', '#ff0000');
+              } else{
+                $('#svz-schema-form-submit' + currentID).prop('disabled', false);
+                $('#svz-key-warning' + currentID).hide();
+                $('#svz-key' + currentID).css('border-color', '#cccccc');
+              }
+            }));
 
           $(document).on('change', '.svz-selected-type', $.debounce(TIMEOUT_DEBOUNCE, function() {
               var selectedType = $(this).val();
@@ -336,6 +337,7 @@
 
             currentID = currentID.replace( /^\D+/g, '');
 
+
             if (_.include(Object.keys(properties), $('#svz-key' + currentID).val()) && $('#svz-key' + currentID).val() != $('#svz-tab' + currentID).html().split('</button> ')[1]){
               $('#svz-key-warning' + currentID).show();
               $('#svz-key' + currentID).css('border-color', '#ff0000');
@@ -407,12 +409,20 @@
 
                 $('#svz-left-container' + currentID).slideToggle();
 
-                $('<button onclick="$(\'#svz-left-container' + currentID + '\').slideToggle(); $(this).hide();" >Schema' + currentID + '</button>').insertBefore('#svz-left-container' + currentID);
-
-                var newSchemaForm = '<div id="svz-schema-form-tabs-container' + currentID + '" class="tab-pane active"> <div id="svz-left-container' + currentID + '" style="float:left; width:45%; margin-left: 50px; margin-top: 20px;"> <ul class="nav nav-tabs" id="svz-schema-form-tabs' + currentID + '"> <li class="active"><a data-target="#svz-schema-tab" data-toggle="tab">Schema</a></li> <li><a data-target="#svz-form-tab" data-toggle="tab">Form</a></li> </ul> <div class="tab-content"> <div class="tab-pane active" id="svz-schema-tab' + currentID + '"> <h2>For schema:</h2> <form id="svz-schema-form' + currentID + '" action="javascript:void(0);" onsubmit="GenerateTextForm(this.id);"> <label class="svzRequiredLabel">Type</label> <div> <select class="svz-selected-type" id="svz-selected-type' + currentID + '" name="type' + currentID + '" required multiple> <option label="object" value="object">object</option> <option label="array" value="array">array</option> <option label="number" value="number">number</option> <option label="integer" value="integer">integer</option> <option label="string" value="string">string</option> <option label="boolean" value="boolean">boolean</option> <option label="null" value="null">null</option> </select> </div><label class="svzRequiredLabel">Key<font class="svzKeyWarning" id="svz-key-warning' + currentID + '" color="red" hidden> (key already exists)</font></label> <div><input id="svz-key' + currentID + '" class="svz-key" placeholder="Key (Unique identifier)" type="text" name="key' + currentID + '" required></div><label>Title</label> <div><input placeholder="Title" type="text" name="title' + currentID + '"></div><label>Ordering</label> <div><input placeholder="Ordering" type="number" name="ordering' + currentID + '"></div> <label>Description</label> <div><input class="longtext" id="svz-description' + currentID + '" placeholder="Description" type="text" name="description' + currentID + '"></div> <div><label style="display: flex;"><input id="svz-required' + currentID + '" type="checkbox" name="required' + currentID + '">Required (check for true)</label></div><label id="svz-label-for-enum' + currentID + '">Enum</label><ul id="svz-enum' + currentID + '" name="enum' + currentID + '" class="svz-enum"></ul><input class="btn btn-primary" id="svz-schema-form-submit' + currentID + '" type="submit"> </form> </div> <div class="tab-pane" id="svz-form-tab' + currentID + '"> <h2 id="svz-for-form' + currentID + '">For form:</h2> <form id="svz-for-form-form' + currentID + '"></form> </div> </div> </div>';
+                $('<button onclick="$(\'#svz-left-container' + currentID + '\').slideToggle(); $(this).hide();" >Array' + currentID + '</button>').insertBefore('#svz-left-container' + currentID);
+                currentID += 1;
+                var newSchemaForm = '<div id="svz-schema-form-tabs-container' + currentID + '" class="tab-pane active"> <div id="svz-left-container' + currentID + '" style="float:left; width:45%; margin-left: 50px; margin-top: 20px;"> <ul class="nav nav-tabs" id="svz-schema-form-tabs' + currentID + '"> <li class="active"><a data-target="#svz-schema-tab" data-toggle="tab">Schema</a></li> <li><a data-target="#svz-form-tab" data-toggle="tab">Form</a></li> </ul> <div class="tab-content"> <div class="tab-pane active" id="svz-schema-tab' + currentID + '"> <h2>Object of array:</h2> <form id="svz-schema-form' + currentID + '" action="javascript:void(0);" onsubmit="GenerateTextForm(this.id);"> <label class="svzRequiredLabel">Type</label> <div> <select class="svz-selected-type" id="svz-selected-type' + currentID + '" name="type' + currentID + '" required multiple> <option label="object" value="object">object</option> <option label="array" value="array">array</option> <option label="number" value="number">number</option> <option label="integer" value="integer">integer</option> <option label="string" value="string">string</option> <option label="boolean" value="boolean">boolean</option> <option label="null" value="null">null</option> </select> </div><label class="svzRequiredLabel">Key<font class="svzKeyWarning" id="svz-key-warning' + currentID + '" color="red" hidden> (key already exists)</font></label> <div><input id="svz-key' + currentID + '" class="svz-key" placeholder="Key (Unique identifier)" type="text" name="key' + currentID + '" required></div><label>Title</label> <div><input placeholder="Title" type="text" name="title' + currentID + '"></div><label>Ordering</label> <div><input placeholder="Ordering" type="number" name="ordering' + currentID + '"></div> <label>Description</label> <div><input class="longtext" id="svz-description' + currentID + '" placeholder="Description" type="text" name="description' + currentID + '"></div> <div><label style="display: flex;"><input id="svz-required' + currentID + '" type="checkbox" name="required' + currentID + '">Required (check for true)</label></div><label id="svz-label-for-enum' + currentID + '">Enum</label><ul id="svz-enum' + currentID + '" name="enum' + currentID + '" class="svz-enum"></ul><input class="btn btn-primary" id="svz-schema-form-submit' + currentID + '" type="submit"> </form> </div> <div class="tab-pane" id="svz-form-tab' + currentID + '"> <h2 id="svz-for-form' + currentID + '">For form:</h2> <form id="svz-for-form-form' + currentID + '"></form> </div> </div> </div>';
             
                 $('#tab-content').append(newSchemaForm);
-
+                $('.svz-selected-type').multiselect({
+                    buttonWidth: '206px',
+                    nonSelectedText: 'Choose type',
+                    numberDisplayed: 3
+                });
+                $('.svz-enum').tagit({
+                    allowSpaces: true,
+                    placeholderText: 'Enum'
+                });
 
                 
                 properties[chosenKey]['items'] = {};
