@@ -1,45 +1,25 @@
-use strict;
-use warnings;
-use 5.010;
-use BSON qw/encode decode/;
-use Cpanel::JSON::XS qw(encode_json decode_json);
+use FreezeThaw qw(freeze thaw cmpStr safeFreeze cmpStrHard);
+use Data::Dumper;
 
 my $filename = '/home/slavi/Desktop/testfile.txt';
-open (my $fh, '<:encoding(UTF-8)', $filename);
+open (my $fh, "<", $filename);
 
+my %testhash = (a => 'asd');
+my @testarr = qw(a b c d);
 
-my $student = {
-    name => 'Foo Bar',
-    file => $fh,
-    gender => undef,
-    classes => [
-        'Chemistry',
-        'Math',
-        'Litreture',
-    ],
-    address => {
-        city => 'Fooville',
-        planet => 'Earth',
-    },
-};
- 
-my $student_json = encode_json $student;
-print "$student_json\n\n";
+my %grades;
+$grades{"asd"}{Mathematics}   = [1,2,3,4,5,6];
+$grades{"asd"}{Literature}    = \%testhash;
+$grades{"haha"}{Literature}   = $filename;
+$grades{"haha"}{Mathematics}  = \@testarr;
+$grades{"haha"}{Art}          = 99;
 
-my $hash_ref = decode_json $student_json;
+print "$grades{haha}{Literature}\n";
+print Dumper(\%grades) . "\n\n";
 
-my %hash = %$hash_ref;
+my $string = freeze( %grades );
+print $string . "\n\n";
 
-print "Reference: $hash_ref\n\n";
-print "Dereferenced:\n";
-foreach my $k (keys %hash) {
-    if ($hash{$k}){
-        print "$k: $hash{$k}\n"; 
-    } else{
-        print "$k: null\n";
-    }
+my %grades2 = thaw $string;
+print Dumper(\%grades2) . "\n\n";
 
-    
-}
-
-close $fh;
