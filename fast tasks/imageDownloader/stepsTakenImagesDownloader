@@ -1,0 +1,14 @@
+
+
+
+
+1. python imagesDownloader.py                               - download 100 images from google search with word given from console
+2. s=1; for file in *.jpeg; do convert $file -resize 20x20! $file; s=$((s + 1)); done      				- resize all .jpeg files to 20x20 pixels
+3. s=1; for file in *.jpeg; do mv $file google_pic_$s.jpeg; s=$((s + 1)); done;           				- rename all .jpeg files to google_pic_(1..n)
+4. mv /home/slavi/Desktop/imageDownloader/cars/!(goo*) /home/slavi/Desktop/imageDownloader/carsJpegs/ 	- move all non-jpegs to another folder
+5.tar -czvf googlepics.tar.gz /home/slavi/Desktop/imageDownloader/carsJpegs/ 							- archive all non jpegs to googlepics.tar.gz
+
+
+
+
+
