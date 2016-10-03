@@ -4,67 +4,78 @@ use Data::Dumper;
 # use BSON qw/encode decode/;
 use JSON;
 use YAML;
+use BSON qw/encode decode/;
+
+my $document = {
+    _id      => BSON::ObjectId->new,
+    date     => BSON::Time->new,
+    name     => 'James Bond',
+    age      => 45,
+    amount   => 24587.45,
+    badass   => BSON::Bool->true,
+    password => BSON::String->new('12345')
+};
 
 
 #**********************            With FreezeThaw Module             **********************
-# sub serializeHashToFile($$){
-#     my %hashToSerialize = %{$_[0]};;
-#     my $fileName = $_[1];
-#     my $serializedHash = freeze(%hashToSerialize);
+sub serializeHashToFileFreezeThaw($$){
+    my %hashToSerialize = %{$_[0]};;
+    my $fileName = $_[1];
+    my $serializedHash = freeze(%hashToSerialize);
 
-#     open (my $fh, ">", $fileName) or die "Could not open $fileName";
-#     print $fh $serializedHash; 
-#     close $fh;
-# }
+    open (my $fh, ">", $fileName) or die "Could not open $fileName";
+    print $fh $serializedHash; 
+    close $fh;
+}
 
-# sub deserializeFileTextToHash($){
-#     my $fileName = $_[0];
-#     print $fileName . "\n\n";
+sub deserializeFileTextToHashFreezeThaw($){
+    my $fileName = $_[0];
+    print $fileName . "\n\n";
 
-#     open (my $fh, '<' ,$fileName) or die "Could not open $fileName";
+    open (my $fh, '<' ,$fileName) or die "Could not open $fileName";
 
-#     $serializedHash = '';
-#     while(my $row = <$fh>){
-#         chomp $row;
-#         $serializedHash = $serializedHash.$row;
-#     }
-#     close $fh;
-#     my %hash = thaw $serializedHash;
-#     return %hash;
-# }
+    $serializedHash = '';
+    while(my $row = <$fh>){
+        chomp $row;
+        $serializedHash = $serializedHash.$row;
+    }
+    close $fh;
+    my %hash = thaw $serializedHash;
+    return %hash;
+}
 
 
 
 # **********************            With JSON Module             **********************
-# sub serializeHashToFile($$){
-#     my %hashToSerialize = %{$_[0]};;
-#     my $fileName = $_[1];
-#     my $serializedHash = encode_json \%hashToSerialize;
-#     open (my $fh, ">", $fileName) or die "Could not open $fileName";
-#     print $fh $serializedHash; 
-#     close $fh;
-# }
+sub serializeHashToFileJSON($$){
+    my %hashToSerialize = %{$_[0]};;
+    my $fileName = $_[1];
+    my $serializedHash = encode_json \%hashToSerialize;
+    open (my $fh, ">", $fileName) or die "Could not open $fileName";
+    print $fh $serializedHash; 
+    close $fh;
+}
 
-# sub deserializeFileTextToHash($){
-#     my $fileName = $_[0];
-#     print $fileName . "\n\n";
+sub deserializeFileTextToHashJSON($){
+    my $fileName = $_[0];
+    print $fileName . "\n\n";
 
-#     open (my $fh, '<' ,$fileName) or die "Could not open $fileName";
+    open (my $fh, '<' ,$fileName) or die "Could not open $fileName";
 
-#     $serializedHash = '';
-#     while(my $row = <$fh>){
-#         chomp $row;
-#         $serializedHash = $serializedHash.$row;
-#     }
-#     close $fh;
-#     my %hash = decode_json $serializedHash;
-#     return %hash;
-# }
+    $serializedHash = '';
+    while(my $row = <$fh>){
+        chomp $row;
+        $serializedHash = $serializedHash.$row;
+    }
+    close $fh;
+    my %hash = decode_json $serializedHash;
+    return %hash;
+}
 
 
 
 # **********************            With YAML Module             **********************
-sub serializeHashToFile($$){
+sub serializeHashToFileYAML($$){
     my %hashToSerialize = %{$_[0]};;
     my $fileName = $_[1];
     my $serializedHash = Dump(%hashToSerialize);
@@ -73,7 +84,7 @@ sub serializeHashToFile($$){
     close $fh;
 }
 
-sub deserializeFileTextToHash($){
+sub deserializeFileTextToHashYAML($){
     my $fileName = $_[0];
     print $fileName . "\n\n";
 
@@ -83,6 +94,34 @@ sub deserializeFileTextToHash($){
     close $fh;
     return %hash;
 }
+
+
+
+# **********************            With BSON Module             **********************
+sub serializeHashToFileBSON($$){
+    my %hashToSerialize = %{$_[0]};;
+    my $fileName = $_[1];
+    my $serializedHash = encode(\%hashToSerialize);
+    open (my $fh, ">", $fileName) or die "Could not open $fileName";
+    print $fh $serializedHash; 
+    close $fh;
+}
+
+sub deserializeFileTextToHashBSON($){
+    my $fileName = $_[0];
+    print $fileName . "\n\n";
+    my $serializedHash = '';
+    open (my $fh, '<' ,$fileName) or die "Could not open $fileName";
+    while(my $row = <$fh>){
+        chomp ($row);
+        $serializedHash = $serializedHash.$row;
+    }
+
+    my %hash = decode($serializedHash);
+    close $fh;
+    return %hash;
+}
+
 
 @ARGV[0] or die "You should provide a file path from cmd line!";
 my $nestedFile = "/home/slavi/Desktop/testfile.txt";
@@ -95,9 +134,9 @@ my %beginning_hash;
 
 $beginning_hash{"a"}{Mathematics}   = [1,2,3,4,5,6, [1,2,3]];
 $beginning_hash{"a"}{Literature}    = \%hashToNest;
-$beginning_hash{"b"}{Literature}   = $fh;
+#$beginning_hash{"b"}{Literature}   = $fh;
 $beginning_hash{"b"}{Mathematics}  = \@arrToNest;
-$beginning_hash{"b"}{Art}          = $blessedVar;
+#$beginning_hash{"b"}{Art}          = $blessedVar;
 
 serializeHashToFile(\%beginning_hash, '/home/slavi/Desktop/test.yml');
 my %deserializedHash = deserializeFileTextToHash('/home/slavi/Desktop/test.yml');
