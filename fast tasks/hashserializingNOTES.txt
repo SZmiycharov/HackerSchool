@@ -1,0 +1,105 @@
+with FreezeThaw:
+- filehandle fails:
+Do not know how to thaw GLOB at /home/slavi/perl5/lib/perl5/FreezeThaw.pm line 533.
+	FreezeThaw::thawScalar(157) called at /home/slavi/perl5/lib/perl5/FreezeThaw.pm line 417
+	FreezeThaw::thawArray called at /home/slavi/perl5/lib/perl5/FreezeThaw.pm line 434
+	FreezeThaw::thawHash called at /home/slavi/perl5/lib/perl5/FreezeThaw.pm line 533
+	FreezeThaw::thawScalar(102) called at /home/slavi/perl5/lib/perl5/FreezeThaw.pm line 417
+	FreezeThaw::thawArray called at /home/slavi/perl5/lib/perl5/FreezeThaw.pm line 533
+	FreezeThaw::thawScalar(4) called at /home/slavi/perl5/lib/perl5/FreezeThaw.pm line 710
+	FreezeThaw::thaw("FrT;\@4|\$1|a%4|\$10|Literature\$11|Mathematics%2|\$1|a\$3|asd\@7|\$1"...) called at serializeHash.plx line 31
+	main::deserializeFileTextToHash("/home/slavi/Desktop/test.txt") called at serializeHash.plx line 91
+- bless stays bless
+- references are represented as actual object
+
+
+
+with JSON:
+- blessed object fails:
+encountered object 'main=SCALAR(0xf58c60)', but neither allow_blessed, convert_blessed nor allow_tags settings are enabled (or TO_JSON/FREEZE method missing) at serializeHash.plx line 41.
+- GLOB fails:
+cannot encode reference to scalar 'GLOB(0x2689708)' unless the scalar is 0 or 1 at serializeHash.plx line 41.
+- deserialized hash not same with beginning hash:
+$VAR1 = {
+          'b' => {
+                   'Mathematics' => [
+                                      'a',
+                                      'b',
+                                      'c',
+                                      'd'
+                                    ]
+                 },
+          'a' => {
+                   'Literature' => {
+                                     'a' => 'asd'
+                                   },
+                   'Mathematics' => [
+                                      1,
+                                      2,
+                                      3,
+                                      4,
+                                      5,
+                                      6,
+                                      [
+                                        1,
+                                        2,
+                                        3
+                                      ]
+                                    ]
+                 }
+        };
+$VAR1 = {
+          'HASH(0x1019458)' => undef
+        };
+
+
+
+with YAML:
+- serializes and deserializes ok with ref, GLOB, bless
+- before and after hashes not the same:
+got : GLOB(0x1815708)
+expect : GLOB(0x25b22c8)
+
+
+
+with BSON:
+- blessed fails: During encode_one, For key 'Art', can't encode value of type 'main' at /home/slavi/perl5/lib/perl5/BSON.pm line 275.
+ at serializeHash.plx line 104
+- GLOB fails: During encode_one, For key 'Literature', can't encode value of type 'GLOB' at /home/slavi/perl5/lib/perl5/BSON.pm line 275.
+ at serializeHash.plx line 104
+- without first two: serializes ok, when deserializing: 2 hashes not the same: 
+$VAR1 = {
+          'a' => {
+                   'Mathematics' => [
+                                      1,
+                                      2,
+                                      3,
+                                      4,
+                                      5,
+                                      6,
+                                      [
+                                        1,
+                                        2,
+                                        3
+                                      ]
+                                    ],
+                   'Literature' => {
+                                     'a' => 'asd'
+                                   }
+                 },
+          'b' => {
+                   'Mathematics' => [
+                                      'a',
+                                      'b',
+                                      'c',
+                                      'd'
+                                    ]
+                 }
+        };
+
+$VAR1 = {
+          'HASH(0x1de7698)' => undef
+        };
+
+
+
