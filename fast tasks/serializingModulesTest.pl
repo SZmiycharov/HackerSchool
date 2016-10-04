@@ -4,82 +4,21 @@ use lib '/home/slavi/Desktop/HackerSchool/fast\ tasks';
 use serializeHash;
 use Try::Tiny;
 
-sub testFreezeThaw($){
-	my %beginning_hash = %{$_[0]};
-	serializeHashToFileFreezeThaw(\%beginning_hash, '/home/slavi/Desktop/test.txt');
-	my %deserializedHash = deserializeFileTextToHashFreezeThaw('/home/slavi/Desktop/test.txt');
-
-	print "beginning hash:\n";
-	print Dumper(\%beginning_hash) . "\n\n";
-
-	print "deserializedHash:\n";
-	print Dumper(\%deserializedHash) . "\n\n";
-
-	use Test::Deep;
-	cmp_deeply(\%beginning_hash, \%deserializedHash);
-}
-
-sub testJSON($){
-	my %beginning_hash = %{$_[0]};
-	serializeHashToFileJSON(\%beginning_hash, '/home/slavi/Desktop/test.txt');
-	my %deserializedHash = deserializeFileTextToHashJSON('/home/slavi/Desktop/test.txt');
-
-	print "beginning hash:\n";
-	print Dumper(\%beginning_hash) . "\n\n";
-
-	print "deserializedHash:\n";
-	print Dumper(\%deserializedHash) . "\n\n";
-
-	use Test::Deep;
-	cmp_deeply(\%beginning_hash, \%deserializedHash);
-}
-
-sub testYAML($){
-	my %beginning_hash = %{$_[0]};
-	serializeHashToFileYAML(\%beginning_hash, '/home/slavi/Desktop/test.yml');
-	my %deserializedHash = deserializeFileTextToHashYAML('/home/slavi/Desktop/test.yml');
-
-	print "beginning hash:\n";
-	print Dumper(\%beginning_hash) . "\n\n";
-
-	print "deserializedHash:\n";
-	print Dumper(\%deserializedHash) . "\n\n";
-
-	use Test::Deep;
-	cmp_deeply(\%beginning_hash, \%deserializedHash);	
-}
-
-sub testBSON($){
-	my %beginning_hash = %{$_[0]};
-	serializeHashToFileBSON(\%beginning_hash, '/home/slavi/Desktop/test.txt');
-	my %deserializedHash = deserializeFileTextToHashBSON('/home/slavi/Desktop/test.txt');
-
-	print "beginning hash:\n";
-	print Dumper(\%beginning_hash) . "\n\n";
-
-	print "deserializedHash:\n";
-	print Dumper(\%deserializedHash) . "\n\n";
-
-	use Test::Deep;
-	cmp_deeply(\%beginning_hash, \%deserializedHash);
-}
-
-
 
 $ARGV[0] or die "You should provide a file path from cmd line!";
-my $nestedFile = "/home/slavi/Desktop/testfile.txt";
-open (my $fh, "<", $nestedFile) or die "Could not open $nestedFile!";
-my %hashToNest = (a => 'asd');
-my @arrToNest = qw(a b c d);
-my $helperNum = 10;
-my $blessedVar = bless \$helperNum;
+my $nested_file = "/home/slavi/Desktop/testfile.txt";
+open (my $fh, "<", $nested_file) or die "Could not open $nested_file!";
+my %hash_to_nest = (a => 'asd');
+my @arr_to_nest = qw(a b c d);
+my $helper_num = 10;
+my $blessed_var = bless \$helper_num;
 my %beginning_hash;
 
 $beginning_hash{"a"}{Mathematics}   = [1,2,3,4,5,6, [1,2,3]];
-$beginning_hash{"a"}{Literature}    = \%hashToNest;
+$beginning_hash{"a"}{Literature}    = \%hash_to_nest;
 $beginning_hash{"b"}{Literature}   = $fh;
-$beginning_hash{"b"}{Mathematics}  = \@arrToNest;
-$beginning_hash{"b"}{Art}          = $blessedVar;
+$beginning_hash{"b"}{Mathematics}  = \@arr_to_nest;
+$beginning_hash{"b"}{Art}          = $blessed_var;
 
 print "************FreezeThawTest************\n";
 my $start_time = [Time::HiRes::gettimeofday()];
@@ -124,6 +63,8 @@ try{
 $diff = Time::HiRes::tv_interval($start_time);
 print "Elapsed time: $diff ms\n";
 print "\n\n";
+
+close $fh;
 
 
 
