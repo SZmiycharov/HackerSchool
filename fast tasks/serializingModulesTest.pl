@@ -20,12 +20,13 @@ $beginning_hash{"b"}{Literature}   = $fh;
 $beginning_hash{"b"}{Mathematics}  = \@arr_to_nest;
 $beginning_hash{"b"}{Art}          = $blessed_var;
 
+
 print "\n*****************************FreezeThawTest*****************************\n";
 my $start_time = time;
 try{
 	testFreezeThaw(\%beginning_hash);
 } catch{
-	print "caught error: $_";
+	print "caught error: $_\n";
 };
 my $end_time = time;
 my $elapsed_time = $end_time - $start_time;
@@ -37,7 +38,7 @@ $start_time = time;
 try{
 	testJSON(\%beginning_hash);
 } catch{
-	print "caught error: $_";
+	print "caught error: $_\n";
 };
 $end_time = time;
 $elapsed_time = $end_time - $start_time;
@@ -49,7 +50,7 @@ $start_time = time;
 try{
 	testYAML(\%beginning_hash);
 } catch{
-	print "caught error: $_";
+	print "caught error: $_\n";
 };
 $end_time = time;
 $elapsed_time = $end_time - $start_time;
@@ -61,7 +62,7 @@ $start_time = time;
 try{
 	testBSON(\%beginning_hash);
 } catch{
-	print "caught error: $_";
+	print "caught error: $_\n";
 };
 $end_time = time;
 $elapsed_time = $end_time - $start_time;

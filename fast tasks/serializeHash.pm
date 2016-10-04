@@ -40,6 +40,7 @@ sub deserializeFileTextToHashFreezeThaw($){
     }
     close $fh;
     my %hash = thaw $serialized_hash;
+
     return %hash;
 }
 
@@ -47,8 +48,7 @@ sub deserializeFileTextToHashFreezeThaw($){
 
 # **********************            With JSON Module             **********************
 sub serializeHashToFileJSON($$){
-    my ($hash_to_serialize) = @_;
-    my $file_name = $_[1];
+    my ($hash_to_serialize, $file_name) = @_;
     my $serialized_hash = encode_json $hash_to_serialize;
     open (my $fh, ">", $file_name) or die "Could not open $file_name";
     print $fh $serialized_hash; 
@@ -57,7 +57,6 @@ sub serializeHashToFileJSON($$){
 
 sub deserializeFileTextToHashJSON($){
     my ($file_name) = @_;
-
     open (my $fh, '<' ,$file_name) or die "Could not open $file_name";
 
     my $serialized_hash = '';
@@ -66,8 +65,9 @@ sub deserializeFileTextToHashJSON($){
         $serialized_hash = $serialized_hash.$row;
     }
     close $fh;
-    my %hash = decode_json $serialized_hash;
-    return %hash;
+    my $hash = decode_json $serialized_hash;
+
+    return %$hash;
 }
 
 
@@ -89,6 +89,7 @@ sub deserializeFileTextToHashYAML($){
     my $yml = do { local $/; <$fh> };
     my %hash = Load($yml);
     close $fh;
+
     return %hash;
 }
 
@@ -114,9 +115,10 @@ sub deserializeFileTextToHashBSON($){
         $serialized_hash = $serialized_hash.$row;
     }
 
-    my %hash = decode($serialized_hash);
+    my $hash = decode($serialized_hash);
     close $fh;
-    return %hash;
+
+    return %$hash;
 }
 
 
