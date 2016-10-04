@@ -19,38 +19,6 @@ with JSON:
 encountered object 'main=SCALAR(0xf58c60)', but neither allow_blessed, convert_blessed nor allow_tags settings are enabled (or TO_JSON/FREEZE method missing) at serializeHash.plx line 41.
 - GLOB fails:
 cannot encode reference to scalar 'GLOB(0x2689708)' unless the scalar is 0 or 1 at serializeHash.plx line 41.
-- deserialized hash not same with beginning hash:
-$VAR1 = {
-          'b' => {
-                   'Mathematics' => [
-                                      'a',
-                                      'b',
-                                      'c',
-                                      'd'
-                                    ]
-                 },
-          'a' => {
-                   'Literature' => {
-                                     'a' => 'asd'
-                                   },
-                   'Mathematics' => [
-                                      1,
-                                      2,
-                                      3,
-                                      4,
-                                      5,
-                                      6,
-                                      [
-                                        1,
-                                        2,
-                                        3
-                                      ]
-                                    ]
-                 }
-        };
-$VAR1 = {
-          'HASH(0x1019458)' => undef
-        };
 
 
 
@@ -67,39 +35,7 @@ with BSON:
  at serializeHash.plx line 104
 - GLOB fails: During encode_one, For key 'Literature', can't encode value of type 'GLOB' at /home/slavi/perl5/lib/perl5/BSON.pm line 275.
  at serializeHash.plx line 104
-- without first two: serializes ok, when deserializing: 2 hashes not the same: 
-$VAR1 = {
-          'a' => {
-                   'Mathematics' => [
-                                      1,
-                                      2,
-                                      3,
-                                      4,
-                                      5,
-                                      6,
-                                      [
-                                        1,
-                                        2,
-                                        3
-                                      ]
-                                    ],
-                   'Literature' => {
-                                     'a' => 'asd'
-                                   }
-                 },
-          'b' => {
-                   'Mathematics' => [
-                                      'a',
-                                      'b',
-                                      'c',
-                                      'd'
-                                    ]
-                 }
-        };
 
-$VAR1 = {
-          'HASH(0x1de7698)' => undef
-        };
 
 
 
