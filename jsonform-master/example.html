@@ -6,8 +6,9 @@
 
     <style>
       .container {
-          min-height: 1000px;
-          min-width: 700px;
+          overflow:hidden;
+          min-height: 500px;
+          min-width: 200px;
           background-color: #7DA5A6;
           border: 1px solid #718D8E;
           border-radius: 4px;
@@ -19,8 +20,9 @@
       }
 
       .container .container {
-          min-height: 900px;
-          min-width: 600px;
+          overflow:hidden;
+          min-height: 400px;
+          min-width: 200px;
 
           background-color: #97a8a9;
           border: 3px solid #BED5D6;
@@ -32,14 +34,18 @@
       }
 
       .item {
+          overflow:hidden;
           background-color: #6065C9;
           border: 2px solid #353871;
           margin-bottom: 5px;
           border-radius: 2px;
-          padding: 15px 50px;
+          padding: -1px 50px;
       }
       .item:hover{
         background-color: #4249d6;
+      }
+      .svz-add-item{
+        float:right;
       }
     </style>
 
@@ -48,15 +54,14 @@
   <body>
     <div style="float:left; width:45%; margin-left: 50px; margin-top: 20px;">
       <div class="container">
-          <div class="item"></div>
+          <div class="item" id="svz-item-container1"><button id="svz-add-item1" class="svz-add-item" type="button">+</button></div>
           <div class="container-wrapper">
-              <div class="container">
-                  <div class="item"></div>
-                  <div class="item"></div>
-                  <div class="item"></div>
-              </div>
+            <div class="container">
+                <div class="item"  id="svz-item-container2"><button id="svz-add-item2" class="svz-add-item" type="button">+</button></div>
+                <div class="item"  id="svz-item-container3"><button id="svz-add-item3" class="svz-add-item" type="button">+</button></div>
+            </div>
           </div>
-          <div class="item"></div>
+          <div class="item"  id="svz-item-container4"><button id="svz-add-item4" class="svz-add-item" type="button">+</button></div>
       </div>
     </div>
 
@@ -194,7 +199,25 @@
             var selectedItem = $(this).find('a').html().split('</button> ')[1];
             $('#svz-tabs-search').val(selectedItem);
           });
+
+
+
+
+
+
+          $(document).on('click', '.svz-add-item', function(){
+            console.log($(this).attr('id'));
+            var currentID = $(this).attr('id').replace( /^\D+/g, '');
+            $('<div class="item"  id="svz-item-container1' + currentID + '"><button  id="svz-add-item' + currentID +'" class="svz-add-item" type="button">+</button></div>').insertAfter('#svz-item-container' + currentID);
+          });
           
+
+
+
+
+
+
+
           $('#add-new-schema-form').click(function(){
             CURRENT_SCHEMA_FORM_ID += 1;
             if ($('#svz-main-tabs li').length - $('#svz-dropdown-menu-items li').length >= MAX_NUM_TABS_NAVBAR) {
