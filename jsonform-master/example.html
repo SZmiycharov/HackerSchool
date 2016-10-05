@@ -7,8 +7,9 @@
     <style>
       .container {
           overflow:hidden;
-          min-height: 500px;
-          min-width: 200px;
+          max-width: 800px;
+          min-height: 150px;
+          min-width: 400px;
           background-color: #7DA5A6;
           border: 1px solid #718D8E;
           border-radius: 4px;
@@ -21,8 +22,8 @@
 
       .container .container {
           overflow:hidden;
-          min-height: 400px;
-          min-width: 200px;
+          min-height: 100px;
+          min-width: 400px;
 
           background-color: #97a8a9;
           border: 3px solid #BED5D6;
@@ -44,24 +45,23 @@
       .item:hover{
         background-color: #4249d6;
       }
-      .svz-add-item{
-        float:right;
-      }
+
     </style>
 
   </head>
 
   <body>
     <div style="float:left; width:45%; margin-left: 50px; margin-top: 20px;">
-      <div class="container">
-          <div class="item" id="svz-item-container1"><button id="svz-add-item1" class="svz-add-item" type="button">+</button></div>
-          <div class="container-wrapper">
-            <div class="container">
-                <div class="item"  id="svz-item-container2"><button id="svz-add-item2" class="svz-add-item" type="button">+</button></div>
-                <div class="item"  id="svz-item-container3"><button id="svz-add-item3" class="svz-add-item" type="button">+</button></div>
+      <div class="container" id="svz-container1"><button id="svz-add-item1" class="svz-add-item" type="button">+</button>
+
+          <div class="item" id="svz-item-container1"><button id="svz-add-container1" class="svz-add-container" type="button">+</button></div>
+          <div class="container-wrapper" id="svz-cont-wrapper1">
+            <div class="container" id="svz-container2"><button id="svz-add-item2" class="svz-add-item" type="button">+</button>
+                <div class="item" id="svz-item-container2"><button id="svz-add-container2" class="svz-add-container" type="button">+</button></div>
+                <div class="item" id="svz-item-container3"><button id="svz-add-container3" class="svz-add-container" type="button">+</button></div>
             </div>
           </div>
-          <div class="item"  id="svz-item-container4"><button id="svz-add-item4" class="svz-add-item" type="button">+</button></div>
+          <div class="item"  id="svz-item-container4"><button id="svz-add-container4" class="svz-add-container" type="button">+</button></div>
       </div>
     </div>
 
@@ -98,6 +98,8 @@
           var TIMEOUT_DEBOUNCE = 500;
           var CURRENT_SCHEMA_FORM_ID = 1;
           var MAX_NUM_TABS_NAVBAR = 3;
+          var CURRENT_CONTAINER_ID = 2;
+          var CURRENT_ITEM_ID = 2;
 
           $('#svz-main-tabs').tabs();
           $('#svz-main-tabs a:last').tab('show');
@@ -203,16 +205,48 @@
 
 
 
+          // <div class="container" id="svz-container1"><button id="svz-add-item1" class="svz-add-item" type="button">+</button>
 
+          //     <div class="item" id="svz-item-container1"><button id="svz-add-container1" class="svz-add-container" type="button">+</button></div>
+          //     <div class="container-wrapper" id="svz-cont-wrapper1">
+          //       <div class="container" id="svz-container2"><button id="svz-add-item2" class="svz-add-item" type="button">+</button>
+          //           <div class="item" id="svz-item-container2"><button id="svz-add-container2" class="svz-add-container" type="button">+</button></div>
+          //           <div class="item" id="svz-item-container3"><button id="svz-add-container3" class="svz-add-container" type="button">+</button></div>
+          //       </div>
+          //     </div>
+          //     <div class="item"  id="svz-item-container4"><button id="svz-add-container4" class="svz-add-container" type="button">+</button></div>
+          // </div>
+
+
+
+
+
+          $(document).on('click', '.svz-add-container', function(){
+            console.log('first funct'); // appends big container into item
+            CURRENT_CONTAINER_ID += 1;
+            CURRENT_ITEM_ID += 1;
+            var currentID = $(this).attr('id').replace( /^\D+/g, '');
+            $('#svz-item-container' + currentID).replaceWith('<div class="container-wrapper" id="svz-cont-wrapper' + CURRENT_CONTAINER_ID + '"><div class="container" id="svz-container' + CURRENT_CONTAINER_ID + '"><button id="svz-add-item' + CURRENT_CONTAINER_ID + '" class="svz-add-item" type="button">+</button></div></div>');
+            $('#svz-container' + CURRENT_CONTAINER_ID).append('<div class="item"  id="svz-item-container' + CURRENT_ITEM_ID + '"><button  id="svz-add-container' + CURRENT_ITEM_ID +'" class="svz-add-container" type="button">+</button></div>');
+
+            $('.container').sortable({
+              connectWith: '.container'
+            });
+          });
 
           $(document).on('click', '.svz-add-item', function(){
-            console.log($(this).attr('id'));
+            console.log('second madafak'); // appends small item to container
+            CURRENT_ITEM_ID += 1;
             var currentID = $(this).attr('id').replace( /^\D+/g, '');
-            $('<div class="item"  id="svz-item-container1' + currentID + '"><button  id="svz-add-item' + currentID +'" class="svz-add-item" type="button">+</button></div>').insertAfter('#svz-item-container' + currentID);
+            $('#svz-container' + currentID).append('<div class="item"  id="svz-item-container' + CURRENT_ITEM_ID + '"><button  id="svz-add-container' + CURRENT_ITEM_ID +'" class="svz-add-container" type="button">+</button></div>');
+            
+            $('.container').sortable({
+              connectWith: '.container'
+            });
           });
+
           
-
-
+          
 
 
 
