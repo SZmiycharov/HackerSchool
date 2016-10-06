@@ -153,14 +153,6 @@
     (function svzMainFunction ($) {
       'use strict';
         $( document ).ready(function() {
-          // $('.container').sortable({
-          //   connectWith: '.container',
-          // });
-          // $( ".container" ).bind( "sortout", function(event, ui) {
-          //   console.log("out event");
-          // });
-          
-
           var TIMEOUT_DEBOUNCE = 500;
           var CURRENT_SCHEMA_FORM_ID = 1;
           var MAX_NUM_TABS_NAVBAR = 3;
@@ -314,12 +306,16 @@
 
           $(document).on('click', '#svz-sorting-btn', function(){
             if($(this).text() == 'Allow sorting'){
-
               $('.container').sortable({
+                items: '.item, .container-wrapper',
+                cancel: ":button",
+                //axis: 'y',
+                //cursor: 'move',
+                //tolerance: 'pointer',
                 connectWith: '.container',
               });
-              $( ".container" ).bind( "sortout", function(event, ui) {
-                console.log("out event");
+              $('.container').bind( 'sortout', function(event, ui) {
+                console.log('out event');
               });
               $('.container').sortable('enable');
 
@@ -343,12 +339,17 @@
             $('#svz-item-container' + currentID).replaceWith('<div class="container-wrapper" id="svz-cont-wrapper' + CURRENT_CONTAINER_ID + '"><div class="container" id="svz-container' + CURRENT_CONTAINER_ID + '"><button id="svz-add-item' + CURRENT_CONTAINER_ID + '" class="svz-add-item" type="button">+</button> <button id="svz-remove-item' + CURRENT_CONTAINER_ID + '" class="svz-remove-item" type="button">-</button></div></div>');
             $('#svz-container' + CURRENT_CONTAINER_ID).append('<div class="item"  id="svz-item-container' + CURRENT_ITEM_ID + '"><button  id="svz-add-container' + CURRENT_ITEM_ID +'" class="svz-add-container" type="button">+</button> <button id="svz-remove-container' + CURRENT_ITEM_ID + '" class="svz-remove-container" type="button">-</button></div>');
 
-            // $('.container').sortable({
-            //   connectWith: '.container',
-            // });
-            // $( ".container" ).bind( "sortout", function(event, ui) {
-            //   console.log("out event");
-            // });
+            $('.container').sortable({
+                items: '.item, .container-wrapper',
+                //axis: 'y',
+                //cursor: 'move',
+                //tolerance: 'pointer',
+                cancel: ":button",
+                connectWith: '.container',
+            });
+            $( ".container" ).bind( "sortout", function(event, ui) {
+              console.log("out event");
+            });
           });
 
           $(document).on('click', '.svz-add-item', function(e){
@@ -359,12 +360,17 @@
             var currentID = $(this).attr('id').replace( /^\D+/g, '');
             $('#svz-container' + currentID).append('<div class="item"  id="svz-item-container' + CURRENT_ITEM_ID + '"><button  id="svz-add-container' + CURRENT_ITEM_ID +'" class="svz-add-container" type="button">+</button><button id="svz-remove-container' + CURRENT_ITEM_ID + '" class="svz-remove-container" type="button">-</button></div>');
             
-            // $('.container').sortable({
-            //   connectWith: '.container',
-            // });
-            // $( ".container" ).bind( "sortout", function(event, ui) {
-            //   console.log("out event");
-            // });
+            $('.container').sortable({
+                //axis: 'y',
+                //cursor: 'move',
+                //tolerance: 'pointer',
+                cancel: ":button",
+                connectWith: '.container',
+                items: '.item, .container-wrapper',
+            });
+            $( ".container" ).bind( "sortout", function(event, ui) {
+              console.log("out event");
+            });
           });
 
 
