@@ -311,7 +311,7 @@
                 cancel: ":button",
                 //axis: 'y',
                 //cursor: 'move',
-                //tolerance: 'pointer',
+                tolerance: 'pointer',
                 connectWith: '.container',
               });
               $('.container').bind( 'sortout', function(event, ui) {
@@ -341,9 +341,9 @@
 
             $('.container').sortable({
                 items: '.item, .container-wrapper',
-                //axis: 'y',
+                axis: 'y',
                 //cursor: 'move',
-                //tolerance: 'pointer',
+                tolerance: 'pointer',
                 cancel: ":button",
                 connectWith: '.container',
             });
@@ -361,9 +361,9 @@
             $('#svz-container' + currentID).append('<div class="item"  id="svz-item-container' + CURRENT_ITEM_ID + '"><button  id="svz-add-container' + CURRENT_ITEM_ID +'" class="svz-add-container" type="button">+</button><button id="svz-remove-container' + CURRENT_ITEM_ID + '" class="svz-remove-container" type="button">-</button></div>');
             
             $('.container').sortable({
-                //axis: 'y',
+                axis: 'y',
                 //cursor: 'move',
-                //tolerance: 'pointer',
+                tolerance: 'pointer',
                 cancel: ":button",
                 connectWith: '.container',
                 items: '.item, .container-wrapper',
