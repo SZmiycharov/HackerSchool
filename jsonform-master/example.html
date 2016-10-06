@@ -3,13 +3,13 @@
   <head>
     <meta charset="utf-8" />
     <title>JSONCreator</title>
-
+    <link rel="stylesheet" style="text/css" href="deps/opt/bootstrap.css" />
     <style>
       .container {
           overflow:hidden;
           max-width: 800px;
           min-height: 150px;
-          min-width: 400px;
+          min-width: 500px;
           background-color: #7DA5A6;
           border: 1px solid #718D8E;
           border-radius: 4px;
@@ -20,7 +20,7 @@
       .container .container {
           overflow:hidden;
           min-height: 100px;
-          min-width: 400px;
+          min-width: 500px;
 
           background-color: #97a8a9;
           border: 3px solid #BED5D6;
@@ -48,7 +48,8 @@
   </head>
 
   <body>
-    <div style="float:left; width:45%; margin-left: 50px; margin-top: 20px;">
+    <div style="float:left; width:45%; margin-left: 50px; margin-top: 40px;">
+      <div><button id="svz-sorting-btn" type="button" class="btn btn-primary">Allow sorting</button></div>
       <div class="container" id="svz-container1">
         <button id="svz-add-item1" class="svz-add-item" type="button">+</button>
           <div class="item" id="svz-item-container1">
@@ -67,7 +68,57 @@
                 <div class="item" id="svz-item-container3">
                   <button id="svz-add-container3" class="svz-add-container" type="button">+</button>
                   <button id="svz-remove-container3" class="svz-remove-container" type="button">-</button>
+
+
+
+                  <div class="tab-content" id="tab-content3" hidden>
+                  <div id="svz-schema-form-tabs-container" class="tab-pane active">
+                      <div id="svz-left-container" style="float:left; width:45%; margin-left: 50px; margin-top: 20px;"> 
+                        <ul class="nav nav-tabs" id="svz-schema-form-tabs">
+                          <li class="active"><a data-target="#svz-schema-tab" data-toggle="tab">Schema</a></li>
+                          <li><a data-target="#svz-form-tab" data-toggle="tab">Form</a></li>
+                        </ul>
+                        <div class="tab-content">
+                          <div class="tab-pane active" id="svz-schema-tab">
+                            <h2>For schema:</h2>
+                            <form id="svz-schema-form" action="javascript:void(0);" onsubmit="GenerateTextForm(this.id);">
+                                <label class="svzRequiredLabel">Type</label>
+                                <div>
+                                  <select class="svz-selected-type" id="svz-selected-type" name="type" required multiple>
+                                    <option label="object" value="object">object</option>
+                                    <option label="array" value="array">array</option>
+                                    <option label="number" value="number">number</option> 
+                                    <option label="integer" value="integer">integer</option>
+                                    <option label="string" value="string">string</option>  
+                                    <option label="boolean" value="boolean">boolean</option> 
+                                    <option label="null" value="null">null</option>
+                                  </select>
+                                </div>
+                                <label class="svzRequiredLabel">Key<font class="svzKeyWarning" id="svz-key-warning" color="red" hidden> (key already exists)</font></label>
+                                <div><input id="svz-key" class="svz-key" placeholder="Key (Unique identifier)" type="text" name="key" required></div>
+                                <label>Title</label>
+                                <div><input placeholder="Title" type="text" name="title"></div>
+                                <label>Ordering</label>
+                                <div><input placeholder="Ordering" type="number" name="ordering"></div>
+                                <label>Description</label>
+                                <div><input class="longtext" id="svz-description" placeholder="Description" type="text" name="description"></div>
+                                <div><label style="display: flex;"><input id="svz-required" type="checkbox" name="required">Required (check for true)</label></div>
+                                <label id="svz-label-for-enum">Enum</label>
+                                <ul id="svz-enum" name="enum" class="svz-enum"></ul>
+                                <input class="btn btn-primary" id="svz-schema-form-submit" type="submit">
+                            </form>
+                          </div>
+                          <div class="tab-pane" id="svz-form-tab">
+                            <h2 id="svz-for-form">For form:</h2>
+                            <form id="svz-for-form-form"></form>
+                          </div>
+                        </div> 
+                      </div>   
+                  </div>
+                  </div>
                 </div>
+            
+
             </div>
           </div>
           <div class="item"  id="svz-item-container4">
@@ -102,12 +153,12 @@
     (function svzMainFunction ($) {
       'use strict';
         $( document ).ready(function() {
-          $('.container').sortable({
-            connectWith: '.container',
-          });
-          $( ".container" ).bind( "sortout", function(event, ui) {
-            console.log("out event");
-          });
+          // $('.container').sortable({
+          //   connectWith: '.container',
+          // });
+          // $( ".container" ).bind( "sortout", function(event, ui) {
+          //   console.log("out event");
+          // });
           
 
           var TIMEOUT_DEBOUNCE = 500;
@@ -226,6 +277,19 @@
             $('#svz-tabs-search').val(selectedItem);
           });
 
+          $(document).on('click', '.container, .item', function(e){
+            if (e.target != this) return;
+            e.stopPropagation();
+
+            var currentID = $(this).attr('id').replace( /^\D+/g, '')
+            console.log($(this).attr('id'));
+
+            if ($(this).attr('id') != 'svz-container1'){
+              $('#tab-content' + currentID).toggle();
+              
+            }
+          });
+
 
 
           $(document).on('mouseover', '.container', function(e){
@@ -248,35 +312,59 @@
             $(this).removeClass('currentItemHover');
           });
 
-          $(document).on('click', '.svz-add-container', function(){
+          $(document).on('click', '#svz-sorting-btn', function(){
+            if($(this).text() == 'Allow sorting'){
+
+              $('.container').sortable({
+                connectWith: '.container',
+              });
+              $( ".container" ).bind( "sortout", function(event, ui) {
+                console.log("out event");
+              });
+              $('.container').sortable('enable');
+
+              $(this).text('Disallow sorting');
+              $(this).attr('class', 'btn btn-danger');
+            } else{
+              $(this).text('Allow sorting');
+
+              $(this).attr('class', 'btn btn-primary');
+              $('.container').sortable('disable');
+            }
+          });
+
+
+          $(document).on('click', '.svz-add-container', function(e){
             console.log('first funct'); // appends big container into item
+            e.stopPropagation();
             CURRENT_CONTAINER_ID += 1;
             CURRENT_ITEM_ID += 1;
             var currentID = $(this).attr('id').replace( /^\D+/g, '');
-            $('#svz-item-container' + currentID).replaceWith('<div class="container-wrapper" id="svz-cont-wrapper' + CURRENT_CONTAINER_ID + '"><div class="container" id="svz-container' + CURRENT_CONTAINER_ID + '"><button id="svz-add-item' + CURRENT_CONTAINER_ID + '" class="svz-add-item" type="button">+</button><button id="svz-remove-item' + CURRENT_CONTAINER_ID + '" class="svz-remove-item" type="button">-</button></div></div>');
-            $('#svz-container' + CURRENT_CONTAINER_ID).append('<div class="item"  id="svz-item-container' + CURRENT_ITEM_ID + '"><button  id="svz-add-container' + CURRENT_ITEM_ID +'" class="svz-add-container" type="button">+</button><button id="svz-remove-container' + CURRENT_ITEM_ID + '" class="svz-remove-container" type="button">-</button></div>');
+            $('#svz-item-container' + currentID).replaceWith('<div class="container-wrapper" id="svz-cont-wrapper' + CURRENT_CONTAINER_ID + '"><div class="container" id="svz-container' + CURRENT_CONTAINER_ID + '"><button id="svz-add-item' + CURRENT_CONTAINER_ID + '" class="svz-add-item" type="button">+</button> <button id="svz-remove-item' + CURRENT_CONTAINER_ID + '" class="svz-remove-item" type="button">-</button></div></div>');
+            $('#svz-container' + CURRENT_CONTAINER_ID).append('<div class="item"  id="svz-item-container' + CURRENT_ITEM_ID + '"><button  id="svz-add-container' + CURRENT_ITEM_ID +'" class="svz-add-container" type="button">+</button> <button id="svz-remove-container' + CURRENT_ITEM_ID + '" class="svz-remove-container" type="button">-</button></div>');
 
-            $('.container').sortable({
-              connectWith: '.container',
-            });
-            $( ".container" ).bind( "sortout", function(event, ui) {
-              console.log("out event");
-            });
+            // $('.container').sortable({
+            //   connectWith: '.container',
+            // });
+            // $( ".container" ).bind( "sortout", function(event, ui) {
+            //   console.log("out event");
+            // });
           });
 
-          $(document).on('click', '.svz-add-item', function(){
+          $(document).on('click', '.svz-add-item', function(e){
+            e.stopPropagation();
             console.log('second function'); // appends small item to container
             CURRENT_CONTAINER_ID += 1;
             CURRENT_ITEM_ID += 1;
             var currentID = $(this).attr('id').replace( /^\D+/g, '');
             $('#svz-container' + currentID).append('<div class="item"  id="svz-item-container' + CURRENT_ITEM_ID + '"><button  id="svz-add-container' + CURRENT_ITEM_ID +'" class="svz-add-container" type="button">+</button><button id="svz-remove-container' + CURRENT_ITEM_ID + '" class="svz-remove-container" type="button">-</button></div>');
             
-            $('.container').sortable({
-              connectWith: '.container',
-            });
-            $( ".container" ).bind( "sortout", function(event, ui) {
-              console.log("out event");
-            });
+            // $('.container').sortable({
+            //   connectWith: '.container',
+            // });
+            // $( ".container" ).bind( "sortout", function(event, ui) {
+            //   console.log("out event");
+            // });
           });
 
 
