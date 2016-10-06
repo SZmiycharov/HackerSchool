@@ -51,23 +51,32 @@
     <div style="float:left; width:45%; margin-left: 50px; margin-top: 40px;">
       <div><button id="svz-sorting-btn" type="button" class="btn btn-primary">Allow sorting</button></div>
       <div class="container" id="svz-container1">
-        <button id="svz-add-item1" class="svz-add-item" type="button">+</button>
+        <button id="svz-add-item1" class="btn btn-secondary svz-add-item" type="button">+</button>
           <div class="item" id="svz-item-container1">
-            <button id="svz-add-container1" class="svz-add-container" type="button">+</button>
-            <button id="svz-remove-container1" class="svz-remove-container" type="button">-</button>
+            <div class="btn-group" role="group">
+              <button type="button" id="svz-add-container1" class="btn btn-secondary svz-add-container" type="button">+</button>
+              <button type="button" id="svz-remove-container1" class="btn btn-secondary svz-remove-container" type="button">-</button>
+            </div>
+            
           </div>
 
           <div class="container-wrapper" id="svz-cont-wrapper1">
             <div class="container" id="svz-container2">
-              <button id="svz-add-item2" class="svz-add-item" type="button">+</button>
-              <button id="svz-remove-item2" class="svz-remove-item" type="button">-</button>
+              <div class="btn-group" role="group">
+                <button id="svz-add-item2" class="btn btn-secondary svz-add-item" type="button">+</button>
+                <button id="svz-remove-item2" class="btn btn-secondary svz-remove-item" type="button">-</button>
+              </div>
                 <div class="item" id="svz-item-container2">
-                  <button id="svz-add-container2" class="svz-add-container" type="button">+</button>
-                  <button id="svz-remove-container2" class="svz-remove-container" type="button">-</button>
+                  <div class="btn-group" role="group">
+                    <button id="svz-add-container2" class="btn btn-secondary svz-add-container" type="button">+</button>
+                    <button id="svz-remove-container2" class="btn btn-secondary svz-remove-container" type="button">-</button>
+                  </div>
                 </div>
                 <div class="item" id="svz-item-container3">
-                  <button id="svz-add-container3" class="svz-add-container" type="button">+</button>
-                  <button id="svz-remove-container3" class="svz-remove-container" type="button">-</button>
+                  <div class="btn-group" role="group">
+                    <button id="svz-add-container3" class="btn btn-secondary svz-add-container" type="button">+</button>
+                    <button id="svz-remove-container3" class="btn btn-secondary svz-remove-container" type="button">-</button>
+                  </div>
 
 
 
@@ -122,8 +131,10 @@
             </div>
           </div>
           <div class="item"  id="svz-item-container4">
-            <button id="svz-add-container4" class="svz-add-container" type="button">+</button>
-            <button id="svz-remove-container4" class="svz-remove-container" type="button">-</button>
+            <div class="btn-group" role="group">
+              <button id="svz-add-container4" class="btn btn-secondary svz-add-container" type="button">+</button>
+              <button id="svz-remove-container4" class="btn btn-secondary svz-remove-container" type="button">-</button>
+            </div>
           </div>
       </div>
     </div>
@@ -274,7 +285,6 @@
             e.stopPropagation();
 
             var currentID = $(this).attr('id').replace( /^\D+/g, '')
-            console.log($(this).attr('id'));
 
             if ($(this).attr('id') != 'svz-container1'){
               $('#tab-content' + currentID).toggle();
@@ -308,14 +318,14 @@
             if($(this).text() == 'Allow sorting'){
               $('.container').sortable({
                 items: '.item, .container-wrapper',
-                cancel: ":button",
-                //axis: 'y',
+                cancel: ':button',
+                axis: 'y',
                 //cursor: 'move',
                 tolerance: 'pointer',
                 connectWith: '.container',
               });
               $('.container').bind( 'sortout', function(event, ui) {
-                console.log('out event');
+                //console.log('out event');
               });
               $('.container').sortable('enable');
 
@@ -336,20 +346,23 @@
             CURRENT_CONTAINER_ID += 1;
             CURRENT_ITEM_ID += 1;
             var currentID = $(this).attr('id').replace( /^\D+/g, '');
-            $('#svz-item-container' + currentID).replaceWith('<div class="container-wrapper" id="svz-cont-wrapper' + CURRENT_CONTAINER_ID + '"><div class="container" id="svz-container' + CURRENT_CONTAINER_ID + '"><button id="svz-add-item' + CURRENT_CONTAINER_ID + '" class="svz-add-item" type="button">+</button> <button id="svz-remove-item' + CURRENT_CONTAINER_ID + '" class="svz-remove-item" type="button">-</button></div></div>');
-            $('#svz-container' + CURRENT_CONTAINER_ID).append('<div class="item"  id="svz-item-container' + CURRENT_ITEM_ID + '"><button  id="svz-add-container' + CURRENT_ITEM_ID +'" class="svz-add-container" type="button">+</button> <button id="svz-remove-container' + CURRENT_ITEM_ID + '" class="svz-remove-container" type="button">-</button></div>');
+            $('#svz-item-container' + currentID).replaceWith('<div class="container-wrapper" id="svz-cont-wrapper' + CURRENT_CONTAINER_ID + '"><div class="container" id="svz-container' + CURRENT_CONTAINER_ID + '"><div class="btn-group" role="group"><button id="svz-add-item' + CURRENT_CONTAINER_ID + '" class="btn btn-secondary svz-add-item" type="button">+</button><button id="svz-remove-item' + CURRENT_CONTAINER_ID + '" class="btn btn-secondary svz-remove-item" type="button">-</button></div></div></div>');
+            $('#svz-container' + CURRENT_CONTAINER_ID).append('<div class="item"  id="svz-item-container' + CURRENT_ITEM_ID + '"><div class="btn-group" role="group"><button  id="svz-add-container' + CURRENT_ITEM_ID +'" class="btn btn-secondary svz-add-container" type="button">+</button> <button id="svz-remove-container' + CURRENT_ITEM_ID + '" class="btn btn-secondary svz-remove-container" type="button">-</button></div></div>');
 
-            $('.container').sortable({
+            if ($('#svz-sorting-btn').text() == 'Disallow sorting'){
+              $('.container').sortable({
                 items: '.item, .container-wrapper',
                 axis: 'y',
                 //cursor: 'move',
                 tolerance: 'pointer',
                 cancel: ":button",
                 connectWith: '.container',
-            });
-            $( ".container" ).bind( "sortout", function(event, ui) {
-              console.log("out event");
-            });
+              });
+              $( ".container" ).bind( "sortout", function(event, ui) {
+                //console.log("out event");
+              });
+            }
+
           });
 
           $(document).on('click', '.svz-add-item', function(e){
@@ -358,28 +371,28 @@
             CURRENT_CONTAINER_ID += 1;
             CURRENT_ITEM_ID += 1;
             var currentID = $(this).attr('id').replace( /^\D+/g, '');
-            $('#svz-container' + currentID).append('<div class="item"  id="svz-item-container' + CURRENT_ITEM_ID + '"><button  id="svz-add-container' + CURRENT_ITEM_ID +'" class="svz-add-container" type="button">+</button><button id="svz-remove-container' + CURRENT_ITEM_ID + '" class="svz-remove-container" type="button">-</button></div>');
+            $('#svz-container' + currentID).append('<div class="item"  id="svz-item-container' + CURRENT_ITEM_ID + '"><div class="btn-group" role="group"><button  id="svz-add-container' + CURRENT_ITEM_ID +'" class="btn btn-secondary svz-add-container" type="button">+</button><button id="svz-remove-container' + CURRENT_ITEM_ID + '" class="btn btn-secondary svz-remove-container" type="button">-</button></div></div>');
             
-            $('.container').sortable({
+            if ($('#svz-sorting-btn').text() == 'Disallow sorting'){
+              $('.container').sortable({
                 axis: 'y',
                 //cursor: 'move',
                 tolerance: 'pointer',
                 cancel: ":button",
                 connectWith: '.container',
                 items: '.item, .container-wrapper',
-            });
-            $( ".container" ).bind( "sortout", function(event, ui) {
-              console.log("out event");
-            });
+              });
+              $( ".container" ).bind( "sortout", function(event, ui) {
+                //console.log("out event");
+              });
+            }
           });
 
 
           $(document).on('click', '.svz-remove-container', function(){
-            console.log($(this).parent().attr('id'));
             $(this).parent().remove();
           });
           $(document).on('click', '.svz-remove-item', function(){
-            console.log($(this).parent().attr('id'));
             $(this).parent().remove();
           });
           
