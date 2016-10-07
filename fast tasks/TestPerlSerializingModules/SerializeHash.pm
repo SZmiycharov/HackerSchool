@@ -10,11 +10,6 @@ use BSON qw/encode decode/;
 my $document = {
     _id      => BSON::ObjectId->new,
     date     => BSON::Time->new,
-    name     => 'James Bond',
-    age      => 45,
-    amount   => 24587.45,
-    badass   => BSON::Bool->true,
-    password => BSON::String->new('12345')
 };
 
 
@@ -49,7 +44,9 @@ sub deserializeFileTextToHashFreezeThaw($){
 # **********************            With JSON Module             **********************
 sub serializeHashToFileJSON($$){
     my ($hash_to_serialize, $file_name) = @_;
-    my $serialized_hash = encode_json $hash_to_serialize;
+    my $JSON = JSON->new->utf8;
+    $JSON->convert_blessed(1);
+    my $serialized_hash = $JSON->encode($hash_to_serialize);
     open (my $fh, ">", $file_name) or die "Could not open $file_name";
     print $fh $serialized_hash; 
     close $fh;

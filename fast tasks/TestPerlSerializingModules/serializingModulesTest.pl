@@ -10,8 +10,9 @@ my $nested_file = "/home/slavi/Desktop/testfile.txt";
 open (my $fh, "<", $nested_file) or die "Could not open $nested_file!";
 my %hash_to_nest = (a => 'asd');
 my @arr_to_nest = qw(a b c d);
-my $helper_num = 10;
+my $helper_num = {a=>'asd'};
 my $blessed_var = bless \$helper_num;
+$blessed_var = JSON::true;
 my %beginning_hash;
 
 $beginning_hash{"a"}{Mathematics}   = [1,2,3,4,5,6, [1,2,3]];
@@ -20,6 +21,11 @@ $beginning_hash{"b"}{Literature}   = $fh;
 $beginning_hash{"b"}{Mathematics}  = \@arr_to_nest;
 $beginning_hash{"b"}{Art}          = $blessed_var;
 
+# %beginning_hash = (
+#     "apple"  => "red",
+#     "orange" => "orange",
+#     "grape"  => "purple",
+# );
 
 print "\n*****************************FreezeThawTest*****************************\n";
 my $start_time = time;
