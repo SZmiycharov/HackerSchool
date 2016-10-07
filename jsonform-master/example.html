@@ -493,12 +493,10 @@
           window.GenerateTextForm = function(currentID){
             currentID = currentID.replace( /^\D+/g, '');
 
-
             if($('#svz-key-warning').is(':visible')){
               return false;
             }
 
-          
             if (_.include(Object.keys(properties), $('#svz-key' + currentID).val()) && $('#svz-key' + currentID).val() != $('#svz-label-cont' + currentID).html()){
               $('#svz-key-warning' + currentID).show();
               $('#svz-key' + currentID).css('border-color', '#ff0000');
@@ -561,11 +559,26 @@
                 currentProperties['enum'] = assignedEnum;
               }
               
+
               
+
               if (toDeleteRequired){
                 required.splice(_.indexOf(required, chosenKey), 1);
               }
               properties[chosenKey] = currentProperties;
+
+              try {
+                  var sortableItemsArray = $('.container').sortable('toArray');
+                  var sortableItemsArrayLength = sortableItemsArray.length;
+                  for (var i = 0; i < sortableItemsArrayLength; i++) {
+                      if (_.include(Object.keys(properties), $('#' + sortableItemsArray[i]).find('.svz-label-cont').html())){
+                        properties[$('#' + sortableItemsArray[i]).find('.svz-label-cont').html()]['ordering'] = i + 1;
+                      }
+                  }
+              }
+              catch(err) {
+                  console.log('Error: ' + err.message);
+              }
 
               if(typeFromSelect == 'object'){
                 console.log('type is object will do this later!');
