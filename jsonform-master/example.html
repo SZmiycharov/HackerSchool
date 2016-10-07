@@ -21,11 +21,11 @@
           overflow:hidden;
           min-height: 100px;
           min-width: 500px;
-
           background-color: #97a8a9;
           border: 3px solid #BED5D6;
           display: block;
-          margin-bottom: 5px;
+          margin-top: 5px;
+          margin-bottom: 25px;
       }
       .currentContainerHover {
         background-color: #616a6b;
@@ -35,7 +35,8 @@
           overflow:hidden;
           background-color: #6065C9;
           border: 2px solid #353871;
-          margin-bottom: 5px;
+          margin-bottom: 10px;
+          margin-top: 5px;
           border-radius: 2px;
           padding: -1px 50px;
       }
@@ -73,7 +74,9 @@
                   </div>
                 </div>
                 <div class="item" id="svz-item-container3">
+                    <label id="svz-label-cont3">New schema</label>
                   <div class="btn-group" role="group">
+                    
                     <button id="svz-add-container3" class="btn btn-secondary svz-add-container" type="button">+</button>
                     <button id="svz-remove-container3" class="btn btn-secondary svz-remove-container" type="button">-</button>
                   </div>
@@ -81,19 +84,19 @@
 
 
                   <div class="tab-content" id="tab-content3" hidden>
-                  <div id="svz-schema-form-tabs-container" class="tab-pane active">
-                      <div id="svz-left-container" style="float:left; width:45%; margin-left: 50px; margin-top: 20px;"> 
-                        <ul class="nav nav-tabs" id="svz-schema-form-tabs">
+                  <div id="svz-schema-form-tabs-container3" class="tab-pane active">
+                      <div id="svz-left-container3" style="float:left; width:45%; margin-left: 50px; margin-top: 20px;"> 
+                        <ul class="nav nav-tabs" id="svz-schema-form-tabs3">
                           <li class="active"><a data-target="#svz-schema-tab" data-toggle="tab">Schema</a></li>
                           <li><a data-target="#svz-form-tab" data-toggle="tab">Form</a></li>
                         </ul>
                         <div class="tab-content">
-                          <div class="tab-pane active" id="svz-schema-tab">
+                          <div class="tab-pane active" id="svz-schema-tab3">
                             <h2>For schema:</h2>
-                            <form id="svz-schema-form" action="javascript:void(0);" onsubmit="GenerateTextForm(this.id);">
+                            <form id="svz-schema-form3" action="javascript:void(0);" onsubmit="GenerateTextForm(this.id);">
                                 <label class="svzRequiredLabel">Type</label>
                                 <div>
-                                  <select class="svz-selected-type" id="svz-selected-type" name="type" required multiple>
+                                  <select class="svz-selected-type" id="svz-selected-type3" name="type3" required multiple>
                                     <option label="object" value="object">object</option>
                                     <option label="array" value="array">array</option>
                                     <option label="number" value="number">number</option> 
@@ -103,23 +106,23 @@
                                     <option label="null" value="null">null</option>
                                   </select>
                                 </div>
-                                <label class="svzRequiredLabel">Key<font class="svzKeyWarning" id="svz-key-warning" color="red" hidden> (key already exists)</font></label>
-                                <div><input id="svz-key" class="svz-key" placeholder="Key (Unique identifier)" type="text" name="key" required></div>
+                                <label class="svzRequiredLabel">Key<font class="svzKeyWarning" id="svz-key-warning3" color="red" hidden> (key already exists)</font></label>
+                                <div><input id="svz-key3" class="svz-key" placeholder="Key (Unique identifier)" type="text" name="key3" required></div>
                                 <label>Title</label>
-                                <div><input placeholder="Title" type="text" name="title"></div>
+                                <div><input placeholder="Title" type="text" name="title3"></div>
                                 <label>Ordering</label>
-                                <div><input placeholder="Ordering" type="number" name="ordering"></div>
+                                <div><input placeholder="Ordering" type="number" name="ordering3"></div>
                                 <label>Description</label>
-                                <div><input class="longtext" id="svz-description" placeholder="Description" type="text" name="description"></div>
-                                <div><label style="display: flex;"><input id="svz-required" type="checkbox" name="required">Required (check for true)</label></div>
-                                <label id="svz-label-for-enum">Enum</label>
-                                <ul id="svz-enum" name="enum" class="svz-enum"></ul>
-                                <input class="btn btn-primary" id="svz-schema-form-submit" type="submit">
+                                <div><input class="longtext" id="svz-description3" placeholder="Description" type="text" name="description3"></div>
+                                <div><label style="display: flex;"><input id="svz-required" type="checkbox" name="required3">Required (check for true)</label></div>
+                                <label id="svz-label-for-enum3">Enum</label>
+                                <ul id="svz-enum3" name="enum3" class="svz-enum"></ul>
+                                <input class="btn btn-primary" id="svz-schema-form-submit3" type="submit">
                             </form>
                           </div>
-                          <div class="tab-pane" id="svz-form-tab">
-                            <h2 id="svz-for-form">For form:</h2>
-                            <form id="svz-for-form-form"></form>
+                          <div class="tab-pane" id="svz-form-tab3">
+                            <h2 id="svz-for-form3">For form:</h2>
+                            <form id="svz-for-form-form3"></form>
                           </div>
                         </div> 
                       </div>   
@@ -191,7 +194,7 @@
           window.RemoveTab = function(currentID) {
             var currentID = currentID.replace( /^\D+/g, '');
             try{
-              var currentKey = $('#svz-tab' + currentID).html().split('</button> ')[1];
+              var currentKey = $('#svz-label-cont' + currentID).html();
             } catch(err){
               console.log(err);
             }
@@ -317,10 +320,11 @@
           $(document).on('click', '#svz-sorting-btn', function(){
             if($(this).text() == 'Allow sorting'){
               $('.container').sortable({
+                delay: 150,
                 items: '.item, .container-wrapper',
                 cancel: ':button',
                 axis: 'y',
-                //cursor: 'move',
+                cursor: 'move',
                 tolerance: 'pointer',
                 connectWith: '.container',
               });
@@ -351,9 +355,10 @@
 
             if ($('#svz-sorting-btn').text() == 'Disallow sorting'){
               $('.container').sortable({
+                delay: 150,
                 items: '.item, .container-wrapper',
                 axis: 'y',
-                //cursor: 'move',
+                cursor: 'move',
                 tolerance: 'pointer',
                 cancel: ":button",
                 connectWith: '.container',
@@ -376,7 +381,7 @@
             if ($('#svz-sorting-btn').text() == 'Disallow sorting'){
               $('.container').sortable({
                 axis: 'y',
-                //cursor: 'move',
+                cursor: 'move',
                 tolerance: 'pointer',
                 cancel: ":button",
                 connectWith: '.container',
@@ -390,18 +395,15 @@
 
 
           $(document).on('click', '.svz-remove-container', function(){
+            $(this).parent().parent().remove();
             $(this).parent().remove();
           });
           $(document).on('click', '.svz-remove-item', function(){
+            $(this).parent().parent().remove();
             $(this).parent().remove();
           });
           
           
-
-
-
-
-
           $('#add-new-schema-form').click(function(){
             CURRENT_SCHEMA_FORM_ID += 1;
             if ($('#svz-main-tabs li').length - $('#svz-dropdown-menu-items li').length >= MAX_NUM_TABS_NAVBAR) {
@@ -439,7 +441,7 @@
              console.log('keyup on key');
              var currentID = $(this).attr('id').replace( /^\D+/g, '');
 
-             if (_.include(Object.keys(properties), $(this).val()) && $(this).val() != $('#svz-tab' + currentID).html().split('</button> ')[1]){
+             if (_.include(Object.keys(properties), $(this).val()) && $(this).val() != $('#svz-label-cont' + currentID).html()){
                $('#svz-schema-form-submit' + currentID).prop('disabled', true);
                 $('#svz-key-warning' + currentID).show();
                 $('#svz-key' + currentID).css('border-color', '#ff0000');
@@ -463,9 +465,9 @@
                 $('#svz-label-for-enum' + currentTabNum).show();
                 $('#svz-schema-form' + currentTabNum).append('<label class="additionaloption' + currentTabNum + '">Maximum length</label><div class="additionaloption' + currentTabNum + '" class="form-group"><input id="svz-max-length' + currentTabNum + '" type="number" name="maxLength' + currentTabNum + '" placeholder="Maximum length"></div>');
                 $('#svz-schema-form' + currentTabNum).append('<label class="additionaloption' + currentTabNum + '">Minimum length</label><div class="additionaloption' + currentTabNum + '" class="form-group"><input id="svz-min-length' + currentTabNum + '" type="number" name="minLength' + currentTabNum + '" placeholder="Minimum length"></div>');
-                $('#svz-schema-form' + currentTabNum).append('<label class="additionaloption' + currentTabNum + '">Minimum</label><div class="additionaloption' + currentTabNum + '" class="form-group"><input id="minimum' + currentTabNum + '" type="number" name="minimum' + currentTabNum + '" placeholder="Minimum"></div>');
+                $('#svz-schema-form' + currentTabNum).append('<label class="additionaloption' + currentTabNum + '">Minimum</label><div class="additionaloption' + currentTabNum + '" class="form-group"><input class="minimum" id="minimum' + currentTabNum + '" type="number" name="minimum' + currentTabNum + '" placeholder="Minimum"></div>');
                 $('#svz-schema-form' + currentTabNum).append('<div hidden class="additionaloption' + currentTabNum + '" class="form-group"  id="exclusive-min-div' + currentTabNum + '"><label style="display: flex;"><input id="exclusiveMinimum' + currentTabNum + '" name="exclusiveMinimum' + currentTabNum + '" type="checkbox" placeholder="Exclusive minimum">Check - num will be more than minimum</label></div>');
-                $('#svz-schema-form' + currentTabNum).append('<label class="additionaloption' + currentTabNum + '">Maximum</label><div class="additionaloption' + currentTabNum + '" class="form-group"><input id="maximum' + currentTabNum + '" type="number" name="maximum' + currentTabNum + '" placeholder="Maximum"></div>');
+                $('#svz-schema-form' + currentTabNum).append('<label class="additionaloption' + currentTabNum + '">Maximum</label><div class="additionaloption' + currentTabNum + '" class="form-group"><input class="maximum" id="maximum' + currentTabNum + '" type="number" name="maximum' + currentTabNum + '" placeholder="Maximum"></div>');
                 $('#svz-schema-form' + currentTabNum).append('<div hidden class="additionaloption' + currentTabNum + '" class="form-group" id="exclusive-max-div' + currentTabNum + '"><label style="display: flex;"><input id="exclusiveMaximum' + currentTabNum + '" name="exclusiveMaximum' + currentTabNum + '" type="checkbox" placeholder="Exclusive maximum">Check - num will be less than minimum</label></div>');
                 $('#svz-schema-form' + currentTabNum).append('<label class="additionaloption' + currentTabNum + '">Default</label><div class="additionaloption' + currentTabNum + '" class="form-group"><input name="default' + currentTabNum + '" id="svz-default' + currentTabNum + '" type="number" placeholder="Default"></div>');
                 $('#svz-schema-form' + currentTabNum).append('<div class="additionaloption' + currentTabNum + '"><label style="display: flex;"><input id="svz-readonly' + currentTabNum + '" name="readonly' + currentTabNum + '" type="checkbox">Readonly (check for true)</label></div>');
@@ -487,9 +489,9 @@
                   $('#svz-enum' + currentTabNum).show();
                   $('#svz-enum').prop('disabled', false);
                   $('#svz-label-for-enum' + currentTabNum).show();
-                  $('#svz-schema-form' + currentTabNum).append('<label class="additionaloption' + currentTabNum + '">Minimum</label><div class="additionaloption' + currentTabNum + '" class="form-group"><input id="minimum' + currentTabNum + '" type="number" name="minimum" placeholder="Minimum"></div>');
+                  $('#svz-schema-form' + currentTabNum).append('<label class="additionaloption' + currentTabNum + '">Minimum</label><div class="additionaloption' + currentTabNum + '" class="form-group"><input class="minimum" id="minimum' + currentTabNum + '" type="number" name="minimum" placeholder="Minimum"></div>');
                   $('#svz-schema-form' + currentTabNum).append('<div hidden class="additionaloption' + currentTabNum + '" class="form-group"  id="exclusive-min-div' + currentTabNum + '"><label style="display: flex;"><input id="exclusiveMinimum' + currentTabNum + '" name="exclusiveMinimum' + currentTabNum + '" type="checkbox" placeholder="Exclusive minimum">Check - num will be more than minimum</label></div>');
-                  $('#svz-schema-form' + currentTabNum).append('<label class="additionaloption' + currentTabNum + '">Maximum</label><div class="additionaloption' + currentTabNum + '" class="form-group"><input id="maximum' + currentTabNum + '" type="number" name="maximum' + currentTabNum + '" placeholder="Maximum"></div>');
+                  $('#svz-schema-form' + currentTabNum).append('<label class="additionaloption' + currentTabNum + '">Maximum</label><div class="additionaloption' + currentTabNum + '" class="form-group"><input class="maximum" id="maximum' + currentTabNum + '" type="number" name="maximum' + currentTabNum + '" placeholder="Maximum"></div>');
                   $('#svz-schema-form' + currentTabNum).append('<div hidden class="additionaloption' + currentTabNum + '" class="form-group" id="exclusive-max-div' + currentTabNum + '"><label style="display: flex;"><input id="exclusiveMaximum" name="exclusiveMaximum" type="checkbox" placeholder="Exclusive maximum">Check - num will be less than minimum</label></div>');
                   $('#svz-schema-form' + currentTabNum).append('<label class="additionaloption' + currentTabNum + '">Default</label><div class="additionaloption' + currentTabNum + '" class="form-group"><input name="default' + currentTabNum + '" id="svz-default' + currentTabNum + '" type="number" placeholder="Default"></div>');
                   $('#svz-schema-form' + currentTabNum).append('<div class="additionaloption' + currentTabNum + '"><label style="display: flex;"><input id="svz-readonly' + currentTabNum + '" name="readonly' + currentTabNum + '" type="checkbox">Readonly (check for true)</label></div>');
@@ -507,22 +509,26 @@
               }
           }));
         
-          $(document).on('change', '#minimum', function(){
-            $('#exclusive-min-div').toggle(!!$(this).val());
+          $(document).on('change', '.minimum', function(){
+            var currentID = $(this).attr('id').replace( /^\D+/g, '');
+            $('#exclusive-min-div' + currentID).toggle(!!$(this).val());
           }); 
-          $(document).on('change', '#maximum', function(){
-            $('#exclusive-max-div').toggle(!!$(this).val());
+          $(document).on('change', '.maximum', function(){
+            console.log('change max')
+            var currentID = $(this).attr('id').replace( /^\D+/g, '');
+            $('#exclusive-max-div' + currentID).toggle(!!$(this).val());
           }); 
 
           window.GenerateTextForm = function(currentID){
+            currentID = currentID.replace( /^\D+/g, '');
+
+
             if($('#svz-key-warning').is(':visible')){
               return false;
             }
 
-            currentID = currentID.replace( /^\D+/g, '');
-
-
-            if (_.include(Object.keys(properties), $('#svz-key' + currentID).val()) && $('#svz-key' + currentID).val() != $('#svz-tab' + currentID).html().split('</button> ')[1]){
+          
+            if (_.include(Object.keys(properties), $('#svz-key' + currentID).val()) && $('#svz-key' + currentID).val() != $('#svz-label-cont' + currentID).html()){
               $('#svz-key-warning' + currentID).show();
               $('#svz-key' + currentID).css('border-color', '#ff0000');
               return false;
@@ -530,11 +536,12 @@
               $('#svz-key-warning' + currentID).hide();
               $('#svz-key' + currentID).css('border-color', '#cccccc');
             }
+            var currentKey = $('#svz-label-cont' + currentID).html();
 
 
-            var currentKey = $('#svz-tab' + currentID).html().split('</button> ')[1];
 
-            if ((Object.keys(properties) != 0) && (currentKey != $('#svz-key' + currentID).val()) && _.include(Object.keys(properties), currentKey)){     
+
+            if ((Object.keys(properties) != 0) && (currentKey != $('#svz-key' + currentID).val()) && _.include(Object.keys(properties), currentKey)){ 
               Object.defineProperty(properties, $('#svz-key' + currentID).val(), Object.getOwnPropertyDescriptor(properties, currentKey));
               delete properties[currentKey];
             }
@@ -560,20 +567,29 @@
                   typesFromSelectArray.push(field.value);
                   currentProperties['type'] = typesFromSelectArray;
                 } else if(field.name == 'key' + currentID){
-                  $('#svz-tab' + currentID).html('<button onclick="RemoveTab(this.id);" class="close closeTab" type="button" id="svz-close-tab' + currentID + '">×</button> ' + field.value);
+
                   chosenKey = field.value;
                 } else if(field.name == 'required' + currentID){
                   toDeleteRequired = false;
                   if (field.value && !(_.include(required, chosenKey))) {
                       required.push(chosenKey);
-                  }
+                      console.log('required: ' + required);
+                      console.log('label html: ' + $('#svz-label-cont' + currentID).html());
+
+
+                      if (_.include(required, $('#svz-label-cont' + currentID).html())){
+                        required.splice(_.indexOf(required, $('#svz-label-cont' + currentID).html()), 1);
+                      }
+                  } 
+
                 } else{
                   if (field.name.replace(/[0-9]/g, '') != 'tags'){
                     currentProperties[field.name.replace(/[0-9]/g, '')] = field.value;
                   }
                 }
               });
-                
+              $('#svz-label-cont' + currentID).html(chosenKey);
+
               var assignedEnum = $('#svz-enum' + currentID).tagit('assignedTags');
               if (assignedEnum != '') {
                 currentProperties['enum'] = assignedEnum;
@@ -587,10 +603,7 @@
 
               if(typeFromSelect == 'object'){
                 console.log('type is object will do this later!');
-              } else if(typeFromSelect == 'array'){
-
-
-
+              } else if(typeFromSelect == 'array'){   
                 $('#svz-left-container' + currentID).slideToggle();
 
                 $('<button onclick="$(\'#svz-left-container' + currentID + '\').slideToggle(); $(this).hide();" >Array' + currentID + '</button>').insertBefore('#svz-left-container' + currentID);
