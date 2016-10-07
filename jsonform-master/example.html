@@ -43,12 +43,71 @@
       .currentItemHover {
         background-color: #4249d6;
       }
+      .svz-label-cont {
+        font-weight: bold;
+        font-size: 20px;
+        display: inline;
+        position: absolute;
+        margin-left: 10px;
+        margin-top: 5px;
+      }
 
     </style>
 
   </head>
 
   <body>
+    <!-- hidden form for cloning -->
+    <div class="tab-content" id="tab-content9999999" hidden>
+      <div id="svz-schema-form-tabs-container9999999" class="tab-pane active">
+          <div id="svz-left-container9999999" style="float:left; width:45%; margin-left: 50px; margin-top: 20px;"> 
+            <ul class="nav nav-tabs" id="svz-schema-form-tabs9999999">
+              <li class="active"><a data-target="#svz-schema-tab" data-toggle="tab">Schema</a></li>
+              <li><a data-target="#svz-form-tab" data-toggle="tab">Form</a></li>
+            </ul>
+            <div class="tab-content">
+              <div class="tab-pane active" id="svz-schema-tab9999999">
+                <h2>For schema:</h2>
+                <form id="svz-schema-form9999999" action="javascript:void(0);" onsubmit="GenerateTextForm(this.id);">
+                    <label class="svzRequiredLabel">Type</label>
+                    <div>
+                      <select class="svz-selected-type" id="svz-selected-type9999999" name="type9999999" required multiple>
+                        <option label="object" value="object">object</option>
+                        <option label="array" value="array">array</option>
+                        <option label="number" value="number">number</option> 
+                        <option label="integer" value="integer">integer</option>
+                        <option label="string" value="string">string</option>  
+                        <option label="boolean" value="boolean">boolean</option> 
+                        <option label="null" value="null">null</option>
+                      </select>
+                    </div>
+                    <label class="svzRequiredLabel">Key<font class="svzKeyWarning" id="svz-key-warning9999999" color="red" hidden> (key already exists)</font></label>
+                    <div><input id="svz-key9999999" class="svz-key" placeholder="Key (Unique identifier)" type="text" name="key9999999" required></div>
+                    <label>Title</label>
+                    <div><input placeholder="Title" type="text" name="title9999999"></div>
+                    <label>Ordering</label>
+                    <div><input placeholder="Ordering" type="number" name="ordering9999999"></div>
+                    <label>Description</label>
+                    <div><input class="longtext" id="svz-description9999999" placeholder="Description" type="text" name="description9999999"></div>
+                    <div><label style="display: flex;"><input id="svz-required" type="checkbox" name="required9999999">Required (check for true)</label></div>
+                    <label id="svz-label-for-enum9999999">Enum</label>
+                    <ul id="svz-enum9999999" name="enum9999999" class="svz-enum"></ul>
+                    <input class="btn btn-primary" id="svz-schema-form-submit9999999" type="submit">
+                </form>
+              </div>
+              <div class="tab-pane" id="svz-form-tab9999999">
+                <h2 id="svz-for-form9999999">For form:</h2>
+                <form id="svz-for-form-form9999999"></form>
+              </div>
+            </div> 
+          </div>   
+      </div>
+    </div>
+
+
+
+
+
     <div style="float:left; width:45%; margin-left: 50px; margin-top: 40px;">
       <div><button id="svz-sorting-btn" type="button" class="btn btn-primary">Allow sorting</button></div>
       <div class="container" id="svz-container1">
@@ -74,59 +133,58 @@
                   </div>
                 </div>
                 <div class="item" id="svz-item-container3">
-                    <label id="svz-label-cont3">New schema</label>
                   <div class="btn-group" role="group">
-                    
                     <button id="svz-add-container3" class="btn btn-secondary svz-add-container" type="button">+</button>
                     <button id="svz-remove-container3" class="btn btn-secondary svz-remove-container" type="button">-</button>
+                    <label class="svz-label-cont" id="svz-label-cont3">New schema</label>
                   </div>
 
 
 
                   <div class="tab-content" id="tab-content3" hidden>
-                  <div id="svz-schema-form-tabs-container3" class="tab-pane active">
-                      <div id="svz-left-container3" style="float:left; width:45%; margin-left: 50px; margin-top: 20px;"> 
-                        <ul class="nav nav-tabs" id="svz-schema-form-tabs3">
-                          <li class="active"><a data-target="#svz-schema-tab" data-toggle="tab">Schema</a></li>
-                          <li><a data-target="#svz-form-tab" data-toggle="tab">Form</a></li>
-                        </ul>
-                        <div class="tab-content">
-                          <div class="tab-pane active" id="svz-schema-tab3">
-                            <h2>For schema:</h2>
-                            <form id="svz-schema-form3" action="javascript:void(0);" onsubmit="GenerateTextForm(this.id);">
-                                <label class="svzRequiredLabel">Type</label>
-                                <div>
-                                  <select class="svz-selected-type" id="svz-selected-type3" name="type3" required multiple>
-                                    <option label="object" value="object">object</option>
-                                    <option label="array" value="array">array</option>
-                                    <option label="number" value="number">number</option> 
-                                    <option label="integer" value="integer">integer</option>
-                                    <option label="string" value="string">string</option>  
-                                    <option label="boolean" value="boolean">boolean</option> 
-                                    <option label="null" value="null">null</option>
-                                  </select>
-                                </div>
-                                <label class="svzRequiredLabel">Key<font class="svzKeyWarning" id="svz-key-warning3" color="red" hidden> (key already exists)</font></label>
-                                <div><input id="svz-key3" class="svz-key" placeholder="Key (Unique identifier)" type="text" name="key3" required></div>
-                                <label>Title</label>
-                                <div><input placeholder="Title" type="text" name="title3"></div>
-                                <label>Ordering</label>
-                                <div><input placeholder="Ordering" type="number" name="ordering3"></div>
-                                <label>Description</label>
-                                <div><input class="longtext" id="svz-description3" placeholder="Description" type="text" name="description3"></div>
-                                <div><label style="display: flex;"><input id="svz-required" type="checkbox" name="required3">Required (check for true)</label></div>
-                                <label id="svz-label-for-enum3">Enum</label>
-                                <ul id="svz-enum3" name="enum3" class="svz-enum"></ul>
-                                <input class="btn btn-primary" id="svz-schema-form-submit3" type="submit">
-                            </form>
-                          </div>
-                          <div class="tab-pane" id="svz-form-tab3">
-                            <h2 id="svz-for-form3">For form:</h2>
-                            <form id="svz-for-form-form3"></form>
-                          </div>
-                        </div> 
-                      </div>   
-                  </div>
+                    <div id="svz-schema-form-tabs-container3" class="tab-pane active">
+                        <div id="svz-left-container3" style="float:left; width:45%; margin-left: 50px; margin-top: 20px;"> 
+                          <ul class="nav nav-tabs" id="svz-schema-form-tabs3">
+                            <li class="active"><a data-target="#svz-schema-tab" data-toggle="tab">Schema</a></li>
+                            <li><a data-target="#svz-form-tab" data-toggle="tab">Form</a></li>
+                          </ul>
+                          <div class="tab-content">
+                            <div class="tab-pane active" id="svz-schema-tab3">
+                              <h2>For schema:</h2>
+                              <form id="svz-schema-form3" action="javascript:void(0);" onsubmit="GenerateTextForm(this.id);">
+                                  <label class="svzRequiredLabel">Type</label>
+                                  <div>
+                                    <select class="svz-selected-type" id="svz-selected-type3" name="type3" required multiple>
+                                      <option label="object" value="object">object</option>
+                                      <option label="array" value="array">array</option>
+                                      <option label="number" value="number">number</option> 
+                                      <option label="integer" value="integer">integer</option>
+                                      <option label="string" value="string">string</option>  
+                                      <option label="boolean" value="boolean">boolean</option> 
+                                      <option label="null" value="null">null</option>
+                                    </select>
+                                  </div>
+                                  <label class="svzRequiredLabel">Key<font class="svzKeyWarning" id="svz-key-warning3" color="red" hidden> (key already exists)</font></label>
+                                  <div><input id="svz-key3" class="svz-key" placeholder="Key (Unique identifier)" type="text" name="key3" required></div>
+                                  <label>Title</label>
+                                  <div><input placeholder="Title" type="text" name="title3"></div>
+                                  <label>Ordering</label>
+                                  <div><input placeholder="Ordering" type="number" name="ordering3"></div>
+                                  <label>Description</label>
+                                  <div><input class="longtext" id="svz-description3" placeholder="Description" type="text" name="description3"></div>
+                                  <div><label style="display: flex;"><input id="svz-required" type="checkbox" name="required3">Required (check for true)</label></div>
+                                  <label id="svz-label-for-enum3">Enum</label>
+                                  <ul id="svz-enum3" name="enum3" class="svz-enum"></ul>
+                                  <input class="btn btn-primary" id="svz-schema-form-submit3" type="submit">
+                              </form>
+                            </div>
+                            <div class="tab-pane" id="svz-form-tab3">
+                              <h2 id="svz-for-form3">For form:</h2>
+                              <form id="svz-for-form-form3"></form>
+                            </div>
+                          </div> 
+                        </div>   
+                    </div>
                   </div>
                 </div>
             
@@ -283,15 +341,18 @@
             $('#svz-tabs-search').val(selectedItem);
           });
 
-          $(document).on('click', '.container, .item', function(e){
+          $(document).on('click', '.container, .item, .svz-label-cont', function(e){
+            console.log('here');
             if (e.target != this) return;
             e.stopPropagation();
 
             var currentID = $(this).attr('id').replace( /^\D+/g, '')
+            console.log(currentID);
 
             if ($(this).attr('id') != 'svz-container1'){
+              console.log('yeah gonna toggle!');
+
               $('#tab-content' + currentID).toggle();
-              
             }
           });
 
@@ -378,6 +439,25 @@
             var currentID = $(this).attr('id').replace( /^\D+/g, '');
             $('#svz-container' + currentID).append('<div class="item"  id="svz-item-container' + CURRENT_ITEM_ID + '"><div class="btn-group" role="group"><button  id="svz-add-container' + CURRENT_ITEM_ID +'" class="btn btn-secondary svz-add-container" type="button">+</button><button id="svz-remove-container' + CURRENT_ITEM_ID + '" class="btn btn-secondary svz-remove-container" type="button">-</button></div></div>');
             
+            var $clonedDiv = $('#tab-content9999999').clone();
+
+            $clonedDiv.find('[id]').each(function() { 
+              var newID = $(this).attr('id').replace(/\d+$/, function(str) { return CURRENT_ITEM_ID; });
+              $(this).attr('id', newID);
+            });
+            $clonedDiv.find('[name]').each(function() { 
+              var newID = $(this).attr('name').replace(/\d+$/, function(str) { return CURRENT_ITEM_ID; });
+              $(this).attr('name', newID);
+            });
+
+            var idWithoutNumber = $clonedDiv.attr('id').replace(/[0-9]/g, '');
+
+            $clonedDiv.attr('id', idWithoutNumber + CURRENT_ITEM_ID)
+
+            console.log($clonedDiv.attr('id'));
+            $('#svz-item-container' + CURRENT_ITEM_ID).append($clonedDiv);
+            
+
             if ($('#svz-sorting-btn').text() == 'Disallow sorting'){
               $('.container').sortable({
                 axis: 'y',
@@ -404,35 +484,6 @@
           });
           
           
-          $('#add-new-schema-form').click(function(){
-            CURRENT_SCHEMA_FORM_ID += 1;
-            if ($('#svz-main-tabs li').length - $('#svz-dropdown-menu-items li').length >= MAX_NUM_TABS_NAVBAR) {
-              if ($('#svz-tabs-dropdown-menu').attr('id') == undefined) {
-                $('<li id="svz-tabs-dropdown-menu" class="dropdown"><input class="dropdown-toggle" data-toggle="dropdown" id="svz-tabs-search" placeholder="search" type="text" onkeyup="HandleSearchEvent();">  <ul id="svz-dropdown-menu-items" class="dropdown-menu"> <li id="svz-last-dropdown-option" style="display:none"></li> </ul> </li>').insertBefore('#add-new-schema-form');
-              }
-              $('#svz-dropdown-menu-items').append('<li id="svz-li' + CURRENT_SCHEMA_FORM_ID + '" class="svz-dropdown-tabs"><a data-target="#svz-schema-form-tabs-container' + CURRENT_SCHEMA_FORM_ID + '" id="svz-tab' + CURRENT_SCHEMA_FORM_ID + '" data-toggle="tab"><button onclick="RemoveTab(this.id);" class="close closeTab" type="button" id="svz-close-tab' + CURRENT_SCHEMA_FORM_ID + '">×</button> Schema' + CURRENT_SCHEMA_FORM_ID + '</a></li>');
-            } else{
-              $('<li  id="svz-li' + CURRENT_SCHEMA_FORM_ID + '"><a data-target="#svz-schema-form-tabs-container' + CURRENT_SCHEMA_FORM_ID + '" id="svz-tab' + CURRENT_SCHEMA_FORM_ID + '" data-toggle="tab"><button onclick="RemoveTab(this.id);" class="close closeTab" type="button" id="svz-close-tab' + CURRENT_SCHEMA_FORM_ID + '">×</button> Schema' + CURRENT_SCHEMA_FORM_ID + '</a></li>').insertBefore('#add-new-schema-form');
-            }
-            
-            var newSchemaForm = '<div id="svz-schema-form-tabs-container' + CURRENT_SCHEMA_FORM_ID + '" class="tab-pane active"> <div id="svz-left-container' + CURRENT_SCHEMA_FORM_ID + '" style="float:left; width:45%; margin-left: 50px; margin-top: 20px;"> <ul class="nav nav-tabs" id="svz-schema-form-tabs' + CURRENT_SCHEMA_FORM_ID + '"> <li class="active"><a data-target="#svz-schema-tab" data-toggle="tab">Schema</a></li> <li><a data-target="#svz-form-tab" data-toggle="tab">Form</a></li> </ul> <div class="tab-content"> <div class="tab-pane active" id="svz-schema-tab' + CURRENT_SCHEMA_FORM_ID + '"> <h2>For schema:</h2> <form id="svz-schema-form' + CURRENT_SCHEMA_FORM_ID + '" action="javascript:void(0);" onsubmit="GenerateTextForm(this.id);"> <label class="svzRequiredLabel">Type</label> <div> <select class="svz-selected-type" id="svz-selected-type' + CURRENT_SCHEMA_FORM_ID + '" name="type' + CURRENT_SCHEMA_FORM_ID + '" required multiple> <option label="object" value="object">object</option> <option label="array" value="array">array</option> <option label="number" value="number">number</option> <option label="integer" value="integer">integer</option> <option label="string" value="string">string</option> <option label="boolean" value="boolean">boolean</option> <option label="null" value="null">null</option> </select> </div><label class="svzRequiredLabel">Key<font class="svzKeyWarning" id="svz-key-warning' + CURRENT_SCHEMA_FORM_ID + '" color="red" hidden> (key already exists)</font></label> <div><input id="svz-key' + CURRENT_SCHEMA_FORM_ID + '" class="svz-key" placeholder="Key (Unique identifier)" type="text" name="key' + CURRENT_SCHEMA_FORM_ID + '" required></div><label>Title</label> <div><input placeholder="Title" type="text" name="title' + CURRENT_SCHEMA_FORM_ID + '"></div><label>Ordering</label> <div><input placeholder="Ordering" type="number" name="ordering' + CURRENT_SCHEMA_FORM_ID + '"></div> <label>Description</label> <div><input class="longtext" id="svz-description' + CURRENT_SCHEMA_FORM_ID + '" placeholder="Description" type="text" name="description' + CURRENT_SCHEMA_FORM_ID + '"></div> <div><label style="display: flex;"><input id="svz-required' + CURRENT_SCHEMA_FORM_ID + '" type="checkbox" name="required' + CURRENT_SCHEMA_FORM_ID + '">Required (check for true)</label></div><label id="svz-label-for-enum' + CURRENT_SCHEMA_FORM_ID + '">Enum</label><ul id="svz-enum' + CURRENT_SCHEMA_FORM_ID + '" name="enum' + CURRENT_SCHEMA_FORM_ID + '" class="svz-enum"></ul><input class="btn btn-primary" id="svz-schema-form-submit' + CURRENT_SCHEMA_FORM_ID + '" type="submit"> </form> </div> <div class="tab-pane" id="svz-form-tab' + CURRENT_SCHEMA_FORM_ID + '"> <h2 id="svz-for-form' + CURRENT_SCHEMA_FORM_ID + '">For form:</h2> <form id="svz-for-form-form' + CURRENT_SCHEMA_FORM_ID + '"></form> </div> </div> </div>';
-            
-            $('#tab-content').append(newSchemaForm);
-             
-            $('.svz-selected-type').multiselect({
-                buttonWidth: '206px',
-                nonSelectedText: 'Choose type',
-                numberDisplayed: 3
-            });
-            $('.svz-enum').tagit({
-                allowSpaces: true,
-                placeholderText: 'Enum'
-            });
-
-            $('#svz-main-tabs a:last').tab('show');
-            $('#svz-tabs-search').val($('#svz-main-tabs a:last').text().substring(1));
-            $('#svz-main-tabs').tabs('refresh');
-          });
 
           var required = [];
           var properties = {};
@@ -572,7 +623,7 @@
                 } else if(field.name == 'required' + currentID){
                   toDeleteRequired = false;
                   if (field.value && !(_.include(required, chosenKey))) {
-                      required.push(chosenKey);
+                      
                       console.log('required: ' + required);
                       console.log('label html: ' + $('#svz-label-cont' + currentID).html());
 
@@ -580,6 +631,7 @@
                       if (_.include(required, $('#svz-label-cont' + currentID).html())){
                         required.splice(_.indexOf(required, $('#svz-label-cont' + currentID).html()), 1);
                       }
+                      required.push(chosenKey);
                   } 
 
                 } else{
@@ -604,13 +656,7 @@
               if(typeFromSelect == 'object'){
                 console.log('type is object will do this later!');
               } else if(typeFromSelect == 'array'){   
-                $('#svz-left-container' + currentID).slideToggle();
-
-                $('<button onclick="$(\'#svz-left-container' + currentID + '\').slideToggle(); $(this).hide();" >Array' + currentID + '</button>').insertBefore('#svz-left-container' + currentID);
-                currentID += 1;
-                var newSchemaForm = '<div id="svz-schema-form-tabs-container' + currentID + '" class="tab-pane active"> <div id="svz-left-container' + currentID + '" style="float:left; width:45%; margin-left: 50px; margin-top: 20px;"> <ul class="nav nav-tabs" id="svz-schema-form-tabs' + currentID + '"> <li class="active"><a data-target="#svz-schema-tab" data-toggle="tab">Schema</a></li> <li><a data-target="#svz-form-tab" data-toggle="tab">Form</a></li> </ul> <div class="tab-content"> <div class="tab-pane active" id="svz-schema-tab' + currentID + '"> <h2>Object of array:</h2> <form id="svz-schema-form' + currentID + '" action="javascript:void(0);" onsubmit="GenerateTextForm(this.id);"> <label class="svzRequiredLabel">Type</label> <div> <select class="svz-selected-type" id="svz-selected-type' + currentID + '" name="type' + currentID + '" required multiple> <option label="object" value="object">object</option> <option label="array" value="array">array</option> <option label="number" value="number">number</option> <option label="integer" value="integer">integer</option> <option label="string" value="string">string</option> <option label="boolean" value="boolean">boolean</option> <option label="null" value="null">null</option> </select> </div><label class="svzRequiredLabel">Key<font class="svzKeyWarning" id="svz-key-warning' + currentID + '" color="red" hidden> (key already exists)</font></label> <div><input id="svz-key' + currentID + '" class="svz-key" placeholder="Key (Unique identifier)" type="text" name="key' + currentID + '" required></div><label>Title</label> <div><input placeholder="Title" type="text" name="title' + currentID + '"></div><label>Ordering</label> <div><input placeholder="Ordering" type="number" name="ordering' + currentID + '"></div> <label>Description</label> <div><input class="longtext" id="svz-description' + currentID + '" placeholder="Description" type="text" name="description' + currentID + '"></div> <div><label style="display: flex;"><input id="svz-required' + currentID + '" type="checkbox" name="required' + currentID + '">Required (check for true)</label></div><label id="svz-label-for-enum' + currentID + '">Enum</label><ul id="svz-enum' + currentID + '" name="enum' + currentID + '" class="svz-enum"></ul><input class="btn btn-primary" id="svz-schema-form-submit' + currentID + '" type="submit"> </form> </div> <div class="tab-pane" id="svz-form-tab' + currentID + '"> <h2 id="svz-for-form' + currentID + '">For form:</h2> <form id="svz-for-form-form' + currentID + '"></form> </div> </div> </div>';
-            
-                $('#tab-content').append(newSchemaForm);
+                
                 $('.svz-selected-type').multiselect({
                     buttonWidth: '206px',
                     nonSelectedText: 'Choose type',
