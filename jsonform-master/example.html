@@ -39,6 +39,7 @@
           margin-top: 5px;
           border-radius: 2px;
           padding: -1px 50px;
+          min-height: 30px;
       }
       .currentItemHover {
         background-color: #4249d6;
@@ -50,6 +51,7 @@
         position: absolute;
         margin-left: 10px;
         margin-top: 5px;
+        margin-bottom: 10px;
       }
       #svz-json-preview{
          float:right; 
@@ -121,85 +123,6 @@
       <div><button id="svz-sorting-btn" type="button" class="btn btn-primary">Allow sorting</button></div>
       <div class="container" id="svz-container1">
         <button id="svz-add-item1" class="btn btn-secondary svz-add-item" type="button">+</button>
-
-
-          <!-- <div class="container-wrapper" id="svz-cont-wrapper1">
-            <div class="container" id="svz-container2">
-              <div class="btn-group" role="group">
-                <button id="svz-add-item2" class="btn btn-secondary svz-add-item" type="button">+</button>
-                <button id="svz-remove-item2" class="btn btn-secondary svz-remove-item" type="button">-</button>
-              </div>
-                <div class="item" id="svz-item-container2">
-                  <div class="btn-group" role="group">
-                    <button id="svz-add-container2" class="btn btn-secondary svz-add-container" type="button">+</button>
-                    <button id="svz-remove-container2" class="btn btn-secondary svz-remove-container" type="button">-</button>
-                  </div>
-                </div>
-                <div class="item" id="svz-item-container3">
-                  <div class="btn-group" role="group">
-                    <button id="svz-add-container3" class="btn btn-secondary svz-add-container" type="button">+</button>
-                    <button id="svz-remove-container3" class="btn btn-secondary svz-remove-container" type="button">-</button>
-                    <label class="svz-label-cont" id="svz-label-cont3">New schema</label>
-                  </div>
-
-                  <div class="tab-content" id="tab-content3" hidden>
-                    <div id="svz-schema-form-tabs-container3" class="tab-pane active">
-                        <div id="svz-left-container3" style="float:left; width:45%; margin-left: 50px; margin-top: 20px;"> 
-                          <ul class="nav nav-tabs" id="svz-schema-form-tabs3">
-                            <li class="active"><a data-target="#svz-schema-tab" data-toggle="tab">Schema</a></li>
-                            <li><a data-target="#svz-form-tab" data-toggle="tab">Form</a></li>
-                          </ul>
-                          <div class="tab-content">
-                            <div class="tab-pane active" id="svz-schema-tab3">
-                              <h2>For schema:</h2>
-                              <form id="svz-schema-form3" action="javascript:void(0);" onsubmit="GenerateTextForm(this.id);">
-                                  <label class="svzRequiredLabel">Type</label>
-                                  <div>
-                                    <select class="svz-selected-type" id="svz-selected-type3" name="type3" required multiple>
-                                      <option label="object" value="object">object</option>
-                                      <option label="array" value="array">array</option>
-                                      <option label="number" value="number">number</option> 
-                                      <option label="integer" value="integer">integer</option>
-                                      <option label="string" value="string">string</option>  
-                                      <option label="boolean" value="boolean">boolean</option> 
-                                      <option label="null" value="null">null</option>
-                                    </select>
-                                  </div>
-                                  <label class="svzRequiredLabel">Key<font class="svzKeyWarning" id="svz-key-warning3" color="red" hidden> (key already exists)</font></label>
-                                  <div><input id="svz-key3" class="svz-key" placeholder="Key (Unique identifier)" type="text" name="key3" required></div>
-                                  <label>Title</label>
-                                  <div><input placeholder="Title" type="text" name="title3"></div>
-                                  <label>Ordering</label>
-                                  <div><input placeholder="Ordering" type="number" name="ordering3"></div>
-                                  <label>Description</label>
-                                  <div><input class="longtext" id="svz-description3" placeholder="Description" type="text" name="description3"></div>
-                                  <div><label style="display: flex;"><input id="svz-required" type="checkbox" name="required3">Required (check for true)</label></div>
-                                  <label id="svz-label-for-enum3">Enum</label>
-                                  <ul id="svz-enum3" name="enum3" class="svz-enum"></ul>
-                                  <input class="btn btn-primary" id="svz-schema-form-submit3" type="submit">
-                              </form>
-                            </div>
-                            <div class="tab-pane" id="svz-form-tab3">
-                              <h2 id="svz-for-form3">For form:</h2>
-                              <form id="svz-for-form-form3"></form>
-                            </div>
-                          </div> 
-                        </div>   
-                    </div>
-                  </div>
-                </div>
-            
-
-            </div>
-          </div>
-          <div class="item"  id="svz-item-container4">
-            <div class="btn-group" role="group">
-              <button id="svz-add-container4" class="btn btn-secondary svz-add-container" type="button">+</button>
-              <button id="svz-remove-container4" class="btn btn-secondary svz-remove-container" type="button">-</button>
-            </div>
-          </div> -->
-
-
       </div>
     </div>
 
@@ -312,36 +235,32 @@
             }
           }
 
-          window.HandleSearchEvent = function() {
-            var filter = $('#svz-tabs-search').val().toUpperCase();
-            var listItems = $('.svz-dropdown-tabs');
+          // window.HandleSearchEvent = function() {
+          //   var filter = $('#svz-tabs-search').val().toUpperCase();
+          //   var listItems = $('.svz-dropdown-tabs');
             
-            listItems.each(function(idx, li) {
-              if (_.include($(li).text().toUpperCase(), filter.toUpperCase())){
-                $(li).css('display', 'list-item');
-              } else{
-                $(li).css('display', 'table-column');
-              }
-            });
-          }
+          //   listItems.each(function(idx, li) {
+          //     if (_.include($(li).text().toUpperCase(), filter.toUpperCase())){
+          //       $(li).css('display', 'list-item');
+          //     } else{
+          //       $(li).css('display', 'table-column');
+          //     }
+          //   });
+          // }
 
 
-          $(document).on('click', '#svz-dropdown-menu-items li', function() {
-            var selectedItem = $(this).find('a').html().split('</button> ')[1];
-            $('#svz-tabs-search').val(selectedItem);
-          });
+          // $(document).on('click', '#svz-dropdown-menu-items li', function() {
+          //   var selectedItem = $(this).find('a').html().split('</button> ')[1];
+          //   $('#svz-tabs-search').val(selectedItem);
+          // });
 
           $(document).on('click', '.container, .item, .svz-label-cont', function(e){
-            console.log('here');
             if (e.target != this) return;
             e.stopPropagation();
 
             var currentID = $(this).attr('id').replace( /^\D+/g, '')
-            console.log(currentID);
 
             if ($(this).attr('id') != 'svz-container1'){
-              console.log('yeah gonna toggle!');
-
               $('#tab-content' + currentID).toggle();
             }
           });
@@ -373,7 +292,7 @@
               $('.container').sortable({
                 delay: 150,
                 items: '.item, .container-wrapper',
-                cancel: ':button',
+                cancel: ':button, input',
                 axis: 'y',
                 cursor: 'move',
                 tolerance: 'pointer',
@@ -401,8 +320,8 @@
             CURRENT_CONTAINER_ID += 1;
             CURRENT_ITEM_ID += 1;
             var currentID = $(this).attr('id').replace( /^\D+/g, '');
-            $('#svz-item-container' + currentID).replaceWith('<div class="container-wrapper" id="svz-cont-wrapper' + CURRENT_CONTAINER_ID + '"><div class="container" id="svz-container' + CURRENT_CONTAINER_ID + '"><div class="btn-group" role="group"><button id="svz-add-item' + CURRENT_CONTAINER_ID + '" class="btn btn-secondary svz-add-item" type="button">+</button><button id="svz-remove-item' + CURRENT_CONTAINER_ID + '" class="btn btn-secondary svz-remove-item" type="button">-</button></div></div></div>');
-            $('#svz-container' + CURRENT_CONTAINER_ID).append('<div class="item"  id="svz-item-container' + CURRENT_ITEM_ID + '"><div class="btn-group" role="group"><button  id="svz-add-container' + CURRENT_ITEM_ID +'" class="btn btn-secondary svz-add-container" type="button">+</button> <button id="svz-remove-container' + CURRENT_ITEM_ID + '" class="btn btn-secondary svz-remove-container" type="button">-</button></div></div>');
+            $('#svz-item-container' + currentID).replaceWith('<div class="container-wrapper" id="svz-cont-wrapper' + CURRENT_CONTAINER_ID + '"><div class="container" id="svz-container' + CURRENT_CONTAINER_ID + '"><div class="btn-group" role="group"><button id="svz-add-item' + CURRENT_CONTAINER_ID + '" class="btn btn-secondary svz-add-item" type="button" style="display: none;">+</button><button id="svz-remove-item' + CURRENT_CONTAINER_ID + '" class="btn btn-secondary svz-remove-item" type="button" style="display: none;">-</button></div></div></div>');
+            $('#svz-container' + CURRENT_CONTAINER_ID).append('<div class="item"  id="svz-item-container' + CURRENT_ITEM_ID + '"><div class="btn-group" role="group"><button  id="svz-add-container' + CURRENT_ITEM_ID +'" class="btn btn-secondary svz-add-container" type="button" style="display: none;">+</button> <button id="svz-remove-container' + CURRENT_ITEM_ID + '" class="btn btn-secondary svz-remove-container" type="button" style="display: none;">-</button></div></div>');
 
             if ($('#svz-sorting-btn').text() == 'Disallow sorting'){
               $('.container').sortable({
@@ -411,7 +330,7 @@
                 axis: 'y',
                 cursor: 'move',
                 tolerance: 'pointer',
-                cancel: ":button",
+                cancel: ":button, input",
                 connectWith: '.container',
               });
               $( ".container" ).bind( "sortout", function(event, ui) {
@@ -427,11 +346,10 @@
             CURRENT_CONTAINER_ID += 1;
             CURRENT_ITEM_ID += 1;
             var currentID = $(this).attr('id').replace( /^\D+/g, '');
-            $('#svz-container' + currentID).prepend('<div class="item"  id="svz-item-container' + CURRENT_ITEM_ID + '"><div class="btn-group" role="group"><button  id="svz-add-container' + CURRENT_ITEM_ID +'" class="btn btn-secondary svz-add-container" type="button">+</button><button id="svz-remove-container' + CURRENT_ITEM_ID + '" class="btn btn-secondary svz-remove-container" type="button">-</button></div><label class="svz-label-cont" id="svz-label-cont' + CURRENT_ITEM_ID + '">New schema</label></div>');
+            $('#svz-container' + currentID).prepend('<div class="item"  id="svz-item-container' + CURRENT_ITEM_ID + '"><div class="btn-group" role="group"><button  id="svz-add-container' + CURRENT_ITEM_ID +'" class="btn btn-secondary svz-add-container" type="button" style="display: none;">+</button><button id="svz-remove-container' + CURRENT_ITEM_ID + '" class="btn btn-secondary svz-remove-container" type="button" style="display: none;">-</button></div><label class="svz-label-cont" id="svz-label-cont' + CURRENT_ITEM_ID + '">New schema</label></div>');
             
             var $clonedDiv = $('#tab-content9999999').clone();
 
-            console.log($clonedDiv);
             $clonedDiv.find('.multiselect').remove();
             $clonedDiv.find('.ui-widget-content:last').remove();
 
@@ -454,7 +372,7 @@
                 axis: 'y',
                 cursor: 'move',
                 tolerance: 'pointer',
-                cancel: ":button",
+                cancel: ":button , input",
                 connectWith: '.container',
                 items: '.item, .container-wrapper',
               });
@@ -568,7 +486,6 @@
             $('#exclusive-min-div' + currentID).toggle(!!$(this).val());
           }); 
           $(document).on('change', '.maximum', function(){
-            console.log('change max')
             var currentID = $(this).attr('id').replace( /^\D+/g, '');
             $('#exclusive-max-div' + currentID).toggle(!!$(this).val());
           }); 
@@ -626,17 +543,11 @@
                 } else if(field.name == 'required' + currentID){
                   toDeleteRequired = false;
                   if (field.value && !(_.include(required, chosenKey))) {
-                      
-                      console.log('required: ' + required);
-                      console.log('label html: ' + $('#svz-label-cont' + currentID).html());
-
-
                       if (_.include(required, $('#svz-label-cont' + currentID).html())){
                         required.splice(_.indexOf(required, $('#svz-label-cont' + currentID).html()), 1);
                       }
                       required.push(chosenKey);
                   } 
-
                 } else{
                   if (field.name.replace(/[0-9]/g, '') != 'tags'){
                     currentProperties[field.name.replace(/[0-9]/g, '')] = field.value;
