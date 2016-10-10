@@ -380,12 +380,18 @@
             $('#svz-schema-form' + currentIDnum).append('<input class="btn btn-primary" id="svz-schema-form-submit' + currentIDnum + '" type="submit">');
           }
 
+          window.AppendReadonlyFieldToForm = function(currentIDnum){
+            $('#svz-schema-form' + currentIDnum).append('<div class="additionaloption' + currentIDnum + '"><label style="display: flex;"><input id="svz-readonly' + currentIDnum + '" name="readonly' + currentIDnum + '" type="checkbox">Readonly (check for true)</label></div>');
+          }
+
           window.ToggleFormAndEnum = function(currentIDnum){
             $('#svz-schema-form-submit' + currentIDnum).remove();
             $('#svz-enum' + currentIDnum).show();
             $('#svz-enum').prop('disabled', false);
             $('#svz-label-for-enum' + currentIDnum).show();
           }
+
+
 
           $(document).on('change', '.svz-selected-type', $.debounce(TIMEOUT_DEBOUNCE, function() {
               var selectedType = $(this).val();
@@ -403,10 +409,8 @@
                   AppendInputFieldToForm(currentTabNum, 'Maximum', 'maximum', 'maximum', 'maximum');
                   AppendCheckboxFieldToForm(currentTabNum, 'Check - num will be more than maximum', 'Exclusive maximum', 'exclusive-max-div', 'exclusiveMaximum', 'exclusiveMaximum');
                   AppendInputFieldToForm(currentTabNum, 'Default', 'svz-default', 'default', '');
-
                   AppendCheckboxFieldToForm(currentTabNum, 'Readonly (check for true)', '', 'svz-readonly', 'readonly', '');
-                  $('svz-readonly' + currentTabNum).show();
-
+                  AppendReadonlyFieldToForm(currentTabNum);
                   AppendInputFieldToForm(currentTabNum, 'Pattern (regex)', 'svz-pattern', 'pattern', '');
                   AppendSubmitBtnToForm(currentTabNum);
 
@@ -416,10 +420,7 @@
                   AppendInputFieldToForm(currentTabNum, 'Maximum length', 'svz-max-length', 'maxLength', '');
                   AppendInputFieldToForm(currentTabNum, 'Minimum length', 'svz-min-length', 'minLength', '');
                   AppendInputFieldToForm(currentTabNum, 'Default', 'svz-default', 'default', '');
-
-                  AppendCheckboxFieldToForm(currentTabNum, 'Readonly (check for true)', '', 'svz-readonly', 'readonly', '');
-                  $('svz-readonly' + currentTabNum).show();
-
+                  AppendReadonlyFieldToForm(currentTabNum);
                   AppendInputFieldToForm(currentTabNum, 'Pattern (regex)', 'svz-pattern', 'pattern', '');
                   AppendSubmitBtnToForm(currentTabNum);
 
@@ -431,10 +432,7 @@
                   AppendInputFieldToForm(currentTabNum, 'Maximum', 'maximum', 'maximum', 'maximum');
                   AppendCheckboxFieldToForm(currentTabNum, 'Check - num will be more than maximum', 'Exclusive maximum', 'exclusive-max-div', 'exclusiveMaximum', 'exclusiveMaximum');
                   AppendInputFieldToForm(currentTabNum, 'Default', 'svz-default', 'default', '');
-
-                  AppendCheckboxFieldToForm(currentTabNum, 'Readonly (check for true)', '', 'svz-readonly', 'readonly', '');
-                  $('svz-readonly' + currentTabNum).show();
-
+                  AppendReadonlyFieldToForm(currentTabNum);
                   AppendSubmitBtnToForm(currentTabNum);
 
                 } 
