@@ -88,7 +88,7 @@
             <div class="tab-content">
               <div class="tab-pane active" id="svz-schema-tab9999999">
                 <h2>For schema:</h2>
-                <form id="svz-schema-form9999999" action="javascript:void(0);" onsubmit="HandleFormSubmit(this.id);">
+                <form id="svz-schema-form9999999" action="javascript:void(0);" onsubmit="HandleFormSubmit(this, this.id);">
                     <label class="svzRequiredLabel">Type</label>
                     <div>
                       <select class="svz-selected-type" id="svz-selected-type9999999" name="type9999999" required multiple>
@@ -371,15 +371,12 @@
           window.AppendInputFieldToForm = function(currentIDnum, label, ID, name, currentClass){
             $('#svz-schema-form' + currentIDnum).append('<label class="additionaloption' + currentIDnum + '">' + label + '</label><div class="additionaloption' + currentIDnum + '" class="form-group"><input id="' + ID + currentIDnum + '" type="number" class="' + currentClass + '" name="' + name + currentIDnum + '" placeholder="' + label + '"></div>');
           }
-
           window.AppendCheckboxFieldToForm = function(currentIDnum, label, placeholder, IDdiv, IDinput, name){
             $('#svz-schema-form' + currentIDnum).append('<div hidden class="additionaloption' + currentIDnum + '" class="form-group"  id="' + IDdiv + currentIDnum + '"><label style="display: flex;"><input id="'+ IDinput + currentIDnum + '" name="' + name + currentIDnum + '" type="checkbox" placeholder="' + placeholder + '">' + label + '</label></div>');
           }
-
           window.AppendSubmitBtnToForm = function(currentIDnum){
             $('#svz-schema-form' + currentIDnum).append('<input class="btn btn-primary" id="svz-schema-form-submit' + currentIDnum + '" type="submit">');
           }
-
           window.AppendReadonlyFieldToForm = function(currentIDnum){
             $('#svz-schema-form' + currentIDnum).append('<div class="additionaloption' + currentIDnum + '"><label style="display: flex;"><input id="svz-readonly' + currentIDnum + '" name="readonly' + currentIDnum + '" type="checkbox">Readonly (check for true)</label></div>');
           }
@@ -390,8 +387,6 @@
             $('#svz-enum').prop('disabled', false);
             $('#svz-label-for-enum' + currentIDnum).show();
           }
-
-
 
           $(document).on('change', '.svz-selected-type', $.debounce(TIMEOUT_DEBOUNCE, function() {
               var selectedType = $(this).val();
@@ -466,9 +461,34 @@
           var required = [];
           var properties = {};
 
-          window.HandleFormSubmit = function(currentID){
+
+
+
+
+
+
+          window.search = function(path, obj, target) {
+
+              for (var k in obj) {
+                  if (obj.hasOwnProperty(k))
+                      if (obj[k] === target)
+                          return path + "['" + k + "']"
+                      else if (typeof obj[k] === "object") {
+                          var result = search(path + "['" + k + "']", obj[k], target);
+                          if (result)
+                              return result;
+                      }
+              }
+              return false;
+          }
+
+          window.HandleFormSubmit = function(currentObject, currentID){
+            // when parents(':eq(11)') --> undefined => first level; ELSE: nested => object or array!!!
+
+            
+
+
             var currentID = currentID.replace( /^\D+/g, '');
-            console.log('in HandleFormSubmit');
 
             if($('#svz-key-warning').is(':visible')){
               return false;
@@ -540,7 +560,19 @@
               if (toDeleteRequired){
                 required.splice(_.indexOf(required, chosenKey), 1);
               }
-              properties[chosenKey] = currentProperties;
+
+
+              if (!$(currentObject).parents(':eq(11)').html()){
+                console.log('element is first level; normal obj');
+                properties[chosenKey] = currentProperties;
+              } else{
+                console.log('nested el - arr or object hard one!!');
+                //parent label
+                console.log($(currentObject).parents(':eq(6)').find('.svz-label-container').html());
+                properties[$(currentObject).parents(':eq(6)').find('.svz-label-container').html()]['properties'] = currentProperties;
+
+
+              }
 
               try {
                   var sortableItemsArray = $('.container').sortable('toArray');
@@ -554,10 +586,41 @@
                   //console.log('Error: ' + err.message);
               }
 
+              var data = {
+                  key1: {
+                      children: {
+                          key2: 'value',
+                          key3: 'value',
+                          key4: { a: 12 }
+                      },
+                      key5: 'value'
+                  }
+              };
+
+              var x = data.key1.children.key4;
+              var path = search('data', data, x);
+              console.log(path); //data['key1']['children']['key4']
 
               //_.include($(li).text().toUpperCase(), filter.toUpperCase())
               if(_.include(typesFromSelectArray, 'object')){
                 console.log('type is object!');
+
+
+
+                var jsonPreview = {
+                  'schema': {
+                    'type': 'object',
+                    'properties': properties
+                  }
+                };
+
+                if (required != ''){
+                  jsonPreview['required'] = required;
+                } else{
+                  delete jsonPreview['required'];
+                }
+
+
 
                 AppendObjectArrayForm(currentID);
 
