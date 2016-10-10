@@ -79,7 +79,7 @@
             <div class="tab-content">
               <div class="tab-pane active" id="svz-schema-tab9999999">
                 <h2>For schema:</h2>
-                <form id="svz-schema-form9999999" action="javascript:void(0);" onsubmit="GenerateTextForm(this.id);">
+                <form id="svz-schema-form9999999" action="javascript:void(0);" onsubmit="HandleFormSubmit(this.id);">
                     <label class="svzRequiredLabel">Type</label>
                     <div>
                       <select class="svz-selected-type" id="svz-selected-type9999999" name="type9999999" required multiple>
@@ -96,8 +96,8 @@
                     <div><input id="svz-key9999999" class="svz-key" placeholder="Key (Unique identifier)" type="text" name="key9999999" required></div>
                     <label>Title</label>
                     <div><input placeholder="Title" type="text" name="title9999999"></div>
-                    <label>Ordering</label>
-                    <div><input placeholder="Ordering" type="number" name="ordering9999999"></div>
+                    <!-- <label>Ordering</label>
+                    <div><input placeholder="Ordering" type="number" name="ordering9999999"></div> -->
                     <label>Description</label>
                     <div><input class="longtext" id="svz-description9999999" placeholder="Description" type="text" name="description9999999"></div>
                     <div><label style="display: flex;"><input id="svz-required" type="checkbox" name="required9999999">Required (check for true)</label></div>
@@ -166,6 +166,21 @@
             }
           });
 
+          window.InitializeSortable = function() {
+            $('.container').sortable({
+                delay: 150,
+                items: '.item, .container-wrapper',
+                cancel: ':button, input',
+                axis: 'y',
+                cursor: 'move',
+                tolerance: 'pointer',
+                connectWith: '.container',
+              });
+              $('.container').bind( 'sortout', function(event, ui) {
+                //console.log('out event');
+              });
+          }
+
           window.ValidateForm = function() {
             $('#svz-schema-form-submit').click(function(){
               console.log('hehe');
@@ -215,24 +230,24 @@
             }
 
             //if main tabs (3 + 1(the dropdown)) are too few - get from the dropdown and append to main tabs
-            if($('#svz-main-tabs li').length - $('#svz-dropdown-menu-items li').length <= MAX_NUM_TABS_NAVBAR){
-              //$('#svz-dropdown-menu-items li').length is 1 when there is no tab in dropdown
-              if($('#svz-dropdown-menu-items li').length >= 1){
-                $('#svz-dropdown-menu-items li').each(function(idx, li) {
-                    if ($(li).attr('id') != 'svz-last-dropdown-option'){
-                      $(li).clone().removeClass().insertBefore('#svz-tabs-dropdown-menu');
-                      $(li).remove();
+            // if($('#svz-main-tabs li').length - $('#svz-dropdown-menu-items li').length <= MAX_NUM_TABS_NAVBAR){
+            //   //$('#svz-dropdown-menu-items li').length is 1 when there is no tab in dropdown
+            //   if($('#svz-dropdown-menu-items li').length >= 1){
+            //     $('#svz-dropdown-menu-items li').each(function(idx, li) {
+            //         if ($(li).attr('id') != 'svz-last-dropdown-option'){
+            //           $(li).clone().removeClass().insertBefore('#svz-tabs-dropdown-menu');
+            //           $(li).remove();
 
-                      if ($('#svz-main-tabs li').length - $('#svz-dropdown-menu-items li').length > MAX_NUM_TABS_NAVBAR || $('#svz-dropdown-menu-items li').length < 2){
-                        if($('#svz-dropdown-menu-items li').length < 2){
-                          $('#svz-tabs-dropdown-menu').remove();
-                        }
-                        return false;
-                      }
-                    }         
-                });
-              }
-            }
+            //           if ($('#svz-main-tabs li').length - $('#svz-dropdown-menu-items li').length > MAX_NUM_TABS_NAVBAR || $('#svz-dropdown-menu-items li').length < 2){
+            //             if($('#svz-dropdown-menu-items li').length < 2){
+            //               $('#svz-tabs-dropdown-menu').remove();
+            //             }
+            //             return false;
+            //           }
+            //         }         
+            //     });
+            //   }
+            // }
           }
 
           // window.HandleSearchEvent = function() {
@@ -289,18 +304,8 @@
 
           $(document).on('click', '#svz-sorting-btn', function(){
             if($(this).text() == 'Allow sorting'){
-              $('.container').sortable({
-                delay: 150,
-                items: '.item, .container-wrapper',
-                cancel: ':button, input',
-                axis: 'y',
-                cursor: 'move',
-                tolerance: 'pointer',
-                connectWith: '.container',
-              });
-              $('.container').bind( 'sortout', function(event, ui) {
-                //console.log('out event');
-              });
+              InitializeSortable();
+
               $('.container').sortable('enable');
 
               $(this).text('Disallow sorting');
@@ -324,18 +329,7 @@
             $('#svz-container' + CURRENT_CONTAINER_ID).append('<div class="item"  id="svz-item-container' + CURRENT_ITEM_ID + '"><div class="btn-group" role="group"><button  id="svz-add-container' + CURRENT_ITEM_ID +'" class="btn btn-secondary svz-add-container" type="button" style="display: none;">+</button> <button id="svz-remove-container' + CURRENT_ITEM_ID + '" class="btn btn-secondary svz-remove-container" type="button" style="display: none;">-</button></div></div>');
 
             if ($('#svz-sorting-btn').text() == 'Disallow sorting'){
-              $('.container').sortable({
-                delay: 150,
-                items: '.item, .container-wrapper',
-                axis: 'y',
-                cursor: 'move',
-                tolerance: 'pointer',
-                cancel: ":button, input",
-                connectWith: '.container',
-              });
-              $( ".container" ).bind( "sortout", function(event, ui) {
-                //console.log("out event");
-              });
+              InitializeSortable();
             }
 
           });
@@ -346,7 +340,9 @@
             CURRENT_CONTAINER_ID += 1;
             CURRENT_ITEM_ID += 1;
             var currentID = $(this).attr('id').replace( /^\D+/g, '');
-            $('#svz-container' + currentID).prepend('<div class="item"  id="svz-item-container' + CURRENT_ITEM_ID + '"><div class="btn-group" role="group"><button  id="svz-add-container' + CURRENT_ITEM_ID +'" class="btn btn-secondary svz-add-container" type="button" style="display: none;">+</button><button id="svz-remove-container' + CURRENT_ITEM_ID + '" class="btn btn-secondary svz-remove-container" type="button" style="display: none;">-</button></div><label class="svz-label-cont" id="svz-label-cont' + CURRENT_ITEM_ID + '">New schema</label></div>');
+            // $('#svz-container' + currentID).append('<div class="item"  id="svz-item-container' + CURRENT_ITEM_ID + '"><div class="btn-group" role="group"><button  id="svz-add-container' + CURRENT_ITEM_ID +'" class="btn btn-secondary svz-add-container" type="button" style="display: none;">+</button><button id="svz-remove-container' + CURRENT_ITEM_ID + '" class="btn btn-secondary svz-remove-container" type="button" style="display: none;">-</button></div><label class="svz-label-cont" id="svz-label-cont' + CURRENT_ITEM_ID + '">New schema</label></div>');
+            console.log(currentID);
+            $('<div class="item"  id="svz-item-container' + CURRENT_ITEM_ID + '"><div class="btn-group" role="group"><button  id="svz-add-container' + CURRENT_ITEM_ID +'" class="btn btn-secondary svz-add-container" type="button" style="display: none;">+</button><button id="svz-remove-container' + CURRENT_ITEM_ID + '" class="btn btn-secondary svz-remove-container" type="button" style="display: none;">-</button></div><label class="svz-label-cont" id="svz-label-cont' + CURRENT_ITEM_ID + '">New schema</label></div>').insertBefore('#svz-add-item' + currentID);
             
             var $clonedDiv = $('#tab-content9999999').clone();
 
@@ -368,17 +364,7 @@
             $('#svz-item-container' + CURRENT_ITEM_ID).append($clonedDiv);
             
             if ($('#svz-sorting-btn').text() == 'Disallow sorting'){
-              $('.container').sortable({
-                axis: 'y',
-                cursor: 'move',
-                tolerance: 'pointer',
-                cancel: ":button , input",
-                connectWith: '.container',
-                items: '.item, .container-wrapper',
-              });
-              $( ".container" ).bind( "sortout", function(event, ui) {
-                //console.log("out event");
-              });
+              InitializeSortable();
             }
 
             $('.svz-selected-type').multiselect({
@@ -391,7 +377,6 @@
                 allowSpaces: true,
                 placeholderText: 'Enum'
             });
-
           });
 
 
@@ -490,8 +475,8 @@
             $('#exclusive-max-div' + currentID).toggle(!!$(this).val());
           }); 
 
-          window.GenerateTextForm = function(currentID){
-            currentID = currentID.replace( /^\D+/g, '');
+          window.HandleFormSubmit = function(currentID){
+            var currentID = currentID.replace( /^\D+/g, '');
 
             if($('#svz-key-warning').is(':visible')){
               return false;
@@ -507,24 +492,28 @@
             }
             var currentKey = $('#svz-label-cont' + currentID).html();
 
-
-
-
             if ((Object.keys(properties) != 0) && (currentKey != $('#svz-key' + currentID).val()) && _.include(Object.keys(properties), currentKey)){ 
               Object.defineProperty(properties, $('#svz-key' + currentID).val(), Object.getOwnPropertyDescriptor(properties, currentKey));
               delete properties[currentKey];
             }
 
-            var typeFromSelect = $('#svz-selected-type' + currentID).val();
-            var typesFromSelectArray = [];
+            var typesFromSelect = $('#svz-selected-type' + currentID).val();
+            var typesFromSelectArray = $.map(typesFromSelect, function(value, index) {
+                return [value];
+            });
+            
+
+
             var chosenKey = '';
 
-            if (typeFromSelect){
+            if (typesFromSelect){
               $('#svz-for-form-form' + currentID).empty();
 
               var schemaFormDataArray = $('#svz-schema-form' + currentID).serializeArray();
               var currentProperties = {};
               var toDeleteRequired = true;
+              
+              currentProperties['type'] = typesFromSelectArray;
 
               schemaFormDataArray = schemaFormDataArray.filter(function(n){return n.value !== ''});
 
@@ -532,10 +521,7 @@
                 if (field.value == 'on'){
                   field.value = 'true';
                 }
-                if(field.name == 'type' + currentID){
-                  typesFromSelectArray.push(field.value);
-                  currentProperties['type'] = typesFromSelectArray;
-                } else if(field.name == 'key' + currentID){
+                if(field.name == 'key' + currentID){
 
                   chosenKey = field.value;
                 } else if(field.name == 'required' + currentID){
@@ -547,7 +533,7 @@
                       required.push(chosenKey);
                   } 
                 } else{
-                  if (field.name.replace(/[0-9]/g, '') != 'tags'){
+                  if (field.name.replace(/[0-9]/g, '') != 'tags' && field.name.replace(/[0-9]/g, '') != 'type'){
                     currentProperties[field.name.replace(/[0-9]/g, '')] = field.value;
                   }
                 }
@@ -580,9 +566,9 @@
                   console.log('Error: ' + err.message);
               }
 
-              if(typeFromSelect == 'object'){
+              if(typesFromSelect == 'object'){
                 console.log('type is object will do this later!');
-              } else if(typeFromSelect == 'array'){   
+              } else if(typesFromSelect == 'array'){   
                 
                 // $('.svz-selected-type').multiselect({
                 //     buttonWidth: '206px',
