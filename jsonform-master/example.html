@@ -228,66 +228,22 @@
             if($('#svz-dropdown-menu-items li').length < 2){
               $('#svz-tabs-dropdown-menu').remove();
             }
-
-            //if main tabs (3 + 1(the dropdown)) are too few - get from the dropdown and append to main tabs
-            // if($('#svz-main-tabs li').length - $('#svz-dropdown-menu-items li').length <= MAX_NUM_TABS_NAVBAR){
-            //   //$('#svz-dropdown-menu-items li').length is 1 when there is no tab in dropdown
-            //   if($('#svz-dropdown-menu-items li').length >= 1){
-            //     $('#svz-dropdown-menu-items li').each(function(idx, li) {
-            //         if ($(li).attr('id') != 'svz-last-dropdown-option'){
-            //           $(li).clone().removeClass().insertBefore('#svz-tabs-dropdown-menu');
-            //           $(li).remove();
-
-            //           if ($('#svz-main-tabs li').length - $('#svz-dropdown-menu-items li').length > MAX_NUM_TABS_NAVBAR || $('#svz-dropdown-menu-items li').length < 2){
-            //             if($('#svz-dropdown-menu-items li').length < 2){
-            //               $('#svz-tabs-dropdown-menu').remove();
-            //             }
-            //             return false;
-            //           }
-            //         }         
-            //     });
-            //   }
-            // }
           }
-
-          // window.HandleSearchEvent = function() {
-          //   var filter = $('#svz-tabs-search').val().toUpperCase();
-          //   var listItems = $('.svz-dropdown-tabs');
-            
-          //   listItems.each(function(idx, li) {
-          //     if (_.include($(li).text().toUpperCase(), filter.toUpperCase())){
-          //       $(li).css('display', 'list-item');
-          //     } else{
-          //       $(li).css('display', 'table-column');
-          //     }
-          //   });
-          // }
-
-
-          // $(document).on('click', '#svz-dropdown-menu-items li', function() {
-          //   var selectedItem = $(this).find('a').html().split('</button> ')[1];
-          //   $('#svz-tabs-search').val(selectedItem);
-          // });
 
           $(document).on('click', '.container, .item, .svz-label-cont', function(e){
             if (e.target != this) return;
             e.stopPropagation();
 
             var currentID = $(this).attr('id').replace( /^\D+/g, '')
-            console.log($(this).attr('id').replace(/[0-9]/g, ''));
+
             if($(this).attr('id').replace(/[0-9]/g, '') == 'svz-container'){
               currentID -= 1;
             }
-            
-            console.log('hereeeeee!!!!');
-            console.log(currentID);
 
             if ($(this).attr('id') != 'svz-container1'){
               $('#tab-content' + currentID).toggle();
             }
           });
-
-
 
           $(document).on('mouseover', '.container', function(e){
             e.stopPropagation();
@@ -391,30 +347,13 @@
 
           }
 
-
-          // $(document).on('click', '.svz-add-container', function(e){
-          //   console.log('first funct'); // appends big container into item
-          //   e.stopPropagation();
-          //   CURRENT_CONTAINER_ID += 1;
-          //   CURRENT_ITEM_ID += 1;
-          //   var currentID = $(this).attr('id').replace( /^\D+/g, '');
-          //   $('#svz-item-container' + currentID).replaceWith('<div class="container-wrapper" id="svz-cont-wrapper' + CURRENT_CONTAINER_ID + '"><div class="container" id="svz-container' + CURRENT_CONTAINER_ID + '"><div class="btn-group" role="group"><button id="svz-add-item' + CURRENT_CONTAINER_ID + '" class="btn btn-secondary svz-add-item" type="button" style="display: none;">+</button><button id="svz-remove-item' + CURRENT_CONTAINER_ID + '" class="btn btn-secondary svz-remove-item" type="button" style="display: none;">-</button></div></div></div>');
-          //   $('#svz-container' + CURRENT_CONTAINER_ID).append('<div class="item"  id="svz-item-container' + CURRENT_ITEM_ID + '"><div class="btn-group" role="group"><button  id="svz-add-container' + CURRENT_ITEM_ID +'" class="btn btn-secondary svz-add-container" type="button" style="display: none;">+</button> <button id="svz-remove-container' + CURRENT_ITEM_ID + '" class="btn btn-secondary svz-remove-container" type="button" style="display: none;">-</button></div></div>');
-
-          //   if ($('#svz-sorting-btn').text() == 'Disallow sorting'){
-          //     InitializeSortable();
-          //   }
-
-          // });
-
           $(document).on('click', '.svz-add-item', function(e){
             e.stopPropagation();
             console.log('second function'); // appends small item to container
             CURRENT_CONTAINER_ID += 1;
             CURRENT_ITEM_ID += 1;
             var currentID = $(this).attr('id').replace( /^\D+/g, '');
-            // $('#svz-container' + currentID).append('<div class="item"  id="svz-item-container' + CURRENT_ITEM_ID + '"><div class="btn-group" role="group"><button  id="svz-add-container' + CURRENT_ITEM_ID +'" class="btn btn-secondary svz-add-container" type="button" style="display: none;">+</button><button id="svz-remove-container' + CURRENT_ITEM_ID + '" class="btn btn-secondary svz-remove-container" type="button" style="display: none;">-</button></div><label class="svz-label-cont" id="svz-label-cont' + CURRENT_ITEM_ID + '">New schema</label></div>');
-            console.log(currentID);
+
             $('<div class="item"  id="svz-item-container' + CURRENT_ITEM_ID + '"><div class="btn-group" role="group"><button  id="svz-add-container' + CURRENT_ITEM_ID +'" class="btn btn-secondary svz-add-container" type="button" style="display: none;">+</button><button id="svz-remove-container' + CURRENT_ITEM_ID + '" class="btn btn-secondary svz-remove-container" type="button" style="display: none;">-</button></div><label class="svz-label-cont" id="svz-label-cont' + CURRENT_ITEM_ID + '">New schema</label></div>').insertBefore('#svz-add-item' + currentID);
             
             var $clonedDiv = $('#tab-content9999999').clone();
@@ -643,18 +582,7 @@
 
 
               } else if(_.include(typesFromSelectArray, 'array')){   
-                
-                // $('.svz-selected-type').multiselect({
-                //     buttonWidth: '206px',
-                //     nonSelectedText: 'Choose type',
-                //     numberDisplayed: 3
-                // });
-                // $('.svz-enum').tagit({
-                //     allowSpaces: true,
-                //     placeholderText: 'Enum'
-                // });
 
-                
                 properties[chosenKey]['items'] = {};
                 var jsonPreview = {
                   'schema': {
