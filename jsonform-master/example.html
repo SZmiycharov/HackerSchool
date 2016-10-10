@@ -175,7 +175,7 @@
             }
           });
 
-          window.InitializeSortableAndTagit = function() {
+          window.InitializeSortable = function() {
             $('.container').sortable({
                 delay: 150,
                 items: '.item, .container-wrapper',
@@ -188,11 +188,18 @@
               $('.container').bind( 'sortout', function(event, ui) {
                 //console.log('out event');
               });
+          }
 
-              $('.svz-enum').tagit({
+          window.InitializeMultiselectAndTagit = function(currentID) {
+            $('#svz-selected-type' + currentID).multiselect({
+              buttonWidth: '206px',
+              nonSelectedText: 'Choose type',
+              numberDisplayed: 3
+            });
+            $('#svz-enum' + currentID).tagit({
                 allowSpaces: true,
                 placeholderText: 'Enum'
-              });
+            });
           }
 
           window.ValidateForm = function() {
@@ -242,7 +249,7 @@
 
           $(document).on('click', '#svz-sorting-btn', function(){
             if($(this).text() == 'Allow sorting'){
-              InitializeSortableAndTagit();
+              InitializeSortable();
 
               $('.container').sortable('enable');
 
@@ -263,6 +270,8 @@
 
             var currentLabel = $('#svz-label-item' + currentID).html();
             var $submittedFormDiv = $('#tab-content' + currentID);
+            $submittedFormDiv.find('.multiselect').remove();
+            $submittedFormDiv.find('.ui-widget-content:last').remove();
 
             $('#svz-item-container' + currentID).replaceWith('<div class="container-wrapper" id="svz-cont-wrapper' + CURRENT_CONTAINER_ID + '"><div class="container" id="svz-container' + CURRENT_CONTAINER_ID + '"><div class="btn-group" role="group"><button id="svz-add-item' + CURRENT_CONTAINER_ID + '" class="btn btn-secondary svz-add-container" type="button">+</button><button id="svz-remove-container' + CURRENT_CONTAINER_ID + '" class="btn btn-secondary svz-remove-container" type="button" >-</button></div><label class="svz-label-container" id="svz-label-container' + CURRENT_CONTAINER_ID + '">' + currentLabel + '</label></div></div></div>');
             
@@ -277,19 +286,16 @@
 
             $('#svz-container' + CURRENT_CONTAINER_ID).append($submittedFormDiv.hide());
 
-
             $('#svz-container' + CURRENT_CONTAINER_ID).append('<div class="item"  id="svz-item-container' + CURRENT_ITEM_ID + '"><div class="btn-group" role="group"><button  id="svz-add-container' + CURRENT_ITEM_ID +'" class="btn btn-secondary svz-add-container" type="button" style="display: none;">+</button> <button id="svz-remove-item' + CURRENT_ITEM_ID + '" class="btn btn-secondary svz-remove-item" type="button">-</button></div><label class="svz-label-item" id="svz-label-item' + CURRENT_ITEM_ID + '">New schema</label></div></div>');
 
             if ($('#svz-sorting-btn').text() == 'Disallow sorting'){
-              InitializeSortableAndTagit();
+              InitializeSortable();
             }
 
             var $clonedDiv = $('#tab-content9999999').clone();
 
             $clonedDiv.find('.multiselect').remove();
             $clonedDiv.find('.ui-widget-content:last').remove();
-
-
 
             $clonedDiv.find('[id]').each(function() { 
               var newID = $(this).attr('id').replace(/\d+$/, function(str) { return CURRENT_ITEM_ID; });
@@ -305,28 +311,16 @@
 
             $('#svz-item-container' + CURRENT_ITEM_ID).append($clonedDiv);
 
-            
-
-            
             if ($('#svz-sorting-btn').text() == 'Disallow sorting'){
-              InitializeSortableAndTagit();
+              InitializeSortable();
             }
 
-            $('.svz-selected-type').multiselect({
-              buttonWidth: '206px',
-              nonSelectedText: 'Choose type',
-              numberDisplayed: 3
-            });
-
-            $('.svz-enum').tagit({
-                allowSpaces: true,
-                placeholderText: 'Enum'
-            });
+            console.log('CURRENT_ITEM_ID: ' + CURRENT_ITEM_ID);
+            console.log('CURRENT_CONTAINER_ID: ' + CURRENT_CONTAINER_ID);
 
 
-
-            
-
+            InitializeMultiselectAndTagit(CURRENT_ITEM_ID);
+            InitializeMultiselectAndTagit(CURRENT_CONTAINER_ID);
           }
 
           $(document).on('click', '.svz-add-item', function(e){
@@ -357,16 +351,17 @@
             $('#svz-item-container' + CURRENT_ITEM_ID).append($clonedDiv);
             
             if ($('#svz-sorting-btn').text() == 'Disallow sorting'){
-              InitializeSortableAndTagit();
+              InitializeSortable();
             }
 
-            $('.svz-selected-type').multiselect({
+            console.log('doing this shit!');
+            $('#svz-selected-type' + CURRENT_ITEM_ID).multiselect({
               buttonWidth: '206px',
               nonSelectedText: 'Choose type',
               numberDisplayed: 3
             });
 
-            $('.svz-enum').tagit({
+            $('#svz-enum' + CURRENT_ITEM_ID).tagit({
                 allowSpaces: true,
                 placeholderText: 'Enum'
             });
