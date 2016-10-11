@@ -212,12 +212,21 @@
           $(document).on('click', '.container, .item, .svz-label-item, .svz-label-container', function(e){
             if (e.target != this) return;
             e.stopPropagation();
-
             var currentID = $(this).attr('id').replace( /^\D+/g, '')
 
-            if ($(this).attr('id') != 'svz-container1'){
-              $('#tab-content' + currentID).toggle();
+            console.log($(this).attr('id'));
+            if (_.include($(this).attr('id'), 'label')){
+              if ($(this).attr('id') != 'svz-container1'){
+                console.log($(this).next().attr('id'));
+                $(this).next().toggle();
+              }
+            } else{
+              console.log($(this).find('.tab-content').attr('id'));
+              $('#' + $(this).find('.tab-content').attr('id')).toggle();
+              //$(this).find('.tab-content').toggle();
             }
+
+            
           });
 
           $(document).on('mouseover', '.container', function(e){
@@ -499,6 +508,7 @@
 
 
           var currentID = currentID.replace( /^\D+/g, '');
+          console.log($(currentObject).parent().parent().find('label').html());
 
           if($('#svz-key-warning').is(':visible')){
             return false;
@@ -514,7 +524,11 @@
           }
           var currentKey = $('#svz-label-item' + currentID).html();
 
+          console.log(properties);
+          console.log(currentKey);
+
           if ((Object.keys(properties) != 0) && (currentKey != $('#svz-key' + currentID).val()) && _.include(Object.keys(properties), currentKey)){ 
+            console.log('yeyeye');
             Object.defineProperty(properties, $('#svz-key' + currentID).val(), Object.getOwnPropertyDescriptor(properties, currentKey));
             delete properties[currentKey];
           }
@@ -580,9 +594,8 @@
               var path = search('schema', properties, lastProperties);
               var words = [];
               path.replace(/\['(.+?)'\]/g, function($0, $1) { words.push($1) })
-
-
               var pathToValue = '';
+
               for (var i = 0; i < words.length; i++){
                 //properties = properties[words[i]];
                 if (i !== words.length - 1){
@@ -591,13 +604,13 @@
                 else {
                   pathToValue += words[i];
                 }
-                
               } 
 
               console.log(pathToValue);
               console.log(Object.byString(properties, pathToValue));
 
-              Object.byString(properties, pathToValue)['properties'] = currentProperties;
+              Object.byString(properties, pathToValue)['properties'] = {};
+              Object.byString(properties, pathToValue)['properties'][chosenKey] = currentProperties;
 
               //properties[$(currentObject).parents(':eq(6)').find('.svz-label-container').html()]['properties'] = currentProperties;
 
