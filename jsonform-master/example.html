@@ -165,6 +165,7 @@
           var MAX_NUM_TABS_NAVBAR = 3;
           var CURRENT_CONTAINER_ID = 5;
           var CURRENT_ITEM_ID = 5;
+          var lastProperties;
 
           jQuery.fn.extend({
             prependClass: function(newClasses) {
@@ -462,24 +463,33 @@
           var properties = {};
 
 
-
-
-
-
+          Object.byString = function(o, s) {
+            s = s.replace(/\[(\w+)\]/g, '.$1'); // convert indexes to properties
+            s = s.replace(/^\./, '');           // strip a leading dot
+            var a = s.split('.');
+            for (var i = 0, n = a.length; i < n; ++i) {
+                var k = a[i];
+                if (k in o) {
+                    o = o[k];
+                } else {
+                    return;
+                }
+            }
+            return o;
+          }
 
           window.search = function(path, obj, target) {
-
-              for (var k in obj) {
-                  if (obj.hasOwnProperty(k))
-                      if (obj[k] === target)
-                          return path + "['" + k + "']"
-                      else if (typeof obj[k] === "object") {
-                          var result = search(path + "['" + k + "']", obj[k], target);
-                          if (result)
-                              return result;
-                      }
-              }
-              return false;
+            for (var k in obj) {
+                if (obj.hasOwnProperty(k))
+                    if (obj[k] === target)
+                        return path + "['" + k + "']"
+                    else if (typeof obj[k] === "object") {
+                        var result = search(path + "['" + k + "']", obj[k], target);
+                        if (result)
+                            return result;
+                    }
+            }
+            return false;
           }
 
           window.HandleFormSubmit = function(currentObject, currentID){
@@ -488,210 +498,231 @@
             
 
 
-            var currentID = currentID.replace( /^\D+/g, '');
+          var currentID = currentID.replace( /^\D+/g, '');
 
-            if($('#svz-key-warning').is(':visible')){
-              return false;
-            }
+          if($('#svz-key-warning').is(':visible')){
+            return false;
+          }
 
-            if (_.include(Object.keys(properties), $('#svz-key' + currentID).val()) && $('#svz-key' + currentID).val() != $('#svz-label-item' + currentID).html() && $('#svz-key' + currentID).val() != $('#svz-label-container' + currentID).html()){
-              $('#svz-key-warning' + currentID).show();
-              $('#svz-key' + currentID).css('border-color', '#ff0000');
-              return false;
-            } else{
-              $('#svz-key-warning' + currentID).hide();
-              $('#svz-key' + currentID).css('border-color', '#cccccc');
-            }
-            var currentKey = $('#svz-label-item' + currentID).html();
+          if (_.include(Object.keys(properties), $('#svz-key' + currentID).val()) && $('#svz-key' + currentID).val() != $('#svz-label-item' + currentID).html() && $('#svz-key' + currentID).val() != $('#svz-label-container' + currentID).html()){
+            $('#svz-key-warning' + currentID).show();
+            $('#svz-key' + currentID).css('border-color', '#ff0000');
+            return false;
+          } else{
+            $('#svz-key-warning' + currentID).hide();
+            $('#svz-key' + currentID).css('border-color', '#cccccc');
+          }
+          var currentKey = $('#svz-label-item' + currentID).html();
 
-            if ((Object.keys(properties) != 0) && (currentKey != $('#svz-key' + currentID).val()) && _.include(Object.keys(properties), currentKey)){ 
-              Object.defineProperty(properties, $('#svz-key' + currentID).val(), Object.getOwnPropertyDescriptor(properties, currentKey));
-              delete properties[currentKey];
-            }
+          if ((Object.keys(properties) != 0) && (currentKey != $('#svz-key' + currentID).val()) && _.include(Object.keys(properties), currentKey)){ 
+            Object.defineProperty(properties, $('#svz-key' + currentID).val(), Object.getOwnPropertyDescriptor(properties, currentKey));
+            delete properties[currentKey];
+          }
 
-            var typesFromSelect = $('#svz-selected-type' + currentID).val();
-            var typesFromSelectArray = $.map(typesFromSelect, function(value, index) {
-                return [value];
-            });
-            
-            var chosenKey = '';
+          var typesFromSelect = $('#svz-selected-type' + currentID).val();
+          var typesFromSelectArray = $.map(typesFromSelect, function(value, index) {
+              return [value];
+          });
+          
+          var chosenKey = '';
 
-            if (typesFromSelectArray){
-              $('#svz-for-form-form' + currentID).empty();
+          if (typesFromSelectArray){
+            $('#svz-for-form-form' + currentID).empty();
 
-              var schemaFormDataArray = $('#svz-schema-form' + currentID).serializeArray();
-              var currentProperties = {};
-              var toDeleteRequired = true;
+            var schemaFormDataArray = $('#svz-schema-form' + currentID).serializeArray();
+            var currentProperties = {};
+            var toDeleteRequired = true;
 
-              currentProperties['type'] = typesFromSelectArray;
+            currentProperties['type'] = typesFromSelectArray;
 
-              schemaFormDataArray = schemaFormDataArray.filter(function(n){return n.value !== ''});
+            schemaFormDataArray = schemaFormDataArray.filter(function(n){return n.value !== ''});
 
-              jQuery.each( schemaFormDataArray, function( i, field ) {
-                if (field.value == 'on'){
-                  field.value = 'true';
-                }
-                if(field.name == 'key' + currentID){
-
-                  chosenKey = field.value;
-                } else if(field.name == 'required' + currentID){
-                  toDeleteRequired = false;
-                  if (field.value && !(_.include(required, chosenKey))) {
-                      if (_.include(required, $('#svz-label-item' + currentID).html())){
-                        required.splice(_.indexOf(required, $('#svz-label-item' + currentID).html()), 1);
-                      }
-                      required.push(chosenKey);
-                  } 
-                } else{
-                  if (field.name.replace(/[0-9]/g, '') != 'tags' && field.name.replace(/[0-9]/g, '') != 'type'){
-                    currentProperties[field.name.replace(/[0-9]/g, '')] = field.value;
-                  }
-                }
-              });
-
-              $('#svz-label-item' + currentID).html(chosenKey);
-              $('#svz-label-container' + currentID).html(chosenKey);
-
-              var assignedEnum = $('#svz-enum' + currentID).tagit('assignedTags');
-              if (assignedEnum != '') {
-                currentProperties['enum'] = assignedEnum;
+            jQuery.each( schemaFormDataArray, function( i, field ) {
+              if (field.value == 'on'){
+                field.value = 'true';
               }
-              
-              if (toDeleteRequired){
-                required.splice(_.indexOf(required, chosenKey), 1);
-              }
+              if(field.name == 'key' + currentID){
 
-
-              if (!$(currentObject).parents(':eq(11)').html()){
-                console.log('element is first level; normal obj');
-                properties[chosenKey] = currentProperties;
+                chosenKey = field.value;
+              } else if(field.name == 'required' + currentID){
+                toDeleteRequired = false;
+                if (field.value && !(_.include(required, chosenKey))) {
+                    if (_.include(required, $('#svz-label-item' + currentID).html())){
+                      required.splice(_.indexOf(required, $('#svz-label-item' + currentID).html()), 1);
+                    }
+                    required.push(chosenKey);
+                } 
               } else{
-                console.log('nested el - arr or object hard one!!');
-                //parent label
-                console.log($(currentObject).parents(':eq(6)').find('.svz-label-container').html());
-                properties[$(currentObject).parents(':eq(6)').find('.svz-label-container').html()]['properties'] = currentProperties;
-
-
+                if (field.name.replace(/[0-9]/g, '') != 'tags' && field.name.replace(/[0-9]/g, '') != 'type'){
+                  currentProperties[field.name.replace(/[0-9]/g, '')] = field.value;
+                }
               }
+            });
 
-              try {
-                  var sortableItemsArray = $('.container').sortable('toArray');
-                  var sortableItemsArrayLength = sortableItemsArray.length;
-                  for (var i = 0; i < sortableItemsArrayLength; i++) {
-                      if (_.include(Object.keys(properties), $('#' + sortableItemsArray[i]).find('.svz-label-item').html())){
-                        properties[$('#' + sortableItemsArray[i]).find('.svz-label-item').html()]['ordering'] = i + 1;
-                      }
-                  }
-              } catch(err) {
-                  //console.log('Error: ' + err.message);
-              }
+            $('#svz-label-item' + currentID).html(chosenKey);
+            $('#svz-label-container' + currentID).html(chosenKey);
 
-              var data = {
-                  key1: {
-                      children: {
-                          key2: 'value',
-                          key3: 'value',
-                          key4: { a: 12 }
-                      },
-                      key5: 'value'
-                  }
+            var assignedEnum = $('#svz-enum' + currentID).tagit('assignedTags');
+            if (assignedEnum != '') {
+              currentProperties['enum'] = assignedEnum;
+            }
+            
+            if (toDeleteRequired){
+              required.splice(_.indexOf(required, chosenKey), 1);
+            }
+
+            if (!$(currentObject).parents(':eq(11)').html()){
+              console.log('element is first level; normal obj');
+              properties[chosenKey] = currentProperties;
+            } else{
+              console.log('nested el - arr or object hard one!!');
+
+              var path = search('schema', properties, lastProperties);
+              var words = [];
+              path.replace(/\['(.+?)'\]/g, function($0, $1) { words.push($1) })
+
+
+              var pathToValue = '';
+              for (var i = 0; i < words.length; i++){
+                //properties = properties[words[i]];
+                if (i !== words.length - 1){
+                  pathToValue += words[i] + '.';
+                }
+                else {
+                  pathToValue += words[i];
+                }
+                
+              } 
+
+              console.log(pathToValue);
+              console.log(Object.byString(properties, pathToValue));
+
+              Object.byString(properties, pathToValue)['properties'] = currentProperties;
+
+              //properties[$(currentObject).parents(':eq(6)').find('.svz-label-container').html()]['properties'] = currentProperties;
+
+
+            }
+            lastProperties = currentProperties;
+
+            try {
+                var sortableItemsArray = $('.container').sortable('toArray');
+                var sortableItemsArrayLength = sortableItemsArray.length;
+                for (var i = 0; i < sortableItemsArrayLength; i++) {
+                    if (_.include(Object.keys(properties), $('#' + sortableItemsArray[i]).find('.svz-label-item').html())){
+                      properties[$('#' + sortableItemsArray[i]).find('.svz-label-item').html()]['ordering'] = i + 1;
+                    }
+                }
+            } catch(err) {
+                //console.log('Error: ' + err.message);
+            }
+
+            var data = {
+                key1: {
+                    children: {
+                        key2: 'value',
+                        key3: 'value',
+                        key4: 'test'
+                    },
+                    key5: 'value'
+                }
+            };
+
+            var x = data.key1.children.key4;
+            // var path = search('data', data, x);
+            //var path = search('schema', properties, currentProperties);
+
+            //_.include($(li).text().toUpperCase(), filter.toUpperCase())
+            if(_.include(typesFromSelectArray, 'object')){
+              console.log('type is object!');
+
+
+
+              var jsonPreview = {
+                'schema': {
+                  'type': 'object',
+                  'properties': properties
+                }
               };
 
-              var x = data.key1.children.key4;
-              var path = search('data', data, x);
-              console.log(path); //data['key1']['children']['key4']
-
-              //_.include($(li).text().toUpperCase(), filter.toUpperCase())
-              if(_.include(typesFromSelectArray, 'object')){
-                console.log('type is object!');
-
-
-
-                var jsonPreview = {
-                  'schema': {
-                    'type': 'object',
-                    'properties': properties
-                  }
-                };
-
-                if (required != ''){
-                  jsonPreview['required'] = required;
-                } else{
-                  delete jsonPreview['required'];
-                }
-
-
-
-                AppendObjectArrayForm(currentID);
-
-
-
-              } else if(_.include(typesFromSelectArray, 'array')){   
-
-                properties[chosenKey]['items'] = {};
-                var jsonPreview = {
-                  'schema': {
-                    'type': 'object',
-                    'properties': properties
-                  }
-                };
-
-                if (required != ''){
-                  jsonPreview['required'] = required;
-                } else{
-                  delete jsonPreview['required'];
-                }
-
-
-
-
+              if (required != ''){
+                jsonPreview['required'] = required;
               } else{
-                var jsonPreview = {
-                  'schema': {
-                    'type': 'object',
-                    'properties': properties
-                  }
-                };
-
-                if (required != ''){
-                  jsonPreview['required'] = required;
-                } else{
-                  delete jsonPreview['required'];
-                }
+                delete jsonPreview['required'];
               }
-              $('#svz-json-text-header').hide();
-              $('#svz-json-text').html(JSON.stringify(jsonPreview, undefined, 2));
 
-              $('#svz-for-form-form').jsonForm({
-                schema: {
-                  title: {
-                    type: 'string',
-                    title: 'Title'
-                  },
-                  description: {
-                    type: 'string',
-                    title: 'Description'
-                  },
-                  type: {
-                    type: 'string',
-                    title: 'Type'
-                  }
-                },
-                onSubmit: function (errors, values) {
-                  if (errors) {
-                    //console.log(errors);
-                    $('#res').html('<p>Fix your mistakes!</p>');
-                  } else {
-                    console.log('print form, will do it later!');
-                  }
+
+
+              AppendObjectArrayForm(currentID);
+
+
+
+            } else if(_.include(typesFromSelectArray, 'array')){   
+
+              properties[chosenKey]['items'] = {};
+              var jsonPreview = {
+                'schema': {
+                  'type': 'object',
+                  'properties': properties
                 }
-              }); 
+              };
+
+              if (required != ''){
+                jsonPreview['required'] = required;
+              } else{
+                delete jsonPreview['required'];
+              }
+
+
+
 
             } else{
-                //console.log('fail happened!');
+              var jsonPreview = {
+                'schema': {
+                  'type': 'object',
+                  'properties': properties
+                }
+              };
+
+              if (required != ''){
+                jsonPreview['required'] = required;
+              } else{
+                delete jsonPreview['required'];
+              }
             }
-          } 
-        });
+            $('#svz-json-text-header').hide();
+            $('#svz-json-text').html(JSON.stringify(jsonPreview, undefined, 2));
+
+            $('#svz-for-form-form').jsonForm({
+              schema: {
+                title: {
+                  type: 'string',
+                  title: 'Title'
+                },
+                description: {
+                  type: 'string',
+                  title: 'Description'
+                },
+                type: {
+                  type: 'string',
+                  title: 'Type'
+                }
+              },
+              onSubmit: function (errors, values) {
+                if (errors) {
+                  //console.log(errors);
+                  $('#res').html('<p>Fix your mistakes!</p>');
+                } else {
+                  console.log('print form, will do it later!');
+                }
+              }
+            }); 
+
+          } else{
+              //console.log('fail happened!');
+          }
+        } 
+      });
     })(jQuery);
    
     </script>
