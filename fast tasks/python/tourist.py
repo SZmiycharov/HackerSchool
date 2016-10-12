@@ -38,24 +38,20 @@ while True:
 
 currentSum = 0
 numWays = 0
-acceptableStudents = 0
-kilos = 0
+maxAllowedStudents = 0
+maxAllowedKilograms = 0
 
-#B - u4enicite; A - kilogrami; W-max kg;
 students = [[A1,B1], [A2,B2], [A3,B3]]
 for L in range(0, len(students)+1):
   for subset in itertools.combinations(students, L):
-  	# vsqka vuzmojna kombinaciq!
-  	if len(subset) > 0:
-		for i in subset:
-			print "stud:{} kilos:{}".format(i[1], i[0])
-			acceptableStudents += i[1]
-			kilos += i[0]
-		if acceptableStudents >= K and kilos <= W:
-			print "YEAH"
-			numWays += 1
-		acceptableStudents = 0
-		kilos = 0
+    if len(subset) > 0:
+    for i in subset:
+      maxAllowedStudents += i[1]
+      maxAllowedKilograms += i[0]
+    if maxAllowedStudents >= K and maxAllowedKilograms <= W:
+      numWays += 1
+    maxAllowedStudents = 0
+    maxAllowedKilograms = 0
 
 print "numways: {}".format(numWays)
 
