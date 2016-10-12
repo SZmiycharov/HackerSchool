@@ -126,7 +126,11 @@
 
 
     <div style="float:left; width:45%; margin-left: 50px; margin-top: 40px;">
-      <div><button id="svz-sorting-btn" type="button" class="btn btn-primary">Allow sorting</button></div>
+      <div>
+        <button id="svz-sorting-btn" type="button" class="btn btn-primary">Allow sorting</button>
+        <button id="svz-show-json-preview" type="button" class="btn btn-success" onclick="ShowJSONPreview();">Show JSON</button>
+      </div>
+      <div></div>
       <div class="container" id="svz-container1">
         <button id="svz-add-item1" class="btn btn-secondary svz-add-item" type="button">+</button>
       </div>
@@ -143,7 +147,7 @@
     <script type="text/javascript" src="deps/bootstrap.min.js"></script>
     <script type="text/javascript" src="deps/bootstrap-multiselect.js"></script>
     <link rel="stylesheet" href="deps/bootstrap-multiselect.css" type="text/css"/>
-    <link rel="stylesheet" type="text/css" href="deps/jquery-ui.css">
+    <link rel="stylesheet" type="text/css" href="http://ajax.googleapis.com/ajax/libs/jqueryui/1/themes/flick/jquery-ui.css">
     <link href="deps/jquery.tagit.css" rel="stylesheet" type="text/css">
     <script type="text/javascript" src="deps/underscore.js"></script>
     <script type="text/javascript" src="deps/opt/jsv.js"></script>
@@ -158,12 +162,12 @@
       'use strict';
         $( document ).ready(function() {
           var TIMEOUT_DEBOUNCE = 500;
-          var CURRENT_SCHEMA_FORM_ID = 1;
-          var MAX_NUM_TABS_NAVBAR = 3;
-          var CURRENT_CONTAINER_ID = 5;
-          var CURRENT_ITEM_ID = 5;
-          var ALL_KEYS = [];
-          var LAST_PROPERTIES;
+          
+          var currentSchemaFormID = 1;
+          var currentContainerID = 5;
+          var currentItemID = 5;
+          var allKeys = [];
+          var lastProperties;
 
           jQuery.fn.extend({
             prependClass: function(newClasses) {
@@ -202,7 +206,7 @@
           }
      
           $(document).on('click', '.container, .item, .svz-label-item, .svz-label-container', function(e){
-            if (e.target != this || $(this).attr('id') == 'svz-container1') return;
+            if (e.target != this || $(this).attr('id') === 'svz-container1') return;
             e.stopPropagation();
             var currentID = $(this).attr('id').replace( /^\D+/g, '')
 
@@ -239,7 +243,7 @@
           });
 
           $(document).on('click', '#svz-sorting-btn', function(){
-            if($(this).text() == 'Allow sorting'){
+            if($(this).text() === 'Allow sorting'){
               InitializeSortable();
               $('.container').sortable('enable');
 
@@ -255,30 +259,30 @@
 
           window.AppendObjectArrayForm = function(currentID) {
             //console.log('in AppendObjectArrayForm');
-            CURRENT_CONTAINER_ID += 1;
-            CURRENT_ITEM_ID += 1;
+            currentContainerID += 1;
+            currentItemID += 1;
 
             var currentLabel = $('#svz-label-item' + currentID).html();
             var $submittedFormDiv = $('#tab-content' + currentID);
             $submittedFormDiv.find('.multiselect').remove();
             $submittedFormDiv.find('.ui-widget-content:last').remove();
 
-            $('#svz-item-container' + currentID).replaceWith('<div class="container-wrapper" id="svz-cont-wrapper' + CURRENT_CONTAINER_ID + '"><div class="container" id="svz-container' + CURRENT_CONTAINER_ID + '"><div class="btn-group" role="group"><button id="svz-add-item' + CURRENT_CONTAINER_ID + '" class="btn btn-secondary svz-add-item" type="button">+</button><button id="svz-remove-container' + CURRENT_CONTAINER_ID + '" class="btn btn-secondary svz-remove-container" type="button" >-</button></div><label class="svz-label-container" id="svz-label-container' + CURRENT_CONTAINER_ID + '">' + currentLabel + '</label></div></div></div>');
+            $('#svz-item-container' + currentID).replaceWith('<div class="container-wrapper" id="svz-cont-wrapper' + currentContainerID + '"><div class="container" id="svz-container' + currentContainerID + '"><div class="btn-group" role="group"><button id="svz-add-item' + currentContainerID + '" class="btn btn-secondary svz-add-item" type="button">+</button><button id="svz-remove-container' + currentContainerID + '" class="btn btn-secondary svz-remove-container" type="button" >-</button></div><label class="svz-label-container" id="svz-label-container' + currentContainerID + '">' + currentLabel + '</label></div></div></div>');
             
             $submittedFormDiv.find('[id]').each(function() { 
-              var newID = $(this).attr('id').replace(/\d+$/, function(str) { return CURRENT_CONTAINER_ID; });
+              var newID = $(this).attr('id').replace(/\d+$/, function(str) { return currentContainerID; });
               $(this).attr('id', newID);
             });
             $submittedFormDiv.find('[name]').each(function() { 
-              var newID = $(this).attr('name').replace(/\d+$/, function(str) { return CURRENT_CONTAINER_ID; });
+              var newID = $(this).attr('name').replace(/\d+$/, function(str) { return currentContainerID; });
               $(this).attr('name', newID);
             });
 
-            $('#svz-container' + CURRENT_CONTAINER_ID).append($submittedFormDiv.hide());
+            $('#svz-container' + currentContainerID).append($submittedFormDiv.hide());
 
-            $('#svz-container' + CURRENT_CONTAINER_ID).append('<div class="item"  id="svz-item-container' + CURRENT_ITEM_ID + '"><div class="btn-group" role="group"><button  id="svz-add-container' + CURRENT_ITEM_ID +'" class="btn btn-secondary svz-add-container" type="button" style="display: none;">+</button> <button id="svz-remove-item' + CURRENT_ITEM_ID + '" class="btn btn-secondary svz-remove-item" type="button">-</button></div><label class="svz-label-item" id="svz-label-item' + CURRENT_ITEM_ID + '">New schema</label></div></div>');
+            $('#svz-container' + currentContainerID).append('<div class="item"  id="svz-item-container' + currentItemID + '"><div class="btn-group" role="group"><button  id="svz-add-container' + currentItemID +'" class="btn btn-secondary svz-add-container" type="button" style="display: none;">+</button> <button id="svz-remove-item' + currentItemID + '" class="btn btn-secondary svz-remove-item" type="button">-</button></div><label class="svz-label-item" id="svz-label-item' + currentItemID + '">New schema</label></div></div>');
 
-            if ($('#svz-sorting-btn').text() == 'Disallow sorting'){
+            if ($('#svz-sorting-btn').text() === 'Disallow sorting'){
               InitializeSortable();
             }
 
@@ -286,70 +290,70 @@
             $clonedDiv.find('.multiselect').remove();
             $clonedDiv.find('.ui-widget-content:last').remove();
             $clonedDiv.find('[id]').each(function() { 
-              var newID = $(this).attr('id').replace(/\d+$/, function(str) { return CURRENT_ITEM_ID; });
+              var newID = $(this).attr('id').replace(/\d+$/, function(str) { return currentItemID; });
               $(this).attr('id', newID);
             });
             $clonedDiv.find('[name]').each(function() { 
-              var newID = $(this).attr('name').replace(/\d+$/, function(str) { return CURRENT_ITEM_ID; });
+              var newID = $(this).attr('name').replace(/\d+$/, function(str) { return currentItemID; });
               $(this).attr('name', newID);
             });
             var idWithoutNumber = $clonedDiv.attr('id').replace(/[0-9]/g, '');
-            $clonedDiv.attr('id', idWithoutNumber + CURRENT_ITEM_ID)
+            $clonedDiv.attr('id', idWithoutNumber + currentItemID)
 
-            $('#svz-item-container' + CURRENT_ITEM_ID).append($clonedDiv);
+            $('#svz-item-container' + currentItemID).append($clonedDiv);
 
-            if ($('#svz-sorting-btn').text() == 'Disallow sorting'){
+            if ($('#svz-sorting-btn').text() === 'Disallow sorting'){
               InitializeSortable();
             }
 
-            InitializeMultiselectAndTagit(CURRENT_ITEM_ID);
-            InitializeMultiselectAndTagit(CURRENT_CONTAINER_ID);
+            InitializeMultiselectAndTagit(currentItemID);
+            InitializeMultiselectAndTagit(currentContainerID);
           }
 
           $(document).on('click', '.svz-add-item', function(e){
             e.stopPropagation();
             console.log('second function'); // appends small item to container
 
-            CURRENT_ITEM_ID += 1;
+            currentItemID += 1;
             var currentID = $(this).attr('id').replace( /^\D+/g, '');
 
             var $clonedDiv = $('#tab-content9999999').clone();
             $clonedDiv.find('.multiselect').remove();
             $clonedDiv.find('.ui-widget-content:last').remove();
             $clonedDiv.find('[id]').each(function() { 
-              var newID = $(this).attr('id').replace(/\d+$/, function(str) { return CURRENT_ITEM_ID; });
+              var newID = $(this).attr('id').replace(/\d+$/, function(str) { return currentItemID; });
               $(this).attr('id', newID);
             });
             $clonedDiv.find('[name]').each(function() { 
-              var newID = $(this).attr('name').replace(/\d+$/, function(str) { return CURRENT_ITEM_ID; });
+              var newID = $(this).attr('name').replace(/\d+$/, function(str) { return currentItemID; });
               $(this).attr('name', newID);
             });
             var idWithoutNumber = $clonedDiv.attr('id').replace(/[0-9]/g, '');
-            $clonedDiv.attr('id', idWithoutNumber + CURRENT_ITEM_ID);
+            $clonedDiv.attr('id', idWithoutNumber + currentItemID);
 
             if (!$(this).parent().parent().find('.container').html()){
-              $('#svz-container' + currentID).append('<div class="item"  id="svz-item-container' + CURRENT_ITEM_ID + '"><div class="btn-group" role="group"><button id="svz-remove-item' + CURRENT_ITEM_ID + '" class="btn btn-secondary svz-remove-item" type="button">-</button></div><label class="svz-label-item" id="svz-label-item' + CURRENT_ITEM_ID + '">New schema</label></div>');
+              $('#svz-container' + currentID).append('<div class="item"  id="svz-item-container' + currentItemID + '"><div class="btn-group" role="group"><button id="svz-remove-item' + currentItemID + '" class="btn btn-secondary svz-remove-item" type="button">-</button></div><label class="svz-label-item" id="svz-label-item' + currentItemID + '">New schema</label></div>');
             } else {
-              $('<div class="item"  id="svz-item-container' + CURRENT_ITEM_ID + '"><div class="btn-group" role="group"><button id="svz-remove-item' + CURRENT_ITEM_ID + '" class="btn btn-secondary svz-remove-item" type="button">-</button></div><label class="svz-label-item" id="svz-label-item' + CURRENT_ITEM_ID + '">New schema</label></div>').insertBefore('#svz-add-item' + currentID);
+              $('<div class="item"  id="svz-item-container' + currentItemID + '"><div class="btn-group" role="group"><button id="svz-remove-item' + currentItemID + '" class="btn btn-secondary svz-remove-item" type="button">-</button></div><label class="svz-label-item" id="svz-label-item' + currentItemID + '">New schema</label></div>').insertBefore('#svz-add-item' + currentID);
             }
-            $('#svz-item-container' + CURRENT_ITEM_ID).append($clonedDiv);
+            $('#svz-item-container' + currentItemID).append($clonedDiv);
 
-            if ($('#svz-sorting-btn').text() == 'Disallow sorting'){
+            if ($('#svz-sorting-btn').text() === 'Disallow sorting'){
               InitializeSortable();
             }
-            InitializeMultiselectAndTagit(CURRENT_ITEM_ID);
+            InitializeMultiselectAndTagit(currentItemID);
           });
 
           $(document).on('click', '.svz-remove-item', function(){
             delete properties[$(this).parent().parent().find('.svz-label-item').html()];
-            ALL_KEYS.splice(_.indexOf(ALL_KEYS, $(this).parent().parent().find('.svz-label-item').html()), 1);
+            allKeys.splice(_.indexOf(allKeys, $(this).parent().parent().find('.svz-label-item').html()), 1);
             $(this).parent().parent().remove();
             $(this).parent().remove();
           });
 
           $(document).on('click', '.svz-remove-container', function(){
             delete properties[$(this).parent().parent().find('.svz-label-container').html()];
-            ALL_KEYS.splice(_.indexOf(ALL_KEYS, $(this).parent().parent().find('.svz-label-container').html()), 1);
+            allKeys.splice(_.indexOf(allKeys, $(this).parent().parent().find('.svz-label-container').html()), 1);
             $(this).parent().parent().remove();
             $(this).parent().remove();
           });
@@ -464,6 +468,23 @@
           var required = [];
           var properties = {};
 
+          window.ShowJSONPreview = function(){
+            var jsonPreview = {
+                  'schema': {
+                    'type': 'object',
+                    'properties': properties
+                  }
+            };
+            if (required != ''){
+              jsonPreview['required'] = required;
+            } else{
+              delete jsonPreview['required'];
+            }
+
+            $('#svz-json-text-header').hide();
+            $('#svz-json-text').html(JSON.stringify(jsonPreview, undefined, 2));
+          }
+
 
           Object.byString = function(o, s) {
             s = s.replace(/\[(\w+)\]/g, '.$1'); // convert indexes to properties
@@ -499,9 +520,6 @@
           }
 
           window.HandleFormSubmit = function(currentObject, currentID){
-            // when parents(':eq(11)') --> undefined => first level; ELSE: nested => object or array!!!
-
-          
             var currentID = currentID.replace( /^\D+/g, '');
             if($('#svz-key-warning').is(':visible')){
               return false;
@@ -523,10 +541,10 @@
             }
 
             if ((Object.keys(properties) != 0) 
-                && (currentKey != $('#svz-key' + currentID).val()) 
-                  && _.include(Object.keys(properties), currentKey)){ 
+              && (currentKey != $('#svz-key' + currentID).val()) 
+              && _.include(Object.keys(properties), currentKey)){ 
 
-              var path = search('schema', properties, LAST_PROPERTIES);
+              var path = search('schema', properties, lastProperties);
               var words = [];
               path.replace(/\['(.+?)'\]/g, function($0, $1) { words.push($1) })
               var pathToValue = '';
@@ -559,7 +577,7 @@
               var schemaFormDataArray = $('#svz-schema-form' + currentID).serializeArray();
               var toDeleteRequired = true;
 
-              if (typesFromSelectArray.length == 1){
+              if (typesFromSelectArray.length === 1){
                 thisProperties[currentKey]['type'] = typesFromSelectArray[0];
               } else{
                 thisProperties[currentKey]['type'] = typesFromSelectArray;
@@ -569,9 +587,9 @@
               schemaFormDataArray = schemaFormDataArray.filter(function(n){return n.value !== ''});
 
               jQuery.each( schemaFormDataArray, function( i, field ) {
-                if (field.value == 'on'){
+                if (field.value === 'on'){
                   field.value = 'true';
-                }else if(field.name == 'required' + currentID){
+                }else if(field.name === 'required' + currentID){
                   toDeleteRequired = false;
                   if (field.value && !(_.include(required, chosenKey))) {
                       if (_.include(required, $('#svz-label-item' + currentID).html())){
@@ -588,8 +606,6 @@
                 }
               });
 
-              console.log(currentID);
-              console.log(chosenKey);
               $('#svz-label-item' + currentID).html(chosenKey);
               $('#svz-label-container' + currentID).html(chosenKey);
 
@@ -606,12 +622,9 @@
 
               Object.defineProperty(properties, $('#svz-key' + currentID).val(), Object.getOwnPropertyDescriptor(properties, currentKey));
               delete properties[currentKey];
-              ALL_KEYS.splice(_.indexOf(ALL_KEYS, currentKey), 1);
+              allKeys.splice(_.indexOf(allKeys, currentKey), 1);
 
               return;
-
-
-
             }
 
             var typesFromSelect = $('#svz-selected-type' + currentID).val();
@@ -628,7 +641,7 @@
               var currentProperties = {};
               var toDeleteRequired = true;
 
-              if (typesFromSelectArray.length == 1){
+              if (typesFromSelectArray.length === 1){
                 currentProperties['type'] = typesFromSelectArray[0];
               } else{
                 currentProperties['type'] = typesFromSelectArray;
@@ -638,13 +651,13 @@
               schemaFormDataArray = schemaFormDataArray.filter(function(n){return n.value !== ''});
 
               jQuery.each( schemaFormDataArray, function( i, field ) {
-                if (field.value == 'on'){
+                if (field.value === 'on'){
                   field.value = 'true';
                 }
-                if(field.name == 'key' + currentID){
+                if(field.name === 'key' + currentID){
                   chosenKey = field.value;
-                  ALL_KEYS.push(chosenKey);
-                } else if(field.name == 'required' + currentID){
+                  allKeys.push(chosenKey);
+                } else if(field.name === 'required' + currentID){
                   toDeleteRequired = false;
                   if (field.value && !(_.include(required, chosenKey))) {
                       if (_.include(required, $('#svz-label-item' + currentID).html())){
@@ -677,7 +690,7 @@
               } else{
                 console.log('nested el - arr or object hard one!!');
 
-                var path = search('schema', properties, LAST_PROPERTIES);
+                var path = search('schema', properties, lastProperties);
                 var words = [];
                 path.replace(/\['(.+?)'\]/g, function($0, $1) { words.push($1) })
                 var pathToValue = '';
@@ -699,7 +712,7 @@
 
 
               }
-              LAST_PROPERTIES = currentProperties;
+              lastProperties = currentProperties;
 
               try {
                   var sortableItemsArray = $('.container').sortable('toArray');
@@ -713,81 +726,57 @@
                   console.log('Error: ' + err.message);
               }
 
-              var data = {
-                  key1: {
-                      children: {
-                          key2: 'value',
-                          key3: 'value',
-                          key4: 'test'
-                      },
-                      key5: 'value'
-                  }
-              };
-
-              var x = data.key1.children.key4;
-              // var path = search('data', data, x);
-              //var path = search('schema', properties, currentProperties);
-
-              //_.include($(li).text().toUpperCase(), filter.toUpperCase())
               if(_.include(typesFromSelectArray, 'object')){
-                console.log('type is object!');
+                // var jsonPreview = {
+                //   'schema': {
+                //     'type': 'object',
+                //     'properties': properties
+                //   }
+                // };
 
-
-
-                var jsonPreview = {
-                  'schema': {
-                    'type': 'object',
-                    'properties': properties
-                  }
-                };
-
-                if (required != ''){
-                  jsonPreview['required'] = required;
-                } else{
-                  delete jsonPreview['required'];
-                }
-
-
-
+                // if (required != ''){
+                //   jsonPreview['required'] = required;
+                // } else{
+                //   delete jsonPreview['required'];
+                // }
                 AppendObjectArrayForm(currentID);
 
+              } 
+              // else if(_.include(typesFromSelectArray, 'array')){   
+
+              //   properties[chosenKey]['items'] = {};
+              //   var jsonPreview = {
+              //     'schema': {
+              //       'type': 'object',
+              //       'properties': properties
+              //     }
+              //   };
+
+              //   if (required != ''){
+              //     jsonPreview['required'] = required;
+              //   } else{
+              //     delete jsonPreview['required'];
+              //   }
 
 
-              } else if(_.include(typesFromSelectArray, 'array')){   
-
-                properties[chosenKey]['items'] = {};
-                var jsonPreview = {
-                  'schema': {
-                    'type': 'object',
-                    'properties': properties
-                  }
-                };
-
-                if (required != ''){
-                  jsonPreview['required'] = required;
-                } else{
-                  delete jsonPreview['required'];
-                }
 
 
+              // } else{
+              //   var jsonPreview = {
+              //     'schema': {
+              //       'type': 'object',
+              //       'properties': properties
+              //     }
+              //   };
 
-
-              } else{
-                var jsonPreview = {
-                  'schema': {
-                    'type': 'object',
-                    'properties': properties
-                  }
-                };
-
-                if (required != ''){
-                  jsonPreview['required'] = required;
-                } else{
-                  delete jsonPreview['required'];
-                }
-              }
-              $('#svz-json-text-header').hide();
-              $('#svz-json-text').html(JSON.stringify(jsonPreview, undefined, 2));
+              //   if (required != ''){
+              //     jsonPreview['required'] = required;
+              //   } else{
+              //     delete jsonPreview['required'];
+              //   }
+              // }
+              // $('#svz-json-text-header').hide();
+              // $('#svz-json-text').html(JSON.stringify(jsonPreview, undefined, 2));
 
               $('#svz-for-form-form').jsonForm({
                 schema: {
