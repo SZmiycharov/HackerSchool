@@ -203,9 +203,9 @@
                 connectWith: '.container',
                 start: function(){
                   console.log('start position: ' + $(this).attr('id'));
-
-                  var currentKeyContainer = $(this).find('.svz-label-container').html();
-                  var currentKeyItem = $(this).find('.svz-label-item').html(); 
+                  //must be done on mousedown and mouseup!!! - za da se vzima taka element id + element father (containera) id
+                  var currentKeyContainer = $(this).find('.svz-label-container:first').html();
+                  var currentKeyItem = $(this).find('.svz-label-item:first').html(); 
 
                   if ($(this).attr('id') !== 'svz-container1'){
                     var allPaths = getkeys(properties);
@@ -220,6 +220,8 @@
                     delete Object.byString(properties, currentPath)[currentKeyItem];
                   } else{
                     draggedObject = properties[currentKeyItem];
+                    console.log(currentKeyItem);
+                    console.log(draggedObject);
                     delete properties[currentKeyItem];
                   }
                   
@@ -248,8 +250,16 @@
                       }
                     }
                     console.log(currentPath);
-
-                    Object.byString(properties, currentPath)['properties'][currentKeyItem] = draggedObject;
+                    try{
+                      Object.byString(properties, currentPath)['properties'][currentKeyItem] = draggedObject;
+                    } catch(e){
+                      currentPath = currentPath.split('.').slice(0, -1).join('.');
+                      console.log(currentPath);
+                      console.log(currentKeyItem);
+                      console.log(draggedObject);
+                      Object.byString(properties, currentPath)[currentKeyItem] = draggedObject;
+                    }
+                    
                   } else{
                     properties[currentKeyItem] = draggedObject;
                   }
