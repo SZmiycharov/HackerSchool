@@ -562,7 +562,7 @@
               } 
 
               try{
-                var thisProperties = Object.byString(properties, pathToValue)['properties'];
+                var thisProperties = Object.byString(properties, pathToValue);
                 var helper = thisProperties['type'];
               } catch(e){
                 var thisProperties = properties;
@@ -577,10 +577,13 @@
               var schemaFormDataArray = $('#svz-schema-form' + currentID).serializeArray();
               var toDeleteRequired = true;
 
+              console.log(thisProperties);
+              console.log(currentKey);
+
               if (typesFromSelectArray.length === 1){
-                thisProperties[currentKey]['type'] = typesFromSelectArray[0];
+                thisProperties['type'] = typesFromSelectArray[0];
               } else{
-                thisProperties[currentKey]['type'] = typesFromSelectArray;
+                thisProperties['type'] = typesFromSelectArray;
               }
               
               var chosenKey = $('#svz-key' + currentID).val();
@@ -601,7 +604,7 @@
                   if (field.name.replace(/[0-9]/g, '') != 'tags' 
                       && field.name.replace(/[0-9]/g, '') != 'type'
                         && field.name.replace(/[0-9]/g, '') != 'key'){
-                    thisProperties[currentKey][field.name.replace(/[0-9]/g, '')] = field.value;
+                    thisProperties[field.name.replace(/[0-9]/g, '')] = field.value;
                   }
                 }
               });
@@ -611,15 +614,18 @@
 
               var assignedEnum = $('#svz-enum' + currentID).tagit('assignedTags');
               if (assignedEnum != '') {
-                thisProperties[currentKey]['enum'] = assignedEnum;
+                thisProperties['enum'] = assignedEnum;
               }
               
               if (toDeleteRequired){
                 required.splice(_.indexOf(required, chosenKey), 1);
               }
 
-              Object.defineProperty(properties, $('#svz-key' + currentID).val(), Object.getOwnPropertyDescriptor(properties, currentKey));
-              delete properties[currentKey];
+              console.log(pathToValue);
+              pathToValue = pathToValue.split('.').slice(0,-1).join('.');
+              
+              Object.defineProperty(Object.byString(properties, pathToValue), $('#svz-key' + currentID).val(), Object.getOwnPropertyDescriptor(Object.byString(properties, pathToValue), currentKey));
+              delete Object.byString(properties, pathToValue)[currentKey];
               allKeys.splice(_.indexOf(allKeys, currentKey), 1);
 
               return;
@@ -686,17 +692,17 @@
                 console.log('element is first level; normal obj');
                 properties[chosenKey] = currentProperties;
               } else{
-                console.log('nested el - arr or object hard one!!');
-
-                console.log(lastProperties['type']);
-                
+                console.log('nested el - arr or object hard one!!');                
 
                 var path = search('schema', properties, lastProperties);
                 var words = [];
-                path.replace(/\['(.+?)'\]/g, function($0, $1) { words.push($1) })
+                try{
+                  path.replace(/\['(.+?)'\]/g, function($0, $1) { words.push($1) })
+                } catch(e){
+                  return;
+                }
+                
                 var pathToValue = '';
-
-
 
                 for (var i = 0; i < words.length; i++){
                   //properties = properties[words[i]];
@@ -718,17 +724,15 @@
                     }
                   }
                   console.log('Path to value now: ' + pathToValue);
-                }
-
-                
-                if (lastProperties['type'] === 'object'){
+                  Object.byString(properties, pathToValue)['properties'][chosenKey] = currentProperties;
+                }else if (lastProperties['type'] === 'object'){
                   try{
                     Object.byString(properties, pathToValue)['properties'][chosenKey] = currentProperties;
                   } catch(e){
                     Object.byString(properties, pathToValue)['properties'] = {};
                     Object.byString(properties, pathToValue)['properties'][chosenKey] = currentProperties;
                   }
-                } else{
+                } else if (lastProperties['type'] === 'array'){
                   try{
                     Object.byString(properties, pathToValue)['items'][chosenKey] = currentProperties;
                   } catch(e){
