@@ -564,8 +564,6 @@
               } catch(e){
                 var thisProperties = properties;
               }
-
-              console.log(thisProperties);
               
               var typesFromSelect = $('#svz-selected-type' + currentID).val();
               var typesFromSelectArray = $.map(typesFromSelect, function(value, index) {
@@ -616,8 +614,6 @@
               if (toDeleteRequired){
                 required.splice(_.indexOf(required, chosenKey), 1);
               }
-
-              console.log(thisProperties);
 
               Object.defineProperty(properties, $('#svz-key' + currentID).val(), Object.getOwnPropertyDescriptor(properties, currentKey));
               delete properties[currentKey];
@@ -689,23 +685,48 @@
               } else{
                 console.log('nested el - arr or object hard one!!');
 
+                console.log(lastProperties['type']);
+                
+
                 var path = search('schema', properties, lastProperties);
                 var words = [];
                 path.replace(/\['(.+?)'\]/g, function($0, $1) { words.push($1) })
                 var pathToValue = '';
 
+
+
                 for (var i = 0; i < words.length; i++){
                   //properties = properties[words[i]];
                   if (i !== words.length - 1){
                     pathToValue += words[i] + '.';
-                  }
-                  else {
+                  } else {
                     pathToValue += words[i];
                   }
                 } 
 
-                Object.byString(properties, pathToValue)['properties'] = {};
-                Object.byString(properties, pathToValue)['properties'][chosenKey] = currentProperties;
+                if (lastProperties['type'] !== 'object'){
+                  var splittedPathToValueLength = pathToValue.split('.');
+                  pathToValue = '';
+                  for (var i = 0; i < splittedPathToValueLength.length - 2; i++){
+                    if (i !== splittedPathToValueLength.length - 3){
+                      pathToValue += splittedPathToValueLength[i] + '.';
+                    } else{
+                      pathToValue += splittedPathToValueLength[i];
+                    }
+                  }
+                  console.log('Path to value now: ' + pathToValue);
+                }
+
+                
+
+                
+                try{
+                  Object.byString(properties, pathToValue)['properties'][chosenKey] = currentProperties;
+                } catch(e){
+                  Object.byString(properties, pathToValue)['properties'] = {};
+                  Object.byString(properties, pathToValue)['properties'][chosenKey] = currentProperties;
+                }
+                
               }
               lastProperties = currentProperties;
 
