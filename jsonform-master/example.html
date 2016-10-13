@@ -207,45 +207,55 @@
                   var currentKeyContainer = $(this).find('.svz-label-container').html();
                   var currentKeyItem = $(this).find('.svz-label-item').html(); 
 
-                  
+                  if ($(this).attr('id') !== 'svz-container1'){
+                    var allPaths = getkeys(properties);
+                    for (var i = 0; i < allPaths.length; i++){
+                      if (_.include(allPaths[i], currentKeyItem)){
+                        var currentPath = allPaths[i].split('.' + currentKeyItem)[0].split('.type')[0];
+                      }
+                    }
 
+                    draggedObject = Object.byString(properties, currentPath)[currentKeyItem];
 
-                  var path = search('schema', properties, lastProperties);
-                  var words = [];
-                  try{
-                    path.replace(/\['(.+?)'\]/g, function($0, $1) { words.push($1) })
-                  } catch(e){
-                    return;
+                    delete Object.byString(properties, currentPath)[currentKeyItem];
+                  } else{
+                    draggedObject = properties[currentKeyItem];
+                    delete properties[currentKeyItem];
                   }
-                  var pathToCurrentKey = words.slice(0,-1).join('.');
-                  draggedObject = Object.byString(properties, pathToCurrentKey)[currentKeyItem];
-
-                  delete Object.byString(properties, pathToCurrentKey)[currentKeyItem];
+                  
                 },
                 change: $.debounce(1200, function(event, ui) {
                   console.log('change position: ' + $(this).attr('id'));
                   var currentKeyContainer = $(this).find('.svz-label-container').html();
-                  var currentKeyItem = $(this).find('.svz-label-item').html(); 
+                  var currentKeyItem = $(this).find('.svz-label-item').html();
 
-                  // var path = search('schema', properties, lastProperties);
-                  // console.log(path);
-                  // var words = [];
-                  // try{
-                  //   path.replace(/\['(.+?)'\]/g, function($0, $1) { words.push($1) })
-                  // } catch(e){
-                  //   return;
-                  // }
+                  if ($(this).attr('id') !== 'svz-container1'){
+                    
+                    // var path = search('schema', properties, lastProperties);
+                    // console.log(path);
+                    // var words = [];
+                    // try{
+                    //   path.replace(/\['(.+?)'\]/g, function($0, $1) { words.push($1) })
+                    // } catch(e){
+                    //   return;
+                    // }
 
-
-                  var allPaths = getkeys(properties);
-                  for (var i = 0; i < allPaths.length; i++){
-                    if (_.include(allPaths[i], currentKeyContainer)){
-                      var currentPath = allPaths[i].split('.' + currentKeyContainer)[0].split('.type')[0];
+                    console.log(currentKeyContainer);
+                    var allPaths = getkeys(properties);
+                    for (var i = 0; i < allPaths.length; i++){
+                      if (_.include(allPaths[i], currentKeyContainer)){
+                        var currentPath = allPaths[i].split('.' + currentKeyContainer)[0].split('.type')[0];
+                      }
                     }
+                    console.log(currentPath);
+
+                    Object.byString(properties, currentPath)['properties'][currentKeyItem] = draggedObject;
+                  } else{
+                    properties[currentKeyItem] = draggedObject;
                   }
+                  
 
-
-                  Object.byString(properties, currentKeyContainer)['properties'][currentKeyItem] = draggedObject;
+                  
 
                 }),
 
