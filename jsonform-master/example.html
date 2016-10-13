@@ -550,7 +550,6 @@
               var pathToValue = '';
 
               for (var i = 0; i < words.length; i++){
-                //properties = properties[words[i]];
                 if (i !== words.length - 1){
                   pathToValue += words[i] + '.';
                 }
@@ -707,10 +706,6 @@
 
                 Object.byString(properties, pathToValue)['properties'] = {};
                 Object.byString(properties, pathToValue)['properties'][chosenKey] = currentProperties;
-
-                //properties[$(currentObject).parents(':eq(6)').find('.svz-label-container').html()]['properties'] = currentProperties;
-
-
               }
               lastProperties = currentProperties;
 
@@ -727,56 +722,9 @@
               }
 
               if(_.include(typesFromSelectArray, 'object')){
-                // var jsonPreview = {
-                //   'schema': {
-                //     'type': 'object',
-                //     'properties': properties
-                //   }
-                // };
-
-                // if (required != ''){
-                //   jsonPreview['required'] = required;
-                // } else{
-                //   delete jsonPreview['required'];
-                // }
                 AppendObjectArrayForm(currentID);
-
               } 
-              // else if(_.include(typesFromSelectArray, 'array')){   
 
-              //   properties[chosenKey]['items'] = {};
-              //   var jsonPreview = {
-              //     'schema': {
-              //       'type': 'object',
-              //       'properties': properties
-              //     }
-              //   };
-
-              //   if (required != ''){
-              //     jsonPreview['required'] = required;
-              //   } else{
-              //     delete jsonPreview['required'];
-              //   }
-
-
-
-
-              // } else{
-              //   var jsonPreview = {
-              //     'schema': {
-              //       'type': 'object',
-              //       'properties': properties
-              //     }
-              //   };
-
-              //   if (required != ''){
-              //     jsonPreview['required'] = required;
-              //   } else{
-              //     delete jsonPreview['required'];
-              //   }
-              // }
-              // $('#svz-json-text-header').hide();
-              // $('#svz-json-text').html(JSON.stringify(jsonPreview, undefined, 2));
 
               $('#svz-for-form-form').jsonForm({
                 schema: {
