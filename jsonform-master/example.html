@@ -112,7 +112,7 @@
                     <div><label style="display: flex;"><input id="svz-required" type="checkbox" name="required9999999">Required (check for true)</label></div>
                     <label id="svz-label-for-enum9999999">Enum</label>
                     <ul id="svz-enum9999999" name="enum9999999" class="svz-enum"></ul>
-                    <input class="btn btn-primary" id="svz-schema-form-submit9999999" type="submit">
+                    <input class="btn btn-primary" id="svz-schema-form-submit9999999" type="submit" value="Update">
                 </form>
               </div>
               <div class="tab-pane" id="svz-form-tab9999999">
@@ -380,18 +380,28 @@
           window.AppendCheckboxFieldToForm = function(currentIDnum, label, placeholder, IDdiv, IDinput, name){
             $('#svz-schema-form' + currentIDnum).append('<div hidden class="additionaloption' + currentIDnum + '" class="form-group"  id="' + IDdiv + currentIDnum + '"><label style="display: flex;"><input id="'+ IDinput + currentIDnum + '" name="' + name + currentIDnum + '" type="checkbox" placeholder="' + placeholder + '">' + label + '</label></div>');
           }
+          window.AppendCheckboxFieldArray = function(currentIDnum){
+            $('#svz-schema-form' + currentIDnum).append('<div class="additionaloption' + currentIDnum + '"><label style="display: flex;"><input id="svz-unique-items' + currentIDnum + '" name="uniqueItems' + currentIDnum + '" type="checkbox">Unique items (check for true)</label></div>');
+          }
           window.AppendSubmitBtnToForm = function(currentIDnum){
-            $('#svz-schema-form' + currentIDnum).append('<input class="btn btn-primary" id="svz-schema-form-submit' + currentIDnum + '" type="submit">');
+            $('#svz-schema-form' + currentIDnum).append('<input class="btn btn-primary" id="svz-schema-form-submit' + currentIDnum + '" type="submit" value="Update">');
           }
           window.AppendReadonlyFieldToForm = function(currentIDnum){
             $('#svz-schema-form' + currentIDnum).append('<div class="additionaloption' + currentIDnum + '"><label style="display: flex;"><input id="svz-readonly' + currentIDnum + '" name="readonly' + currentIDnum + '" type="checkbox">Readonly (check for true)</label></div>');
           }
 
-          window.ToggleFormAndEnum = function(currentIDnum){
+          window.RemoveFormShowEnum = function(currentIDnum){
             $('#svz-schema-form-submit' + currentIDnum).remove();
             $('#svz-enum' + currentIDnum).show();
             $('#svz-enum').prop('disabled', false);
             $('#svz-label-for-enum' + currentIDnum).show();
+          }
+
+          window.RemoveEnumRemoveTagit = function(currentIDnum){
+            $('#svz-enum' + currentIDnum).hide();
+            $('.tagit-choice').remove();
+            $('#svz-label-for-enum' + currentIDnum).hide();
+            $('#svz-schema-form-submit' + currentIDnum).remove();
           }
 
           $(document).on('change', '.svz-selected-type', $.debounce(TIMEOUT_DEBOUNCE, function() {
@@ -402,7 +412,7 @@
               if (selectedType){
                 if ((_.include(selectedType, 'number') || _.include(selectedType, 'integer')) 
                   && _.include(selectedType, 'string')) {
-                  ToggleFormAndEnum(currentTabNum);
+                  RemoveFormShowEnum(currentTabNum);
 
                   AppendInputFieldToForm(currentTabNum, 'Maximum length', 'svz-max-length', 'maxLength', '');
                   AppendInputFieldToForm(currentTabNum, 'Minimum length', 'svz-min-length', 'minLength', '');
@@ -417,7 +427,7 @@
                   AppendSubmitBtnToForm(currentTabNum);
 
                 } else if (_.include(selectedType, 'string')){
-                  ToggleFormAndEnum(currentTabNum);
+                  RemoveFormShowEnum(currentTabNum);
 
                   AppendInputFieldToForm(currentTabNum, 'Maximum length', 'svz-max-length', 'maxLength', '');
                   AppendInputFieldToForm(currentTabNum, 'Minimum length', 'svz-min-length', 'minLength', '');
@@ -427,7 +437,7 @@
                   AppendSubmitBtnToForm(currentTabNum);
 
                 } else if (_.include(selectedType, 'number') || _.include(selectedType, 'integer')){
-                  ToggleFormAndEnum(currentTabNum);
+                  RemoveFormShowEnum(currentTabNum);
 
                   AppendInputFieldToForm(currentTabNum, 'Minimum', 'minimum', 'minimum', 'minimum');
                   AppendCheckboxFieldToForm(currentTabNum, 'Check - num will be more than minimum', 'Exclusive minimum', 'exclusive-min-div', 'exclusiveMinimum', 'exclusiveMinimum');
@@ -437,21 +447,14 @@
                   AppendReadonlyFieldToForm(currentTabNum);
                   AppendSubmitBtnToForm(currentTabNum);
 
-                } 
-                // else if (_.include(selectedType, 'array')){
-                //   $('#svz-enum' + currentTabNum).hide();
-                //   $('.tagit-choice').remove();
-                //   $('#svz-label-for-enum' + currentTabNum).hide();
-                //   $('#svz-schema-form-submit' + currentTabNum).remove();
+                } else if (_.include(selectedType, 'array')){
+                  RemoveEnumRemoveTagit(currentTabNum);
 
-
-
-
-                //   $('#svz-schema-form' + currentTabNum).append('<label class="additionaloption' + currentTabNum + '">Minimum items</label><div class="additionaloption' + currentTabNum + '" class="form-group"><input id="svz-min-items' + currentTabNum + '" type="number" name="minItems' + currentTabNum + '" placeholder="Minimum items"></div>');
-                //   $('#svz-schema-form' + currentTabNum).append('<label class="additionaloption' + currentTabNum + '">Maximum items</label><div class="additionaloption' + currentTabNum + '" class="form-group"><input id="svz-max-items' + currentTabNum + '" type="number" name="maxItems' + currentTabNum + '" placeholder="Maximum items"></div>');
-                //   $('#svz-schema-form' + currentTabNum).append('<div class="additionaloption' + currentTabNum + '"><label style="display: flex;"><input id="svz-unique-items' + currentTabNum + '" name="uniqueItems' + currentTabNum + '" type="checkbox">Unique items (check for true)</label></div>');
-                //   $('#svz-schema-form' + currentTabNum).append('<input class="btn btn-primary" id="svz-schema-form-submit' + currentTabNum + '" type="submit">');
-                // }
+                  AppendInputFieldToForm(currentTabNum, 'Minimum items', 'svz-min-items', 'minItems', '');
+                  AppendInputFieldToForm(currentTabNum, 'Maximum items', 'svz-max-items', 'maxItems', '');
+                  AppendCheckboxFieldArray(currentTabNum);
+                  AppendSubmitBtnToForm(currentTabNum);
+                }
               }
           }));
         
@@ -704,7 +707,7 @@
                   }
                 } 
 
-                if (lastProperties['type'] !== 'object'){
+                if (lastProperties['type'] !== 'object' && lastProperties['type'] !== 'array'){
                   var splittedPathToValueLength = pathToValue.split('.');
                   pathToValue = '';
                   for (var i = 0; i < splittedPathToValueLength.length - 2; i++){
@@ -718,14 +721,23 @@
                 }
 
                 
-
-                
-                try{
-                  Object.byString(properties, pathToValue)['properties'][chosenKey] = currentProperties;
-                } catch(e){
-                  Object.byString(properties, pathToValue)['properties'] = {};
-                  Object.byString(properties, pathToValue)['properties'][chosenKey] = currentProperties;
+                if (lastProperties['type'] === 'object'){
+                  try{
+                    Object.byString(properties, pathToValue)['properties'][chosenKey] = currentProperties;
+                  } catch(e){
+                    Object.byString(properties, pathToValue)['properties'] = {};
+                    Object.byString(properties, pathToValue)['properties'][chosenKey] = currentProperties;
+                  }
+                } else{
+                  try{
+                    Object.byString(properties, pathToValue)['items'][chosenKey] = currentProperties;
+                  } catch(e){
+                    Object.byString(properties, pathToValue)['items'] = {};
+                    Object.byString(properties, pathToValue)['items'][chosenKey] = currentProperties;
+                  }
                 }
+                
+                
                 
               }
               lastProperties = currentProperties;
@@ -742,7 +754,7 @@
                   console.log('Error: ' + err.message);
               }
 
-              if(_.include(typesFromSelectArray, 'object')){
+              if(_.include(typesFromSelectArray, 'object') || _.include(typesFromSelectArray, 'array')){
                 AppendObjectArrayForm(currentID);
               } 
 
