@@ -178,6 +178,20 @@
             }
           });
 
+          var getkeys = function(obj, prefix){
+              var keys = Object.keys(obj);
+              prefix = prefix ? prefix + '.' : '';
+              return keys.reduce(function(result, key){
+                  if(typeof obj[key] === 'object'){
+                      result = result.concat(getkeys(obj[key], prefix + key));
+                  }else{
+                      result.push(prefix + key);
+                  }
+                  return result;
+              }, []);
+          };
+
+          var draggedObject;
           window.InitializeSortable = function() {
             $('.container').sortable({
                 delay: 150,
@@ -187,9 +201,54 @@
                 cursor: 'move',
                 tolerance: 'pointer',
                 connectWith: '.container',
-              });
-              $('.container').bind( 'sortout', function(event, ui) {
-                //console.log('out event');
+                start: function(){
+                  console.log('start position: ' + $(this).attr('id'));
+
+                  var currentKeyContainer = $(this).find('.svz-label-container').html();
+                  var currentKeyItem = $(this).find('.svz-label-item').html(); 
+
+                  
+
+
+                  var path = search('schema', properties, lastProperties);
+                  var words = [];
+                  try{
+                    path.replace(/\['(.+?)'\]/g, function($0, $1) { words.push($1) })
+                  } catch(e){
+                    return;
+                  }
+                  var pathToCurrentKey = words.slice(0,-1).join('.');
+                  draggedObject = Object.byString(properties, pathToCurrentKey)[currentKeyItem];
+
+                  delete Object.byString(properties, pathToCurrentKey)[currentKeyItem];
+                },
+                change: $.debounce(1200, function(event, ui) {
+                  console.log('change position: ' + $(this).attr('id'));
+                  var currentKeyContainer = $(this).find('.svz-label-container').html();
+                  var currentKeyItem = $(this).find('.svz-label-item').html(); 
+
+                  // var path = search('schema', properties, lastProperties);
+                  // console.log(path);
+                  // var words = [];
+                  // try{
+                  //   path.replace(/\['(.+?)'\]/g, function($0, $1) { words.push($1) })
+                  // } catch(e){
+                  //   return;
+                  // }
+
+
+                  var allPaths = getkeys(properties);
+                  for (var i = 0; i < allPaths.length; i++){
+                    if (_.include(allPaths[i], currentKeyContainer)){
+                      var currentPath = allPaths[i].split('.' + currentKeyContainer)[0].split('.type')[0];
+                    }
+                  }
+
+
+                  Object.byString(properties, currentKeyContainer)['properties'][currentKeyItem] = draggedObject;
+
+                }),
+
               });
           }
 
@@ -312,7 +371,6 @@
 
           $(document).on('click', '.svz-add-item', function(e){
             e.stopPropagation();
-            console.log('second function'); // appends small item to container
 
             currentItemID += 1;
             var currentID = $(this).attr('id').replace( /^\D+/g, '');
@@ -463,7 +521,6 @@
             $('#exclusive-min-div' + currentID).toggle(!!$(this).val());
           }); 
           $(document).on('change', '.maximum', function(){
-            console.log('hereee');
             var currentID = $(this).attr('id').replace( /^\D+/g, '');
             $('#exclusive-max-div' + currentID).toggle(!!$(this).val());
           }); 
@@ -543,16 +600,9 @@
               currentKey = $('#svz-label-container' + currentID).html();
             }
 
-            console.log(currentKey);
-            console.log($('#svz-key' + currentID).val());
-            console.log(allKeys, currentKey);
-
-
-
             if (allKeys 
               && (currentKey != $('#svz-key' + currentID).val()) 
               && _.include(allKeys, currentKey)){ 
-              console.log('WE ARE HERE BITCH\n');
 
               var path = search('schema', properties, lastProperties);
               var words = [];
@@ -710,11 +760,8 @@
               }
 
               if (!$(currentObject).parents(':eq(11)').html()){
-                console.log('element is first level; normal obj');
                 properties[chosenKey] = currentProperties;
               } else{
-                console.log('nested el - arr or object hard one!!');                
-
                 var path = search('schema', properties, lastProperties);
                 var words = [];
                 try{
@@ -744,7 +791,6 @@
                       pathToValue += splittedPathToValueLength[i];
                     }
                   }
-                  console.log('Path to value now: ' + pathToValue);
                   try{
                     Object.byString(properties, pathToValue)['properties'][chosenKey] = currentProperties;
                   } catch(e) {
@@ -780,7 +826,7 @@
                       }
                   }
               } catch(err) {
-                  console.log('Error: ' + err.message);
+                  //console.log('Error: ' + err.message);
               }
 
               if(_.include(typesFromSelectArray, 'object') || _.include(typesFromSelectArray, 'array')){
