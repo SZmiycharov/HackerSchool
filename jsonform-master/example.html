@@ -361,7 +361,7 @@
           $(document).on('keyup', '.svz-key', $.debounce(TIMEOUT_DEBOUNCE, function() {
              var currentID = $(this).attr('id').replace( /^\D+/g, '');
 
-             if (_.include(Object.keys(properties), $(this).val()) 
+             if (_.include(allKeys, $(this).val()) 
               && $(this).val() != $('#svz-label-item' + currentID).html() 
               && $(this).val() != $('#svz-label-container' + currentID).html()){
                 $('#svz-schema-form-submit' + currentID).prop('disabled', true);
@@ -528,7 +528,7 @@
               return false;
             }
 
-            if (_.include(Object.keys(properties), $('#svz-key' + currentID).val()) 
+            if (_.include(allKeys, $('#svz-key' + currentID).val()) 
                 && $('#svz-key' + currentID).val() != $('#svz-label-item' + currentID).html() 
                   && $('#svz-key' + currentID).val() != $('#svz-label-container' + currentID).html()){
               $('#svz-key-warning' + currentID).show();
@@ -543,9 +543,9 @@
               currentKey = $('#svz-label-container' + currentID).html();
             }
 
-            if ((Object.keys(properties) != 0) 
+            if (allKeys 
               && (currentKey != $('#svz-key' + currentID).val()) 
-              && _.include(Object.keys(properties), currentKey)){ 
+              && _.include(allKeys, currentKey)){ 
 
               var path = search('schema', properties, lastProperties);
               var words = [];
@@ -746,7 +746,7 @@
                   var sortableItemsArray = $('.container').sortable('toArray');
                   var sortableItemsArrayLength = sortableItemsArray.length;
                   for (var i = 0; i < sortableItemsArrayLength; i++) {
-                      if (_.include(Object.keys(properties), $('#' + sortableItemsArray[i]).find('.svz-label-item').html())){
+                      if (_.include(allKeys, $('#' + sortableItemsArray[i]).find('.svz-label-item').html())){
                         properties[$('#' + sortableItemsArray[i]).find('.svz-label-item').html()]['ordering'] = i + 1;
                       }
                   }
