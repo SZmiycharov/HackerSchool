@@ -543,9 +543,16 @@
               currentKey = $('#svz-label-container' + currentID).html();
             }
 
+            console.log(currentKey);
+            console.log($('#svz-key' + currentID).val());
+            console.log(allKeys, currentKey);
+
+
+
             if (allKeys 
               && (currentKey != $('#svz-key' + currentID).val()) 
               && _.include(allKeys, currentKey)){ 
+              console.log('WE ARE HERE BITCH\n');
 
               var path = search('schema', properties, lastProperties);
               var words = [];
@@ -577,9 +584,6 @@
               var schemaFormDataArray = $('#svz-schema-form' + currentID).serializeArray();
               var toDeleteRequired = true;
 
-              console.log(thisProperties);
-              console.log(currentKey);
-
               if (typesFromSelectArray.length === 1){
                 thisProperties['type'] = typesFromSelectArray[0];
               } else{
@@ -592,7 +596,10 @@
               jQuery.each( schemaFormDataArray, function( i, field ) {
                 if (field.value === 'on'){
                   field.value = 'true';
-                }else if(field.name === 'required' + currentID){
+                }else if(field.name === 'key' + currentID){
+                  chosenKey = field.value;
+                  allKeys.push(chosenKey);
+                } else if(field.name === 'required' + currentID){
                   toDeleteRequired = false;
                   if (field.value && !(_.include(required, chosenKey))) {
                       if (_.include(required, $('#svz-label-item' + currentID).html())){
@@ -621,15 +628,29 @@
                 required.splice(_.indexOf(required, chosenKey), 1);
               }
 
-              console.log(pathToValue);
               pathToValue = pathToValue.split('.').slice(0,-1).join('.');
               
-              Object.defineProperty(Object.byString(properties, pathToValue), $('#svz-key' + currentID).val(), Object.getOwnPropertyDescriptor(Object.byString(properties, pathToValue), currentKey));
-              delete Object.byString(properties, pathToValue)[currentKey];
+              try{
+                Object.defineProperty(Object.byString(properties, pathToValue), $('#svz-key' + currentID).val(), Object.getOwnPropertyDescriptor(Object.byString(properties, pathToValue), currentKey));
+                delete Object.byString(properties, pathToValue)[currentKey];
+              } catch(e){
+                Object.defineProperty(properties, $('#svz-key' + currentID).val(), Object.getOwnPropertyDescriptor(properties, currentKey));
+                delete properties[currentKey];
+              }
+              
+              
               allKeys.splice(_.indexOf(allKeys, currentKey), 1);
 
               return;
             }
+
+
+
+
+
+
+
+
 
             var typesFromSelect = $('#svz-selected-type' + currentID).val();
             var typesFromSelectArray = $.map(typesFromSelect, function(value, index) {
@@ -724,7 +745,11 @@
                     }
                   }
                   console.log('Path to value now: ' + pathToValue);
-                  Object.byString(properties, pathToValue)['properties'][chosenKey] = currentProperties;
+                  try{
+                    Object.byString(properties, pathToValue)['properties'][chosenKey] = currentProperties;
+                  } catch(e) {
+                    Object.byString(properties, pathToValue)['items'][chosenKey] = currentProperties;
+                  }
                 }else if (lastProperties['type'] === 'object'){
                   try{
                     Object.byString(properties, pathToValue)['properties'][chosenKey] = currentProperties;
