@@ -3,7 +3,7 @@
   <head>
     <meta charset="utf-8" />
     <title>JSONCreator</title>
-    <link rel="stylesheet" style="text/css" href="deps/opt/bootstrap.css" />
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css">
     <style>
       .container {
           overflow:hidden;
@@ -62,15 +62,6 @@
         margin-top: 5px;
         margin-bottom: 10px;
       }
-      #svz-json-preview{
-        float: right; 
-        width: 45%; 
-        margin-right: 3%; 
-        margin-top: 2%;
-        position: fixed;
-        top: 2%;
-        right: 0;
-      }
       textarea {
         width: 60%;
         height: 700px;
@@ -81,7 +72,7 @@
   </head>
 
   <body>
-    <!-- hidden form for cloning -->
+    <!-- hidden forms for cloning -->
     <div class="tab-content" id="tab-content9999999" hidden>
       <div id="svz-schema-form-tabs-container9999999" class="tab-pane active">
           <div id="svz-left-container9999999" style="float:left; width:45%; margin-left: 50px; margin-top: 20px;"> 
@@ -92,7 +83,10 @@
             <div class="tab-content">
               <div class="tab-pane active" id="svz-schema-tab9999999">
                 <h2>For schema:</h2>
+
+
                 <form id="svz-schema-form9999999" action="javascript:void(0);" onsubmit="HandleFormSubmit(this, this.id);">
+                  <div class="form-group">
                     <label class="svzRequiredLabel">Type</label>
                     <div>
                       <select class="svz-selected-type" id="svz-selected-type9999999" name="type9999999" required multiple>
@@ -105,18 +99,27 @@
                         <option label="null" value="null">null</option>
                       </select>
                     </div>
+                  </div>
+                  <div class="form-group">
                     <label class="svzRequiredLabel">Key<font class="svzKeyWarning" id="svz-key-warning9999999" color="red" hidden> (key already exists)</font></label>
                     <div><input id="svz-key9999999" class="svz-key" placeholder="Key (Unique identifier)" type="text" name="key9999999" required></div>
+                  </div>
+                  <div class="form-group">
                     <label>Title</label>
                     <div><input placeholder="Title" type="text" name="title9999999"></div>
-                    <!-- <label>Ordering</label>
-                    <div><input placeholder="Ordering" type="number" name="ordering9999999"></div> -->
+                  </div>
+                  <div class="form-group">
                     <label>Description</label>
                     <div><input class="longtext" id="svz-description9999999" placeholder="Description" type="text" name="description9999999"></div>
-                    <div><label style="display: flex;"><input id="svz-required" type="checkbox" name="required9999999">Required (check for true)</label></div>
+                  </div>
+                  <div class="form-group">
+                    <div><label><input id="svz-required" type="checkbox" name="required9999999">Required (check for true)</label></div>
+                  </div>
+                  <div class="form-group">
                     <label id="svz-label-for-enum9999999">Enum</label>
                     <ul id="svz-enum9999999" name="enum9999999" class="svz-enum"></ul>
-                    <input class="btn btn-primary" id="svz-schema-form-submit9999999" type="submit" value="Update">
+                  </div>
+                    <input class="btn btn-default" id="svz-schema-form-submit9999999" type="submit" value="Update">
                 </form>
               </div>
               <div class="tab-pane" id="svz-form-tab9999999">
@@ -138,7 +141,10 @@
             <div class="tab-content">
               <div class="tab-pane active" id="svz-schema-tab9999998">
                 <h2>For schema:</h2>
+
+
                 <form id="svz-schema-form9999998" action="javascript:void(0);" onsubmit="HandleFormSubmit(this, this.id);">
+                  <div class="form-group">
                     <label class="svzRequiredLabel">Type</label>
                     <div>
                       <select class="svz-selected-type" id="svz-selected-type9999998" name="type9999998" required multiple>
@@ -151,9 +157,27 @@
                         <option label="null" value="null">null</option>
                       </select>
                     </div>
+                  </div>
+                  <div class="form-group">
+                    <label class="svzRequiredLabel">Key<font class="svzKeyWarning" id="svz-key-warning9999998" color="red" hidden> (key already exists)</font></label>
+                    <div><input id="svz-key9999998" class="svz-key" placeholder="Key (Unique identifier)" type="text" name="key9999998" required></div>
+                  </div>
+                  <div class="form-group">
+                    <label>Title</label>
+                    <div><input placeholder="Title" type="text" name="title9999998"></div>
+                  </div>
+                  <div class="form-group">
+                    <label>Description</label>
+                    <div><input class="longtext" id="svz-description9999998" placeholder="Description" type="text" name="description9999998"></div>
+                  </div>
+                  <div class="form-group">
+                    <div><label><input id="svz-required" type="checkbox" name="required9999998">Required (check for true)</label></div>
+                  </div>
+                  <div class="form-group">
                     <label id="svz-label-for-enum9999998">Enum</label>
                     <ul id="svz-enum9999998" name="enum9999998" class="svz-enum"></ul>
-                    <input class="btn btn-primary" id="svz-schema-form-submit9999998" type="submit" value="Update">
+                  </div>
+                    <input class="btn btn-default" id="svz-schema-form-submit9999998" type="submit" value="Update">
                 </form>
               </div>
               <div class="tab-pane" id="svz-form-tab9999998">
@@ -166,7 +190,13 @@
     </div>
 
 
-    <div style="float:left; width:45%; margin-left: 50px; margin-top: 40px;">
+
+    
+
+
+
+
+    <div class="col-md-6">
       <div>
         <button id="svz-sorting-btn" type="button" class="btn btn-primary">Allow sorting</button>
         <button id="svz-show-json-preview" type="button" class="btn btn-success" onclick="ShowJSONPreview();">Show JSON</button>
@@ -177,11 +207,13 @@
       </div>
     </div>
 
-    <div id="svz-json-preview">
+    <div class="col-md-6">
       <h3>Preview appears here:</h3>
       <p id="svz-json-text-header">When you choose options json will appear here! :)</p>
       <textarea name="textarea" id="svz-json-text"></textarea>
     </div>
+
+
 
 
     <script src="deps/jquery.min.js"></script>
