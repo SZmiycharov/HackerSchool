@@ -179,6 +179,22 @@
       </div>
     </div>
 
+    <!-- id $schema -->
+    <div id="svz-toggle-main-options" hidden><button type="button" class="btn btn-info">Main options</button></div>
+    <div id="svz-main-options">
+      <h3>JSONSchema: main options</h3>
+      <form action="javascript:void(0);" onsubmit="HandleMainSchemaFormSubmit();" id="svz-main-form-schema-options">
+        <div class="form-group">
+          <label for="svz-schema-main-id">ID:</label>
+          <input class="form-control" name="id" id="svz-schema-main-id">
+        </div>
+        <div class="form-group">
+          <label for="svz-main-dollar-schema">$Schema:</label>
+          <input class="form-control" name="$schema" id="svz-main-dollar-schema">
+        </div>
+        <input class="btn btn-default" type="submit" value="Submit">
+      </form>
+    </div>
 
 
     <div class="col-md-6 col-sn-12" style="margin-top: 40px;">
@@ -213,7 +229,6 @@
     <script src="deps/jquery.ba-throttle-debounce.js"></script>
     <script src="deps/lodash.min.js"></script>
     <script type="text/javascript" src="deps/jquery-ui.min.js"></script>
-    <script type="text/javascript" src="deps/tv4.js"></script>
     <script src="deps/tag-it.js" type="text/javascript" charset="utf-8"></script>
     <script type="text/javascript">
 
@@ -227,7 +242,7 @@
           var currentItemID = 5;
           var allKeys = [];
           var lastProperties;
-          var jsonPreview;
+          var jsonPreview = {};
 
           jQuery.fn.extend({
             prependClass: function(newClasses) {
@@ -237,10 +252,6 @@
                 });
             }
           });
-
-
-          
-          
 
           var getkeys = function(obj, prefix){
               var keys = Object.keys(obj);
@@ -346,10 +357,7 @@
               }
             } else{
               $('#' + $(this).find('.tab-content').attr('id')).toggle();
-              //$(this).find('.tab-content').toggle();
             }
-
-            
           });
 
           $(document).on('mouseover', '.container', function(e){
@@ -525,7 +533,7 @@
           });
 
           window.AppendInputFieldToForm = function(currentIDnum, label, ID, name, currentClass){
-            $('#svz-schema-form' + currentIDnum).append('<label class="additionaloption' + currentIDnum + '">' + label + '</label><div class="additionaloption' + currentIDnum + '" class="form-group"><input id="' + ID + currentIDnum + '" type="number" class="' + currentClass + '" name="' + name + currentIDnum + '" placeholder="' + label + '"></div>');
+            $('#svz-schema-form' + currentIDnum).append('<div class="form-group additionaloption' + currentIDnum + '"><label class="additionaloption' + currentIDnum + '">' + label + '</label><input id="' + ID + currentIDnum + '" type="number" class="form-control ' + currentClass + '" name="' + name + currentIDnum + '" placeholder="' + label + '"></div>');
           }
           window.AppendCheckboxFieldToForm = function(currentIDnum, label, placeholder, IDdiv, IDinput, name){
             $('#svz-schema-form' + currentIDnum).append('<div hidden class="additionaloption' + currentIDnum + '" class="form-group"  id="' + IDdiv + currentIDnum + '"><label style="display: flex;"><input id="'+ IDinput + currentIDnum + '" name="' + name + currentIDnum + '" type="checkbox" placeholder="' + placeholder + '">' + label + '</label></div>');
@@ -534,7 +542,7 @@
             $('#svz-schema-form' + currentIDnum).append('<div class="additionaloption' + currentIDnum + '"><label style="display: flex;"><input id="svz-unique-items' + currentIDnum + '" name="uniqueItems' + currentIDnum + '" type="checkbox">Unique items (check for true)</label></div>');
           }
           window.AppendSubmitBtnToForm = function(currentIDnum){
-            $('#svz-schema-form' + currentIDnum).append('<input class="btn btn-primary" id="svz-schema-form-submit' + currentIDnum + '" type="submit" value="Update">');
+            $('#svz-schema-form' + currentIDnum).append('<input class="btn btn-default" id="svz-schema-form-submit' + currentIDnum + '" type="submit" value="Update">');
           }
           window.AppendReadonlyFieldToForm = function(currentIDnum){
             $('#svz-schema-form' + currentIDnum).append('<div class="additionaloption' + currentIDnum + '"><label style="display: flex;"><input id="svz-readonly' + currentIDnum + '" name="readonly' + currentIDnum + '" type="checkbox">Readonly (check for true)</label></div>');
@@ -628,11 +636,9 @@
           var properties = {};
 
           window.ShowJSONPreview = function(){
-            jsonPreview = {
-                  'schema': {
+            jsonPreview['schema'] = {
                     'type': 'object',
                     'properties': properties
-                  }
             };
             if (required != ''){
               jsonPreview['required'] = required;
@@ -679,6 +685,27 @@
             }
             return false;
           }
+
+          window.HandleMainSchemaFormSubmit = function(){
+            $.each($('#svz-main-form-schema-options').serializeArray(), function(i, field) {
+              if(field.value){
+                jsonPreview[field.name] = field.value;
+              }
+            });
+
+            $('#svz-main-options').slideToggle();
+            $('#svz-toggle-main-options').show();
+          }
+
+
+          $(document).on('click', '#svz-toggle-main-options', function(){
+            $('#svz-main-options').slideToggle();
+          }); 
+            
+            
+          
+
+
 
           window.HandleFormSubmit = function(currentObject, currentID){
             var currentID = currentID.replace( /^\D+/g, '');
@@ -794,13 +821,6 @@
 
               return;
             }
-
-
-
-
-
-
-
 
 
             var typesFromSelect = $('#svz-selected-type' + currentID).val();
