@@ -399,8 +399,10 @@
             //console.log('in AppendObjectArrayForm');
             currentContainerID += 1;
             currentItemID += 1;
-
             var currentLabel = $('#svz-label-item' + currentID).html();
+            $('svz-item-container' + currentLabel).parent().find('label');
+            //tuk trqbva da se vidi dali parenta e array -> ako e array: return vednaga!!!!!!!!!!!!!!
+
             var $submittedFormDiv = $('#tab-content' + currentID);
             $submittedFormDiv.find('.multiselect').remove();
             $submittedFormDiv.find('.ui-widget-content:last').remove();
@@ -728,9 +730,13 @@
               currentKey = $('#svz-label-container' + currentID).html();
             }
 
+            console.log('first here!');
             if (allKeys 
               && (currentKey != $('#svz-key' + currentID).val()) 
               && _.include(allKeys, currentKey)){ 
+
+              console.log('here bitch');
+              console.log(currentKey);
 
               var path = search('schema', properties, lastProperties);
               var words = [];
@@ -915,7 +921,7 @@
                   try{
                     Object.byString(properties, pathToValue)['properties'][chosenKey] = currentProperties;
                   } catch(e) {
-                    Object.byString(properties, pathToValue)['items'][chosenKey] = currentProperties;
+                    Object.byString(properties, pathToValue)['items'] = currentProperties;
                   }
                 }else if (lastProperties['type'] === 'object'){
                   try{
