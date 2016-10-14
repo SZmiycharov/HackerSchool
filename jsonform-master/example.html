@@ -128,6 +128,43 @@
       </div>
     </div>
 
+    <div class="tab-content" id="tab-content9999998" hidden>
+      <div id="svz-schema-form-tabs-container9999998" class="tab-pane active">
+          <div id="svz-left-container9999998" style="float:left; width:45%; margin-left: 50px; margin-top: 20px;"> 
+            <ul class="nav nav-tabs" id="svz-schema-form-tabs9999998">
+              <li class="active"><a data-target="#svz-schema-tab" data-toggle="tab">Schema</a></li>
+              <li><a data-target="#svz-form-tab" data-toggle="tab">Form</a></li>
+            </ul>
+            <div class="tab-content">
+              <div class="tab-pane active" id="svz-schema-tab9999998">
+                <h2>For schema:</h2>
+                <form id="svz-schema-form9999998" action="javascript:void(0);" onsubmit="HandleFormSubmit(this, this.id);">
+                    <label class="svzRequiredLabel">Type</label>
+                    <div>
+                      <select class="svz-selected-type" id="svz-selected-type9999998" name="type9999998" required multiple>
+                        <option label="object" value="object">object</option>
+                        <option label="array" value="array">array</option>
+                        <option label="number" value="number">number</option> 
+                        <option label="integer" value="integer">integer</option>
+                        <option label="string" value="string">string</option>  
+                        <option label="boolean" value="boolean">boolean</option> 
+                        <option label="null" value="null">null</option>
+                      </select>
+                    </div>
+                    <label id="svz-label-for-enum9999998">Enum</label>
+                    <ul id="svz-enum9999998" name="enum9999998" class="svz-enum"></ul>
+                    <input class="btn btn-primary" id="svz-schema-form-submit9999998" type="submit" value="Update">
+                </form>
+              </div>
+              <div class="tab-pane" id="svz-form-tab9999998">
+                <h2 id="svz-for-form9999998">For form:</h2>
+                <form id="svz-for-form-form9999998"></form>
+              </div>
+            </div> 
+          </div>   
+      </div>
+    </div>
+
 
     <div style="float:left; width:45%; margin-left: 50px; margin-top: 40px;">
       <div>
@@ -343,7 +380,7 @@
             }
           });
 
-          window.AppendObjectArrayForm = function(currentID) {
+          window.AppendObjectArrayForm = function(currentID, currentType) {
             //console.log('in AppendObjectArrayForm');
             currentContainerID += 1;
             currentItemID += 1;
@@ -372,19 +409,41 @@
               InitializeSortable();
             }
 
-            var $clonedDiv = $('#tab-content9999999').clone();
-            $clonedDiv.find('.multiselect').remove();
-            $clonedDiv.find('.ui-widget-content:last').remove();
-            $clonedDiv.find('[id]').each(function() { 
-              var newID = $(this).attr('id').replace(/\d+$/, function(str) { return currentItemID; });
-              $(this).attr('id', newID);
-            });
-            $clonedDiv.find('[name]').each(function() { 
-              var newID = $(this).attr('name').replace(/\d+$/, function(str) { return currentItemID; });
-              $(this).attr('name', newID);
-            });
-            var idWithoutNumber = $clonedDiv.attr('id').replace(/[0-9]/g, '');
-            $clonedDiv.attr('id', idWithoutNumber + currentItemID)
+            if (currentType == 'object'){
+              var $clonedDiv = $('#tab-content9999999').clone();
+              $clonedDiv.find('.multiselect').remove();
+              $clonedDiv.find('.ui-widget-content:last').remove();
+              $clonedDiv.find('[id]').each(function() { 
+                var newID = $(this).attr('id').replace(/\d+$/, function(str) { return currentItemID; });
+                $(this).attr('id', newID);
+              });
+              $clonedDiv.find('[name]').each(function() { 
+                var newID = $(this).attr('name').replace(/\d+$/, function(str) { return currentItemID; });
+                $(this).attr('name', newID);
+              });
+              var idWithoutNumber = $clonedDiv.attr('id').replace(/[0-9]/g, '');
+              $clonedDiv.attr('id', idWithoutNumber + currentItemID);
+
+            } else if (currentType == 'array'){
+              console.log('type is array!');
+              var $clonedDiv = $('#tab-content9999998').clone();
+              $clonedDiv.find('.multiselect').remove();
+              $clonedDiv.find('.ui-widget-content:last').remove();
+              $clonedDiv.find('[id]').each(function() { 
+                var newID = $(this).attr('id').replace(/\d+$/, function(str) { return currentItemID; });
+                $(this).attr('id', newID);
+              });
+              $clonedDiv.find('[name]').each(function() { 
+                var newID = $(this).attr('name').replace(/\d+$/, function(str) { return currentItemID; });
+                $(this).attr('name', newID);
+              });
+              var idWithoutNumber = $clonedDiv.attr('id').replace(/[0-9]/g, '');
+              $clonedDiv.attr('id', idWithoutNumber + currentItemID);
+              $clonedDiv.remove();
+
+            }
+
+            
 
             $('#svz-item-container' + currentItemID).append($clonedDiv);
 
@@ -492,11 +551,14 @@
           $(document).on('change', '.svz-selected-type', $.debounce(TIMEOUT_DEBOUNCE, function() {
               var selectedType = $(this).val();
               var currentTabNum = $(this).attr('name').replace( /^\D+/g, '');
+              var parentType = $('#svz-item-container' + $(this).attr('id').replace( /^\D+/g, '')).parent().find('.svz-selected-type').val()[0];
+
               $('.additionaloption' + currentTabNum).remove();
 
               if (selectedType){
                 if ((_.include(selectedType, 'number') || _.include(selectedType, 'integer')) 
-                  && _.include(selectedType, 'string')) {
+                  && _.include(selectedType, 'string')
+                  && parentType !== 'array') {
                   RemoveFormShowEnum(currentTabNum);
 
                   AppendInputFieldToForm(currentTabNum, 'Maximum length', 'svz-max-length', 'maxLength', '');
@@ -511,7 +573,7 @@
                   AppendInputFieldToForm(currentTabNum, 'Pattern (regex)', 'svz-pattern', 'pattern', '');
                   AppendSubmitBtnToForm(currentTabNum);
 
-                } else if (_.include(selectedType, 'string')){
+                } else if (_.include(selectedType, 'string' && parentType !== 'array')){
                   RemoveFormShowEnum(currentTabNum);
 
                   AppendInputFieldToForm(currentTabNum, 'Maximum length', 'svz-max-length', 'maxLength', '');
@@ -521,7 +583,9 @@
                   AppendInputFieldToForm(currentTabNum, 'Pattern (regex)', 'svz-pattern', 'pattern', '');
                   AppendSubmitBtnToForm(currentTabNum);
 
-                } else if (_.include(selectedType, 'number') || _.include(selectedType, 'integer')){
+                } else if ((_.include(selectedType, 'number') || _.include(selectedType, 'integer')) && parentType !== 'array'){
+                  console.log($(this).attr('id').replace( /^\D+/g, ''));
+                  console.log($('#svz-item-container' + $(this).attr('id').replace( /^\D+/g, '')).parent().find('.svz-selected-type').val());
                   RemoveFormShowEnum(currentTabNum);
 
                   AppendInputFieldToForm(currentTabNum, 'Minimum', 'minimum', 'minimum', 'minimum');
@@ -532,9 +596,8 @@
                   AppendReadonlyFieldToForm(currentTabNum);
                   AppendSubmitBtnToForm(currentTabNum);
 
-                } else if (_.include(selectedType, 'array')){
+                } else if (_.include(selectedType, 'array') && parentType !== 'array'){
                   RemoveEnumRemoveTagit(currentTabNum);
-
                   AppendInputFieldToForm(currentTabNum, 'Minimum items', 'svz-min-items', 'minItems', '');
                   AppendInputFieldToForm(currentTabNum, 'Maximum items', 'svz-max-items', 'maxItems', '');
                   AppendCheckboxFieldArray(currentTabNum);
@@ -833,10 +896,10 @@
                   }
                 } else if (lastProperties['type'] === 'array'){
                   try{
-                    Object.byString(properties, pathToValue)['items'][chosenKey] = currentProperties;
+                    Object.byString(properties, pathToValue)['items'] = currentProperties;
                   } catch(e){
                     Object.byString(properties, pathToValue)['items'] = {};
-                    Object.byString(properties, pathToValue)['items'][chosenKey] = currentProperties;
+                    Object.byString(properties, pathToValue)['items'] = currentProperties;
                   }
                 }
                 
@@ -857,9 +920,11 @@
                   //console.log('Error: ' + err.message);
               }
 
-              if(_.include(typesFromSelectArray, 'object') || _.include(typesFromSelectArray, 'array')){
-                AppendObjectArrayForm(currentID);
-              } 
+              if(_.include(typesFromSelectArray, 'object')){
+                AppendObjectArrayForm(currentID, 'object');
+              } else if (_.include(typesFromSelectArray, 'array')){
+                AppendObjectArrayForm(currentID, 'array');
+              }
 
 
               $('#svz-for-form-form').jsonForm({
