@@ -68,6 +68,9 @@
         width: 100%;
         height: 50%;
       }
+      ul.tagit {
+        width: 40%;
+      }
 
     </style>
 
@@ -77,7 +80,7 @@
     <!-- hidden forms for cloning -->
     <div class="tab-content" id="tab-content9999999" hidden>
       <div id="svz-schema-form-tabs-container9999999" class="tab-pane active">
-          <div id="svz-left-container9999999" style="float:left; width:45%; margin-left: 50px; margin-top: 20px;"> 
+          <div id="svz-left-container9999999" style="float:left; width:100%; margin-left: 50px; margin-top: 20px;"> 
             <ul class="nav nav-tabs" id="svz-schema-form-tabs9999999">
               <li class="active"><a data-target="#svz-schema-tab" data-toggle="tab">Schema</a></li>
               <li><a data-target="#svz-form-tab" data-toggle="tab">Form</a></li>
@@ -104,18 +107,18 @@
                   </div>
                   <div class="form-group">
                     <label class="svzRequiredLabel">Key<font class="svzKeyWarning" id="svz-key-warning9999999" color="red" hidden> (key already exists)</font></label>
-                    <div><input id="svz-key9999999" class="svz-key" placeholder="Key (Unique identifier)" type="text" name="key9999999" required></div>
+                    <div class="input-group"><input id="svz-key9999999" class="svz-key form-control" placeholder="Key (Unique identifier)" type="text" name="key9999999" required></div>
                   </div>
                   <div class="form-group">
                     <label>Title</label>
-                    <div><input placeholder="Title" type="text" name="title9999999"></div>
+                    <div class="input-group"><input class="form-control" placeholder="Title" type="text" name="title9999999"></div>
                   </div>
                   <div class="form-group">
                     <label>Description</label>
-                    <div><input class="longtext" id="svz-description9999999" placeholder="Description" type="text" name="description9999999"></div>
+                    <div class="input-group"><input class="longtext form-control" id="svz-description9999999" placeholder="Description" type="text" name="description9999999"></div>
                   </div>
                   <div class="form-group">
-                    <div><label><input id="svz-required" type="checkbox" name="required9999999">Required (check for true)</label></div>
+                    <div class="input-group"><label><input id="svz-required" type="checkbox" name="required9999999">Required (check for true)</label></div>
                   </div>
                   <div class="form-group">
                     <label id="svz-label-for-enum9999999">Enum</label>
@@ -135,7 +138,7 @@
 
     <div class="tab-content" id="tab-content9999998" hidden>
       <div id="svz-schema-form-tabs-container9999998" class="tab-pane active">
-          <div id="svz-left-container9999998" style="float:left; width:45%; margin-left: 50px; margin-top: 20px;"> 
+          <div id="svz-left-container9999998" style="float:left; width:100%; margin-left: 50px; margin-top: 20px;"> 
             <ul class="nav nav-tabs" id="svz-schema-form-tabs9999998">
               <li class="active"><a data-target="#svz-schema-tab" data-toggle="tab">Schema</a></li>
               <li><a data-target="#svz-form-tab" data-toggle="tab">Form</a></li>
@@ -161,25 +164,10 @@
                     </div>
                   </div>
                   <div class="form-group">
-                    <label class="svzRequiredLabel">Key<font class="svzKeyWarning" id="svz-key-warning9999998" color="red" hidden> (key already exists)</font></label>
-                    <div><input id="svz-key9999998" class="svz-key" placeholder="Key (Unique identifier)" type="text" name="key9999998" required></div>
-                  </div>
-                  <div class="form-group">
-                    <label>Title</label>
-                    <div><input placeholder="Title" type="text" name="title9999998"></div>
-                  </div>
-                  <div class="form-group">
-                    <label>Description</label>
-                    <div><input class="longtext" id="svz-description9999998" placeholder="Description" type="text" name="description9999998"></div>
-                  </div>
-                  <div class="form-group">
-                    <div><label><input id="svz-required" type="checkbox" name="required9999998">Required (check for true)</label></div>
-                  </div>
-                  <div class="form-group">
                     <label id="svz-label-for-enum9999998">Enum</label>
                     <ul id="svz-enum9999998" name="enum9999998" class="svz-enum"></ul>
                   </div>
-                    <input class="btn btn-default" id="svz-schema-form-submit9999998" type="submit" value="Update">
+                  <input class="btn btn-default" id="svz-schema-form-submit9999998" type="submit" value="Update">
                 </form>
               </div>
               <div class="tab-pane" id="svz-form-tab9999998">
@@ -225,6 +213,7 @@
     <script src="deps/jquery.ba-throttle-debounce.js"></script>
     <script src="deps/lodash.min.js"></script>
     <script type="text/javascript" src="deps/jquery-ui.min.js"></script>
+    <script type="text/javascript" src="deps/tv4.js"></script>
     <script src="deps/tag-it.js" type="text/javascript" charset="utf-8"></script>
     <script type="text/javascript">
 
@@ -238,6 +227,7 @@
           var currentItemID = 5;
           var allKeys = [];
           var lastProperties;
+          var jsonPreview;
 
           jQuery.fn.extend({
             prependClass: function(newClasses) {
@@ -247,6 +237,10 @@
                 });
             }
           });
+
+
+          
+          
 
           var getkeys = function(obj, prefix){
               var keys = Object.keys(obj);
@@ -331,32 +325,16 @@
 
           window.InitializeMultiselectAndTagit = function(currentID) {
             $('#svz-selected-type' + currentID).multiselect({
-              buttonWidth: '206px',
+              buttonWidth: '40%',
               nonSelectedText: 'Choose type',
               numberDisplayed: 3
             });
             $('#svz-enum' + currentID).tagit({
                 allowSpaces: true,
-                placeholderText: 'Enum'
+                placeholderText: 'Enum',
             });
           }
-      
-          // $(document).on('mousedown', '.container, .item, .svz-label-item, .svz-label-container', function(e){
-          //   if (e.target != this) return;
-          //   e.stopPropagation();
-          //   // console.log('mousedown');
-          //   // console.log($(this).attr('id'));
-          // });
-
-          // $(document).on('mouseup', '.container, .item, .svz-label-item, .svz-label-container', function(e){
-          //   if (e.target != this) return;
-          //   e.stopPropagation();
-          //   // console.log('mouseup');
-          //   // console.log($(this).attr('id'));
-          // });
-
-
-
+    
           $(document).on('click', '.container, .item, .svz-label-item, .svz-label-container', function(e){
             if (e.target != this || $(this).attr('id') === 'svz-container1') return;
             e.stopPropagation();
@@ -454,7 +432,6 @@
               $clonedDiv.attr('id', idWithoutNumber + currentItemID);
 
             } else if (currentType == 'array'){
-              console.log('type is array!');
               var $clonedDiv = $('#tab-content9999998').clone();
               $clonedDiv.find('.multiselect').remove();
               $clonedDiv.find('.ui-widget-content:last').remove();
@@ -580,7 +557,12 @@
           $(document).on('change', '.svz-selected-type', $.debounce(TIMEOUT_DEBOUNCE, function() {
               var selectedType = $(this).val();
               var currentTabNum = $(this).attr('name').replace( /^\D+/g, '');
-              var parentType = $('#svz-item-container' + $(this).attr('id').replace( /^\D+/g, '')).parent().find('.svz-selected-type').val()[0];
+              var parentID = $('#svz-item-container' + $(this).attr('id').replace(/^\D+/g, '')).parent().attr('id').replace(/^\D+/g, '');
+              var parentType = $('#svz-selected-type' + parentID).val();
+              if (parentType){
+                parentType = parentType[0];
+              }
+              console.log('parentid: ' + parentID + ' parentType: ' + parentType);
 
               $('.additionaloption' + currentTabNum).remove();
 
@@ -613,8 +595,6 @@
                   AppendSubmitBtnToForm(currentTabNum);
 
                 } else if ((_.include(selectedType, 'number') || _.include(selectedType, 'integer')) && parentType !== 'array'){
-                  console.log($(this).attr('id').replace( /^\D+/g, ''));
-                  console.log($('#svz-item-container' + $(this).attr('id').replace( /^\D+/g, '')).parent().find('.svz-selected-type').val());
                   RemoveFormShowEnum(currentTabNum);
 
                   AppendInputFieldToForm(currentTabNum, 'Minimum', 'minimum', 'minimum', 'minimum');
@@ -648,7 +628,7 @@
           var properties = {};
 
           window.ShowJSONPreview = function(){
-            var jsonPreview = {
+            jsonPreview = {
                   'schema': {
                     'type': 'object',
                     'properties': properties
@@ -662,6 +642,7 @@
 
             $('#svz-json-text-header').hide();
             $('#svz-json-text').html(JSON.stringify(jsonPreview, undefined, 2));
+            $('#svz-json-text').height($('#svz-json-text').prop('scrollHeight'));
           }
 
 
