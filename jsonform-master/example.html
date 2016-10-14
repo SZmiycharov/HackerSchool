@@ -71,6 +71,10 @@
         top: 2%;
         right: 0;
       }
+      textarea {
+        width: 60%;
+        height: 700px;
+      }
 
     </style>
 
@@ -92,7 +96,7 @@
                     <label class="svzRequiredLabel">Type</label>
                     <div>
                       <select class="svz-selected-type" id="svz-selected-type9999999" name="type9999999" required multiple>
-                        <option s="object" value="object">object</option>
+                        <option label="object" value="object">object</option>
                         <option label="array" value="array">array</option>
                         <option label="number" value="number">number</option> 
                         <option label="integer" value="integer">integer</option>
@@ -137,9 +141,9 @@
     </div>
 
     <div id="svz-json-preview">
-        <h3>Preview appears here:</h3>
-        <p id="svz-json-text-header">When you choose options json will appear here! :)</p>
-        <pre id="svz-json-text">{this is json surely :D}</pre>
+      <h3>Preview appears here:</h3>
+      <p id="svz-json-text-header">When you choose options json will appear here! :)</p>
+      <textarea name="textarea" id="svz-json-text"></textarea>
     </div>
 
 
@@ -439,7 +443,7 @@
             $(this).parent().remove();
           });
           
-          $(document).on('keyup', '.svz-key', $.debounce(TIMEOUT_DEBOUNCE, function() {
+          $(document).on('keyup', '.svz-key', function() {
              var currentID = $(this).attr('id').replace( /^\D+/g, '');
 
              if (_.include(allKeys, $(this).val()) 
@@ -453,7 +457,7 @@
                 $('#svz-key-warning' + currentID).hide();
                 $('#svz-key' + currentID).css('border-color', '#cccccc');
               }
-          }));
+          });
 
           window.AppendInputFieldToForm = function(currentIDnum, label, ID, name, currentClass){
             $('#svz-schema-form' + currentIDnum).append('<label class="additionaloption' + currentIDnum + '">' + label + '</label><div class="additionaloption' + currentIDnum + '" class="form-group"><input id="' + ID + currentIDnum + '" type="number" class="' + currentClass + '" name="' + name + currentIDnum + '" placeholder="' + label + '"></div>');
