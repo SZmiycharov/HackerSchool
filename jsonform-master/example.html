@@ -201,66 +201,53 @@
                 cursor: 'move',
                 tolerance: 'pointer',
                 connectWith: '.container',
-                start: function(){
-                  console.log('start position: ' + $(this).attr('id'));
-                  //must be done on mousedown and mouseup!!! - za da se vzima taka element id + element father (containera) id
-                  var currentKeyContainer = $(this).find('.svz-label-container:first').html();
-                  var currentKeyItem = $(this).find('.svz-label-item:first').html(); 
+                start: function(event, ui){
+                  console.info('start position: ' + ui.item.attr('id'));
+                  var currentKeyItem = $('#' + ui.item.attr('id')).find('label').html();
+                  var currentKeyContainer = $('#' + ui.item.attr('id')).parent().find('label').html(); 
 
-                  if ($(this).attr('id') !== 'svz-container1'){
+                  if ($('#' + ui.item.attr('id')).parent().attr('id') !== 'svz-container1'){
                     var allPaths = getkeys(properties);
                     for (var i = 0; i < allPaths.length; i++){
                       if (_.include(allPaths[i], currentKeyItem)){
                         var currentPath = allPaths[i].split('.' + currentKeyItem)[0].split('.type')[0];
                       }
                     }
-
                     draggedObject = Object.byString(properties, currentPath)[currentKeyItem];
-
                     delete Object.byString(properties, currentPath)[currentKeyItem];
                   } else{
                     draggedObject = properties[currentKeyItem];
-                    console.log(currentKeyItem);
-                    console.log(draggedObject);
                     delete properties[currentKeyItem];
                   }
-                  
                 },
                 change: $.debounce(1200, function(event, ui) {
-                  console.log('change position: ' + $(this).attr('id'));
-                  var currentKeyContainer = $(this).find('.svz-label-container').html();
-                  var currentKeyItem = $(this).find('.svz-label-item').html();
-
-                  if ($(this).attr('id') !== 'svz-container1'){
-                    
-                    // var path = search('schema', properties, lastProperties);
-                    // console.log(path);
-                    // var words = [];
-                    // try{
-                    //   path.replace(/\['(.+?)'\]/g, function($0, $1) { words.push($1) })
-                    // } catch(e){
-                    //   return;
-                    // }
-
-                    console.log(currentKeyContainer);
+                  console.info('change position: ' + ui.item.attr('id'));
+                  console.log($('#' + ui.item.attr('id')).parent().attr('id'));
+                  var currentKeyItem = $('#' + ui.item.attr('id')).find('label').html();
+                  var currentKeyContainer = $('#' + ui.item.attr('id')).parent().find('label').html(); 
+                  
+                  if ($('#' + ui.item.attr('id')).parent().attr('id') !== 'svz-container1'){
                     var allPaths = getkeys(properties);
+                    console.log(allPaths);
                     for (var i = 0; i < allPaths.length; i++){
                       if (_.include(allPaths[i], currentKeyContainer)){
-                        var currentPath = allPaths[i].split('.' + currentKeyContainer)[0].split('.type')[0];
+                        console.log(allPaths[i]);
+                        //1.type
+                        var currentPath = allPaths[i].split('.type')[0];
+                        break;
                       }
                     }
-                    console.log(currentPath);
+                    console.log('current change path: ' + currentPath);
                     try{
                       Object.byString(properties, currentPath)['properties'][currentKeyItem] = draggedObject;
                     } catch(e){
+                      console.log('fucking exception!');
                       currentPath = currentPath.split('.').slice(0, -1).join('.');
-                      console.log(currentPath);
-                      console.log(currentKeyItem);
-                      console.log(draggedObject);
                       Object.byString(properties, currentPath)[currentKeyItem] = draggedObject;
                     }
                     
                   } else{
+                    console.log('dropping it on main container');
                     properties[currentKeyItem] = draggedObject;
                   }
                   
@@ -283,7 +270,23 @@
                 placeholderText: 'Enum'
             });
           }
-     
+      
+          // $(document).on('mousedown', '.container, .item, .svz-label-item, .svz-label-container', function(e){
+          //   if (e.target != this) return;
+          //   e.stopPropagation();
+          //   // console.log('mousedown');
+          //   // console.log($(this).attr('id'));
+          // });
+
+          // $(document).on('mouseup', '.container, .item, .svz-label-item, .svz-label-container', function(e){
+          //   if (e.target != this) return;
+          //   e.stopPropagation();
+          //   // console.log('mouseup');
+          //   // console.log($(this).attr('id'));
+          // });
+
+
+
           $(document).on('click', '.container, .item, .svz-label-item, .svz-label-container', function(e){
             if (e.target != this || $(this).attr('id') === 'svz-container1') return;
             e.stopPropagation();
@@ -567,6 +570,7 @@
 
 
           Object.byString = function(o, s) {
+            if (!s || !o) return;
             s = s.replace(/\[(\w+)\]/g, '.$1'); // convert indexes to properties
             s = s.replace(/^\./, '');           // strip a leading dot
             var a = s.split('.');
