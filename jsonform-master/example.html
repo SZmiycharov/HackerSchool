@@ -652,36 +652,58 @@
           });
 
 
-
+          var jsonFromTextbox;
           var path;
-          window.walker = function(key, value) {
-            var savepath = path;
-    
+          window.IteratorNestedObject = function(key, value) {
+            var savepath = path;  
             path = path ? (path + "." + key) : key;
-            console.info(path);
-            console.log(key, value);
-            
+  
 
-            if(path.split('.').length === 1 && key !== 'schema'){
+
+
+
+            if(path.split('.').length === 1){
               if (key === 'id'){
                 $('#svz-schema-main-id').val(value);
               } else if (key === '$schema'){
                 $('#svz-main-dollar-schema').val(value);
               }
               $('#svz-submit-main-options').click();
+            } else if(path.split('.').length === 3){
+              $('#svz-add-item1').click();
+              var currentItemID = $('#svz-container1').children().eq(-2).attr('id').replace( /^\D+/g, '');
+              $('form#svz-schema-form' + currentItemID + ' :input[name="' + 'key' + String(currentItemID) + '"]').val(path.split('.')[2]);
+
+              $('form#svz-schema-form' + currentItemID + ' :input').each(function(){
+                if ($(this).attr('name')){
+                  $.each(Object.byString(jsonFromTextbox, path), function(key, value){
+                    console.log($('form#svz-schema-form' + currentItemID + ' :input[name="' + String(key) + String(currentItemID) + '"]').attr('id'));
+                    console.log(value);
+                    $('form#svz-schema-form' + currentItemID + ' :input[name="' + String(key) + String(currentItemID) + '"]').val(value);
+                    try{
+                      $('form#svz-schema-form' + currentItemID + ' :input[name="' + String(key) + String(currentItemID) + '"]').multiselect('refresh');
+                    } catch(e){}                    
+                  });
+                }
+              });
+              $('#svz-schema-form-submit' + currentItemID).click();
             }
-            
+
+
+  
+
+
+
             if (typeof value === "object") {
-                $.each(value, walker);
-            }
-    
+                $.each(value, IteratorNestedObject);
+            }  
             path = savepath;
           }
 
           $(document).on('click', '#svz-generate-inputs', function(){
             try{              
-              var jsonFromTextbox = JSON.parse($('#svz-json-text').val());
-              $.each(jsonFromTextbox, walker);
+              jsonFromTextbox = JSON.parse($('#svz-json-text').val());
+              $.each(jsonFromTextbox, IteratorNestedObject);
             } catch(e){
               console.log(e);
             }
