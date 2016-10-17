@@ -192,7 +192,7 @@
           <label for="svz-main-dollar-schema">$Schema:</label>
           <input class="form-control" name="$schema" id="svz-main-dollar-schema">
         </div>
-        <input class="btn btn-default" type="submit" value="Submit">
+        <input id="svz-submit-main-options" class="btn btn-default" type="submit" value="Submit">
       </form>
     </div>
 
@@ -200,7 +200,7 @@
     <div class="col-md-6 col-sn-12" style="margin-top: 40px;">
       <div>
         <button id="svz-sorting-btn" type="button" class="btn btn-primary">Allow sorting</button>
-        <button id="svz-show-json-preview" type="button" class="btn btn-success" onclick="ShowJSONPreview();">Show JSON</button>
+        <button id="svz-show-json-preview" type="button" class="btn btn-success" onclick="ShowJSONPreview();">Show JSON <span class="glyphicon glyphicon-arrow-right"></span></button>
       </div>
       <div></div>
       <div class="container" id="svz-container1">
@@ -212,9 +212,8 @@
       <h3>Preview appears here:</h3>
       <p id="svz-json-text-header">When you choose options json will appear here! :)</p>
       <textarea name="textarea" id="svz-json-text"></textarea>
+      <button id="svz-generate-inputs" type="button" class="btn btn-success"><span class="glyphicon glyphicon-arrow-left"></span> Generate inputs</button>
     </div>
-
-
 
 
     <script src="deps/jquery.min.js"></script>
@@ -225,6 +224,7 @@
     <link href="deps/jquery.tagit.css" rel="stylesheet" type="text/css">
     <script type="text/javascript" src="deps/underscore.js"></script>
     <script type="text/javascript" src="deps/opt/jsv.js"></script>
+    <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/ajv/4.8.0/ajv.bundle.js"></script>
     <script type="text/javascript" src="lib/jsonform.js"></script>
     <script src="deps/jquery.ba-throttle-debounce.js"></script>
     <script src="deps/lodash.min.js"></script>
@@ -320,17 +320,11 @@
                       currentPath = currentPath.split('.').slice(0, -1).join('.');
                       Object.byString(properties, currentPath)[currentKeyItem] = draggedObject;
                     }
-                    
                   } else{
                     console.log('dropping it on main container');
                     properties[currentKeyItem] = draggedObject;
                   }
-                  
-
-                  
-
                 }),
-
               });
           }
 
@@ -371,7 +365,6 @@
               $(this).css('background-color', '#97a8a9');
             }
           });
-
           $(document).on('mouseover', '.item', function(e){
             e.stopPropagation();
             $(this).prependClass('currentItemHover');
@@ -401,18 +394,15 @@
             currentItemID += 1;
             var currentLabel = $('#svz-label-item' + currentID).html();
             $('svz-item-container' + currentLabel).parent().find('label');
-            console.log(currentID);
             var parentID = $('#svz-item-container' + currentID).parent().attr('id');
+
             try{
               if($('#svz-selected-type' + parentID.replace( /^\D+/g, '')).val().length === 1 
               && $('#svz-selected-type' + parentID.replace( /^\D+/g, '')).val()[0] === 'array'){
-                console.log('not appending new item container!!!');
                 return;
               }
             } catch(e) {}
             
-            //tuk trqbva da se vidi dali parenta e array -> ako e array: return vednaga!!!!!!!!!!!
-
             var $submittedFormDiv = $('#tab-content' + currentID);
             $submittedFormDiv.find('.multiselect').remove();
             $submittedFormDiv.find('.ui-widget-content:last').remove();
@@ -582,7 +572,6 @@
               if (parentType){
                 parentType = parentType[0];
               }
-              console.log('parentid: ' + parentID + ' parentType: ' + parentType);
 
               $('.additionaloption' + currentTabNum).remove();
 
@@ -644,6 +633,64 @@
             $('#exclusive-max-div' + currentID).toggle(!!$(this).val());
           }); 
 
+          $(document).on('keyup', '#svz-json-text', function(e) {
+            if (e.which == 8 || e.which == 46) {
+              $(this).height(parseFloat($(this).css('min-height')) != 0 ? parseFloat($(this).css('min-height')) : parseFloat($(this).css('font-size')));
+            }
+            while($(this).outerHeight() < this.scrollHeight + parseFloat($(this).css('borderTopWidth')) + parseFloat($(this).css('borderBottomWidth'))) {
+                $(this).height($(this).height()+1);
+            };
+
+            // var ajv = new Ajv({allErrors: true});
+            // var validate = ajv.compile(jsonPreview);
+            // var valid = validate(jsonPreview);
+            // if(!valid){
+            //   console.log(ajv.errors);
+            // } else{
+            //   console.log('VALIDDD');
+            // }
+          });
+
+
+
+          var path;
+          window.walker = function(key, value) {
+            var savepath = path;
+    
+            path = path ? (path + "." + key) : key;
+            console.info(path);
+            console.log(key, value);
+            
+
+            if(path.split('.').length === 1 && key !== 'schema'){
+              if (key === 'id'){
+                $('#svz-schema-main-id').val(value);
+              } else if (key === '$schema'){
+                $('#svz-main-dollar-schema').val(value);
+              }
+              $('#svz-submit-main-options').click();
+            }
+            
+            if (typeof value === "object") {
+                $.each(value, walker);
+            }
+    
+            path = savepath;
+          }
+
+          $(document).on('click', '#svz-generate-inputs', function(){
+            try{              
+              var jsonFromTextbox = JSON.parse($('#svz-json-text').val());
+              $.each(jsonFromTextbox, walker);
+            } catch(e){
+              console.log(e);
+            }
+            
+          });
+
+
+
+
           var required = [];
           var properties = {};
 
@@ -659,8 +706,19 @@
             }
 
             $('#svz-json-text-header').hide();
-            $('#svz-json-text').html(JSON.stringify(jsonPreview, undefined, 2));
+            $('#svz-json-text').val(JSON.stringify(jsonPreview, undefined, 2));
             $('#svz-json-text').height($('#svz-json-text').prop('scrollHeight'));
+
+
+            // var ajv = new Ajv({allErrors: true});
+            // var validate = ajv.compile(jsonPreview);
+            // var valid = validate(jsonPreview);
+            // if(!valid){
+            //   console.log(ajv.errors);
+            // } else{
+            //   console.log('VALIDDD');
+            // }
+            
           }
 
 
@@ -705,7 +763,7 @@
               }
             });
 
-            $('#svz-main-options').slideToggle();
+            $('#svz-main-options').slideUp();
             $('#svz-toggle-main-options').show();
           }
 
@@ -740,13 +798,9 @@
               currentKey = $('#svz-label-container' + currentID).html();
             }
 
-            console.log('first here!');
             if (allKeys 
               && (currentKey != $('#svz-key' + currentID).val()) 
               && _.include(allKeys, currentKey)){ 
-
-              console.log('here bitch');
-              console.log(currentKey);
 
               var path = search('schema', properties, lastProperties);
               var words = [];
