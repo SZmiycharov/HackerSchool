@@ -401,7 +401,17 @@
             currentItemID += 1;
             var currentLabel = $('#svz-label-item' + currentID).html();
             $('svz-item-container' + currentLabel).parent().find('label');
-            //tuk trqbva da se vidi dali parenta e array -> ako e array: return vednaga!!!!!!!!!!!!!!
+            console.log(currentID);
+            var parentID = $('#svz-item-container' + currentID).parent().attr('id');
+            try{
+              if($('#svz-selected-type' + parentID.replace( /^\D+/g, '')).val().length === 1 
+              && $('#svz-selected-type' + parentID.replace( /^\D+/g, '')).val()[0] === 'array'){
+                console.log('not appending new item container!!!');
+                return;
+              }
+            } catch(e) {}
+            
+            //tuk trqbva da se vidi dali parenta e array -> ako e array: return vednaga!!!!!!!!!!!
 
             var $submittedFormDiv = $('#tab-content' + currentID);
             $submittedFormDiv.find('.multiselect').remove();
