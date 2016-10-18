@@ -71,12 +71,9 @@
       ul.tagit {
         width: 40%;
       }
-      #svz-json-text{
-        position: absolute;
-        width: 500px;
-        height: 400px;
-      }
+      #svz-json-text-warning{
 
+      }
 
     </style>
 
@@ -94,6 +91,8 @@
             <div class="tab-content">
               <div class="tab-pane active" id="svz-schema-tab9999999">
                 <h2>For schema:</h2>
+
+
                 <form id="svz-schema-form9999999" action="javascript:void(0);" onsubmit="HandleFormSubmit(this, this.id);">
                   <div class="form-group">
                     <label class="svzRequiredLabel">Type</label>
@@ -183,6 +182,7 @@
       </div>
     </div>
 
+    <!-- id $schema -->
     <div id="svz-toggle-main-options" hidden><button type="button" class="btn btn-info">Main options</button></div>
     <div id="svz-main-options">
       <h3>JSONSchema: main options</h3>
@@ -214,7 +214,7 @@
     <div class="col-md-6 col-sn-12" style="margin-top: 20px;">
       <h3>Preview appears here:</h3>
       <p id="svz-json-text-header">When you choose options json will appear here! :)</p>
-      <div name="textarea" id="svz-json-text"></div>
+      <textarea name="textarea" id="svz-json-text" spellcheck="false"></textarea>
       <p class="text-danger"><font class="svzKeyWarning" id="svz-json-text-warning" color="red" hidden> (key already exists)</font></p>
 
       <button id="svz-generate-inputs" type="button" class="btn btn-success"><span class="glyphicon glyphicon-arrow-left"></span> Generate inputs</button>
@@ -231,8 +231,6 @@
     <script type="text/javascript" src="deps/opt/jsv.js"></script>
     <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/ajv/4.8.0/ajv.bundle.js"></script>
     <script type="text/javascript" src="lib/jsonform.js"></script>
-    <script type="text/javascript" src="deps/ace.js"></script>
-    <script src="deps/mode-json.js" type="text/javascript" charset="utf-8"></script>
     <script src="deps/jquery.ba-throttle-debounce.js"></script>
     <script src="deps/lodash.min.js"></script>
     <script type="text/javascript" src="deps/jquery-ui.min.js"></script>
@@ -242,9 +240,6 @@
     (function svzMainFunction ($) {
       'use strict';
         $( document ).ready(function() {
-          var editor = ace.edit("svz-json-text");
-          editor.getSession().setMode("deps/json");
-
           var TIMEOUT_DEBOUNCE = 500;
           
           var currentSchemaFormID = 1;
@@ -461,8 +456,7 @@
 
             }
 
-            
-
+          
             $('#svz-item-container' + currentItemID).append($clonedDiv);
 
             if ($('#svz-sorting-btn').text() === 'Disallow sorting'){
@@ -664,10 +658,6 @@
             var savepath = path;  
             path = path ? (path + "." + key) : key;
   
-
-
-
-
             if(path.split('.').length === 1){
               if (key === 'id'){
                 $('#svz-schema-main-id').val(value);
@@ -683,7 +673,7 @@
               $('form#svz-schema-form' + currentItemID + ' :input').each(function(){
                 if ($(this).attr('name')){
                   $.each(Object.byString(jsonFromTextbox, path), function(key, value){
-                      if ($('form#svz-schema-form' + currentItemID + ' :input[name="' + String(key) + String(currentItemID) + '"]').val()){
+                    if ($('form#svz-schema-form' + currentItemID + ' :input[name="' + String(key) + String(currentItemID) + '"]').val()){
                     } else{
                       $('form#svz-schema-form' + currentItemID + ' :input[name="' + String(key) + String(currentItemID) + '"]').val(value);
                     }
@@ -695,6 +685,36 @@
                 }
               });
               $('#svz-schema-form-submit' + currentItemID).click();
+            } else if(path.split('.').length % 2 !== 0){
+              var containerLabelID = $('#svz-container1').find('label:contains("' + path.split('.').reverse()[2] + '")').attr('id');
+              if (containerLabelID){
+                if (containerLabelID.replace(/[0-9]/g, '') === 'svz-label-container'){
+                  var itemLabelID = $('#svz-container' + containerLabelID.replace( /^\D+/g, '')).find('label:contains("New schema")').attr('id');
+                  var currentItemID = itemLabelID.replace( /^\D+/g, '');
+                }
+              }
+
+              $('form#svz-schema-form' + currentItemID + ' :input[name="' + 'key' + String(currentItemID) + '"]').val(path.split('.').reverse()[0]);
+
+              $('form#svz-schema-form' + currentItemID + ' :input').each(function(){
+                if ($(this).attr('name')){
+                  console.log($(this).attr('name'));
+                  $.each(Object.byString(jsonFromTextbox, path), function(key, value){
+                    if ($('form#svz-schema-form' + currentItemID + ' :input[name="' + String(key) + String(currentItemID) + '"]').val()){
+                    } else{
+                      $('form#svz-schema-form' + currentItemID + ' :input[name="' + String(key) + String(currentItemID) + '"]').val(value);
+                    }
+                    
+                    if ($('form#svz-schema-form' + currentItemID + ' :input[name="' + String(key) + String(currentItemID) + '"]').attr('name') === 'type' + String(currentItemID)){
+                      $('form#svz-schema-form' + currentItemID + ' :input[name="' + String(key) + String(currentItemID) + '"]').multiselect('refresh');
+                    }                    
+                  });
+                }
+              });
+              $('#svz-schema-form-submit' + currentItemID).click();
+
+
+              
             }
 
 
@@ -710,7 +730,7 @@
 
           $(document).on('click', '#svz-generate-inputs', function(){
             try{              
-              jsonFromTextbox = JSON.parse($('#svz-json-text').text());
+              jsonFromTextbox = JSON.parse($('#svz-json-text').val());
               $.each(jsonFromTextbox, IteratorNestedObject);
             } catch(e){
               console.log(e);
@@ -736,7 +756,8 @@
             }
 
             $('#svz-json-text-header').hide();
-            $('#svz-json-text').text(JSON.stringify(jsonPreview, undefined, 2));
+            $('#svz-json-text').val(JSON.stringify(jsonPreview, undefined, 2));
+            $('#svz-json-text').height($('#svz-json-text').prop('scrollHeight'));
 
 
             // var ajv = new Ajv({allErrors: true});
@@ -992,6 +1013,9 @@
                 
                 var pathToValue = '';
 
+
+
+                //TUK DA SE SMENI NACHINA PO KOITO SE VZIMA PUTQ!!!!!!!!!!!!!!!!!!!!!!!!!
                 for (var i = 0; i < words.length; i++){
                   //properties = properties[words[i]];
                   if (i !== words.length - 1){
