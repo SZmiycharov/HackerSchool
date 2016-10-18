@@ -71,8 +71,9 @@
       ul.tagit {
         width: 40%;
       }
-      #svz-json-text-warning{
-
+      #svz-json-text{
+        width: 90%;
+        height:600px;
       }
 
     </style>
@@ -127,7 +128,32 @@
                     <label id="svz-label-for-enum9999999">Enum</label>
                     <ul id="svz-enum9999999" name="enum9999999" class="svz-enum"></ul>
                   </div>
-                    <input class="btn btn-default" id="svz-schema-form-submit9999999" type="submit" value="Update">
+
+                  <div class="form-group">
+                    <button id="svz-add-options-button9999999" type="button" class="btn btn-info svz-add-options-button">Additional options</button>
+                  </div>
+                  <div id="svz-add-options-cont9999999" hidden>
+                    <div class="form-group">
+                      <label>Reference table</label>
+                      <div class="input-group"><input class="form-control" placeholder="refTable" type="text" name="refTable9999999"></div>
+                    </div>
+                    <div class="form-group">
+                      <label>Reference column</label>
+                      <div class="input-group"><input class="form-control" placeholder="refCol" type="text" name="refCol9999999"></div>
+                    </div>
+                    <div class="form-group">
+                      <label>Reference type</label>
+                      <div class="input-group"><input class="form-control" placeholder="refType" type="text" name="refType9999999"></div>
+                    </div>
+                    <div class="form-group">
+                      <div class="input-group"><label><input type="checkbox" name="translate9999999">Translate (check for true)</label></div>
+                    </div>
+                  </div>
+
+
+
+
+                  <input class="btn btn-default" id="svz-schema-form-submit9999999" type="submit" value="Update">
                 </form>
               </div>
               <div class="tab-pane" id="svz-form-tab9999999">
@@ -170,6 +196,34 @@
                     <label id="svz-label-for-enum9999998">Enum</label>
                     <ul id="svz-enum9999998" name="enum9999998" class="svz-enum"></ul>
                   </div>
+
+
+
+
+                  <div class="form-group">
+                    <button id="svz-add-options-button9999998" type="button" class="btn btn-info svz-add-options-button">Additional options</button>
+                  </div>
+                  <div id="svz-add-options-cont9999998" hidden>
+                    <div class="form-group">
+                      <label>Reference table</label>
+                      <div class="input-group"><input class="form-control" placeholder="refTable" type="text" name="refTable9999999"></div>
+                    </div>
+                    <div class="form-group">
+                      <label>Reference column</label>
+                      <div class="input-group"><input class="form-control" placeholder="refCol" type="text" name="refCol9999999"></div>
+                    </div>
+                    <div class="form-group">
+                      <label>Reference type</label>
+                      <div class="input-group"><input class="form-control" placeholder="refType" type="text" name="refType9999999"></div>
+                    </div>
+                    <div class="form-group">
+                      <div class="input-group"><label><input type="checkbox" name="translate9999999">Translate (check for true)</label></div>
+                    </div>
+                  </div>
+                  
+
+
+
                   <input class="btn btn-default" id="svz-schema-form-submit9999998" type="submit" value="Update">
                 </form>
               </div>
@@ -214,14 +268,14 @@
     <div class="col-md-6 col-sn-12" style="margin-top: 20px;">
       <h3>Preview appears here:</h3>
       <p id="svz-json-text-header">When you choose options json will appear here! :)</p>
-      <textarea name="textarea" id="svz-json-text" spellcheck="false"></textarea>
+      <div name="textarea" id="svz-json-text"></div>
       <p class="text-danger"><font class="svzKeyWarning" id="svz-json-text-warning" color="red" hidden> (key already exists)</font></p>
 
       <button id="svz-generate-inputs" type="button" class="btn btn-success"><span class="glyphicon glyphicon-arrow-left"></span> Generate inputs</button>
     </div>
 
 
-    <script src="deps/jquery.min.js"></script>
+    // <script src="deps/jquery.min.js"></script>
     <script type="text/javascript" src="deps/bootstrap.min.js"></script>
     <script type="text/javascript" src="deps/bootstrap-multiselect.js"></script>
     <link rel="stylesheet" href="deps/bootstrap-multiselect.css" type="text/css"/>
@@ -231,6 +285,10 @@
     <script type="text/javascript" src="deps/opt/jsv.js"></script>
     <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/ajv/4.8.0/ajv.bundle.js"></script>
     <script type="text/javascript" src="lib/jsonform.js"></script>
+    <script type="text/javascript" src="deps/ace.js"></script>
+    <script src="deps/mode-json.js" type="text/javascript" charset="utf-8"></script>
+    <script src="deps/mode-javascript.js" type="text/javascript" charset="utf-8"></script>
+    <script src="deps/ext-language_tools.js"></script>
     <script src="deps/jquery.ba-throttle-debounce.js"></script>
     <script src="deps/lodash.min.js"></script>
     <script type="text/javascript" src="deps/jquery-ui.min.js"></script>
@@ -248,6 +306,18 @@
           var allKeys = [];
           var lastProperties;
           var jsonPreview = {};
+
+          var editor = ace.edit('svz-json-text');
+          // editor.session.setMode("ace/mode/javascript");
+          editor.getSession().setMode('deps/javascript');
+          editor.$blockScrolling = Infinity;
+
+          editor.setOptions({
+              enableBasicAutocompletion: true,
+              enableLiveAutocompletion: true
+          });
+
+
 
           jQuery.fn.extend({
             prependClass: function(newClasses) {
@@ -282,7 +352,6 @@
                 tolerance: 'pointer',
                 connectWith: '.container',
                 start: function(event, ui){
-                  console.info('start position: ' + ui.item.attr('id'));
                   var currentKeyItem = $('#' + ui.item.attr('id')).find('label').html();
                   var currentKeyContainer = $('#' + ui.item.attr('id')).parent().find('label').html(); 
 
@@ -349,6 +418,11 @@
             } else{
               $('#' + $(this).find('.tab-content').attr('id')).toggle();
             }
+          });
+
+          $(document).on('click', '.svz-add-options-button', function(){
+            var currentID = $(this).attr('id').replace( /^\D+/g, '');
+            $('#svz-add-options-cont' + currentID).slideToggle();
           });
 
           $(document).on('mouseover', '.container', function(e){
@@ -737,7 +811,7 @@
 
           $(document).on('click', '#svz-generate-inputs', function(){
             try{              
-              jsonFromTextbox = JSON.parse($('#svz-json-text').val());
+              jsonFromTextbox = JSON.parse(editor.getValue());
               $.each(jsonFromTextbox, IteratorNestedObject);
             } catch(e){
               console.log(e);
@@ -763,7 +837,7 @@
             }
 
             $('#svz-json-text-header').hide();
-            $('#svz-json-text').val(JSON.stringify(jsonPreview, undefined, 2));
+            editor.setValue(JSON.stringify(jsonPreview, undefined, 2));
             $('#svz-json-text').height($('#svz-json-text').prop('scrollHeight'));
 
 
