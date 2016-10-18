@@ -71,6 +71,12 @@
       ul.tagit {
         width: 40%;
       }
+      #svz-json-text{
+        position: absolute;
+        width: 500px;
+        height: 400px;
+      }
+
 
     </style>
 
@@ -88,8 +94,6 @@
             <div class="tab-content">
               <div class="tab-pane active" id="svz-schema-tab9999999">
                 <h2>For schema:</h2>
-
-
                 <form id="svz-schema-form9999999" action="javascript:void(0);" onsubmit="HandleFormSubmit(this, this.id);">
                   <div class="form-group">
                     <label class="svzRequiredLabel">Type</label>
@@ -179,7 +183,6 @@
       </div>
     </div>
 
-    <!-- id $schema -->
     <div id="svz-toggle-main-options" hidden><button type="button" class="btn btn-info">Main options</button></div>
     <div id="svz-main-options">
       <h3>JSONSchema: main options</h3>
@@ -211,7 +214,9 @@
     <div class="col-md-6 col-sn-12" style="margin-top: 20px;">
       <h3>Preview appears here:</h3>
       <p id="svz-json-text-header">When you choose options json will appear here! :)</p>
-      <textarea name="textarea" id="svz-json-text"></textarea>
+      <div name="textarea" id="svz-json-text"></div>
+      <p class="text-danger"><font class="svzKeyWarning" id="svz-json-text-warning" color="red" hidden> (key already exists)</font></p>
+
       <button id="svz-generate-inputs" type="button" class="btn btn-success"><span class="glyphicon glyphicon-arrow-left"></span> Generate inputs</button>
     </div>
 
@@ -226,6 +231,8 @@
     <script type="text/javascript" src="deps/opt/jsv.js"></script>
     <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/ajv/4.8.0/ajv.bundle.js"></script>
     <script type="text/javascript" src="lib/jsonform.js"></script>
+    <script type="text/javascript" src="deps/ace.js"></script>
+    <script src="deps/mode-json.js" type="text/javascript" charset="utf-8"></script>
     <script src="deps/jquery.ba-throttle-debounce.js"></script>
     <script src="deps/lodash.min.js"></script>
     <script type="text/javascript" src="deps/jquery-ui.min.js"></script>
@@ -235,6 +242,9 @@
     (function svzMainFunction ($) {
       'use strict';
         $( document ).ready(function() {
+          var editor = ace.edit("svz-json-text");
+          editor.getSession().setMode("deps/json");
+
           var TIMEOUT_DEBOUNCE = 500;
           
           var currentSchemaFormID = 1;
@@ -296,32 +306,24 @@
                   }
                 },
                 change: $.debounce(1200, function(event, ui) {
-                  console.info('change position: ' + ui.item.attr('id'));
-                  console.log($('#' + ui.item.attr('id')).parent().attr('id'));
                   var currentKeyItem = $('#' + ui.item.attr('id')).find('label').html();
                   var currentKeyContainer = $('#' + ui.item.attr('id')).parent().find('label').html(); 
                   
                   if ($('#' + ui.item.attr('id')).parent().attr('id') !== 'svz-container1'){
                     var allPaths = getkeys(properties);
-                    console.log(allPaths);
                     for (var i = 0; i < allPaths.length; i++){
                       if (_.include(allPaths[i], currentKeyContainer)){
-                        console.log(allPaths[i]);
-                        //1.type
                         var currentPath = allPaths[i].split('.type')[0];
                         break;
                       }
                     }
-                    console.log('current change path: ' + currentPath);
                     try{
                       Object.byString(properties, currentPath)['properties'][currentKeyItem] = draggedObject;
                     } catch(e){
-                      console.log('fucking exception!');
                       currentPath = currentPath.split('.').slice(0, -1).join('.');
                       Object.byString(properties, currentPath)[currentKeyItem] = draggedObject;
                     }
                   } else{
-                    console.log('dropping it on main container');
                     properties[currentKeyItem] = draggedObject;
                   }
                 }),
@@ -633,7 +635,7 @@
             $('#exclusive-max-div' + currentID).toggle(!!$(this).val());
           }); 
 
-          $(document).on('keyup', '#svz-json-text', function(e) {
+          $(document).on('change', '#svz-json-text', function(e) {
             if (e.which == 8 || e.which == 46) {
               $(this).height(parseFloat($(this).css('min-height')) != 0 ? parseFloat($(this).css('min-height')) : parseFloat($(this).css('font-size')));
             }
@@ -641,14 +643,18 @@
                 $(this).height($(this).height()+1);
             };
 
-            // var ajv = new Ajv({allErrors: true});
-            // var validate = ajv.compile(jsonPreview);
-            // var valid = validate(jsonPreview);
-            // if(!valid){
-            //   console.log(ajv.errors);
-            // } else{
-            //   console.log('VALIDDD');
-            // }
+            var ajv = new Ajv({allErrors: true});
+            var validate = ajv.compile(jsonPreview);
+            var valid = validate(jsonPreview);
+            if(!valid){
+              console.log(ajv.errors);
+              $('#svz-json-text-warning').show();
+              $('#svz-json-text-warning').text(ajv.errors);
+            } else{
+              $('#svz-json-text-warning').hide();
+              // $('#svz-json-text-warning').show();
+              // $('#svz-json-text-warning').text('Fucking errors man! Dont know them;(( ');
+            }
           });
 
 
@@ -677,12 +683,14 @@
               $('form#svz-schema-form' + currentItemID + ' :input').each(function(){
                 if ($(this).attr('name')){
                   $.each(Object.byString(jsonFromTextbox, path), function(key, value){
-                    console.log($('form#svz-schema-form' + currentItemID + ' :input[name="' + String(key) + String(currentItemID) + '"]').attr('id'));
-                    console.log(value);
-                    $('form#svz-schema-form' + currentItemID + ' :input[name="' + String(key) + String(currentItemID) + '"]').val(value);
-                    try{
+                      if ($('form#svz-schema-form' + currentItemID + ' :input[name="' + String(key) + String(currentItemID) + '"]').val()){
+                    } else{
+                      $('form#svz-schema-form' + currentItemID + ' :input[name="' + String(key) + String(currentItemID) + '"]').val(value);
+                    }
+                    
+                    if ($('form#svz-schema-form' + currentItemID + ' :input[name="' + String(key) + String(currentItemID) + '"]').attr('name') === 'type' + String(currentItemID)){
                       $('form#svz-schema-form' + currentItemID + ' :input[name="' + String(key) + String(currentItemID) + '"]').multiselect('refresh');
-                    } catch(e){}                    
+                    }                    
                   });
                 }
               });
@@ -702,7 +710,7 @@
 
           $(document).on('click', '#svz-generate-inputs', function(){
             try{              
-              jsonFromTextbox = JSON.parse($('#svz-json-text').val());
+              jsonFromTextbox = JSON.parse($('#svz-json-text').text());
               $.each(jsonFromTextbox, IteratorNestedObject);
             } catch(e){
               console.log(e);
@@ -728,8 +736,7 @@
             }
 
             $('#svz-json-text-header').hide();
-            $('#svz-json-text').val(JSON.stringify(jsonPreview, undefined, 2));
-            $('#svz-json-text').height($('#svz-json-text').prop('scrollHeight'));
+            $('#svz-json-text').text(JSON.stringify(jsonPreview, undefined, 2));
 
 
             // var ajv = new Ajv({allErrors: true});
