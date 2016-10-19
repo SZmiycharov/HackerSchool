@@ -1212,15 +1212,34 @@
 
 
 
-                //TUK DA SE SMENI NACHINA PO KOITO SE VZIMA PUTQ!!!!!!!!!!!!!!!!!!!!!!!!!
-                for (var i = 0; i < words.length; i++){
-                  //properties = properties[words[i]];
-                  if (i !== words.length - 1){
-                    pathToValue += words[i] + '.';
-                  } else {
-                    pathToValue += words[i];
+                console.info('-----------------    HERE    ------------------');
+                var currentKeyItem = $('#svz-label-item' + $(currentObject).attr('id').replace( /^\D+/g, '')).html();
+                var currentKeyContainer = $('#svz-label-container' + $(currentObject).parents(':eq(6)').attr('id').replace( /^\D+/g, '')).html();
+                var allPaths = getkeys(properties);
+
+                for (var i = 0; i < allPaths.length; i++){
+                  console.log(allPaths[i]);
+                  console.log(currentKeyItem);
+                  if (_.include(allPaths[i], currentKeyItem)){
+                    pathToValue = allPaths[i].split('.' + currentKeyItem + '.type')[0];
+                    break;
+                  } else if ((_.include(allPaths[i], currentKeyContainer + '.')) 
+                    && (currentKeyItem.replace(/[0-9]/g, '') === 'SVZlabel')){
+                    pathToValue = currentKeyContainer;
                   }
-                } 
+                }
+
+
+                //TUK DA SE SMENI NACHINA PO KOITO SE VZIMA PUTQ!!!!!!!!!!!!!!!!!!!!!!!!!
+                // for (var i = 0; i < words.length; i++){
+                //   //properties = properties[words[i]];
+                //   if (i !== words.length - 1){
+                //     pathToValue += words[i] + '.';
+                //   } else {
+                //     pathToValue += words[i];
+                //   }
+                // } 
+                console.log('PATHTOVALUE: ' + pathToValue);
 
                 if (lastProperties['type'] !== 'object' && lastProperties['type'] !== 'array'){
                   var splittedPathToValueLength = pathToValue.split('.');
