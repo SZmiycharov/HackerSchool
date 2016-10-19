@@ -298,6 +298,30 @@
     (function svzMainFunction ($) {
       'use strict';
         $( document ).ready(function() {
+          window.onerror = function (msg, url, lineNo, columnNo, error) {
+            var string = msg.toLowerCase();
+            var substring = "script error";
+            if (string.indexOf(substring) > -1){
+                console.log('Script Error: See Browser Console for Detail');
+            } else {
+                var message = [
+                    'Message: ' + msg,
+                    'URL: ' + url,
+                    'Line: ' + lineNo,
+                    'Column: ' + columnNo,
+                    'Error object: ' + JSON.stringify(error)
+                ].join(' - ');
+
+                console.log(message);
+            }
+
+            return false;
+        };
+
+
+
+
+
           var TIMEOUT_DEBOUNCE = 500;
           
           var currentSchemaFormID = 1;
@@ -362,7 +386,6 @@
                   propertiesBeforeStart = properties;
                   var currentKeyItem = $('#' + ui.item.attr('id')).find('label').html();
                   var currentKeyContainer = $('#' + ui.item.attr('id')).parent().find('label').html(); 
-                  console.info('----------------------   START   ----------------------');
                   if ($('#' + ui.item.attr('id')).parent().attr('id') !== 'svz-container1'){
                     var allPaths = getkeys(properties);
                     for (var i = 0; i < allPaths.length; i++){
@@ -372,7 +395,6 @@
                       } else if ((_.include(allPaths[i], currentKeyContainer + '.')) 
                         && (currentKeyItem.replace(/[0-9]/g, '') === 'SVZlabel')
                         && (_.include(allPaths[i], 'items'))){
-                        console.log(allPaths[i]);
                         stopToReturn = true;
                       }
                     }
@@ -396,7 +418,6 @@
                     }
 
                     draggedObject = properties[currentKeyItem];
-                    console.log(draggedObject);
                     // delete properties[currentKeyItem];
                   }
                   keyToDelete = currentKeyItem;
@@ -419,9 +440,6 @@
                       }
                     }
                     if(Object.byString(properties, currentPath)['type'] === 'array'){
-                      // properties = propertiesBeforeStart;
-                      // $('#svz-show-json-preview').click();
-                      // $('#svz-generate-inputs').click();
                       $(this).sortable('cancel');
                       return false;
                     }
@@ -521,19 +539,18 @@
           });
 
           window.AppendObjectArrayForm = function(currentID, currentType) {
-            //console.log('in AppendObjectArrayForm');
             currentContainerID += 1;
             currentItemID += 1;
             var currentLabel = $('#svz-label-item' + currentID).html();
             $('svz-item-container' + currentLabel).parent().find('label');
             var parentID = $('#svz-item-container' + currentID).parent().attr('id');
 
-            try{
-              if($('#svz-selected-type' + parentID.replace( /^\D+/g, '')).val().length === 1 
-              && $('#svz-selected-type' + parentID.replace( /^\D+/g, '')).val()[0] === 'array'){
-                return;
-              }
-            } catch(e) {}
+            // try{
+            //   if($('#svz-selected-type' + parentID.replace( /^\D+/g, '')).val().length === 1 
+            //   && $('#svz-selected-type' + parentID.replace( /^\D+/g, '')).val()[0] === 'array'){
+            //     return;
+            //   }
+            // } catch(e) {}
             
             var $submittedFormDiv = $('#tab-content' + currentID);
             $submittedFormDiv.find('.multiselect').remove();
@@ -1084,11 +1101,9 @@
                 }
               });
               if (chosenKey){
-                console.log(chosenKey);
                 $('#svz-label-item' + currentID).html(chosenKey);
                 $('#svz-label-container' + currentID).html(chosenKey);
               }else{
-                console.log('here bitch');
                 $('#svz-label-item' + currentID).html('SVZlabel' + currentID);
                 $('#svz-label-container' + currentID).html('SVZlabel' + currentID);
               }
