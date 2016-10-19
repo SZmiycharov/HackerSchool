@@ -308,7 +308,6 @@
           var jsonPreview = {};
 
           var editor = ace.edit('svz-json-text');
-          // editor.session.setMode("ace/mode/javascript");
           editor.getSession().setMode('deps/javascript');
           editor.$blockScrolling = Infinity;
 
@@ -352,14 +351,18 @@
                 tolerance: 'pointer',
                 connectWith: '.container',
                 start: function(event, ui){
+                  console.log('start');
                   var currentKeyItem = $('#' + ui.item.attr('id')).find('label').html();
                   var currentKeyContainer = $('#' + ui.item.attr('id')).parent().find('label').html(); 
 
                   if ($('#' + ui.item.attr('id')).parent().attr('id') !== 'svz-container1'){
+                    console.log('here');
                     var allPaths = getkeys(properties);
                     for (var i = 0; i < allPaths.length; i++){
                       if (_.include(allPaths[i], currentKeyItem)){
-                        var currentPath = allPaths[i].split('.' + currentKeyItem)[0].split('.type')[0];
+                        var currentPath = allPaths[i].split('.' + currentKeyItem + '.type')[0];
+                        console.log('currentPath: ' + currentPath);
+                        break;
                       }
                     }
                     draggedObject = Object.byString(properties, currentPath)[currentKeyItem];
@@ -369,7 +372,7 @@
                     delete properties[currentKeyItem];
                   }
                 },
-                change: $.debounce(1200, function(event, ui) {
+                stop: function(event, ui) {
                   var currentKeyItem = $('#' + ui.item.attr('id')).find('label').html();
                   var currentKeyContainer = $('#' + ui.item.attr('id')).parent().find('label').html(); 
                   
@@ -384,13 +387,14 @@
                     try{
                       Object.byString(properties, currentPath)['properties'][currentKeyItem] = draggedObject;
                     } catch(e){
-                      currentPath = currentPath.split('.').slice(0, -1).join('.');
+                      //currentPath = currentPath.split('.').slice(0, -1).join('.');
                       Object.byString(properties, currentPath)[currentKeyItem] = draggedObject;
                     }
+                    console.log('stop curpath: ' + currentPath);
                   } else{
                     properties[currentKeyItem] = draggedObject;
                   }
-                }),
+                },
               });
           }
 
@@ -810,6 +814,8 @@
           }
 
           $(document).on('click', '#svz-generate-inputs', function(){
+            $('#svz-container1').html('<button id="svz-add-item1" class="btn btn-secondary svz-add-item" type="button">+</button>');
+            allKeys = [];
             try{              
               jsonFromTextbox = JSON.parse(editor.getValue());
               $.each(jsonFromTextbox, IteratorNestedObject);
