@@ -343,6 +343,8 @@
           var draggedObject;
           var propertiesBeforeStart;
           var stopToReturn;
+          var pathToDelete;
+          var keyToDelete;
 
           window.InitializeSortable = function() {
             $('.container').sortable({
@@ -354,42 +356,50 @@
                 tolerance: 'pointer',
                 connectWith: '.container',
                 start: function(event, ui){
+                  stopToReturn = false;
+                  pathToDelete = '';
+                  keyToDelete = '';
                   propertiesBeforeStart = properties;
                   var currentKeyItem = $('#' + ui.item.attr('id')).find('label').html();
                   var currentKeyContainer = $('#' + ui.item.attr('id')).parent().find('label').html(); 
-
+                  console.info('----------------------   START   ----------------------');
                   if ($('#' + ui.item.attr('id')).parent().attr('id') !== 'svz-container1'){
                     var allPaths = getkeys(properties);
                     for (var i = 0; i < allPaths.length; i++){
                       if (_.include(allPaths[i], currentKeyItem)){
                         var currentPath = allPaths[i].split('.' + currentKeyItem + '.type')[0];
                         break;
+                      } else if ((_.include(allPaths[i], currentKeyContainer + '.')) 
+                        && (currentKeyItem.replace(/[0-9]/g, '') === 'SVZlabel')
+                        && (_.include(allPaths[i], 'items'))){
+                        console.log(allPaths[i]);
+                        stopToReturn = true;
                       }
                     }
                     try{
                       if(Object.byString(properties, currentPath) === 'array'){
                         stopToReturn = true;
-                        $(ui.sender).sortable( "option", "revert", false );
-                        
                       }
                     } catch(e){}
-                    if (stopToReturn){
-                      return false;
-                    } 
 
-                    draggedObject = Object.byString(properties, currentPath)[currentKeyItem];
-                    delete Object.byString(properties, currentPath)[currentKeyItem];
+                    if (!stopToReturn){
+                      draggedObject = Object.byString(properties, currentPath)[currentKeyItem];
+                      // delete Object.byString(properties, currentPath)[currentKeyItem];
+                      pathToDelete = currentPath;
+                    }
+
+
+                    
                   } else{
                     if (properties[currentKeyItem]['type'] === 'array'){
                       stopToReturn = true;
-                      $(ui.sender).sortable( "option", "revert", false );
                     }
-                    if(stopToReturn) {
-                      return false;
-                    }
+
                     draggedObject = properties[currentKeyItem];
-                    delete properties[currentKeyItem];
+                    console.log(draggedObject);
+                    // delete properties[currentKeyItem];
                   }
+                  keyToDelete = currentKeyItem;
                 },
                 stop: function(event, ui) {
                   if (stopToReturn){
@@ -416,14 +426,31 @@
                       return false;
                     }
                     try{
+                      if(pathToDelete){
+                        delete Object.byString(properties, pathToDelete)[keyToDelete];
+                      } else{
+                        delete properties[keyToDelete];
+                      }
                       Object.byString(properties, currentPath)['properties'][currentKeyItem] = draggedObject;
                     } catch(e){
+                      if(pathToDelete){
+                        delete Object.byString(properties, pathToDelete)[keyToDelete];
+                      } else{
+                        delete properties[keyToDelete];
+                      }
                       //currentPath = currentPath.split('.').slice(0, -1).join('.');
                       Object.byString(properties, currentPath)[currentKeyItem] = draggedObject;
                     }
                   } else{
+                    if(pathToDelete){
+                      delete Object.byString(properties, pathToDelete)[keyToDelete];
+                    } else{
+                      delete properties[keyToDelete];
+                    }
                     properties[currentKeyItem] = draggedObject;
-                  }
+                  }                  
+
+
                 },
               });
           }
@@ -1056,9 +1083,16 @@
                   }
                 }
               });
-
-              $('#svz-label-item' + currentID).html(chosenKey);
-              $('#svz-label-container' + currentID).html(chosenKey);
+              if (chosenKey){
+                console.log(chosenKey);
+                $('#svz-label-item' + currentID).html(chosenKey);
+                $('#svz-label-container' + currentID).html(chosenKey);
+              }else{
+                console.log('here bitch');
+                $('#svz-label-item' + currentID).html('SVZlabel' + currentID);
+                $('#svz-label-container' + currentID).html('SVZlabel' + currentID);
+              }
+              
 
               var assignedEnum = $('#svz-enum' + currentID).tagit('assignedTags');
               if (assignedEnum != '') {
@@ -1131,8 +1165,13 @@
                 }
               });
 
-              $('#svz-label-item' + currentID).html(chosenKey);
-              $('#svz-label-container' + currentID).html(chosenKey);
+              if (chosenKey){
+                $('#svz-label-item' + currentID).html(chosenKey);
+                $('#svz-label-container' + currentID).html(chosenKey);
+              }else{
+                $('#svz-label-item' + currentID).html('SVZlabel' + currentID);
+                $('#svz-label-container' + currentID).html('SVZlabel' + currentID);
+              }
 
               var assignedEnum = $('#svz-enum' + currentID).tagit('assignedTags');
               if (assignedEnum != '') {
