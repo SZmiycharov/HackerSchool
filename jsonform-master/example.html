@@ -341,6 +341,9 @@
           };
 
           var draggedObject;
+          var propertiesBeforeStart;
+          var stopToReturn;
+
           window.InitializeSortable = function() {
             $('.container').sortable({
                 delay: 150,
@@ -351,28 +354,49 @@
                 tolerance: 'pointer',
                 connectWith: '.container',
                 start: function(event, ui){
-                  console.log('start');
+                  propertiesBeforeStart = properties;
                   var currentKeyItem = $('#' + ui.item.attr('id')).find('label').html();
                   var currentKeyContainer = $('#' + ui.item.attr('id')).parent().find('label').html(); 
 
                   if ($('#' + ui.item.attr('id')).parent().attr('id') !== 'svz-container1'){
-                    console.log('here');
                     var allPaths = getkeys(properties);
                     for (var i = 0; i < allPaths.length; i++){
                       if (_.include(allPaths[i], currentKeyItem)){
                         var currentPath = allPaths[i].split('.' + currentKeyItem + '.type')[0];
-                        console.log('currentPath: ' + currentPath);
                         break;
                       }
                     }
+                    try{
+                      if(Object.byString(properties, currentPath) === 'array'){
+                        stopToReturn = true;
+                        $(ui.sender).sortable( "option", "revert", false );
+                        
+                      }
+                    } catch(e){}
+                    if (stopToReturn){
+                      return false;
+                    } 
+
                     draggedObject = Object.byString(properties, currentPath)[currentKeyItem];
                     delete Object.byString(properties, currentPath)[currentKeyItem];
                   } else{
+                    if (properties[currentKeyItem]['type'] === 'array'){
+                      stopToReturn = true;
+                      $(ui.sender).sortable( "option", "revert", false );
+                    }
+                    if(stopToReturn) {
+                      return false;
+                    }
                     draggedObject = properties[currentKeyItem];
                     delete properties[currentKeyItem];
                   }
                 },
                 stop: function(event, ui) {
+                  if (stopToReturn){
+                    $(this).sortable('cancel');
+                    return false;
+                  }
+
                   var currentKeyItem = $('#' + ui.item.attr('id')).find('label').html();
                   var currentKeyContainer = $('#' + ui.item.attr('id')).parent().find('label').html(); 
                   
@@ -384,13 +408,19 @@
                         break;
                       }
                     }
+                    if(Object.byString(properties, currentPath)['type'] === 'array'){
+                      // properties = propertiesBeforeStart;
+                      // $('#svz-show-json-preview').click();
+                      // $('#svz-generate-inputs').click();
+                      $(this).sortable('cancel');
+                      return false;
+                    }
                     try{
                       Object.byString(properties, currentPath)['properties'][currentKeyItem] = draggedObject;
                     } catch(e){
                       //currentPath = currentPath.split('.').slice(0, -1).join('.');
                       Object.byString(properties, currentPath)[currentKeyItem] = draggedObject;
                     }
-                    console.log('stop curpath: ' + currentPath);
                   } else{
                     properties[currentKeyItem] = draggedObject;
                   }
@@ -735,7 +765,7 @@
           window.IteratorNestedObject = function(key, value) {
             var savepath = path;  
             path = path ? (path + "." + key) : key;
-  
+
             if(path.split('.').length === 1){
               if (key === 'id'){
                 $('#svz-schema-main-id').val(value);
@@ -747,7 +777,6 @@
               $('#svz-add-item1').click();
               var currentItemID = $('#svz-container1').children().eq(-2).attr('id').replace( /^\D+/g, '');
               $('form#svz-schema-form' + currentItemID + ' :input[name="' + 'key' + String(currentItemID) + '"]').val(path.split('.')[2]);
-
               $('form#svz-schema-form' + currentItemID + ' :input').each(function(){
                 if ($(this).attr('name')){
                   $.each(Object.byString(jsonFromTextbox, path), function(key, value){
@@ -796,10 +825,38 @@
                 });
                 $('#svz-schema-form-submit' + currentItemID).click();
               } catch(e){}
-              
+            } else if ((path.split('.').length % 2 === 0) && (_.include(path, 'items'))){
+              var containerLabelID = $('#svz-container1').find('label:contains("' + path.split('.').reverse()[1] + '")').attr('id');
+
+              if (containerLabelID){
+                if (containerLabelID.replace(/[0-9]/g, '') === 'svz-label-container'){
+                  var itemLabelID = $('#svz-container' + containerLabelID.replace( /^\D+/g, '')).find('label:contains("New schema")').attr('id');
+                  var currentItemID = itemLabelID.replace( /^\D+/g, '');
+                }
+              }
+              var assignedEnum = $('#svz-enum' + currentItemID).tagit('assignedTags');
+              $('form#svz-schema-form' + currentItemID + ' :input[name="' + 'key' + String(currentItemID) + '"]').val(path.split('.').reverse()[0]);
+              $('form#svz-schema-form' + currentItemID + ' :input[name="' + 'enum' + String(currentItemID) + '"]').val(path.split('.').reverse()[0]);
+
+              // $('#svz-enum' + currentID).tagit('assignedTags').val(path.split('.').reverse()[0]);
 
 
-              
+              $('form#svz-schema-form' + currentItemID + ' :input').each(function(){
+                if ($(this).attr('name')){
+                  $.each(Object.byString(jsonFromTextbox, path), function(key, value){
+                    if ($('form#svz-schema-form' + currentItemID + ' :input[name="' + String(key) + String(currentItemID) + '"]').val()){
+                    } else{
+                      $('form#svz-schema-form' + currentItemID + ' :input[name="' + String(key) + String(currentItemID) + '"]').val(value);
+                    }
+                    
+                    if ($('form#svz-schema-form' + currentItemID + ' :input[name="' + String(key) + String(currentItemID) + '"]').attr('name') === 'type' + String(currentItemID)){
+                      $('form#svz-schema-form' + currentItemID + ' :input[name="' + String(key) + String(currentItemID) + '"]').multiselect('refresh');
+                    }                    
+                  });
+                }
+              });
+              $('#svz-schema-form-submit' + currentItemID).click();
+
             }
 
 
@@ -822,7 +879,6 @@
             } catch(e){
               console.log(e);
             }
-            
           });
 
 
@@ -844,7 +900,7 @@
 
             $('#svz-json-text-header').hide();
             editor.setValue(JSON.stringify(jsonPreview, undefined, 2));
-            $('#svz-json-text').height($('#svz-json-text').prop('scrollHeight'));
+            // $('#svz-json-text').height($('#svz-json-text').prop('scrollHeight'));
 
 
             // var ajv = new Ajv({allErrors: true});
@@ -1153,12 +1209,10 @@
                   var sortableItemsArrayLength = sortableItemsArray.length;
                   for (var i = 0; i < sortableItemsArrayLength; i++) {
                       if (_.include(allKeys, $('#' + sortableItemsArray[i]).find('.svz-label-item').html())){
-                        properties[$('#' + sortableItemsArray[i]).find('.svz-label-item').html()]['ordering'] = i + 1;
+                        properties[$('#' + sortableItemsArray[i]).find('.svz-label-item').html()][' '] = i + 1;
                       }
                   }
-              } catch(err) {
-                  //console.log('Error: ' + err.message);
-              }
+              } catch(err) {}
 
               if(_.include(typesFromSelectArray, 'object')){
                 AppendObjectArrayForm(currentID, 'object');
@@ -1184,17 +1238,12 @@
                 },
                 onSubmit: function (errors, values) {
                   if (errors) {
-                    //console.log(errors);
                     $('#res').html('<p>Fix your mistakes!</p>');
-                  } else {
-                    console.log('print form, will do it later!');
-                  }
+                  } else {}
                 }
               }); 
 
-            } else{
-                //console.log('fail happened!');
-            }
+            } else{}
           } 
         });
       })(jQuery);
