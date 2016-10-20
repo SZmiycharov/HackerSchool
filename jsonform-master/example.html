@@ -75,6 +75,9 @@
         width: 90%;
         height:600px;
       }
+      a{
+        color:#2f2f2f;
+      }
 
     </style>
 
@@ -86,15 +89,15 @@
       <div id="svz-schema-form-tabs-container9999999" class="tab-pane active">
           <div id="svz-left-container9999999" style="float:left; width:100%; margin-left: 50px; margin-top: 20px;"> 
             <ul class="nav nav-tabs" id="svz-schema-form-tabs9999999">
-              <li class="active"><a data-target="#svz-schema-tab" data-toggle="tab">Schema</a></li>
-              <li><a data-target="#svz-form-tab" data-toggle="tab">Form</a></li>
+              <li class="active"><a class="svz-schema-tab" data-target="#svz-schema-tab9999999" data-toggle="tab">Schema</a></li>
+              <li id="svz-form-li9999999" style="display:none"><a class="svz-form-tab" data-target="#svz-form-tab9999999" data-toggle="tab">Form</a></li>
             </ul>
             <div class="tab-content">
               <div class="tab-pane active" id="svz-schema-tab9999999">
                 <h2>For schema:</h2>
 
 
-                <form id="svz-schema-form9999999" action="javascript:void(0);" onsubmit="HandleFormSubmit(this, this.id);">
+                <form id="svz-schema-form9999999" action="javascript:void(0);" onsubmit="HandleSchemaFormSubmit(this, this.id);">
                   <div class="form-group">
                     <label class="svzRequiredLabel">Type</label>
                     <div>
@@ -149,17 +152,44 @@
                       <div class="input-group"><label><input type="checkbox" name="translate9999999">Translate (check for true)</label></div>
                     </div>
                   </div>
-
-
-
-
                   <input class="btn btn-default" id="svz-schema-form-submit9999999" type="submit" value="Update">
                 </form>
               </div>
+
+
               <div class="tab-pane" id="svz-form-tab9999999">
                 <h2 id="svz-for-form9999999">For form:</h2>
-                <form id="svz-for-form-form9999999"></form>
+                <form id="svz-for-form-form9999999" action="javascript:void(0);" onsubmit="HandleFormFormSubmit(this, this.id);">
+                  <div class="form-group">
+                    <label>Placeholder</label>
+                    <div class="input-group"><input class="form-control" placeholder="placeholder" type="text" name="placeholder9999999"></div>
+                  </div>
+                  <div class="form-group">
+                    <label>HTML class</label>
+                    <div class="input-group"><input class="form-control" placeholder="htmlClass" type="text" name="htmlClass9999999"></div>
+                  </div>
+                  <div class="form-group">
+                    <label>Append</label>
+                    <div class="input-group"><input class="form-control" placeholder="append" type="text" name="append9999999"></div>
+                  </div>
+                  <div class="form-group">
+                    <label>Prepend</label>
+                    <div class="input-group"><input class="form-control" placeholder="prepend" type="text" name="prepend9999999"></div>
+                  </div>
+
+                  <div class="form-group">
+                    <div class="input-group"><label><input type="checkbox" name="enableReset9999999">enableReset (check for true)</label></div>
+                  </div>
+                  <div class="form-group">
+                    <div class="input-group"><label><input type="checkbox" name="enableUndo9999999">enableUndo (check for true)</label></div>
+                  </div>
+                  <div class="form-group">
+                    <div class="input-group"><label><input type="checkbox" name="enableRedo9999999">enableRedo (check for true)</label></div>
+                  </div>
+                  <input class="btn btn-default" id="svz-schema-form-submit9999999" type="submit" value="Update">
+                </form>
               </div>
+
             </div> 
           </div>   
       </div>
@@ -169,15 +199,15 @@
       <div id="svz-schema-form-tabs-container9999998" class="tab-pane active">
           <div id="svz-left-container9999998" style="float:left; width:100%; margin-left: 50px; margin-top: 20px;"> 
             <ul class="nav nav-tabs" id="svz-schema-form-tabs9999998">
-              <li class="active"><a data-target="#svz-schema-tab" data-toggle="tab">Schema</a></li>
-              <li><a data-target="#svz-form-tab" data-toggle="tab">Form</a></li>
+              <li class="active"><a class="svz-schema-tab" data-target="#svz-schema-tab9999998" data-toggle="tab">Schema</a></li>
+              <li id="svz-form-li9999998" style="display:none"><a class="svz-form-tab" data-target="#svz-form-tab9999998" data-toggle="tab">Form</a></li>
             </ul>
             <div class="tab-content">
               <div class="tab-pane active" id="svz-schema-tab9999998">
                 <h2>For schema:</h2>
 
 
-                <form id="svz-schema-form9999998" action="javascript:void(0);" onsubmit="HandleFormSubmit(this, this.id);">
+                <form id="svz-schema-form9999998" action="javascript:void(0);" onsubmit="HandleSchemaFormSubmit(this, this.id);">
                   <div class="form-group">
                     <label class="svzRequiredLabel">Type</label>
                     <div>
@@ -229,17 +259,54 @@
               </div>
               <div class="tab-pane" id="svz-form-tab9999998">
                 <h2 id="svz-for-form9999998">For form:</h2>
-                <form id="svz-for-form-form9999998"></form>
+
+
+
+
+                <form id="svz-for-form-form9999998">
+                  
+                  <div class="form-group">
+                    <label>Placeholder</label>
+                    <div class="input-group"><input class="form-control" placeholder="placeholder" type="text" name="placeholder9999998"></div>
+                  </div>
+                  <div class="form-group">
+                    <label>HTML class</label>
+                    <div class="input-group"><input class="form-control" placeholder="htmlClass" type="text" name="htmlClass9999998"></div>
+                  </div>
+                  <div class="form-group">
+                    <label>Append</label>
+                    <div class="input-group"><input class="form-control" placeholder="append" type="text" name="append9999998"></div>
+                  </div>
+                  <div class="form-group">
+                    <label>Prepend</label>
+                    <div class="input-group"><input class="form-control" placeholder="prepend" type="text" name="prepend9999998"></div>
+                  </div>
+
+                  <div class="form-group">
+                    <div class="input-group"><label><input type="checkbox" name="enableReset9999998">enableReset (check for true)</label></div>
+                  </div>
+                  <div class="form-group">
+                    <div class="input-group"><label><input type="checkbox" name="enableUndo9999998">enableUndo (check for true)</label></div>
+                  </div>
+                  <div class="form-group">
+                    <div class="input-group"><label><input type="checkbox" name="enableRedo9999998">enableRedo (check for true)</label></div>
+                  </div>
+
+                  <input class="btn btn-default" id="svz-schema-form-submit9999999" type="submit" value="Update">
+                </form>
+
+
+
+
               </div>
             </div> 
           </div>   
       </div>
     </div>
 
-    <!-- id $schema -->
     <div id="svz-toggle-main-options" hidden><button type="button" class="btn btn-info">Main options</button></div>
     <div id="svz-main-options">
-      <h3>JSONSchema: main options</h3>
+      <h3>Schema and form: main options</h3>
       <form action="javascript:void(0);" onsubmit="HandleMainSchemaFormSubmit();" id="svz-main-form-schema-options">
         <div class="form-group">
           <label for="svz-schema-main-id">ID:</label>
@@ -249,6 +316,25 @@
           <label for="svz-main-dollar-schema">$Schema:</label>
           <input class="form-control" name="$schema" id="svz-main-dollar-schema">
         </div>
+
+        <div class="form-group">
+          <label for="svz-main-dollar-schema">schemaId</label>
+          <input class="form-control svz-form-main-options" name="schemaId" id="svz-main-form-schemaid">
+        </div>
+        <div class="form-group">
+          <label for="svz-main-dollar-schema">JSONForm version</label>
+          <input class="form-control svz-form-main-options" name="jsonformVersion" id="svz-main-form-jsonform-version">
+        </div>
+
+        <div class="form-group">
+          <div class="input-group"><label><input class="svz-form-main-options" type="checkbox" name="isStrict">Is strict (check for true)</label></div>
+        </div>
+        <div class="form-group">
+          <div class="input-group"><label><input class="svz-form-main-options" type="checkbox" name="enableRedo">Live validation (check for true)</label></div>
+        </div>
+
+
+
         <input id="svz-submit-main-options" class="btn btn-default" type="submit" value="Submit">
       </form>
     </div>
@@ -266,12 +352,13 @@
     </div>
 
     <div class="col-md-6 col-sn-12" style="margin-top: 20px;">
+      <button id="svz-generate-inputs" type="button" class="btn btn-success"><span class="glyphicon glyphicon-arrow-left"></span> Generate inputs</button>
       <h3>Preview appears here:</h3>
       <p id="svz-json-text-header">When you choose options json will appear here! :)</p>
       <div name="textarea" id="svz-json-text"></div>
       <p class="text-danger"><font class="svzKeyWarning" id="svz-json-text-warning" color="red" hidden> (key already exists)</font></p>
 
-      <button id="svz-generate-inputs" type="button" class="btn btn-success"><span class="glyphicon glyphicon-arrow-left"></span> Generate inputs</button>
+      
     </div>
 
 
@@ -302,7 +389,7 @@
             var string = msg.toLowerCase();
             var substring = "script error";
             if (string.indexOf(substring) > -1){
-                console.log('Script Error: See Browser Console for Detail');
+                `('Script Error: See Browser Console for Detail');
             } else {
                 var message = [
                     'Message: ' + msg,
@@ -577,6 +664,11 @@
 
             if (currentType == 'object'){
               var $clonedDiv = $('#tab-content9999999').clone();
+              var currentDataTargetForm = $clonedDiv.find('.svz-form-tab').attr('data-target');
+              $clonedDiv.find('.svz-form-tab').attr('data-target', currentDataTargetForm.replace(/[0-9]/g, '') + currentItemID);
+              var currentDataTargetForm = $clonedDiv.find('.svz-schema-tab').attr('data-target');
+              $clonedDiv.find('.svz-schema-tab').attr('data-target', currentDataTargetForm.replace(/[0-9]/g, '') + currentItemID);
+
               $clonedDiv.find('.multiselect').remove();
               $clonedDiv.find('.ui-widget-content:last').remove();
               $clonedDiv.find('[id]').each(function() { 
@@ -592,6 +684,12 @@
 
             } else if (currentType == 'array'){
               var $clonedDiv = $('#tab-content9999998').clone();
+              var currentDataTargetForm = $clonedDiv.find('.svz-form-tab').attr('data-target');
+              $clonedDiv.find('.svz-form-tab').attr('data-target', currentDataTargetForm.replace(/[0-9]/g, '') + currentItemID);
+              var currentDataTargetForm = $clonedDiv.find('.svz-schema-tab').attr('data-target');
+              $clonedDiv.find('.svz-schema-tab').attr('data-target', currentDataTargetForm.replace(/[0-9]/g, '') + currentItemID);
+
+              
               $clonedDiv.find('.multiselect').remove();
               $clonedDiv.find('.ui-widget-content:last').remove();
               $clonedDiv.find('[id]').each(function() { 
@@ -626,6 +724,11 @@
             var currentID = $(this).attr('id').replace( /^\D+/g, '');
 
             var $clonedDiv = $('#tab-content9999999').clone();
+            var currentDataTargetForm = $clonedDiv.find('.svz-form-tab').attr('data-target');
+            $clonedDiv.find('.svz-form-tab').attr('data-target', currentDataTargetForm.replace(/[0-9]/g, '') + currentItemID);
+            var currentDataTargetForm = $clonedDiv.find('.svz-schema-tab').attr('data-target');
+            $clonedDiv.find('.svz-schema-tab').attr('data-target', currentDataTargetForm.replace(/[0-9]/g, '') + currentItemID);
+
             $clonedDiv.find('.multiselect').remove();
             $clonedDiv.find('.ui-widget-content:last').remove();
             $clonedDiv.find('[id]').each(function() { 
@@ -930,12 +1033,18 @@
 
           var required = [];
           var properties = {};
+          var formProperties = {};
+          var formFields = [];
 
           window.ShowJSONPreview = function(){
-            jsonPreview['schema'] = {
-                    'type': 'object',
-                    'properties': properties
-            };
+            jsonPreview['schema']['type'] = 'object';
+            jsonPreview['schema']['properties'] = properties;
+            
+            if (_.isEmpty(jsonPreview['form'])){
+              jsonPreview['form'] = {};
+            }
+            jsonPreview['form']['fields'] = formFields;
+
             if (required != ''){
               jsonPreview['required'] = required;
             } else{
@@ -987,17 +1096,31 @@
                       return result;
                     }
                 }
-              }
-                
+              }      
             }
             return false;
           }
 
           window.HandleMainSchemaFormSubmit = function(){
             $.each($('#svz-main-form-schema-options').serializeArray(), function(i, field) {
-              if(field.value){
-                jsonPreview[field.name] = field.value;
+              if (field.value === 'on'){
+                field.value = 'true';
               }
+              if (_.include($('form#svz-main-form-schema-options :input[name="' + field.name + '"]').attr('class'), 'svz-form-main-options')){
+                if (_.isEmpty(jsonPreview['form'])){
+                  jsonPreview['form'] = {};
+                }
+
+                jsonPreview['form'][field.name] = field.value;
+              } else{
+                if(field.value){
+                  if (_.isEmpty(jsonPreview['schema'])){
+                    jsonPreview['schema'] = {};
+                  }
+                  jsonPreview['schema'][field.name] = field.value;
+                }
+              }
+              
             });
 
             $('#svz-main-options').slideUp();
@@ -1010,11 +1133,34 @@
           }); 
             
             
+          window.HandleFormFormSubmit = function(currentObject, currentID){
+            var currentFormProperties = {}
+
+            if ($('#svz-label-item' + $(currentObject).attr('id').replace( /^\D+/g, '')).html()){
+              var currentKey = $('#svz-label-item' + $(currentObject).attr('id').replace( /^\D+/g, '')).html();
+            } else{
+              var currentKey = $('#svz-label-container' + $(currentObject).attr('id').replace( /^\D+/g, '')).html();
+            }
+
+            var currentID = currentID.replace( /^\D+/g, ''); 
+            var schemaFormDataArray = $('#svz-for-form-form' + currentID).serializeArray();
+            schemaFormDataArray = schemaFormDataArray.filter(function(n){return n.value !== ''});
+
+            currentFormProperties['key'] = currentKey;
+            jQuery.each( schemaFormDataArray, function( i, field ) {
+              if (field.value === 'on'){
+                field.value = 'true';
+              }
+              currentFormProperties[field.name.replace(/[0-9]/g, '')] = field.value;
+            });
+
+            formFields.push(currentFormProperties);
+          }
           
 
 
 
-          window.HandleFormSubmit = function(currentObject, currentID){
+          window.HandleSchemaFormSubmit = function(currentObject, currentID){
             var currentID = currentID.replace( /^\D+/g, '');
             if($('#svz-key-warning').is(':visible')){
               return false;
@@ -1143,7 +1289,6 @@
             var chosenKey = '';
 
             if (typesFromSelectArray){
-              $('#svz-for-form-form' + currentID).empty();
 
               var schemaFormDataArray = $('#svz-schema-form' + currentID).serializeArray();
               var currentProperties = {};
@@ -1218,8 +1363,6 @@
                 var allPaths = getkeys(properties);
 
                 for (var i = 0; i < allPaths.length; i++){
-                  console.log(allPaths[i]);
-                  console.log(currentKeyItem);
                   if (_.include(allPaths[i], currentKeyItem)){
                     pathToValue = allPaths[i].split('.' + currentKeyItem + '.type')[0];
                     break;
@@ -1239,7 +1382,6 @@
                 //     pathToValue += words[i];
                 //   }
                 // } 
-                console.log('PATHTOVALUE: ' + pathToValue);
 
                 if (lastProperties['type'] !== 'object' && lastProperties['type'] !== 'array'){
                   var splittedPathToValueLength = pathToValue.split('.');
@@ -1293,29 +1435,7 @@
                 AppendObjectArrayForm(currentID, 'array');
               }
 
-
-              $('#svz-for-form-form').jsonForm({
-                schema: {
-                  title: {
-                    type: 'string',
-                    title: 'Title'
-                  },
-                  description: {
-                    type: 'string',
-                    title: 'Description'
-                  },
-                  type: {
-                    type: 'string',
-                    title: 'Type'
-                  }
-                },
-                onSubmit: function (errors, values) {
-                  if (errors) {
-                    $('#res').html('<p>Fix your mistakes!</p>');
-                  } else {}
-                }
-              }); 
-
+              $('#svz-form-li' + currentID).css('display', 'inline-block');
             } else{}
           } 
         });
