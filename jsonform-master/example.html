@@ -389,7 +389,7 @@
             var string = msg.toLowerCase();
             var substring = "script error";
             if (string.indexOf(substring) > -1){
-                `('Script Error: See Browser Console for Detail');
+                console.log('Script Error: See Browser Console for Detail');
             } else {
                 var message = [
                     'Message: ' + msg,
@@ -1037,6 +1037,9 @@
           var formFields = [];
 
           window.ShowJSONPreview = function(){
+            if(_.isEmpty(jsonPreview['schema'])){
+              jsonPreview['schema'] = {};
+            }
             jsonPreview['schema']['type'] = 'object';
             jsonPreview['schema']['properties'] = properties;
             
@@ -1354,10 +1357,6 @@
                 }
                 
                 var pathToValue = '';
-
-
-
-                console.info('-----------------    HERE    ------------------');
                 var currentKeyItem = $('#svz-label-item' + $(currentObject).attr('id').replace( /^\D+/g, '')).html();
                 var currentKeyContainer = $('#svz-label-container' + $(currentObject).parents(':eq(6)').attr('id').replace( /^\D+/g, '')).html();
                 var allPaths = getkeys(properties);
@@ -1366,8 +1365,7 @@
                   if (_.include(allPaths[i], currentKeyItem)){
                     pathToValue = allPaths[i].split('.' + currentKeyItem + '.type')[0];
                     break;
-                  } else if ((_.include(allPaths[i], currentKeyContainer + '.')) 
-                    && (currentKeyItem.replace(/[0-9]/g, '') === 'SVZlabel')){
+                  } else if (_.include(allPaths[i], currentKeyContainer + '.')){
                     pathToValue = currentKeyContainer;
                   }
                 }
@@ -1382,17 +1380,8 @@
                 //     pathToValue += words[i];
                 //   }
                 // } 
-
+                console.log(pathToValue);
                 if (lastProperties['type'] !== 'object' && lastProperties['type'] !== 'array'){
-                  var splittedPathToValueLength = pathToValue.split('.');
-                  pathToValue = '';
-                  for (var i = 0; i < splittedPathToValueLength.length - 2; i++){
-                    if (i !== splittedPathToValueLength.length - 3){
-                      pathToValue += splittedPathToValueLength[i] + '.';
-                    } else{
-                      pathToValue += splittedPathToValueLength[i];
-                    }
-                  }
                   try{
                     Object.byString(properties, pathToValue)['properties'][chosenKey] = currentProperties;
                   } catch(e) {
