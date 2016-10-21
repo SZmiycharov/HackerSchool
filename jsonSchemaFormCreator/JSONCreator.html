@@ -1205,8 +1205,11 @@
               try{
                 var thisProperties = Object.byString(properties, pathToValue.split('.type')[0]);
                 pathToValue = pathToValue.split('.type')[0];
-              } catch(e){
-                var thisProperties = properties;
+              } catch(e){}
+
+              if (pathToValue.split('.').length == 1){
+                console.log('yes working with prop');
+                thisProperties = properties;
               }
                             
               var typesFromSelect = $('#svz-selected-type' + currentID).val();
@@ -1217,7 +1220,7 @@
 
               var schemaFormDataArray = $('#svz-schema-form' + currentID).serializeArray();
               var toDeleteRequired = true;
-              
+
               thisProperties[$('#svz-key' + currentID).val()] = {};
 
               if (typesFromSelectArray.length === 1){
@@ -1229,19 +1232,26 @@
               var chosenKey = $('#svz-key' + currentID).val();
               schemaFormDataArray = schemaFormDataArray.filter(function(n){return n.value !== ''});
 
+              console.log(currentID);
               jQuery.each( schemaFormDataArray, function( i, field ) {
+                console.log(field.name, field.value);
                 if (field.value === 'on'){
                   field.value = 'true';
-                }else if(field.name === 'key' + currentID){
+                }
+
+                if(field.name === 'key' + currentID){
                   chosenKey = field.value;
                   allKeys.push(chosenKey);
                 } else if(field.name === 'required' + currentID){
+                  console.log('YES BUTHHCHCHHCC');
                   toDeleteRequired = false;
                   if (field.value && !(_.include(required, chosenKey))) {
-                      if (_.include(required, $('#svz-label-item' + currentID).html())){
-                        required.splice(_.indexOf(required, $('#svz-label-item' + currentID).html()), 1);
-                      }
-                      required.push(chosenKey);
+                    console.log('HERE BABY');
+                    if (_.include(required, $('#svz-label-item' + currentID).html())){
+                      required.splice(_.indexOf(required, $('#svz-label-item' + currentID).html()), 1);
+                    }
+                    required.push(chosenKey);
+                    console.log(required);
                   } 
                 } else{
                   if (field.name.replace(/[0-9]/g, '') != 'tags' 
@@ -1265,6 +1275,7 @@
               }
               
               if (toDeleteRequired){
+                console.log('deleting require ;(');
                 required.splice(_.indexOf(required, chosenKey), 1);
               }
 
