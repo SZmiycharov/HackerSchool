@@ -1,0 +1,31 @@
+
+
+
+  "schema": {
+    "type": "object",
+    "properties": {
+      "key1": {
+        "type": "array",
+        "title": "Friend",
+        "items": {
+          "title": "Friend",
+          "type": "object",
+          "properties": {
+            "key1.1": {
+              "title": "Nickname",
+              "type": "string"
+            },
+            "key1.2": {
+              "type": "string",
+              "title": "Gender",
+              "enum": [ "male", "female", "alien" ]
+            },
+            "key1.3": {
+              "type": "integer",
+              "title": "Age"
+            }
+          }
+        }
+      }
+    }
+  }

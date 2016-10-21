@@ -1,0 +1,36 @@
+.container {
+          min-height: 800px;
+          min-width: 500px;
+          background-color: #7DA5A6;
+          border: 1px solid #718D8E;
+          border-radius: 4px;
+          display: inline-block;
+          padding: 10px;
+      }
+      .container:hover{
+          background-color: #4d6869;
+      }
+
+      .container .container {
+          min-height: 700px;
+          min-width: 400px;
+
+          background-color: #97a8a9;
+          border: 3px solid #BED5D6;
+          display: block;
+          margin-bottom: 5px;
+      }
+      .container .container:hover {
+        background-color: #616a6b;
+      }
+
+      .item {
+          background-color: #6065C9;
+          border: 2px solid #353871;
+          margin-bottom: 5px;
+          border-radius: 2px;
+          padding: 15px 50px;
+      }
+      .item:hover{
+        background-color: #4249d6;
+      }

@@ -1,0 +1,29 @@
+workflow:
+Форма - да се избере типа;
+избира се примерно text -> скрива се досегашната форма и се открива нова с GenerateTextForm() функцията; onsubmit на generatetextboxform формата -> извикай handleTextAreaType и направи json файл по зададените параметри
+
+- onload funkciq - vutre v neq celiq javascript;
+- funkciite da sa lokalni (self-executing ) - (function function_name ($) {
+			  // body...
+			})(jQuery);
+
+- da se izpolzva jquery vmesto DOM: document.getElementById('showadvancedoptions').checked da ne e taka! -> $('#asd').prop('checked')	
+- json types
+- da se dobavi null type
+- multiselect - mnogo tipove da se izbirat -> da se napravi sus selectize
+- navsqkude v javascript kavi4kite da sa edini4ni: 'slavi'
+- schema VINAGI: object -> vlojeno navutre prostiq tip
+primerno: {
+	object:{
+	type:number ..... ne6to takova :D
+	}
+}
+
+- block and inline elements;
+- id da e: svz-max-value, a ne maxValue
+
+- ne placeholder a title nad nego!
+- da se iztrivat naprimer readonly checkboxa kato se ibere nov tip!!
+- schema form and form form da sa na tabove a ne sa se slaidva
+- jquery debounce vmesto settimeout
+- javascript lodash grep da se mahant praznite elementi na arrayq
