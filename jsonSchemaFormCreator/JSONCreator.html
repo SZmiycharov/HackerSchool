@@ -408,7 +408,6 @@
           var currentContainerID = 5;
           var currentItemID = 5;
           var allKeys = [];
-          var lastProperties;
           var jsonPreview = {};
 
           var editor = ace.edit('svz-json-text');
@@ -817,7 +816,7 @@
                 parentType = parentType[0];
               }
 
-              $('.additionaloption' + currentTabNum).remove();
+              $('.additionaloption' + currentTabNum).remove();              
 
               if (selectedType){
                 if ((_.include(selectedType, 'number') || _.include(selectedType, 'integer')) 
@@ -837,7 +836,7 @@
                   AppendInputFieldToForm(currentTabNum, 'Pattern (regex)', 'svz-pattern', 'pattern', '');
                   AppendSubmitBtnToForm(currentTabNum);
 
-                } else if (_.include(selectedType, 'string' && parentType !== 'array')){
+                } else if (_.include(selectedType, 'string') && parentType !== 'array'){
                   RemoveFormShowEnum(currentTabNum);
 
                   AppendInputFieldToForm(currentTabNum, 'Maximum length', 'svz-max-length', 'maxLength', '');
@@ -1186,30 +1185,59 @@
 
               var pathToValue = '';
               var currentKeyItem = $('#svz-label-item' + $(currentObject).attr('id').replace( /^\D+/g, '')).html();
+              if(! currentKeyItem){
+                currentKeyItem = $('#svz-label-container' + $(currentObject).attr('id').replace( /^\D+/g, '')).html();
+              }
               var currentKeyContainer = $('#svz-label-container' + $(currentObject).parents(':eq(6)').attr('id').replace( /^\D+/g, '')).html();
               var allPaths = GetAllPaths(properties);
+              var chosenKey = $('#svz-key' + currentID).val();
 
+              console.log(currentKeyItem);
               for (var i = 0; i < allPaths.length; i++){
+                console.log('allPaths[i]: ' + allPaths[i]);
+
                 if (_.include(allPaths[i], currentKeyItem)){
                   pathToValue = allPaths[i].split('.' + currentKeyItem + '.type')[0];
+                  console.log(pathToValue);
                   break;
                 } else if (_.include(allPaths[i], currentKeyContainer + '.')){
+                  var pathIsReady = true;
                   pathToValue = allPaths[i].split('.type')[0];
+                  if (pathToValue.split('.').length != 1){
+                    pathToValue += '.properties';
+                  }
                 }
               }
+              if (!pathIsReady){
+                pathToValue = pathToValue.split(currentKey)[0]
+                if (pathToValue && pathToValue.slice(-1) != '.'){
+                  pathToValue += '.' + currentKey;
+                } else{
+                  pathToValue += currentKey;
+                }
 
-              if(!pathToValue){
-                pathToValue = typeArrayKeysPaths[currentKeyContainer];
+                if(!pathToValue){
+                  pathToValue = typeArrayKeysPaths[currentKeyContainer];
+                }
+              }
+              console.log('path now: ' + pathToValue);
+
+             
+              if (pathToValue.split('.').slice(-1)[0] != 'type'){
+                pathToValue = pathToValue.split('.type')[0];
               }
 
               try{
-                var thisProperties = Object.byString(properties, pathToValue.split('.type')[0]);
-                pathToValue = pathToValue.split('.type')[0];
+                var thisProperties = Object.byString(properties, pathToValue);
               } catch(e){}
 
+              
               if (pathToValue.split('.').length == 1){
-                console.log('yes working with prop');
                 thisProperties = properties;
+              }
+
+              if (pathToValue.split('.').slice(-1)[0] != 'properties' && pathToValue.split('.').slice(-1)[0] != 'items' && pathToValue.split('.').length != 1){
+                pathToValue = pathToValue.split(pathToValue.split('.').slice(-1)[0])[0];
               }
                             
               var typesFromSelect = $('#svz-selected-type' + currentID).val();
@@ -1221,20 +1249,18 @@
               var schemaFormDataArray = $('#svz-schema-form' + currentID).serializeArray();
               var toDeleteRequired = true;
 
-              thisProperties[$('#svz-key' + currentID).val()] = {};
+              thisProperties[currentKey] = {};
 
               if (typesFromSelectArray.length === 1){
-                thisProperties[$('#svz-key' + currentID).val()]['type'] = typesFromSelectArray[0];
+                thisProperties[currentKey]['type'] = typesFromSelectArray[0];
               } else{
-                thisProperties[$('#svz-key' + currentID).val()]['type'] = typesFromSelectArray;
+                thisProperties[currentKey]['type'] = typesFromSelectArray;
               }
               
-              var chosenKey = $('#svz-key' + currentID).val();
+              
               schemaFormDataArray = schemaFormDataArray.filter(function(n){return n.value !== ''});
 
-              console.log(currentID);
               jQuery.each( schemaFormDataArray, function( i, field ) {
-                console.log(field.name, field.value);
                 if (field.value === 'on'){
                   field.value = 'true';
                 }
@@ -1243,21 +1269,18 @@
                   chosenKey = field.value;
                   allKeys.push(chosenKey);
                 } else if(field.name === 'required' + currentID){
-                  console.log('YES BUTHHCHCHHCC');
                   toDeleteRequired = false;
                   if (field.value && !(_.include(required, chosenKey))) {
-                    console.log('HERE BABY');
                     if (_.include(required, $('#svz-label-item' + currentID).html())){
                       required.splice(_.indexOf(required, $('#svz-label-item' + currentID).html()), 1);
                     }
                     required.push(chosenKey);
-                    console.log(required);
                   } 
                 } else{
                   if (field.name.replace(/[0-9]/g, '') != 'tags' 
                       && field.name.replace(/[0-9]/g, '') != 'type'
                         && field.name.replace(/[0-9]/g, '') != 'key'){
-                    thisProperties[$('#svz-key' + currentID).val()][field.name.replace(/[0-9]/g, '')] = field.value;
+                    thisProperties[currentKey][field.name.replace(/[0-9]/g, '')] = field.value;
                   }
                 }
               });
@@ -1271,27 +1294,26 @@
               
               var assignedEnum = $('#svz-enum' + currentID).tagit('assignedTags');
               if (assignedEnum != '') {
-                thisProperties[$('#svz-key' + currentID).val()]['enum'] = assignedEnum;
+                thisProperties[currentKey]['enum'] = assignedEnum;
               }
               
               if (toDeleteRequired){
-                console.log('deleting require ;(');
                 required.splice(_.indexOf(required, chosenKey), 1);
               }
 
-              console.log(properties);
 
-              if ($('#svz-key' + currentID).val() != currentKey){
-                console.log('deleting key and changing it!');
+              console.log(pathToValue);
+
+
+              if (chosenKey != currentKey){
                 try{
-                  Object.defineProperty(Object.byString(properties, pathToValue), $('#svz-key' + currentID).val(), Object.getOwnPropertyDescriptor(Object.byString(properties, pathToValue), currentKey));
+                  Object.defineProperty(Object.byString(properties, pathToValue), chosenKey, Object.getOwnPropertyDescriptor(Object.byString(properties, pathToValue), currentKey));
                   delete Object.byString(properties, pathToValue)[currentKey];
                 } catch(e){
-                  Object.defineProperty(properties, $('#svz-key' + currentID).val(), Object.getOwnPropertyDescriptor(properties, currentKey));
+                  Object.defineProperty(properties, chosenKey, Object.getOwnPropertyDescriptor(properties, currentKey));
                   delete properties[currentKey];
                 }
-              }              
-              console.log(properties);
+              }
               allKeys.splice(_.indexOf(allKeys, currentKey), 1);
               return;
             }
@@ -1378,10 +1400,13 @@
                   pathToValue = allPaths[i].split('.type')[0];
                 }
               }
-
+              
+              console.log(typeArrayKeysPaths);
               if(!pathToValue){
+                console.log('currentKeyContainer: ' + currentKeyContainer);
                 pathToValue = typeArrayKeysPaths[currentKeyContainer];
               }
+              console.log('PathtoValue: ' + pathToValue);
 
               var parentType = String($('#svz-selected-type' + $(currentObject).parents(':eq(6)').attr('id').replace( /^\D+/g, '')).val());
               if (parentType !== 'object' && parentType !== 'array'){
@@ -1406,7 +1431,6 @@
               }
               
             }
-            lastProperties = currentProperties;
 
             try {
                 var sortableItemsArray = $('.container').sortable('toArray');
