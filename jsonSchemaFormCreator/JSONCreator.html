@@ -632,6 +632,7 @@
             // } catch(e) {}
             
             var $submittedFormDiv = $('#tab-content' + currentID);
+
             $submittedFormDiv.find('.multiselect').remove();
             $submittedFormDiv.find('.ui-widget-content:last').remove();
 
@@ -705,8 +706,8 @@
               InitializeSortable();
             }
 
-            InitializeMultiselectAndTagit(currentItemID);
             InitializeMultiselectAndTagit(currentContainerID);
+            InitializeMultiselectAndTagit(currentItemID);
           }
 
           $(document).on('click', '.svz-add-item', function(e){
@@ -1174,31 +1175,40 @@
               currentKey = $('#svz-label-container' + currentID).html();
             }
 
-            if (allKeys 
-              && (currentKey != $('#svz-key' + currentID).val()) 
-              && _.include(allKeys, currentKey)){ 
 
-              var path = search('schema', properties, lastProperties);
-              var words = [];
-              path.replace(/\['(.+?)'\]/g, function($0, $1) { words.push($1) })
+
+
+
+
+            if (allKeys && _.include(allKeys, currentKey)){ 
+
+              console.info('-------------- gonna make changes --------------');
+
               var pathToValue = '';
+              var currentKeyItem = $('#svz-label-item' + $(currentObject).attr('id').replace( /^\D+/g, '')).html();
+              var currentKeyContainer = $('#svz-label-container' + $(currentObject).parents(':eq(6)').attr('id').replace( /^\D+/g, '')).html();
+              var allPaths = GetAllPaths(properties);
 
-              for (var i = 0; i < words.length; i++){
-                if (i !== words.length - 1){
-                  pathToValue += words[i] + '.';
+              for (var i = 0; i < allPaths.length; i++){
+                if (_.include(allPaths[i], currentKeyItem)){
+                  pathToValue = allPaths[i].split('.' + currentKeyItem + '.type')[0];
+                  break;
+                } else if (_.include(allPaths[i], currentKeyContainer + '.')){
+                  pathToValue = allPaths[i].split('.type')[0];
                 }
-                else {
-                  pathToValue += words[i];
-                }
-              } 
+              }
+
+              if(!pathToValue){
+                pathToValue = typeArrayKeysPaths[currentKeyContainer];
+              }
 
               try{
-                var thisProperties = Object.byString(properties, pathToValue);
-                var helper = thisProperties['type'];
+                var thisProperties = Object.byString(properties, pathToValue.split('.type')[0]);
+                pathToValue = pathToValue.split('.type')[0];
               } catch(e){
                 var thisProperties = properties;
               }
-              
+                            
               var typesFromSelect = $('#svz-selected-type' + currentID).val();
               var typesFromSelectArray = $.map(typesFromSelect, function(value, index) {
                   return [value];
@@ -1207,11 +1217,13 @@
 
               var schemaFormDataArray = $('#svz-schema-form' + currentID).serializeArray();
               var toDeleteRequired = true;
+              
+              thisProperties[$('#svz-key' + currentID).val()] = {};
 
               if (typesFromSelectArray.length === 1){
-                thisProperties['type'] = typesFromSelectArray[0];
+                thisProperties[$('#svz-key' + currentID).val()]['type'] = typesFromSelectArray[0];
               } else{
-                thisProperties['type'] = typesFromSelectArray;
+                thisProperties[$('#svz-key' + currentID).val()]['type'] = typesFromSelectArray;
               }
               
               var chosenKey = $('#svz-key' + currentID).val();
@@ -1235,7 +1247,7 @@
                   if (field.name.replace(/[0-9]/g, '') != 'tags' 
                       && field.name.replace(/[0-9]/g, '') != 'type'
                         && field.name.replace(/[0-9]/g, '') != 'key'){
-                    thisProperties[field.name.replace(/[0-9]/g, '')] = field.value;
+                    thisProperties[$('#svz-key' + currentID).val()][field.name.replace(/[0-9]/g, '')] = field.value;
                   }
                 }
               });
@@ -1247,31 +1259,39 @@
                 $('#svz-label-container' + currentID).html('SVZlabel' + currentID);
               }
               
-
               var assignedEnum = $('#svz-enum' + currentID).tagit('assignedTags');
               if (assignedEnum != '') {
-                thisProperties['enum'] = assignedEnum;
+                thisProperties[$('#svz-key' + currentID).val()]['enum'] = assignedEnum;
               }
               
               if (toDeleteRequired){
                 required.splice(_.indexOf(required, chosenKey), 1);
               }
 
-              pathToValue = pathToValue.split('.').slice(0,-1).join('.');
-              
-              try{
-                Object.defineProperty(Object.byString(properties, pathToValue), $('#svz-key' + currentID).val(), Object.getOwnPropertyDescriptor(Object.byString(properties, pathToValue), currentKey));
-                delete Object.byString(properties, pathToValue)[currentKey];
-              } catch(e){
-                Object.defineProperty(properties, $('#svz-key' + currentID).val(), Object.getOwnPropertyDescriptor(properties, currentKey));
-                delete properties[currentKey];
-              }
-              
-              
-              allKeys.splice(_.indexOf(allKeys, currentKey), 1);
+              console.log(properties);
 
+              if ($('#svz-key' + currentID).val() != currentKey){
+                console.log('deleting key and changing it!');
+                try{
+                  Object.defineProperty(Object.byString(properties, pathToValue), $('#svz-key' + currentID).val(), Object.getOwnPropertyDescriptor(Object.byString(properties, pathToValue), currentKey));
+                  delete Object.byString(properties, pathToValue)[currentKey];
+                } catch(e){
+                  Object.defineProperty(properties, $('#svz-key' + currentID).val(), Object.getOwnPropertyDescriptor(properties, currentKey));
+                  delete properties[currentKey];
+                }
+              }              
+              console.log(properties);
+              allKeys.splice(_.indexOf(allKeys, currentKey), 1);
               return;
             }
+
+
+
+
+
+
+
+
 
             var typesFromSelect = $('#svz-selected-type' + currentID).val();
             var typesFromSelectArray = $.map(typesFromSelect, function(value, index) {
@@ -1334,14 +1354,6 @@
             if (!$(currentObject).parents(':eq(11)').html()){
               properties[chosenKey] = currentProperties;
             } else{
-              var path = search('schema', properties, lastProperties);
-              var words = [];
-              try{
-                path.replace(/\['(.+?)'\]/g, function($0, $1) { words.push($1) })
-              } catch(e){
-                return;
-              }
-              
               var pathToValue = '';
               var currentKeyItem = $('#svz-label-item' + $(currentObject).attr('id').replace( /^\D+/g, '')).html();
               var currentKeyContainer = $('#svz-label-container' + $(currentObject).parents(':eq(6)').attr('id').replace( /^\D+/g, '')).html();
@@ -1356,39 +1368,31 @@
                 }
               }
 
-              console.log(typeArrayKeysPaths);
               if(!pathToValue){
-                console.log('currentKeyContainer: ' + currentKeyContainer);
                 pathToValue = typeArrayKeysPaths[currentKeyContainer];
               }
-              console.log('PathtoValue: ' + pathToValue);
 
-              if (lastProperties['type'] !== 'object' && lastProperties['type'] !== 'array'){
+              var parentType = String($('#svz-selected-type' + $(currentObject).parents(':eq(6)').attr('id').replace( /^\D+/g, '')).val());
+              if (parentType !== 'object' && parentType !== 'array'){
                 try{
                   Object.byString(properties, pathToValue)['properties'][chosenKey] = currentProperties;
                 } catch(e) {
                   Object.byString(properties, pathToValue)['items'] = currentProperties;
                 }
-              }else if (lastProperties['type'] === 'object'){
-                try{
+              } else if (parentType === 'object'){
+                  if(_.isEmpty(Object.byString(properties, pathToValue)['properties'])){
+                    Object.byString(properties, pathToValue)['properties'] = {};
+                  }
                   Object.byString(properties, pathToValue)['properties'][chosenKey] = currentProperties;
-                } catch(e){
-                  Object.byString(properties, pathToValue)['properties'] = {};
-                  Object.byString(properties, pathToValue)['properties'][chosenKey] = currentProperties;
-                }
-              } else if (lastProperties['type'] === 'array'){
+              } else if (parentType === 'array'){
                 console.info('----------------------------- ARRAY TYPE -----------------------------');
                 try{
-                  console.log('in try: ' + pathToValue);
                   Object.byString(properties, pathToValue)['items'] = currentProperties;
                 } catch(e){
-                  console.log('in catch: ' + pathToValue);
                   Object.byString(properties, pathToValue)['items'] = {};
                   Object.byString(properties, pathToValue)['items'] = currentProperties;
                 }
               }
-              
-              
               
             }
             lastProperties = currentProperties;
@@ -1431,7 +1435,6 @@
                 if (!pathToParent){
                   typeArrayKeysPaths[currentItemLabel] = typeArrayKeysPaths[parentLabel] + '.items';
                 }
-                console.info(typeArrayKeysPaths);
               }
             }
           } 
