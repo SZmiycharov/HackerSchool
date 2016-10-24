@@ -306,7 +306,7 @@
     </div>
 
     <div id="svz-toggle-main-options" hidden><button type="button" class="btn btn-info">Main options</button></div>
-    <div id="svz-main-options">
+    <div id="svz-main-options" hidden>
       <h3>Schema and form: main options</h3>
       <form action="javascript:void(0);" onsubmit="HandleMainOptionsFormSubmit();" id="svz-main-form-schema-options">
         <div class="form-group">
@@ -333,9 +333,6 @@
         <div class="form-group">
           <div class="input-group"><label><input class="svz-form-main-options" type="checkbox" name="enableRedo">Live validation (check for true)</label></div>
         </div>
-
-
-
         <input id="svz-submit-main-options" class="btn btn-default" type="submit" value="Submit">
       </form>
     </div>
@@ -487,9 +484,6 @@
                       // delete Object.byString(properties, currentPath)[currentKeyItem];
                       pathToDelete = currentPath;
                     }
-
-
-                    
                   } else{
                     if (properties[currentKeyItem]['type'] === 'array'){
                       stopToReturn = true;
@@ -545,8 +539,6 @@
                     }
                     properties[currentKeyItem] = draggedObject;
                   }                  
-
-
                 },
               });
           }
@@ -681,7 +673,6 @@
               var currentDataTargetForm = $clonedDiv.find('.svz-schema-tab').attr('data-target');
               $clonedDiv.find('.svz-schema-tab').attr('data-target', currentDataTargetForm.replace(/[0-9]/g, '') + currentItemID);
 
-              
               $clonedDiv.find('.multiselect').remove();
               $clonedDiv.find('.ui-widget-content:last').remove();
               $clonedDiv.find('[id]').each(function() { 
@@ -695,10 +686,8 @@
               var idWithoutNumber = $clonedDiv.attr('id').replace(/[0-9]/g, '');
               $clonedDiv.attr('id', idWithoutNumber + currentItemID);
               $clonedDiv.remove();
-
             }
 
-          
             $('#svz-item-container' + currentItemID).append($clonedDiv);
 
             if ($('#svz-sorting-btn').text() === 'Disallow sorting'){
@@ -898,9 +887,9 @@
             }
           });
 
-
           var jsonFromTextbox;
           var path;
+
           window.IteratorNestedObject = function(key, value) {
             var savepath = path;  
             path = path ? (path + "." + key) : key;
@@ -979,7 +968,6 @@
 
               // $('#svz-enum' + currentID).tagit('assignedTags').val(path.split('.').reverse()[0]);
 
-
               $('form#svz-schema-form' + currentItemID + ' :input').each(function(){
                 if ($(this).attr('name')){
                   $.each(Object.byString(jsonFromTextbox, path), function(key, value){
@@ -998,11 +986,6 @@
 
             }
 
-
-  
-
-
-
             if (typeof value === "object") {
                 $.each(value, IteratorNestedObject);
             }  
@@ -1019,9 +1002,6 @@
               console.log(e);
             }
           });
-
-
-
 
           var required = [];
           var properties = {};
@@ -1150,7 +1130,6 @@
             formFields.push(currentFormProperties);
           }
 
-
           var typeArrayKeysPaths = {};
           
           window.HandleSchemaFormSubmit = function(currentObject, currentID){
@@ -1174,15 +1153,7 @@
               currentKey = $('#svz-label-container' + currentID).html();
             }
 
-
-
-
-
-
             if (allKeys && _.include(allKeys, currentKey)){ 
-
-              console.info('-------------- gonna make changes --------------');
-
               var pathToValue = '';
               var currentKeyItem = $('#svz-label-item' + $(currentObject).attr('id').replace( /^\D+/g, '')).html();
               if(! currentKeyItem){
@@ -1192,13 +1163,9 @@
               var allPaths = GetAllPaths(properties);
               var chosenKey = $('#svz-key' + currentID).val();
 
-              console.log(currentKeyItem);
               for (var i = 0; i < allPaths.length; i++){
-                console.log('allPaths[i]: ' + allPaths[i]);
-
                 if (_.include(allPaths[i], currentKeyItem)){
                   pathToValue = allPaths[i].split('.' + currentKeyItem + '.type')[0];
-                  console.log(pathToValue);
                   break;
                 } else if (_.include(allPaths[i], currentKeyContainer + '.')){
                   var pathIsReady = true;
@@ -1220,8 +1187,6 @@
                   pathToValue = typeArrayKeysPaths[currentKeyContainer];
                 }
               }
-              console.log('path now: ' + pathToValue);
-
              
               if (pathToValue.split('.').slice(-1)[0] != 'type'){
                 pathToValue = pathToValue.split('.type')[0];
@@ -1230,7 +1195,6 @@
               try{
                 var thisProperties = Object.byString(properties, pathToValue);
               } catch(e){}
-
               
               if (pathToValue.split('.').length == 1){
                 thisProperties = properties;
@@ -1245,18 +1209,18 @@
                   return [value];
               });
 
-
               var schemaFormDataArray = $('#svz-schema-form' + currentID).serializeArray();
               var toDeleteRequired = true;
 
-              thisProperties[currentKey] = {};
+              if (_.isEmpty(thisProperties[currentKey])){
+                thisProperties[currentKey] = {};
+              }
 
               if (typesFromSelectArray.length === 1){
                 thisProperties[currentKey]['type'] = typesFromSelectArray[0];
               } else{
                 thisProperties[currentKey]['type'] = typesFromSelectArray;
               }
-              
               
               schemaFormDataArray = schemaFormDataArray.filter(function(n){return n.value !== ''});
 
@@ -1301,10 +1265,6 @@
                 required.splice(_.indexOf(required, chosenKey), 1);
               }
 
-
-              console.log(pathToValue);
-
-
               if (chosenKey != currentKey){
                 try{
                   Object.defineProperty(Object.byString(properties, pathToValue), chosenKey, Object.getOwnPropertyDescriptor(Object.byString(properties, pathToValue), currentKey));
@@ -1317,14 +1277,6 @@
               allKeys.splice(_.indexOf(allKeys, currentKey), 1);
               return;
             }
-
-
-
-
-
-
-
-
 
             var typesFromSelect = $('#svz-selected-type' + currentID).val();
             var typesFromSelectArray = $.map(typesFromSelect, function(value, index) {
@@ -1342,7 +1294,6 @@
               currentProperties['type'] = typesFromSelectArray;
             }
             
-
             schemaFormDataArray = schemaFormDataArray.filter(function(n){return n.value !== ''});
 
             jQuery.each( schemaFormDataArray, function( i, field ) {
@@ -1401,45 +1352,38 @@
                 }
               }
               
-              console.log(typeArrayKeysPaths);
               if(!pathToValue){
-                console.log('currentKeyContainer: ' + currentKeyContainer);
                 pathToValue = typeArrayKeysPaths[currentKeyContainer];
               }
-              console.log('PathtoValue: ' + pathToValue);
 
               var parentType = String($('#svz-selected-type' + $(currentObject).parents(':eq(6)').attr('id').replace( /^\D+/g, '')).val());
               if (parentType !== 'object' && parentType !== 'array'){
-                try{
-                  Object.byString(properties, pathToValue)['properties'][chosenKey] = currentProperties;
-                } catch(e) {
+                if(_.isEmpty(Object.byString(properties, pathToValue)['properties'][chosenKey])){
                   Object.byString(properties, pathToValue)['items'] = currentProperties;
+                }else{
+                  Object.byString(properties, pathToValue)['properties'][chosenKey] = currentProperties;
                 }
               } else if (parentType === 'object'){
-                  if(_.isEmpty(Object.byString(properties, pathToValue)['properties'])){
-                    Object.byString(properties, pathToValue)['properties'] = {};
-                  }
-                  Object.byString(properties, pathToValue)['properties'][chosenKey] = currentProperties;
-              } else if (parentType === 'array'){
-                console.info('----------------------------- ARRAY TYPE -----------------------------');
-                try{
-                  Object.byString(properties, pathToValue)['items'] = currentProperties;
-                } catch(e){
-                  Object.byString(properties, pathToValue)['items'] = {};
-                  Object.byString(properties, pathToValue)['items'] = currentProperties;
+                if(_.isEmpty(Object.byString(properties, pathToValue)['properties'])){
+                  Object.byString(properties, pathToValue)['properties'] = {};
                 }
+                Object.byString(properties, pathToValue)['properties'][chosenKey] = currentProperties;
+              } else if (parentType === 'array'){
+                if (_.isEmpty(Object.byString(properties, pathToValue)['items'])){
+                  Object.byString(properties, pathToValue)['items'] = {};
+                }
+                Object.byString(properties, pathToValue)['items'] = currentProperties;
               }
-              
             }
 
             try {
-                var sortableItemsArray = $('.container').sortable('toArray');
-                var sortableItemsArrayLength = sortableItemsArray.length;
-                for (var i = 0; i < sortableItemsArrayLength; i++) {
-                    if (_.include(allKeys, $('#' + sortableItemsArray[i]).find('.svz-label-item').html())){
-                      properties[$('#' + sortableItemsArray[i]).find('.svz-label-item').html()]['ordering'] = i + 1;
-                    }
+              var sortableItemsArray = $('.container').sortable('toArray');
+              var sortableItemsArrayLength = sortableItemsArray.length;
+              for (var i = 0; i < sortableItemsArrayLength; i++) {
+                if (_.include(allKeys, $('#' + sortableItemsArray[i]).find('.svz-label-item').html())){
+                  properties[$('#' + sortableItemsArray[i]).find('.svz-label-item').html()]['ordering'] = i + 1;
                 }
+              }
             } catch(err) {}
 
             if(_.include(typesFromSelectArray, 'object')){
