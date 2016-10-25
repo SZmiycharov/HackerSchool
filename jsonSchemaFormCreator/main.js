@@ -817,9 +817,10 @@
               }
 
 
-              
+              var changeThisProperties = true;
               if (pathToValue.split('.').length == 1){
                 thisProperties = properties;
+                changeThisProperties = false;
               }
 
               if (pathToValue.split('.').slice(-1)[0] != 'properties' && pathToValue.split('.').slice(-1)[0] != 'items' && pathToValue.split('.').length != 1){
@@ -830,14 +831,18 @@
                 pathToValue = pathToValue.slice(0, -1);
               }
 
+              if (changeThisProperties){
+                try{
+                  var thisProperties = Object.byString(properties, pathToValue);
+                } catch(e){
+                  console.log(e);
+                }
 
-              try{
-                var thisProperties = Object.byString(properties, pathToValue);
-              } catch(e){
-                console.log(e);
+                if (_.isEmpty(thisProperties[currentKey])){
+                  thisProperties[currentKey] = {};
+                }
               }
 
-              console.log('Pathtovalue: ' + pathToValue);
                             
               var typesFromSelect = $('#svz-selected-type' + currentID).val();
               var typesFromSelectArray = $.map(typesFromSelect, function(value, index) {
@@ -847,12 +852,8 @@
               var schemaFormDataArray = $('#svz-schema-form' + currentID).serializeArray();
               var toDeleteRequired = true;
 
-              console.log(thisProperties[currentKey]);
-              console.log('cur key: ' + currentKey);
 
-              if (_.isEmpty(thisProperties[currentKey])){
-                thisProperties[currentKey] = {};
-              }
+              
 
 
               if (typesFromSelectArray.length === 1){
@@ -1000,7 +1001,11 @@
                 pathToValue = typeArrayKeysPaths[currentKeyContainer];
               }
 
+              console.log('parent id: ' + $(currentObject).parents(':eq(6)').attr('id').replace( /^\D+/g, ''));
+              console.log();
               var parentType = String($('#svz-selected-type' + $(currentObject).parents(':eq(6)').attr('id').replace( /^\D+/g, '')).val());
+
+              console.log('parentType: ' + parentType);
               if (parentType !== 'object' && parentType !== 'array'){
                 if(_.isEmpty(Object.byString(properties, pathToValue)['properties'][chosenKey])){
                   Object.byString(properties, pathToValue)['items'] = currentProperties;
