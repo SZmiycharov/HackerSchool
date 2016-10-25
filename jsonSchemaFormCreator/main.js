@@ -37,7 +37,6 @@
               enableLiveAutocompletion: true
           });
 
-
           jQuery.fn.extend({
             prependClass: function(newClasses) {
                 return this.each(function() {
@@ -514,6 +513,7 @@
           window.IteratorNestedObject = function(key, value) {
             var savepath = path;  
             path = path ? (path + "." + key) : key;
+            console.log(path);
 
             if(path.split('.').length === 1){
               if (key === 'id'){
@@ -577,12 +577,15 @@
             } else if ((path.split('.').length % 2 === 0) && (_.include(path, 'items'))){
               var containerLabelID = $('#svz-container1').find('label:contains("' + path.split('.').reverse()[1] + '")').attr('id');
 
+
+
               if (containerLabelID){
                 if (containerLabelID.replace(/[0-9]/g, '') === 'svz-label-container'){
                   var itemLabelID = $('#svz-container' + containerLabelID.replace( /^\D+/g, '')).find('label:contains("New schema")').attr('id');
                   var currentItemID = itemLabelID.replace( /^\D+/g, '');
                 }
               }
+
               var assignedEnum = $('#svz-enum' + currentItemID).tagit('assignedTags');
               $('form#svz-schema-form' + currentItemID + ' :input[name="' + 'key' + String(currentItemID) + '"]').val(path.split('.').reverse()[0]);
               $('form#svz-schema-form' + currentItemID + ' :input[name="' + 'enum' + String(currentItemID) + '"]').val(path.split('.').reverse()[0]);
@@ -813,9 +816,7 @@
                 pathToValue = pathToValue.split('.type')[0];
               }
 
-              try{
-                var thisProperties = Object.byString(properties, pathToValue);
-              } catch(e){}
+
               
               if (pathToValue.split('.').length == 1){
                 thisProperties = properties;
@@ -824,6 +825,19 @@
               if (pathToValue.split('.').slice(-1)[0] != 'properties' && pathToValue.split('.').slice(-1)[0] != 'items' && pathToValue.split('.').length != 1){
                 pathToValue = pathToValue.split(pathToValue.split('.').slice(-1)[0])[0];
               }
+
+              if(pathToValue.slice(-1) === '.'){
+                pathToValue = pathToValue.slice(0, -1);
+              }
+
+
+              try{
+                var thisProperties = Object.byString(properties, pathToValue);
+              } catch(e){
+                console.log(e);
+              }
+
+              console.log('Pathtovalue: ' + pathToValue);
                             
               var typesFromSelect = $('#svz-selected-type' + currentID).val();
               var typesFromSelectArray = $.map(typesFromSelect, function(value, index) {
@@ -833,9 +847,13 @@
               var schemaFormDataArray = $('#svz-schema-form' + currentID).serializeArray();
               var toDeleteRequired = true;
 
+              console.log(thisProperties[currentKey]);
+              console.log('cur key: ' + currentKey);
+
               if (_.isEmpty(thisProperties[currentKey])){
                 thisProperties[currentKey] = {};
               }
+
 
               if (typesFromSelectArray.length === 1){
                 thisProperties[currentKey]['type'] = typesFromSelectArray[0];
@@ -885,6 +903,7 @@
               if (toDeleteRequired){
                 required.splice(_.indexOf(required, chosenKey), 1);
               }
+              
 
               if (chosenKey != currentKey){
                 try{
@@ -898,6 +917,10 @@
               allKeys.splice(_.indexOf(allKeys, currentKey), 1);
               return;
             }
+
+
+
+
 
             var typesFromSelect = $('#svz-selected-type' + currentID).val();
             var typesFromSelectArray = $.map(typesFromSelect, function(value, index) {
