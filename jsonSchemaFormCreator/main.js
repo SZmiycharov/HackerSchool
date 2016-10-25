@@ -229,8 +229,8 @@
           });
 
           window.AppendObjectArrayForm = function(currentID, currentType) {
-            currentContainerID += 1;
-            currentItemID += 1;
+            currentContainerID += 2;
+            currentItemID += 2;
             var currentLabel = $('#svz-label-item' + currentID).html();
             $('svz-item-container' + currentLabel).parent().find('label');
             var parentID = $('#svz-item-container' + currentID).parent().attr('id');
@@ -293,8 +293,8 @@
               var currentDataTargetForm = $clonedDiv.find('.svz-schema-tab').attr('data-target');
               $clonedDiv.find('.svz-schema-tab').attr('data-target', currentDataTargetForm.replace(/[0-9]/g, '') + currentItemID);
 
-              $clonedDiv.find('.multiselect').remove();
-              $clonedDiv.find('.ui-widget-content:last').remove();
+              // $clonedDiv.find('.multiselect').remove();
+              // $clonedDiv.find('.ui-widget-content:last').remove();
               $clonedDiv.find('[id]').each(function() { 
                 var newID = $(this).attr('id').replace(/\d+$/, function(str) { return currentItemID; });
                 $(this).attr('id', newID);
@@ -1002,7 +1002,6 @@
               }
 
               console.log('parent id: ' + $(currentObject).parents(':eq(6)').attr('id').replace( /^\D+/g, ''));
-              console.log();
               var parentType = String($('#svz-selected-type' + $(currentObject).parents(':eq(6)').attr('id').replace( /^\D+/g, '')).val());
 
               console.log('parentType: ' + parentType);
