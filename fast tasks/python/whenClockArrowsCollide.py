@@ -13,7 +13,7 @@ for i in range(0, 24):
 	hour = math.floor(n/60)
 
 	minutes = math.floor(n%60)
-	
+
 	if hour < 25:
 		if minutes/10 == 0:
 			if hour/10 == 0:
@@ -39,4 +39,4 @@ for i in range(0, 24):
 					break
 
 if not goingToCollide:
-	"Sorry - arrows won't collide again this hour!"
+	print "Sorry - arrows won't collide again this hour!"
