@@ -45,11 +45,11 @@ students = [[A1,B1], [A2,B2], [A3,B3]]
 for L in range(0, len(students)+1):
   for subset in itertools.combinations(students, L):
     if len(subset) > 0:
-    for i in subset:
-      maxAllowedStudents += i[1]
-      maxAllowedKilograms += i[0]
-    if maxAllowedStudents >= K and maxAllowedKilograms <= W:
-      numWays += 1
+      for i in subset:
+        maxAllowedStudents += i[1]
+        maxAllowedKilograms += i[0]
+      if maxAllowedStudents >= K and maxAllowedKilograms <= W:
+        numWays += 1
     maxAllowedStudents = 0
     maxAllowedKilograms = 0
 
