@@ -25,6 +25,7 @@
           var currentSchemaFormID = 1;
           var currentContainerID = 5;
           var currentItemID = 5;
+          var currentFormItemID = 0;
           var allKeys = [];
           var jsonPreview = {};
 
@@ -179,6 +180,8 @@
             if (e.target != this || $(this).attr('id') === 'svz-container1') return;
             e.stopPropagation();
             var currentID = $(this).attr('id').replace( /^\D+/g, '')
+            console.log(currentID);
+            $('#svz-additional-form' + currentID).toggle();
 
             if (_.include($(this).attr('id'), 'label')){
               if ($(this).attr('id') != 'svz-container1'){
@@ -193,6 +196,9 @@
             var currentID = $(this).attr('id').replace( /^\D+/g, '');
             $('#svz-add-options-cont' + currentID).slideToggle();
           });
+          $(document).on('click', '#svz-show-additional-form-fields', function(){
+            $('#svz-additional-form-fields').slideToggle();
+          });
 
           $(document).on('mouseover', '.container', function(e){
             e.stopPropagation();
@@ -201,7 +207,7 @@
             }
           });
           $(document).on('mouseout', '.container', function(){
-            if ($(this).attr('id') != 'svz-container1'){
+            if ($(this).attr('id') != 'svz-container1' && $(this).attr('id') != 'svz-additional-form-container'){
               $(this).css('background-color', '#97a8a9');
             }
           });
@@ -317,6 +323,33 @@
             InitializeMultiselectAndTagit(currentContainerID);
             InitializeMultiselectAndTagit(currentItemID);
           }
+
+          $(document).on('click', '#svz-add-form-item', function(){
+            console.log('heree');
+            currentItemID += 1;
+            var $clonedFormDiv = $('#svz-additional-form').clone();
+
+            $clonedFormDiv.find('[id]').each(function() { 
+              var newID = $(this).attr('id').replace(/\d+$/, function(str) { return currentItemID; });
+              $(this).attr('id', newID);
+            });
+            $clonedFormDiv.find('[name]').each(function() { 
+              var newID = $(this).attr('name').replace(/\d+$/, function(str) { return currentItemID; });
+              $(this).attr('name', newID);
+            });
+            var idWithoutNumber = $clonedFormDiv.attr('id').replace(/[0-9]/g, '');
+            $clonedFormDiv.attr('id', idWithoutNumber + currentItemID);
+
+
+            $('<div class="item"  id="svz-additional-form-item-container' + currentItemID + '"><div class="btn-group" role="group"><button id="svz-remove-additional-form-item' + currentItemID + '" class="btn btn-secondary svz-remove-additional-form-item" type="button">-</button></div><label class="svz-label-item" id="svz-label-additional-form-item' + currentItemID + '">New schema</label></div>').insertBefore('#svz-add-form-item');
+            $('#svz-item-container' + currentItemID).append($clonedFormDiv);
+
+            if ($('#svz-sorting-btn').text() === 'Disallow sorting'){
+              InitializeSortable();
+            }
+            InitializeMultiselectAndTagit(currentItemID);
+
+          });
 
           $(document).on('click', '.svz-add-item', function(e){
             e.stopPropagation();
