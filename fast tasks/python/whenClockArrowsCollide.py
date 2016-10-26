@@ -12,15 +12,19 @@ for i in range(0, 25):
 		if i/10 == 0:
 			if i == now.hour:
 				print "Time when arrows point same in current hour: 0{}:0{}".format(i, j)
+				break
 		else:
 			if i == now.hour:
 				print "Time when arrows point same in current hour: {}:0{}".format(i, j)
+				break
 	else:
 		if i/10 == 0:
 			if i == now.hour:
 				print "Time when arrows point same in current hour: 0{}:{}".format(i, j)
+				break
 		else:
 			if i == now.hour:
 				print "Time when arrows point same in current hour: {}:{}".format(i, j)
+				break
 	j += 5 
 
