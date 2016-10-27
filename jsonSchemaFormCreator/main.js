@@ -175,13 +175,18 @@
                 placeholderText: 'Enum',
             });
           }
+
+
+
+
     
           $(document).on('click', '.container, .item, .svz-label-item, .svz-label-container', function(e){
             if (e.target != this || $(this).attr('id') === 'svz-container1') return;
             e.stopPropagation();
             var currentID = $(this).attr('id').replace( /^\D+/g, '')
+            console.log('Should open it!!!');
             console.log(currentID);
-            $('#svz-additional-form' + currentID).toggle();
+            
 
             if (_.include($(this).attr('id'), 'label')){
               if ($(this).attr('id') != 'svz-container1'){
@@ -189,8 +194,13 @@
               }
             } else{
               $('#' + $(this).find('.tab-content').attr('id')).toggle();
+              $('#svz-additional-form' + currentID).toggle();
             }
           });
+
+
+
+
 
           $(document).on('click', '.svz-add-options-button', function(){
             var currentID = $(this).attr('id').replace( /^\D+/g, '');
@@ -324,31 +334,28 @@
             InitializeMultiselectAndTagit(currentItemID);
           }
 
-          $(document).on('click', '#svz-add-form-item', function(){
-            console.log('heree');
+          $(document).on('click', '#svz-add-form-item', function(e){
+            e.stopPropagation();
+
+            console.log('Adding the form item');
+            
             currentItemID += 1;
             var $clonedFormDiv = $('#svz-additional-form').clone();
 
             $clonedFormDiv.find('[id]').each(function() { 
-              var newID = $(this).attr('id').replace(/\d+$/, function(str) { return currentItemID; });
+              var newID = $(this).attr('id') + currentItemID;
               $(this).attr('id', newID);
             });
-            $clonedFormDiv.find('[name]').each(function() { 
-              var newID = $(this).attr('name').replace(/\d+$/, function(str) { return currentItemID; });
+            $clonedFormDiv.find('[name]').each(function() {
+              var newID = $(this).attr('name') + currentItemID;
               $(this).attr('name', newID);
             });
+
             var idWithoutNumber = $clonedFormDiv.attr('id').replace(/[0-9]/g, '');
             $clonedFormDiv.attr('id', idWithoutNumber + currentItemID);
 
-
-            $('<div class="item"  id="svz-additional-form-item-container' + currentItemID + '"><div class="btn-group" role="group"><button id="svz-remove-additional-form-item' + currentItemID + '" class="btn btn-secondary svz-remove-additional-form-item" type="button">-</button></div><label class="svz-label-item" id="svz-label-additional-form-item' + currentItemID + '">New schema</label></div>').insertBefore('#svz-add-form-item');
-            $('#svz-item-container' + currentItemID).append($clonedFormDiv);
-
-            if ($('#svz-sorting-btn').text() === 'Disallow sorting'){
-              InitializeSortable();
-            }
-            InitializeMultiselectAndTagit(currentItemID);
-
+            $('<div class="item" id="svz-additional-form-item-container' + currentItemID + '"><div class="btn-group" role="group"><button id="svz-remove-additional-form-item' + currentItemID + '" class="btn btn-secondary svz-remove-additional-form-item" type="button">-</button></div><label class="svz-label-item" id="svz-label-additional-form-item' + currentItemID + '">New schema</label></div>').insertBefore('#svz-add-form-item');
+            $('#svz-additional-form-item-container' + currentItemID).append($clonedFormDiv);
           });
 
           $(document).on('click', '.svz-add-item', function(e){
@@ -546,7 +553,6 @@
           window.IteratorNestedObject = function(key, value) {
             var savepath = path;  
             path = path ? (path + "." + key) : key;
-            console.log(path);
 
             if(path.split('.').length === 1){
               if (key === 'id'){
@@ -764,7 +770,9 @@
           }); 
                         
           window.HandleFormFormSubmit = function(currentObject, currentID){
-            var currentFormProperties = {}
+            console.log('in handle form form submit!');
+            var currentFormProperties = {};
+            console.log('curid: ' + currentID);
 
             if ($('#svz-label-item' + $(currentObject).attr('id').replace( /^\D+/g, '')).html()){
               var currentKey = $('#svz-label-item' + $(currentObject).attr('id').replace( /^\D+/g, '')).html();
@@ -774,9 +782,17 @@
 
             var currentID = currentID.replace( /^\D+/g, ''); 
             var schemaFormDataArray = $('#svz-for-form-form' + currentID).serializeArray();
+
+            if (_.isEmpty(schemaFormDataArray)){
+              schemaFormDataArray = $('#svz-additional-for-form-form' + currentID).serializeArray();
+            }
+
             schemaFormDataArray = schemaFormDataArray.filter(function(n){return n.value !== ''});
 
-            currentFormProperties['key'] = currentKey;
+            if (currentKey){
+              currentFormProperties['key'] = currentKey;
+            }
+
             jQuery.each( schemaFormDataArray, function( i, field ) {
               if (field.value === 'on'){
                 field.value = 'true';
@@ -1034,10 +1050,8 @@
                 pathToValue = typeArrayKeysPaths[currentKeyContainer];
               }
 
-              console.log('parent id: ' + $(currentObject).parents(':eq(6)').attr('id').replace( /^\D+/g, ''));
               var parentType = String($('#svz-selected-type' + $(currentObject).parents(':eq(6)').attr('id').replace( /^\D+/g, '')).val());
 
-              console.log('parentType: ' + parentType);
               if (parentType !== 'object' && parentType !== 'array'){
                 if(_.isEmpty(Object.byString(properties, pathToValue)['properties'][chosenKey])){
                   Object.byString(properties, pathToValue)['items'] = currentProperties;
