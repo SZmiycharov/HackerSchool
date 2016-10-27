@@ -669,7 +669,7 @@
           var required = [];
           var properties = {};
           var formProperties = {};
-          var formFields = [];
+          var formFields = {};
 
           window.ShowJSONPreview = function(){
             if(_.isEmpty(jsonPreview['schema'])){
@@ -681,7 +681,16 @@
             if (_.isEmpty(jsonPreview['form'])){
               jsonPreview['form'] = {};
             }
-            jsonPreview['form']['fields'] = formFields;
+
+            var formFieldsValues = [];
+            console.log(formFields);
+
+            for (var key in formFields){
+              formFieldsValues.push(formFields[key]);
+            }
+
+
+            jsonPreview['form']['fields'] = formFieldsValues;
 
             if (required != ''){
               jsonPreview['required'] = required;
@@ -770,6 +779,7 @@
           }); 
                         
           window.HandleFormFormSubmit = function(currentObject, currentID){
+            var fullCurrentID = currentID;
             console.log('in handle form form submit!');
             var currentFormProperties = {};
             console.log('curid: ' + currentID);
@@ -800,7 +810,7 @@
               currentFormProperties[field.name.replace(/[0-9]/g, '')] = field.value;
             });
 
-            formFields.push(currentFormProperties);
+            formFields[fullCurrentID] = currentFormProperties
           }
 
           var typeArrayKeysPaths = {};
