@@ -546,6 +546,7 @@
           window.IteratorNestedObject = function(key, value) {
             var savepath = path;  
             path = path ? (path + "." + key) : key;
+            console.log(path);
 
             if(path.split('.').length === 1){
               if (key === 'id'){
@@ -573,12 +574,29 @@
                 }
               });
               $('#svz-schema-form-submit' + currentItemID).click();
-            } else if(path.split('.').length % 2 !== 0){
+            } 
+
+
+
+
+
+
+            else if(path.split('.').length % 2 !== 0){
               try{
+
                 var containerLabelID = $('#svz-container1').find('label:contains("' + path.split('.').reverse()[2] + '")').attr('id');
+
+                
+
                 if (containerLabelID){
                   if (containerLabelID.replace(/[0-9]/g, '') === 'svz-label-container'){
+                    $('#svz-add-item' + containerLabelID.replace( /^\D+/g, '')).click();
                     var itemLabelID = $('#svz-container' + containerLabelID.replace( /^\D+/g, '')).find('label:contains("New schema")').attr('id');
+                    console.log('ITEMLABELID: ' + itemLabelID);
+
+
+                    // here itemlabel is sometimes undefined (probably element is not created at all!)
+
                     var currentItemID = itemLabelID.replace( /^\D+/g, '');
                   }
                 }
@@ -586,9 +604,6 @@
                 var assignedEnum = $('#svz-enum' + currentItemID).tagit('assignedTags');
                 $('form#svz-schema-form' + currentItemID + ' :input[name="' + 'key' + String(currentItemID) + '"]').val(path.split('.').reverse()[0]);
                 $('form#svz-schema-form' + currentItemID + ' :input[name="' + 'enum' + String(currentItemID) + '"]').val(path.split('.').reverse()[0]);
-
-                // $('#svz-enum' + currentID).tagit('assignedTags').val(path.split('.').reverse()[0]);
-
 
                 $('form#svz-schema-form' + currentItemID + ' :input').each(function(){
                   if ($(this).attr('name')){
@@ -605,24 +620,28 @@
                   }
                 });
                 $('#svz-schema-form-submit' + currentItemID).click();
-              } catch(e){}
-            } else if ((path.split('.').length % 2 === 0) && (_.include(path, 'items'))){
+              } catch(e){
+                console.log('some shit happened: ' + e);
+              }
+            } 
+
+
+
+
+
+
+
+            else if ((path.split('.').length % 2 === 0) && (_.include(path, 'items'))){
               var containerLabelID = $('#svz-container1').find('label:contains("' + path.split('.').reverse()[1] + '")').attr('id');
-
-
-
               if (containerLabelID){
                 if (containerLabelID.replace(/[0-9]/g, '') === 'svz-label-container'){
                   var itemLabelID = $('#svz-container' + containerLabelID.replace( /^\D+/g, '')).find('label:contains("New schema")').attr('id');
                   var currentItemID = itemLabelID.replace( /^\D+/g, '');
                 }
               }
-
               var assignedEnum = $('#svz-enum' + currentItemID).tagit('assignedTags');
               $('form#svz-schema-form' + currentItemID + ' :input[name="' + 'key' + String(currentItemID) + '"]').val(path.split('.').reverse()[0]);
               $('form#svz-schema-form' + currentItemID + ' :input[name="' + 'enum' + String(currentItemID) + '"]').val(path.split('.').reverse()[0]);
-
-              // $('#svz-enum' + currentID).tagit('assignedTags').val(path.split('.').reverse()[0]);
 
               $('form#svz-schema-form' + currentItemID + ' :input').each(function(){
                 if ($(this).attr('name')){
@@ -885,6 +904,7 @@
               if(pathToValue.slice(-1) === '.'){
                 pathToValue = pathToValue.slice(0, -1);
               }
+              console.log(pathToValue);
 
               if (changeThisProperties){
                 try{
@@ -909,6 +929,17 @@
 
 
               
+
+              console.log(thisProperties);
+              console.log('container key: ' + currentKeyContainer);
+              console.log('cur key item: ' + currentKeyItem);
+              console.log(currentKey);
+
+              if (_.isEmpty(thisProperties[currentKey])){
+                thisProperties = thisProperties[currentKeyContainer]['properties'];
+                pathToValue += '.properties';
+                console.info(pathToValue);
+              }
 
 
               if (typesFromSelectArray.length === 1){
