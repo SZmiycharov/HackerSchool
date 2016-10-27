@@ -4,8 +4,8 @@
     <meta charset="utf-8" />
     <title>JSONCreator</title>
     <meta charset="utf-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1">
-  <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css">
     <style>
       .container {
           overflow:hidden;
@@ -17,6 +17,7 @@
           border-radius: 4px;
           display: inline-block;
           padding: 1%;
+          margin-top: 1%;
       }
 
       .container .container {
@@ -62,12 +63,13 @@
         margin-top: 5px;
         margin-bottom: 10px;
       }
-      
-      #svz-additional-form-container{
-        background-color: #7DA5A6 !important;
+      .svz-additional-form-cont{
+        border-radius: 4px;
+        padding: 8px;
       }
-
-
+      #svz-additional-form-container{
+        background-color: #597171 !important;
+      }
       textarea {
         width: 100%;
         height: 50%;
@@ -82,9 +84,7 @@
       a{
         color:#2f2f2f;
       }
-
     </style>
-
   </head>
 
   <body>
@@ -99,8 +99,6 @@
             <div class="tab-content">
               <div class="tab-pane active" id="svz-schema-tab9999999">
                 <h2>For schema:</h2>
-
-
                 <form id="svz-schema-form9999999" action="javascript:void(0);" onsubmit="HandleSchemaFormSubmit(this, this.id);">
                   <div class="form-group">
                     <label class="svzRequiredLabel">Type</label>
@@ -135,7 +133,6 @@
                     <label id="svz-label-for-enum9999999">Enum</label>
                     <ul id="svz-enum9999999" name="enum9999999" class="svz-enum"></ul>
                   </div>
-
                   <div class="form-group">
                     <button id="svz-add-options-button9999999" type="button" class="btn btn-info svz-add-options-button">Additional options</button>
                   </div>
@@ -159,8 +156,6 @@
                   <input class="btn btn-default" id="svz-schema-form-submit9999999" type="submit" value="Update">
                 </form>
               </div>
-
-
               <div class="tab-pane" id="svz-form-tab9999999">
                 <h2 id="svz-for-form9999999">For form:</h2>
                 <form id="svz-for-form-form9999999" action="javascript:void(0);" onsubmit="HandleFormFormSubmit(this, this.id);">
@@ -202,9 +197,23 @@
 
 
 
+
     <!-- form for cloning for additioonal items -->
     <div id="svz-additional-form" hidden>
       <form id="svz-additional-for-form-form" action="javascript:void(0);" onsubmit="HandleFormFormSubmit(this, this.id);">
+        <div class="form-group">
+          <label>Type</label>
+          <div>
+            <select name="type">
+              <option label="fieldset" value="fieldset">fieldset</option>
+              <option label="section" value="section">section</option>
+              <option label="array" value="array">array</option>
+              <option label="tabarray" value="tabarray">tabarray</option>
+              <option label="tabobject" value="tabobject">tabobject</option>
+              <option label="selectfieldset" value="selectfieldset">selectfieldset</option>
+            </select>
+          </div>
+        </div>
         <div class="form-group">
           <label>Placeholder</label>
           <div class="input-group"><input class="form-control" placeholder="placeholder" type="text" name="placeholder"></div>
@@ -221,7 +230,13 @@
           <label>Prepend</label>
           <div class="input-group"><input class="form-control" placeholder="prepend" type="text" name="prepend"></div>
         </div>
-
+        <div class="form-group">
+          <label>Row width</label>
+          <div class="input-group"><input class="form-control" placeholder="Row width" type="text" name="rowWidth"></div>
+        </div>
+        <div class="form-group">
+          <div class="input-group"><label><input type="checkbox" name="notitle">notitle (check for true)</label></div>
+        </div>
         <div class="form-group">
           <div class="input-group"><label><input type="checkbox" name="enableReset">enableReset (check for true)</label></div>
         </div>
@@ -244,7 +259,6 @@
 
 
 
-
     <div class="tab-content" id="tab-content9999998" hidden>
       <div id="svz-schema-form-tabs-container9999998" class="tab-pane active">
           <div id="svz-left-container9999998" style="float:left; width:100%; margin-left: 50px; margin-top: 20px;"> 
@@ -255,8 +269,6 @@
             <div class="tab-content">
               <div class="tab-pane active" id="svz-schema-tab9999998">
                 <h2>For schema:</h2>
-
-
                 <form id="svz-schema-form9999998" action="javascript:void(0);" onsubmit="HandleSchemaFormSubmit(this, this.id);">
                   <div class="form-group">
                     <label class="svzRequiredLabel">Type</label>
@@ -276,10 +288,6 @@
                     <label id="svz-label-for-enum9999998">Enum</label>
                     <ul id="svz-enum9999998" name="enum9999998" class="svz-enum"></ul>
                   </div>
-
-
-
-
                   <div class="form-group">
                     <button id="svz-add-options-button9999998" type="button" class="btn btn-info svz-add-options-button">Additional options</button>
                   </div>
@@ -306,9 +314,7 @@
               </div>
               <div class="tab-pane" id="svz-form-tab9999998">
                 <h2 id="svz-for-form9999998">For form:</h2>
-
                 <form id="svz-for-form-form9999998">
-                  
                   <div class="form-group">
                     <label>Placeholder</label>
                     <div class="input-group"><input class="form-control" placeholder="placeholder" type="text" name="placeholder9999998"></div>
@@ -325,7 +331,13 @@
                     <label>Prepend</label>
                     <div class="input-group"><input class="form-control" placeholder="prepend" type="text" name="prepend9999998"></div>
                   </div>
-
+                  <div class="form-group">
+                    <label>Row width</label>
+                    <div class="input-group"><input class="form-control" placeholder="Row width" type="text" name="rowWidth9999998"></div>
+                  </div>
+                  <div class="form-group">
+                    <div class="input-group"><label><input type="checkbox" name="notitle9999998">notitle (check for true)</label></div>
+                  </div>
                   <div class="form-group">
                     <div class="input-group"><label><input type="checkbox" name="enableReset9999998">enableReset (check for true)</label></div>
                   </div>
@@ -335,13 +347,8 @@
                   <div class="form-group">
                     <div class="input-group"><label><input type="checkbox" name="enableRedo9999998">enableRedo (check for true)</label></div>
                   </div>
-
                   <input class="btn btn-default" id="svz-schema-form-submit9999998" type="submit" value="Update">
                 </form>
-
-
-
-
               </div>
             </div> 
           </div>   
@@ -360,7 +367,6 @@
           <label for="svz-main-dollar-schema">$Schema:</label>
           <input class="form-control" name="$schema" id="svz-main-dollar-schema">
         </div>
-
         <div class="form-group">
           <label for="svz-main-dollar-schema">schemaId</label>
           <input class="form-control svz-form-main-options" name="schemaId" id="svz-main-form-schemaid">
@@ -369,7 +375,6 @@
           <label for="svz-main-dollar-schema">JSONForm version</label>
           <input class="form-control svz-form-main-options" name="jsonformVersion" id="svz-main-form-jsonform-version">
         </div>
-
         <div class="form-group">
           <div class="input-group"><label><input class="svz-form-main-options" type="checkbox" name="isStrict">Is strict (check for true)</label></div>
         </div>
@@ -381,25 +386,25 @@
     </div>
 
 
+
+    <!-- *************************************************** Actual page starts HERE !!!!!!!!!!!!!!! *************************************************** -->
+
+
     <div class="col-md-6 col-sn-12" style="margin-top: 40px;">
       <div>
         <button id="svz-sorting-btn" type="button" class="btn btn-primary">Allow sorting</button>
         <button id="svz-show-json-preview" type="button" class="btn btn-success" onclick="ShowJSONPreview();">Show JSON <span class="glyphicon glyphicon-arrow-right"></span></button>
       </div>
-      <div></div>
       <div class="container" id="svz-container1">
         <button id="svz-add-item1" class="btn btn-secondary svz-add-item" type="button">+</button>
       </div>
-
-      <!-- container for additional forms -->
       <div class="form-group">
         <button id="svz-show-additional-form-fields" type="button" class="btn btn-info">Show/Hide additional form fields</button>
       </div>
 
-
       <div id="svz-additional-form-fields" hidden>
         <h3>Additonal form fields</h3>
-        <div class="container" id="svz-additional-form-container">
+        <div class="svz-additional-form-cont" id="svz-additional-form-container">
           <button id="svz-add-form-item" class="btn btn-secondary svz-add-item" type="button">+</button>
         </div>
       </div>

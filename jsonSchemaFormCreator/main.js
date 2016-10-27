@@ -82,48 +82,52 @@
                   propertiesBeforeStart = properties;
                   var currentKeyItem = $('#' + ui.item.attr('id')).find('label').html();
                   var currentKeyContainer = $('#' + ui.item.attr('id')).parent().find('label').html(); 
-                  if ($('#' + ui.item.attr('id')).parent().attr('id') !== 'svz-container1'){
-                    var allPaths = GetAllPaths(properties);
-                    for (var i = 0; i < allPaths.length; i++){
-                      if (_.include(allPaths[i], currentKeyItem)){
-                        var currentPath = allPaths[i].split('.' + currentKeyItem + '.type')[0];
-                        break;
-                      } else if ((_.include(allPaths[i], currentKeyContainer + '.')) 
-                        && (currentKeyItem.replace(/[0-9]/g, '') === 'SVZlabel')
-                        && (_.include(allPaths[i], 'items'))){
-                        stopToReturn = true;
-                      }
-                    }
-                    try{
-                      if(Object.byString(properties, currentPath) === 'array'){
-                        stopToReturn = true;
-                      }
-                    } catch(e){}
-
-                    if (!stopToReturn){
-                      draggedObject = Object.byString(properties, currentPath)[currentKeyItem];
-                      // delete Object.byString(properties, currentPath)[currentKeyItem];
-                      pathToDelete = currentPath;
-                    }
+                  if(currentKeyItem == 'New schema' || currentKeyContainer === 'New schema'){
+                    stopToReturn = true;
                   } else{
-                    if (properties[currentKeyItem]['type'] === 'array'){
-                      stopToReturn = true;
-                    }
+                    if ($('#' + ui.item.attr('id')).parent().attr('id') !== 'svz-container1'){
+                      var allPaths = GetAllPaths(properties);
+                      for (var i = 0; i < allPaths.length; i++){
+                        if (_.include(allPaths[i], currentKeyItem)){
+                          var currentPath = allPaths[i].split('.' + currentKeyItem + '.type')[0];
+                          break;
+                        } else if ((_.include(allPaths[i], currentKeyContainer + '.')) 
+                          && (currentKeyItem.replace(/[0-9]/g, '') === 'SVZlabel')
+                          && (_.include(allPaths[i], 'items'))){
+                          stopToReturn = true;
+                          break;
+                        }
+                      }
+                      try{
+                        if(Object.byString(properties, currentPath) === 'array'){
+                          stopToReturn = true;
+                        }
+                      } catch(e){}
 
-                    draggedObject = properties[currentKeyItem];
-                    // delete properties[currentKeyItem];
+                      if (!stopToReturn){
+                        draggedObject = Object.byString(properties, currentPath)[currentKeyItem];
+                        pathToDelete = currentPath;
+                      }
+                    } else{
+                      if (properties[currentKeyItem]['type'] === 'array'){
+                        stopToReturn = true;
+                      }
+
+                      draggedObject = properties[currentKeyItem];
+                    }
+                    keyToDelete = currentKeyItem;
                   }
-                  keyToDelete = currentKeyItem;
                 },
                 stop: function(event, ui) {
-                  if (stopToReturn){
+
+                  var currentKeyItem = $('#' + ui.item.attr('id')).find('label').html();
+                  var currentKeyContainer = $('#' + ui.item.attr('id')).parent().find('label').html(); 
+
+                  if (stopToReturn || currentKeyContainer === 'New schema'){
                     $(this).sortable('cancel');
                     return false;
                   }
 
-                  var currentKeyItem = $('#' + ui.item.attr('id')).find('label').html();
-                  var currentKeyContainer = $('#' + ui.item.attr('id')).parent().find('label').html(); 
-                  
                   if ($('#' + ui.item.attr('id')).parent().attr('id') !== 'svz-container1'){
                     var allPaths = GetAllPaths(properties);
                     for (var i = 0; i < allPaths.length; i++){
@@ -183,10 +187,7 @@
           $(document).on('click', '.container, .item, .svz-label-item, .svz-label-container', function(e){
             if (e.target != this || $(this).attr('id') === 'svz-container1') return;
             e.stopPropagation();
-            var currentID = $(this).attr('id').replace( /^\D+/g, '')
-            console.log('Should open it!!!');
-            console.log(currentID);
-            
+            var currentID = $(this).attr('id').replace( /^\D+/g, '')            
 
             if (_.include($(this).attr('id'), 'label')){
               if ($(this).attr('id') != 'svz-container1'){
@@ -250,14 +251,6 @@
             var currentLabel = $('#svz-label-item' + currentID).html();
             $('svz-item-container' + currentLabel).parent().find('label');
             var parentID = $('#svz-item-container' + currentID).parent().attr('id');
-
-            // try{
-            //   if($('#svz-selected-type' + parentID.replace( /^\D+/g, '')).val().length === 1 
-            //   && $('#svz-selected-type' + parentID.replace( /^\D+/g, '')).val()[0] === 'array'){
-            //     return;
-            //   }
-            // } catch(e) {}
-            
             var $submittedFormDiv = $('#tab-content' + currentID);
 
             $submittedFormDiv.find('.multiselect').remove();
@@ -288,7 +281,6 @@
               $clonedDiv.find('.svz-form-tab').attr('data-target', currentDataTargetForm.replace(/[0-9]/g, '') + currentItemID);
               var currentDataTargetForm = $clonedDiv.find('.svz-schema-tab').attr('data-target');
               $clonedDiv.find('.svz-schema-tab').attr('data-target', currentDataTargetForm.replace(/[0-9]/g, '') + currentItemID);
-
               $clonedDiv.find('.multiselect').remove();
               $clonedDiv.find('.ui-widget-content:last').remove();
               $clonedDiv.find('[id]').each(function() { 
@@ -301,6 +293,7 @@
               });
               var idWithoutNumber = $clonedDiv.attr('id').replace(/[0-9]/g, '');
               $clonedDiv.attr('id', idWithoutNumber + currentItemID);
+              $('#svz-form-li' + currentItemID).css('display', 'inline-block');
 
             } else if (currentType == 'array'){
               var $clonedDiv = $('#tab-content9999998').clone();
@@ -354,7 +347,7 @@
             var idWithoutNumber = $clonedFormDiv.attr('id').replace(/[0-9]/g, '');
             $clonedFormDiv.attr('id', idWithoutNumber + currentItemID);
 
-            $('<div class="item" id="svz-additional-form-item-container' + currentItemID + '"><div class="btn-group" role="group"><button id="svz-remove-additional-form-item' + currentItemID + '" class="btn btn-secondary svz-remove-additional-form-item" type="button">-</button></div><label class="svz-label-item" id="svz-label-additional-form-item' + currentItemID + '">New schema</label></div>').insertBefore('#svz-add-form-item');
+            $('<div class="item" id="svz-additional-form-item-container' + currentItemID + '"><div class="btn-group" role="group"><button id="svz-remove-additional-form-item' + currentItemID + '" class="btn btn-secondary svz-remove-additional-form-item" type="button">-</button></div><label class="svz-label-item" id="svz-label-additional-form-item' + currentItemID + '">New form</label></div>').insertBefore('#svz-add-form-item');
             $('#svz-additional-form-item-container' + currentItemID).append($clonedFormDiv);
           });
 
@@ -683,7 +676,6 @@
             }
 
             var formFieldsValues = [];
-            console.log(formFields);
 
             for (var key in formFields){
               formFieldsValues.push(formFields[key]);
@@ -836,6 +828,9 @@
               currentKey = $('#svz-label-container' + currentID).html();
             }
 
+
+
+
             if (allKeys && _.include(allKeys, currentKey)){ 
               var pathToValue = '';
               var currentKeyItem = $('#svz-label-item' + $(currentObject).attr('id').replace( /^\D+/g, '')).html();
@@ -856,6 +851,7 @@
                   if (pathToValue.split('.').length != 1){
                     pathToValue += '.properties';
                   }
+                  break;
                 }
               }
               if (!pathIsReady){
@@ -1046,6 +1042,8 @@
               var currentKeyItem = $('#svz-label-item' + $(currentObject).attr('id').replace( /^\D+/g, '')).html();
               var currentKeyContainer = $('#svz-label-container' + $(currentObject).parents(':eq(6)').attr('id').replace( /^\D+/g, '')).html();
               var allPaths = GetAllPaths(properties);
+              console.log('currentKeyContainer: ' + currentKeyContainer);
+              console.log('currentKeyItem: ' + currentKeyItem);
 
               for (var i = 0; i < allPaths.length; i++){
                 if (_.include(allPaths[i], currentKeyItem)){
@@ -1053,12 +1051,14 @@
                   break;
                 } else if (_.include(allPaths[i], currentKeyContainer + '.')){
                   pathToValue = allPaths[i].split('.type')[0];
+                  break;
                 }
               }
               
               if(!pathToValue){
                 pathToValue = typeArrayKeysPaths[currentKeyContainer];
               }
+              console.log('pathToValue: ' + pathToValue);
 
               var parentType = String($('#svz-selected-type' + $(currentObject).parents(':eq(6)').attr('id').replace( /^\D+/g, '')).val());
 
