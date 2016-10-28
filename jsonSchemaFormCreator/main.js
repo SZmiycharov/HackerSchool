@@ -904,7 +904,11 @@
               if(pathToValue.slice(-1) === '.'){
                 pathToValue = pathToValue.slice(0, -1);
               }
-              console.log(pathToValue);
+              if (_.isEmpty(thisProperties[currentKey])){
+                thisProperties = thisProperties[currentKeyContainer]['properties'];
+                pathToValue += '.properties';
+                console.info(pathToValue);
+              }
 
               if (changeThisProperties){
                 try{
@@ -935,11 +939,7 @@
               console.log('cur key item: ' + currentKeyItem);
               console.log(currentKey);
 
-              if (_.isEmpty(thisProperties[currentKey])){
-                thisProperties = thisProperties[currentKeyContainer]['properties'];
-                pathToValue += '.properties';
-                console.info(pathToValue);
-              }
+              
 
 
               if (typesFromSelectArray.length === 1){
@@ -1089,11 +1089,13 @@
               if(!pathToValue){
                 pathToValue = typeArrayKeysPaths[currentKeyContainer];
               }
-              console.log('pathToValue: ' + pathToValue);
 
+              // here parent type is not gotten correctly!!!!! it should be taken another way!!!              
               var parentType = String($('#svz-selected-type' + $(currentObject).parents(':eq(6)').attr('id').replace( /^\D+/g, '')).val());
+              console.log(parentType);
 
               if (parentType !== 'object' && parentType !== 'array'){
+                console.info('we are gheree1!1');
                 if(_.isEmpty(Object.byString(properties, pathToValue)['properties'][chosenKey])){
                   Object.byString(properties, pathToValue)['items'] = currentProperties;
                 }else{
