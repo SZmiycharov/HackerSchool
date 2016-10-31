@@ -16,60 +16,59 @@ while True:
      else:
          break
 
-goods = []
+shoppingList = []
 
 while True:
   try:
-     allGoods = raw_input()
+     shoppinglistInput = raw_input()
      for i in range(n):
-        goods.append(int(allGoods.split()[i]))
+        shoppingList.append(int(shoppinglistInput.split()[i]))
   except StandardError:
      print("Bad input!")
      continue
   else:
-     if all(i>10000 or i<1 for i in goods):
-         print("goods must be <=10000 and >=1")
+     if all(i>10000 or i<1 for i in shoppingList):
+         print("shoppingList must be <=10000 and >=1")
          continue
      else:
          break
 
 
-arrayComb = []
+shoppingListAllCombinations = []
 for i in range (1, n):
   numFreeProducts = i/k
-  allCombinationsProducts = itertools.combinations(goods, i)
+  allCombinationsProducts = itertools.combinations(shoppingList, i)
   for subset in allCombinationsProducts:
-    arrayComb.append(subset)
+    shoppingListAllCombinations.append(subset)
 
-# arraycomb - po edini4ki, dvoiki, troiki i t.n
 
-currentComb = []
-fullList = []
+currentCombinationProducts = []
+fullListProducts = []
 okComb = []
-
-totalSum = sum(goods)
-answer = totalSum
-currentAnswer = totalSum
+totalSum = sum(shoppingList)
+bestAnswer = totalSum
+currentbestAnswer = totalSum
 
 for i in range(2, n):
-  for subset in itertools.combinations(arrayComb, i):
-    for arr in subset:
-      currentComb.append(arr)
+  for subset in itertools.combinations(shoppingListAllCombinations, i):
+    for products in subset:
+      currentCombinationProducts.append(products)
 
-    for x in currentComb:
-      fullList += x
+    for product in currentCombinationProducts:
+      fullListProducts += product
 
-    if len(fullList) == n-1 and set(fullList) == set(goods):
-      for slavi in currentComb:
-        freeItems = len(slavi)/k
-        slavi = sorted(slavi)
-        freeitemssum = slavi[0:freeItems]
-        for asd in freeitemssum:
-          currentAnswer -= asd
-        if currentAnswer <= answer:
-          answer = currentAnswer
-    currentAnswer = totalSum     
-    fullList = []
-    currentComb = []
+    if len(fullListProducts) == n-1 and set(fullListProducts) == set(shoppingList):
+      for listProducts in currentCombinationProducts:
+        freeItems = len(listProducts)/k
+        listProducts = sorted(listProducts)
+        freeItemsSum = listProducts[0:freeItems]
+        for freeItem in freeItemsSum:
+          currentbestAnswer -= freeItem
+        if currentbestAnswer <= bestAnswer:
+          bestAnswer = currentbestAnswer
+          
+    currentbestAnswer = totalSum     
+    fullListProducts = []
+    currentCombinationProducts = []
 
-print answer
+print bestAnswer
