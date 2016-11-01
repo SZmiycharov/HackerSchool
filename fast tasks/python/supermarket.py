@@ -38,124 +38,30 @@ while True:
      else:
          break
 
-
-# shoppingListAllCombinations = []
-
-# for subset in itertools.combinations(shoppingList, k):
-#   shoppingListAllCombinations.append(subset)
-
-
-# curlist = []
-# helper = shoppingList
-# valid = True
-# numFreeProducts = 0
-# totalsum = sum(shoppingList)
-# answer = sum(shoppingList)
-
-discount = 0
-total = 0
+currentDiscount = 0
+totalcurrentDiscount = 0
 answer = sum(shoppingList)
-import pprint
-pprint.pprint(list(chunks(sorted(shoppingList), k)))
+
 for x in list(chunks(sorted(shoppingList), k)):
   x = sorted(x)
   if len(x) >= k:
     num = len(x)/k
-    discount = sum(x[0:num])
-    total += discount
+    currentDiscount = sum(x[0:num])
+    totalcurrentDiscount += currentDiscount
 
+currentDiscount = 0
+totalcurrentDiscount = 0
+helperShopList = sorted(shoppingList)
+helperShopList.reverse()
 
-answer < sum(shoppingList) - total
-
-discount = 0
-total = 0
-helper = sorted(shoppingList)
-helper.reverse()
-print helper
-for x in list(chunks(helper, k)):
+for x in list(chunks(helperShopList, k)):
   x = sorted(x)
   if len(x) >= k:
     num = len(x)/k
-    discount = sum(x[0:num])
-    total += discount
+    currentDiscount = sum(x[0:num])
+    totalcurrentDiscount += currentDiscount
 
 
-if sum(shoppingList) - total < answer:
-  answer = sum(shoppingList) - total
+answer = sum(shoppingList) - totalcurrentDiscount
 
-print answer
-
-
-
-
-# for subset in itertools.combinations(shoppingListAllCombinations, n/k):
-#   helper = shoppingList[:] 
-#   for i in subset:
-#     for j in i:
-#       try:
-#         helper.remove(j)
-#       except Exception, e:
-#         valid = False
-#         break
-
-#   if valid:
-#     for groupOfProducts in subset:
-#       numFreeProducts = len(groupOfProducts)/k
-#       groupOfProducts = sorted(groupOfProducts)
-#       totalsum -= sum(groupOfProducts[0:numFreeProducts])
-#     if totalsum < answer:
-#       answer = totalsum
-#     print answer
-
-#   totalsum = sum(shoppingList)
-#   valid = True
-#   helper = shoppingList
-
-# print answer
-
-
-
-
-
-
-
-
-
-# currentCombinationProducts = []
-# fullListProducts = []
-# okComb = []
-# totalSum = sum(shoppingList)
-# bestAnswer = totalSum
-# currentbestAnswer = totalSum
-
-
-# 11 41 4 65 11 90 55 
-
-
-# for i in range(1, n):
-#   for subset in itertools.combinations(shoppingListAllCombinations, i):
-#     for products in subset:
-#       currentCombinationProducts.append(products)
-#     for product in currentCombinationProducts:
-#       fullListProducts += product
-    
-#     if len(fullListProducts) <= n:
-#       for listProducts in currentCombinationProducts:
-#         freeItems = len(listProducts)/k
-#         listProducts = sorted(listProducts)
-#         freeItemsSum = listProducts[0:freeItems]
-
-#         for freeItem in freeItemsSum:
-#           currentbestAnswer -= freeItem
-#         if currentbestAnswer < bestAnswer:
-#           bestAnswer = currentbestAnswer
-#           print subset
-#           print fullListProducts
-#           print "\n"
-
-        
-#     currentbestAnswer = totalSum     
-#     fullListProducts = []
-#     currentCombinationProducts = []
-
-# print bestAnswer
+print "The answer is: {}".format(answer)
