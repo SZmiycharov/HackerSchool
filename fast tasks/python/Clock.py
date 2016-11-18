@@ -14,7 +14,7 @@ while True:
      continue
   else:
      if hour<1 or hour>12 or minutes<0 or minutes>59:
-         print("1<=hour<=12 and 0<=minutes<=59")
+         print("Bad input: hour must be 1<= and <=12; minutes must be 0<= and <=59")
          continue
      else:
          break
